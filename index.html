@@ -1,182 +1,295 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>LoopJump&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="LoopJump&#039;s Blog"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LoopJump&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta property="og:type" content="website"><meta property="og:title" content="LoopJump&#039;s Blog"><meta property="og:url" content="http://example.com/"><meta property="og:site_name" content="LoopJump&#039;s Blog"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com"},"headline":"LoopJump's Blog","image":["http://example.com/img/og_image.png"],"author":{"@type":"Person","name":"John Doe"},"publisher":{"@type":"Organization","name":"LoopJump's Blog","logo":{"@type":"ImageObject"}},"description":""}</script><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><!--!--><!-- hexo injector head_end start --><script>
-  (function () {
-      function switchTab() {
-          if (!location.hash) {
-            return;
-          }
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
 
-          const id = '#' + CSS.escape(location.hash.substring(1));
-          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
-          if (!$tabMenu) {
-            return;
-          }
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
 
-          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
-          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
-          Array.from($tabMenuContainer.querySelectorAll('a'))
-              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
-              .forEach($content => $content.classList.add('is-hidden'));
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
 
-          if ($tabMenu) {
-              $tabMenu.parentElement.classList.add('is-active');
-          }
-          const $activeTab = document.querySelector(id);
-          if ($activeTab) {
-              $activeTab.classList.remove('is-hidden');
-          }
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/%E5%85%AC%E5%BC%8F%E4%BE%8B%E5%AD%90/">公式例子</a>
+      </h2>
+      <p class="article-date">October 6, 2024</p>
+      
+      <div class="article-summary">
+        
+          在图中，$a \to b$意味着从(a)可以沿着线到(b)，例如$p_1 \to r_4$。
+
+        
+      </div>
+      <a class="more" href="/%E5%85%AC%E5%BC%8F%E4%BE%8B%E5%AD%90/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/hello-world/">Hello World</a>
+      </h2>
+      <p class="article-date">October 5, 2024</p>
+      
+      <div class="article-summary">
+        
+          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer ...
+        
+      </div>
+      <a class="more" href="/hello-world/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%902/">Cwinux源码解析2</a>
+      </h2>
+      <p class="article-date">October 5, 2014</p>
+      
+      <div class="article-summary">
+        
+          8. CwxCommander命令模式等相关类前面在CwxThread线程类和CwxThreadPool&#x2F;CwxThreadPoolEx线程池类中，描述了线程的两种执行方式。回顾如下：
+线程依据构造函数传递的参数不同，有两种工作方式。第一种是执行已指定的某个函数，这种方式比较简单， ...
+        
+      </div>
+      <a class="more" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%902/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/">Cwinux源码解析1</a>
+      </h2>
+      <p class="article-date">October 5, 2014</p>
+      
+      <div class="article-summary">
+        
+          Cwinux源码解析（一）
+Cwinux源码结构Cwinux源码包含三个部分：公共代码库cmn，同步网络库net，应用架构库app。
+公共代码库cmn：cmn是Cwinux的基础代码库，实现了Cwinux平台的最基础的公共代码，包括线程池、TaskBoard（异步任务中使用）、Command ...
+        
+      </div>
+      <a class="more" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Cwinux%E7%AE%80%E4%BB%8B/">Cwinux简介</a>
+      </h2>
+      <p class="article-date">October 5, 2014</p>
+      
+      <div class="article-summary">
+        
+          Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。
+Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内 ...
+        
+      </div>
+      <a class="more" href="/Cwinux%E7%AE%80%E4%BB%8B/">Read more</a>
+    </article>
+  
+
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
       }
-      switchTab();
-      window.addEventListener('hashchange', switchTab, false);
-  })();
-  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-1-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/">LoopJump&#039;s Blog</a></div><div class="navbar-menu"><div class="navbar-end"></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-12"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2024-10-05T03:52:21.598Z" title="2024/10/5 11:52:21">2024-10-05</time></span><span class="level-item">Updated&nbsp;<time dateTime="2024-10-05T03:52:21.598Z" title="2024/10/5 11:52:21">2024-10-05</time></span></div></div><p class="title is-3 is-size-4-mobile"><a class="link-muted" href="/hello-world/">Hello World</a></p><div class="content"><p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<script src="/js/script.js"></script>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2014-10-05T03:02:00.000Z" title="2014/10/5 11:02:00">2014-10-05</time></span><span class="level-item">Updated&nbsp;<time dateTime="2024-10-05T04:03:09.350Z" title="2024/10/5 12:03:09">2024-10-05</time></span></div></div><p class="title is-3 is-size-4-mobile"><a class="link-muted" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%902/">Cwinux源码解析2</a></p><div class="content"><h3 id="8-CwxCommander命令模式等相关类"><a href="#8-CwxCommander命令模式等相关类" class="headerlink" title="8. CwxCommander命令模式等相关类"></a>8. CwxCommander命令模式等相关类</h3><p>前面在CwxThread线程类和CwxThreadPool&#x2F;CwxThreadPoolEx线程池类中，描述了线程的两种执行方式。回顾如下：</p>
-<p>线程依据构造函数传递的参数不同，有两种工作方式。第一种是执行已指定的某个函数，这种方式比较简单，与pthread的用法基本一致。第二种是通过Commander这种机制来完成具体的功能。这种方式比较复杂。</p>
-<p>在Commander这种方式下，每个消息都有自己的类型， 每种类型的消息都有一个预设的操作对象来处理这个消息。Commander可以被视为类型到操作对象的映射关系管理者。当线程按Commander这种方式工作时，线程不断地从消息队列中取出消息，然后交给Commander分发处理。</p>
-<p>Cwinux采用了Command设计模式，Commander等类就是具体的实现。</p>
-<p>Command设计模式适用于如下的情形：</p>
-<ol>
-<li>抽象出待执行的动作以参数化某对象。</li>
-<li>在不同时刻指定、排列和执行请求。</li>
-<li>支持取消操作。</li>
-<li>支持修改日志。</li>
-</ol>
-<p>Cwinux中，CwxCommander符合第一种情形。</p>
-<p>对于第一种情形，例如，在Java GUI编程中，我们可以使用库中自带工具箱中的Menu类来添加一个菜单。该Menu类的开发者并不知道某个Menu的MenuItem对应的动作时什么，但可以指定一个Command类，这个Command类具有一个函数execute。Menu的使用者从Command派生一个子类ConcreteCommand，在ConcreteCommand的execute函数中实现具体的工作。这种例子中，Command模式是面向对象版本的回调函数机制。</p>
-<p>Command的结构：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/01/Commander_pattern.gif">http://loopjump.com/wp-content/uploads/2014/01/Commander_pattern.gif</a></p>
-<p>CwxCommander，CwxCmdOp等类就是Cwinux中Command模式的实现。</p>
-<p>在cmn&#x2F;CwxCommander.h文件中定义了两个类 CwxCmdOp和CwxCommander。</p>
-<p>CwxCmdOp代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">class CWX_API CwxCmdOp</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    CwxCmdOp() &#123; &#125;</span><br><span class="line">    virtual ~CwxCmdOp() &#123; &#125;</span><br><span class="line">public:</span><br><span class="line">    virtual int onConnCreated(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">    virtual int onConnClosed(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line">    @brief 收到通信数据包事件的处理函数。</span><br><span class="line">    @param [in] msg 收到通信数据包的事件对象。</span><br><span class="line">    @param [in] pThrEnv 线程的TSS对象。</span><br><span class="line">    @return -1：处理失败，0：不处理此事件，1：处理此事件。</span><br><span class="line">    */</span><br><span class="line">    virtual int onRecvMsg(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv)</span><br><span class="line">    &#123;</span><br><span class="line">        CWX_UNUSED_ARG(msg);</span><br><span class="line">        CWX_UNUSED_ARG(pThrEnv);</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    virtual int onEndSendMsg(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">    virtual int onFailSendMsg(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">    virtual int onTimeoutCheck(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">    virtual int onEvent4Handle(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">    virtual int onUserEvent(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv) &#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>CwxCmdOp有若干个处理函数，当前这些处理函数不做任何有用的工作。这是Command模式中的Command类，这些onXXX函数就是Command类的execute函数（这里有多个不同的execute函数）。</p>
-<p>具体使用时，Cwinux的使用者从CwxCmdOp继承一个具体的子类，例如CwxEchoEventHandler，然后实现所关心的execute函数（例如onRecvMsg函数）。</p>
-<p>下面是CwxCommander类的代码。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">@class CwxCommander</span><br><span class="line">@brief Command类，基于事件的SVR-ID，实现事件与其处理Handle的映射。</span><br><span class="line">*/</span><br><span class="line">class  CWX_API CwxCommander</span><br><span class="line">&#123;</span><br><span class="line">    ///消息映射函数类型定义</span><br><span class="line">    typedef int (*fnEventApi)(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    ///SVR-ID与其处理Handle的映射Hash</span><br><span class="line">    typedef hash_map&lt;CWX_UINT32, CwxCmdOp*, CwxNumHash&lt;CWX_UINT32&gt; &gt; CwxEventCommandHash;</span><br><span class="line">public:</span><br><span class="line">    ///构造函数</span><br><span class="line">    CwxCommander():m_msgHash(1024)</span><br><span class="line">    &#123;</span><br><span class="line">        m_arrEvent[CwxEventInfo::DUMMY] = NULL;</span><br><span class="line">        m_arrEvent[CwxEventInfo::CONN_CREATED] = &amp;CwxCommander::onConnCreated;</span><br><span class="line">        m_arrEvent[CwxEventInfo::CONN_CLOSED] = &amp;CwxCommander::onConnClosed;</span><br><span class="line">        m_arrEvent[CwxEventInfo::RECV_MSG] = &amp;CwxCommander::onRecvMsg;</span><br><span class="line">        m_arrEvent[CwxEventInfo::END_SEND_MSG] = &amp;CwxCommander::onEndSendMsg;</span><br><span class="line">        m_arrEvent[CwxEventInfo::FAIL_SEND_MSG] = &amp;CwxCommander::onFailSendMsg;</span><br><span class="line">        m_arrEvent[CwxEventInfo::TIMEOUT_CHECK] = &amp;CwxCommander::onTimeoutCheck;</span><br><span class="line">        m_arrEvent[CwxEventInfo::EVENT_4_HANDLE] = &amp;CwxCommander::onEvent4Handle;</span><br><span class="line">        m_arrEvent[CwxEventInfo::SYS_EVENT_NUM] = &amp;CwxCommander::onUserEvent;</span><br><span class="line">    &#125;</span><br><span class="line">    ///析构函数</span><br><span class="line">    ~CwxCommander()</span><br><span class="line">    &#123;</span><br><span class="line">        m_msgHash.clear();</span><br><span class="line">    &#125;</span><br><span class="line">public:</span><br><span class="line">    ///注册SVR-ID为uiSvrID的事件的处理函数。返回值，0:success, -1: 此SVR-ID已经存在</span><br><span class="line">    int regHandle(CWX_UINT32 uiSvrID, CwxCmdOp* pHandle);</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">    @brief 将消息分发给其处理Handle</span><br><span class="line">    @param [in] msg 要分发的事件</span><br><span class="line">    @param [in] pThrEnv 线程的TSS对象。</span><br><span class="line">    @param [in] iRet Handle对消息的处理结果，-1：处理失败，0：指定的Handle不处理此事件，1：处理成功。</span><br><span class="line">    @return true：将消息分发给了指定的处理Handle；false：没有handle处理此消息</span><br><span class="line">    */</span><br><span class="line">    bool dispatch(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv, int&amp; iRet);</span><br><span class="line"></span><br><span class="line">    ///清空Command注册的SVR-ID</span><br><span class="line">    void reset()</span><br><span class="line">    &#123;</span><br><span class="line">        m_msgHash.clear();</span><br><span class="line">    &#125;</span><br><span class="line">private:</span><br><span class="line">    /**</span><br><span class="line">    @brief 将收到通信数据包事件分发给事件处理Handle。</span><br><span class="line">    @param [in] pEventOp 事件的处理Handle。</span><br><span class="line">    @param [in] msg 连接建立的事件对象。</span><br><span class="line">    @param [in] pThrEnv 线程的TSS对象。</span><br><span class="line">    @return -1：Handle处理失败，0：Handle不处理此事件，1：Handle成功处理此事件。</span><br><span class="line">    */</span><br><span class="line">    static int onRecvMsg(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line"></span><br><span class="line">    static int onConnCreated(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onConnClosed(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onEndSendMsg(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onFailSendMsg(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onTimeoutCheck(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onEvent4Handle(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">    static int onUserEvent(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv);</span><br><span class="line">private:</span><br><span class="line">    ///获取SVR-ID的处理Handle</span><br><span class="line">    CwxCmdOp* getEventOp(CWX_UINT32 uiSvrID);</span><br><span class="line">private:</span><br><span class="line">    fnEventApi          m_arrEvent[CwxEventInfo::SYS_EVENT_NUM + 1];///事件类型与处理API的映射</span><br><span class="line">    CwxEventCommandHash   m_msgHash;///&lt;事件SVR-ID与事件处理Hanlde的映射</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>首先，CwxCommander类的功能：基于事件的SVR-ID（消息包中带有这个属性），实现事件与其处理Handle的映射。</p>
-<p>数据结构：既然是实现一个映射关系，自然是通过map数据结构。这里是使用的hash_map。代码中有如下代码片段：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// SVR-ID与其处理Handle的映射Hash</span><br><span class="line">typedef hash_map&lt;CWX_UINT32, CwxCmdOp*, CwxNumHash&lt;CWX_UINT32&gt; &gt; CwxEventCommandHash;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码定义了一种类型，该类型类型名叫CwxEventCommandHash，它本质上是一个hash_map类型，hash_map的前两个模板是常用的Key的类型和Value的类型，第三个模板是用来指定一个哈希函数，hash_map在维护内部数据结构的时候使用这个哈希函数。注意到，CwxEventCommandHash的Key类型是CWX_UINT32，这是SVR-ID的类型。SVR-ID是每个消息包都有的一个属性，CwxCommander使用这个属性进行分发。CwxEventCommandHash的Value类型是CwxCmdOp*类型。通过这种方式，就将SVR-ID到CwxCmdOp映射关系记录下来了。</p>
-<p>另外， <em><em>typedef int (*fnEventApi)(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss</em> pThrEnv);</em>* 定义了一个函数指针类型（消息映射函数类型定义）。该函数指针指向的函数的参数是CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv三个参数，返回值是int型变量。</p>
-<p>同时，代码fnEventApi m_arrEvent[CwxEventInfo::SYS_EVENT_NUM + 1];&#x2F;&#x2F;&#x2F;事件类型与处理API的映射 定义了一个函数指针数组。该数组依据事件类型对应到不同的函数指针。事件类型也是每个消息包的一个属性。Cwinux中有若干中事件类型：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> enum &#123;</span><br><span class="line">        DUMMY = 0,///&lt;dummy事件，此为无效事件类型</span><br><span class="line">        CONN_CREATED = 1,///&lt;连接建立事件</span><br><span class="line">        CONN_CLOSED = 2,///&lt;连接关闭事件</span><br><span class="line">        RECV_MSG = 3,///&lt;收到通信数据事件</span><br><span class="line">        END_SEND_MSG = 4,///&lt;通信数据包发送完毕事件</span><br><span class="line">        FAIL_SEND_MSG = 5,///&lt;通信数据包发送失败事件</span><br><span class="line">        TIMEOUT_CHECK = 6,///&lt;超时检查事件</span><br><span class="line">        EVENT_4_HANDLE = 7,///&lt;IO上注册的事件发生的事件</span><br><span class="line">        SYS_EVENT_NUM = 8,///&lt;系统事件的数量</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这些事件类型会对应到CwxCommander的几个静态函数onRecvMsg，onConnCreated等（该对应关系在CwxCommander构造函数中设置）。每一个类型都对应于Command模式中的Command类的一个execute函数，这也是为何Cwinux中有多个execute函数。</p>
-<p>好了，先暂停回顾一下。</p>
-<p>每个消息都有SVR-ID和事件类型两个属性。</p>
-<p>CwxCommander保存了SVR-ID到具体的CwxCmdOp的映射关系，同时每一个CwxCmdOp都有对应于不同事件类型的操作函数。</p>
-<p>所以，每一个消息，交给CwxCommander后，CwxCommander能够依据消息的这两个属性找到一个具体的操作函数。</p>
-<p>接着CwxCommander代码继续。</p>
-<p>CwxCommander保存了SVR-ID到具体的CwxCmdOp的映射关系。在使用时，首先要先注册这种关系。regHandle就是实现这个功能。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">///注册SVR-ID为uiSvrID的事件的处理函数。返回值，0:success, -1: 此SVR-ID已经存在</span><br><span class="line">inline int CwxCommander::regHandle(CWX_UINT32 uiSvrID, CwxCmdOp* pHandle)</span><br><span class="line">&#123;</span><br><span class="line">    CWX_ASSERT(pHandle != NULL);</span><br><span class="line">    if (this-&gt;getEventOp(uiSvrID))</span><br><span class="line">        return -1;</span><br><span class="line">    this-&gt;m_msgHash[uiSvrID] = pHandle;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其中，getEventOp是检查是否已经注册过了。代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">inline CwxCmdOp* CwxCommander::getEventOp(CWX_UINT32 uiSvrID)</span><br><span class="line">&#123;</span><br><span class="line">    CwxEventCommandHash::iterator iter = this-&gt;m_msgHash.find(uiSvrID);</span><br><span class="line">    if (iter != this-&gt;m_msgHash.end())</span><br><span class="line">    &#123;</span><br><span class="line">        return iter-&gt;second;</span><br><span class="line">    &#125;</span><br><span class="line">    return NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>CwxCommander的重头戏在dispatch函数。dispatch函数将消息分发给消息属性对应的（消息属性决定）Handle（CwxCmdOp的子类）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> @brief 将消息分发给其处理Handle</span><br><span class="line"> @param [in] msg 要分发的事件</span><br><span class="line"> @param [in] pThrEnv 线程的TSS对象。</span><br><span class="line"> @param [in] iRet Handle对消息的处理结果，-1：处理失败，0：指定的Handle不处理此事件，1：处理成功。</span><br><span class="line"> @return true：将消息分发给了指定的处理Handle；false：没有handle处理此消息</span><br><span class="line">*/</span><br><span class="line">inline bool CwxCommander::dispatch(CwxMsgBlock*&amp; msg, CwxTss* pThrEnv, int&amp; iRet)</span><br><span class="line">&#123;</span><br><span class="line">    CwxCmdOp* pHandle = getEventOp(msg-&gt;event().getSvrId());</span><br><span class="line">    if (!pHandle) return false;</span><br><span class="line">    if (msg-&gt;event().getEvent() &lt; CwxEventInfo::SYS_EVENT_NUM)</span><br><span class="line">    &#123;</span><br><span class="line">        if (m_arrEvent[msg-&gt;event().getEvent()])</span><br><span class="line">        &#123;</span><br><span class="line">            iRet = (*m_arrEvent[msg-&gt;event().getEvent()])(pHandle, msg, pThrEnv);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            iRet = 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        iRet = (*m_arrEvent[CwxEventInfo::SYS_EVENT_NUM])(pHandle, msg, pThrEnv);</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// CwxCommander的几个操作的函数的实现。</span><br><span class="line">int CwxCommander::onConnCreated(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv)</span><br><span class="line">&#123;</span><br><span class="line">    return pEventOp-&gt;onConnCreated(msg, pThrEnv);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int CwxCommander::onConnClosed(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv)</span><br><span class="line">&#123;</span><br><span class="line">    return pEventOp-&gt;onConnClosed(msg, pThrEnv);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int CwxCommander::onRecvMsg(CwxCmdOp* pEventOp, CwxMsgBlock*&amp; msg, CwxTss* pThrEnv)</span><br><span class="line">&#123;</span><br><span class="line">    return pEventOp-&gt;onRecvMsg(msg, pThrEnv);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>dispatch函数中，首先根据消息的SVR_ID属性查找对应的CwxCmdOp类型的Handle，然后根据消息的事件类型属性查找对应的操作函数，最后调用该操作函数（CwxCommander的几个静态函数）。CwxCommander的这几个静态函数实际执行的是Handle对应的操作函数。</p>
-<p>综上，CwxCommander及相关类逻辑结构如图示。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/01/Commander_newsize.jpg">http://loopjump.com/wp-content/uploads/2014/01/Commander_newsize.jpg</a></p>
-<p>结合线程池的实现，将上述内容概述如下：</p>
-<p>用户（使用Cwinux的应用开发者）在应用初始化时建立线程池，并创建Commander。然后实现CwxCmdOp的子类XxxHandle用于处理消息。用户将XxxHandle注册到Commander中。用户从网络上接收到的消息包，并投入到线程池中的消息队列中。线程池会从消息队列中不断地读取消息并通过Commander方式执行dispatch函数将消息分发到具体的操作函数来处理该消息。</p>
-</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2014-10-05T03:01:00.000Z" title="2014/10/5 11:01:00">2014-10-05</time></span><span class="level-item">Updated&nbsp;<time dateTime="2024-10-05T04:02:59.923Z" title="2024/10/5 12:02:59">2024-10-05</time></span></div></div><p class="title is-3 is-size-4-mobile"><a class="link-muted" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/">Cwinux源码解析1</a></p><div class="content"><p>Cwinux源码解析（一）</p>
-<h2 id="Cwinux源码结构"><a href="#Cwinux源码结构" class="headerlink" title="Cwinux源码结构"></a><strong>Cwinux源码结构</strong></h2><p>Cwinux源码包含三个部分：公共代码库cmn，同步网络库net，应用架构库app。</p>
-<p>公共代码库cmn：cmn是Cwinux的基础代码库，实现了Cwinux平台的最基础的公共代码，包括线程池、TaskBoard（异步任务中使用）、Commander（负责将消息包发送到对应的处理句柄）、锁、内存池、package（对数据打包解包）、字符过滤、字符集定义等。</p>
-<p>同步网络包net：net封装了网络层与传输层的TCP，UDP，Unix-Domain的协议。包括各自的网络地址对象、网络连接对象、网络连接建立对象、网络连接accept对象。net依赖cmn。</p>
-<p>应用架构库app：app是Cwinux的Framework库，包含Framework，Channel等。app是Cwinux最终端的库，Cwinux使用者（网络服务开发者）继承app里的相关类，重载所关心的接口函数，实现自己的网络服务业务逻辑。app依赖cmn和net。</p>
-<h3 id="公共代码库cmn"><a href="#公共代码库cmn" class="headerlink" title="公共代码库cmn"></a><strong>公共代码库cmn</strong></h3><h3 id="1-CwxBitMap位图工具类"><a href="#1-CwxBitMap位图工具类" class="headerlink" title="1. CwxBitMap位图工具类"></a>1. CwxBitMap位图工具类</h3><p>CwxBitMap实现了位图的基本操作：setBit将某一位设置为1，clrBit将某一位清零，检查某一位是否为1。CwxBitMap本身没有保存位图的数据，只提供操作函数。位图数据作为参数传递给操作函数。例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">inline static void setBit(void* bitMap, CWX_UINT32 bit)</span><br><span class="line">&#123;</span><br><span class="line">    (((char*)bitMap)[bit&gt;&gt;3]) |= (1&lt;&lt;(bit&amp;0x07));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>CwxBitMap用char数组来保存位图，每个char可以存放8位。置位时，首先跳到第 (bit&gt;&gt;3) 个char，然后将这个char的第 (bit&amp;0x07) 个位置1。另外，参数为void*类型，因此需要强转一次。</p>
-<p>ps：淘宝的tbsys的BitMap类是将char数组作为类的成员变量保存在类中，再加上一些统计变量，这样可以快速提供已有多少位被置位，多少位清零。</p>
-<h3 id="2-CwxLogger日志类"><a href="#2-CwxLogger日志类" class="headerlink" title="2. CwxLogger日志类"></a>2. CwxLogger日志类</h3><p>CwxLogger提供日志功能。</p>
-<p>CwxLogger使用了懒汉模式的单实例模式。 CwxLogger日志类的几个主要成员变量包括日志输出级别m_uiLevel（info、debug、warning、error四个级别，可以设置输出全部或某几个级别的日志），日志文件大小和数量参数。CwxLogger还实现了日志文件的切换的循环使用（当前日志文件超过一定大小，切换到新的日志文件，日志文件数目超过一定数目，会重复使用最旧的日志文件）。</p>
-<p>不少日志类（CwxLogger，tbsys.log）都使用内置宏__FILE__、__LINE__等来添加更丰富的信息。其中__FILE__指当前文件，__LINE__指当前行号。有了这些信息，使用日志文件时，能更清楚地知道某条日志是哪个源码文件的哪一行打印的。</p>
-<h3 id="3-CwxMutexLock，CwxMutexGuard等互斥锁相关类"><a href="#3-CwxMutexLock，CwxMutexGuard等互斥锁相关类" class="headerlink" title="3. CwxMutexLock，CwxMutexGuard等互斥锁相关类"></a>3. CwxMutexLock，CwxMutexGuard等互斥锁相关类</h3><p>CwxMutexLock是互斥锁（排它锁）类。这个类主要对pthread库中的互斥锁类型pthread_mutex_t进行了封装，提供了申请锁、释放锁、尝试释放锁等。</p>
-<p>CwxMutexGuard（Cwinux注释中称之为策略锁）封装了临界区的进入和退出。这是一个模板类。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">template &lt;class LOCK&gt;</span><br><span class="line">class CwxMutexGuard</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    ///构造函数，若lock不为空，则加锁</span><br><span class="line">    CwxMutexGuard (LOCK * lock):m_pLock(lock)</span><br><span class="line">    &#123;</span><br><span class="line">        if (m_pLock) m_pLock-&gt;acquire();</span><br><span class="line">    &#125;</span><br><span class="line">    ///析构函数，若锁对象不为空，则解锁</span><br><span class="line">    ~CwxMutexGuard ()</span><br><span class="line">    &#123;</span><br><span class="line">        if (m_pLock) m_pLock-&gt;release();</span><br><span class="line">    &#125;</span><br><span class="line">private:</span><br><span class="line">    ///禁止不带锁对象的默认构造函数.</span><br><span class="line">    CwxMutexGuard (): m_pLock (0) &#123;&#125;</span><br><span class="line">    ///锁对象的指针</span><br><span class="line">    LOCK*      m_pLock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>使用方式为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">inline void append(CwxAppForkEnv* pForkEnv)</span><br><span class="line">&#123;</span><br><span class="line">    CwxMutexGuard&lt;CwxMutexLock&gt; lock(&amp;m_lock);</span><br><span class="line">    if (pForkEnv)</span><br><span class="line">    &#123;</span><br><span class="line">       m_forks.push_back(pForkEnv);</span><br><span class="line">       m_bEvent = true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>该类包含一个LOCK模板对象m_pLock，具体可以是某个类型的锁。在CwxMutexGuard的构造函数中对m_pLock进行加锁，在析构函数中解锁。这样封装后，程序员不再手工调用lock和unlock函数，而是将其交给栈上对象的构造和析构函数负责。CwxMutexGuard的声明周期正好等于临界区。这样就能够保证在同一个函数中同一个scope中对某个互斥锁进行加锁和解锁。避免了在不同函数中、不同条件分支中、try-catch异常流程中加锁和解锁的麻烦。</p>
-<h3 id="4-CwxCondition条件变量类"><a href="#4-CwxCondition条件变量类" class="headerlink" title="4. CwxCondition条件变量类"></a>4. CwxCondition条件变量类</h3><p>CwxCondition条件变量类对pthread库的条件变量pthread_cond_t进行了封装。封装过程比较简单，主要是对参数和返回值进行了一些处理。</p>
-<p>pthread库的条件变量pthread_cond_t用法简述如下。</p>
-<p>pthread_cond_t用于在执行一些动作前等待一个条件成立。例如，在使用了pthread_cond_t实现的生产者消费者问题中，生产者放入一个元素前需要等待“环形缓冲区中有空位置（读写指针指向的位置相同）”这一条件成立。</p>
-<p>pthread_cond_t使用时需要和一个互斥锁mutex配合使用。mutex用于对条件的读写进行互斥保护。条件变量pthread_cond_t的使用模式比较固定，基本代码结构如下（代码中用cond表示条件变量）：</p>
-<p>wait端：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mutex.lock();</span><br><span class="line">while(waitCondition)&#123;</span><br><span class="line">	cond.wait(mutex);</span><br><span class="line">&#125;</span><br><span class="line">mutex.unlock();</span><br><span class="line">Do Something 1...</span><br></pre></td></tr></table></figure>
-
-<p>signal端：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mutex.lock();</span><br><span class="line">cond.signal();</span><br><span class="line">mutex.unlock();</span><br><span class="line">Do Something 2...</span><br></pre></td></tr></table></figure>
-
-<p>注：cond.wait(mutex)中会对mutex进行unlock，然后睡眠，等被唤醒后，重新mutex.lock，并从wait函数返回。所以从配对上看，显式的mutex.lock和mutex.unlock不是一对，它们跟wait中的unlock和lock分别是一对。wait中while用于避免虚假唤醒，即被唤醒后其实条件仍不满足（例如其他线程抢到了执行机会，条件又变得不满足了），此时应当继续wait。</p>
-<p>CwxCondition类中包含了一个mutex的引用，该引用在CwxCondition的构造函数中被初始化。</p>
-<h3 id="5-CwxMsgQueue消息队列类"><a href="#5-CwxMsgQueue消息队列类" class="headerlink" title="5. CwxMsgQueue消息队列类"></a>5. CwxMsgQueue消息队列类</h3><p>CwxMsgQueue是一个阻塞的消息队列类，内部是一个CwxMsgBlock类型的消息对象的链表。在CwxMsgQueue中，没有消息为队列空条件，所有消息的大小超过一定预设值为队列满条件。CwxMsgQueue类包含了两个CwxCondition类型（条件变量类型）的成员变量m_notEmptyCond和m_notFullCond，用于表示队列非空和非满两个条件。</p>
-<p>队列入队函数实现如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">inline int CwxMsgQueue::_waitNotFullCond(CwxTimeValue *timeout)</span><br><span class="line">&#123;</span><br><span class="line">    // Wait while the queue is full.</span><br><span class="line">    while (this-&gt;_isFull())</span><br><span class="line">    &#123;</span><br><span class="line">        if (this-&gt;m_notFullCond.wait(timeout) == -1)</span><br><span class="line">        &#123;</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">        if (this-&gt;m_state != ACTIVATED)</span><br><span class="line">        &#123;</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">///将一个消息放到队列的头部。-1：失败；&gt;=0：队列中的消息数量</span><br><span class="line">int CwxMsgQueue::enqueue (CwxMsgBlock *msg,CwxTimeValue *timeout)</span><br><span class="line">&#123;</span><br><span class="line">    int queue_count = 0;</span><br><span class="line">    &#123;</span><br><span class="line">        CwxMutexGuard&lt;CwxMutexLock&gt; guard(&amp;this-&gt;m_lock);</span><br><span class="line">        if (DEACTIVATED == this-&gt;m_state)</span><br><span class="line">        &#123;</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">        if (this-&gt;_waitNotFullCond(timeout) == -1)</span><br><span class="line">            return -1;</span><br><span class="line">        if (!msg) return -1;</span><br><span class="line">        m_curCount ++;</span><br><span class="line">        m_curLength += msg-&gt;length();</span><br><span class="line">        m_curMsgBytes += msg-&gt;capacity();</span><br><span class="line">        msg-&gt;m_next = m_head;</span><br><span class="line">        m_head = msg;</span><br><span class="line">        if (!m_tail) m_tail = m_head;</span><br><span class="line">        if (1 ==  m_curCount)</span><br><span class="line">        &#123;</span><br><span class="line">            if (-1 == m_notEmptyCond.signal()) return -1;</span><br><span class="line">        &#125;</span><br><span class="line">        queue_count = m_curCount;</span><br><span class="line">    &#125;</span><br><span class="line">    return queue_count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>_waitNotFullCond中封装了条件变量m_notFullCond.wait操作。</p>
-<p>enqueue函数中首先通过guard对this-&gt;m_lock加锁，然后调用_waitNotFullCond执行条件变量的wait。wait如果返回表示条件满足，开始执行具体的入队列动作，包括将新的消息对象串到链表中，修改统计信息等。如果这是第一个消息，也就是说队列从空变为不空，则调用m_notEmptyCond.signal()来唤醒等待队列不空这一条件的线程（这些线程在执行m_notEmptyCond.wait时，因为当时队列空而阻塞睡眠了）。</p>
-<p>注意到，该代码没有显示表达出CwxCondition条件变量类中描述的“条件变量需要和一个互斥锁配合使用”的用法。这是因为CwxCondition类在内部包含了一个mutex的引用。例如，m_notFullCond操作在初始化时，它的成员变量mutex&amp;被初始化，后续m_notFullCond执行wait时，wait实现中会对该mutex加锁。</p>
-<p>队列出队函数实现与入队相似。</p>
-<h3 id="6-CwxThread线程类"><a href="#6-CwxThread线程类" class="headerlink" title="6. CwxThread线程类"></a>6. CwxThread线程类</h3><p>CwxThread是对pthread线程的封装，注意到CwxThread类中包含一个CwxMsgQueue类型的对象。换言之，每个线程都能访问到某个消息队列。至于这个消息对象的来源，从CwxThread的构造函数可以看出，创建线程时可以指定一个已有的CwxMsgQueue对象作为该线程的消息队列，如果不指定，则构造函数负责创建一个新的消息队列。</p>
-<p>spawn函数用来生成一个线程。该函数主要是进行pthread相关的设置，最后调用pthread_create函数创建线程。</p>
-<p>start函数用来启动一个线程。start函数调用spawn函数，并将该线程将要执行的函数设置为threadFunc函数（函数指针作为参数传递给spawn函数）。threadFunc函数实际执行threadMain函数。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">void CwxThread::threadMain() &#123;</span><br><span class="line">	/*</span><br><span class="line">	 * 注册并设置 tss的相关代码。（略）</span><br><span class="line">	 */</span><br><span class="line">	m_pTssEnv-&gt;getThreadInfo().setThreadNo(m_unThreadId);</span><br><span class="line"></span><br><span class="line">	/*</span><br><span class="line">	 * 线程实际执行代码</span><br><span class="line">	 */</span><br><span class="line">    do &#123;</span><br><span class="line">        if (m_func)</span><br><span class="line">        &#123;</span><br><span class="line">            //指定了线程执行的函数，则执行该函数</span><br><span class="line">            m_func(m_pTssEnv, m_msgQueue, m_arg);</span><br><span class="line">        &#125;</span><br><span class="line">        else if (m_commander)</span><br><span class="line">        &#123;</span><br><span class="line">            //未指定线程执行的函数，则通过Commander执行。</span><br><span class="line">            while( (iRet = this-&gt;pop(block)) != -1) //block until has query message</span><br><span class="line">            &#123;</span><br><span class="line">                if (!m_commander-&gt;dispatch(block, m_pTssEnv, iRet))</span><br><span class="line">                &#123;</span><br><span class="line">                    CWX_DEBUG(&quot;No handle to deal with event&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                if (1 != iRet)</span><br><span class="line">                &#123;</span><br><span class="line">                	CWX_DEBUG(&quot;iRet = ???&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                if (block)</span><br><span class="line">                	CwxMsgBlockAlloc::free(block);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            CWX_ERROR(&quot;Thread has neither commander nor own func, exit.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;while(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>threadMain首先进行必要的TSS设置（TSS指局部于线程的变量 thread specific storage），然后开始实际的工作。threadMain依据构造函数传递的参数不同，有两种工作方式。第一种是执行已指定的某个函数，这种方式比较简单，与未封装的pthread的用法基本一致。第二种是通过Commander这种机制来完成具体的功能。这种方式比较复杂，后面会有详细的介绍。这里先简单介绍一下。每个消息都有自己的类型， 每种类型的消息都有一个预设的操作对象来处理这个消息。Commander可以被视为类型到操作对象的映射关系管理者。当threadMain按第二种方式工作时，线程不断地从消息队列中取出消息，然后交给Commander处理。</p>
-<h3 id="7-CwxThreadPool，CwxThreadPoolEx线程池"><a href="#7-CwxThreadPool，CwxThreadPoolEx线程池" class="headerlink" title="7. CwxThreadPool，CwxThreadPoolEx线程池"></a>7. CwxThreadPool，CwxThreadPoolEx线程池</h3><p>线程池的大致思路是：在服务启动时预先创建一定数目的线程，这些线程循环执行一些具体的工作，这样就避免了在每次处理你不同请求时进行创建线程和销毁线程。</p>
-<p>Cwinux提供了两种线程池CwxThreadPool和CwxThreadPoolEx。回顾CwxThread类的实现，每个线程都能访问到某个消息队列。CwxThreadPool和CwxThreadPoolEx的区别如图示。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2013/12/threadPool_newsize.jpg">http://loopjump.com/wp-content/uploads/2013/12/threadPool_newsize.jpg</a></p>
-<p>CwxThreadPool的所有线程共享一个消息队列。新的消息会追加到该消息队列。CwxThreadPoolEx的每个线程都有自己的消息队列，每个线程都只能从自己的消息队列中取出消息来处理。新的消息追加时需要制定具体追加到哪一个消息队列中。</p>
-<p>线程池在创建并启动后，池中的所有线程会并发执行，从消息队列中读取消息，并依据线程的配置执行（参见CwxThread类的两种执行方式）。</p>
-</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2014-10-05T03:00:00.000Z" title="2014/10/5 11:00:00">2014-10-05</time></span><span class="level-item">Updated&nbsp;<time dateTime="2024-10-05T04:02:45.623Z" title="2024/10/5 12:02:45">2024-10-05</time></span></div></div><p class="title is-3 is-size-4-mobile"><a class="link-muted" href="/Cwinux%E7%AE%80%E4%BB%8B/">Cwinux简介</a></p><div class="content"><h2 id="Cwinux是什么"><a href="#Cwinux是什么" class="headerlink" title="Cwinux是什么"></a><strong>Cwinux是什么</strong></h2><p>2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。</p>
-<p>Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地开发网络应用。</p>
-<p>从这里可以下载源码：</p>
-<p>GoogleCode地址：<a target="_blank" rel="noopener" href="http://code.google.com/p/cwinux/">http://code.google.com/p/cwinux/</a></p>
-<p>在OSChina上也有简介：<a target="_blank" rel="noopener" href="http://www.oschina.net/p/cwinux">http://www.oschina.net/p/cwinux</a></p>
-<p>源码包里面除源码外，还包含了使用Cwinux的开发指南，一个使用Cwinux的例子和与apache&#x2F;nginx&#x2F;C语言的接口等。Cwinux的源码注释和文档非常规范详实，作者值得赞颂。</p>
-<p>Cwinux最近一次更新时间是2013年7月份。基于Cwinux框架的其他项目有Unistor（key-value存储系统），cwinux-mq（消息队列）等。我在实习期间阅读的代码是2.3.7版本。本博客针对该版本的Cwinux进行了初步的源码解析，其中部分内容来自Cwinux官方文档。在解析源码之前，首先简单看看Cwinux的用法。这里以echo服务为例。</p>
-<h2 id="Cwinux-echo例子"><a href="#Cwinux-echo例子" class="headerlink" title="Cwinux echo例子"></a><strong>Cwinux echo例子</strong></h2><p>Cwinux echo服务实现的功能为：启动服务后，建立监听，客户端向服务器发送一个字符串消息，服务器将该消息返回给客户端。</p>
-<p>本文将简单描述Cwinux echo的结构，细节的描述请参考Cwinux开发手册第2章。</p>
-<h3 id="echo配置"><a href="#echo配置" class="headerlink" title="echo配置"></a><strong>echo配置</strong></h3><p>echo服务的配置文件是xml格式的，CwxEchoConfig类用来解析xml文件，获取配置参数。主要的配置参数包括工作目录，监听IP&#x2F;Port等。</p>
-<h3 id="echo应用类"><a href="#echo应用类" class="headerlink" title="echo应用类"></a><strong>echo应用类</strong></h3><p>CwxEchoApp类继承自CwxAppFramework。CwxAppFramework是Cwinux的内置类，代表一个应用。使用Cwinux开发网络服务应用时，用户都要从CwxAppFramework派生一个类，并重载（override）关心的函数。</p>
-<p>CwxEchoApp类的代码精简后如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">class CwxEchoApp : public CwxAppFramework&#123;</span><br><span class="line">   int initRunEnv();</span><br><span class="line">   void onRecvMsg(...);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>initRunEnv函数初始化运行环境，其代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">int CwxEchoApp::initRunEnv()&#123;</span><br><span class="line">    /*</span><br><span class="line">    设置系统的时钟间隔，最小刻度为1ms，此为1s。</span><br><span class="line">    设置工作目录</span><br><span class="line">    设置循环运行日志的数量</span><br><span class="line">    设置每个日志文件的大小</span><br><span class="line">    */</span><br><span class="line">    ///调用架构的initRunEnv，使以上设置的参数生效</span><br><span class="line">    CwxAppFramework::initRunEnv();</span><br><span class="line"></span><br><span class="line">    ///注册echo请求的处理handle，echo请求的svr-id为SVR_TYPE_ECHO</span><br><span class="line">    m_eventHandler = new CwxEchoEventHandler(this);</span><br><span class="line">    this-&gt;getCommander().regHandle(SVR_TYPE_ECHO, m_eventHandler);</span><br><span class="line"></span><br><span class="line">    ///监听TCP连接，其建立的连接的svr-id都为SVR_TYPE_ECHO，接收的消息的svr-id都为SVR_TYPE_ECHO。全部由m_eventHandler对象来处理</span><br><span class="line">    this-&gt;noticeTcpListen(SVR_TYPE_ECHO,IP,PORT,MODE...);</span><br><span class="line"></span><br><span class="line">    ///创建线程池对象，此线程池中线程的group-id为2，线程池的线程数量为m_config.m_unThreadNum。</span><br><span class="line">    m_threadPool = new CwxThreadPool(..., &amp;getCommander());</span><br><span class="line"></span><br><span class="line">    ///启动线程，线程池中线程的线程栈大小为1M。</span><br><span class="line">    m_threadPool-&gt;start(NULL));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>关于Commander: 每个消息都有自己的类型， 每种类型的消息都有一个预设的操作对象来处理这个消息。Cwinux框架中CwxCmdOp类是所有操作对象的父类。代码中的CwxEchoEventHandler就是继承自CwxCmdOp类。Commander可以被视为类型到操作对象的映射关系管理者。代码将<em>SVR_TYPE_ECHO</em> 类型的消息关联到CwxEchoEventHandler并将这个映射关系注册到Commander中，所有<em>SVR_TYPE_ECHO</em>类型的消息都会最终交给C wxEchoEventHandler来处理。</p>
-<p>CwxEchoApp要重载该应用所关心的响应函数。响应函数是指框架收到事件通知时执行的处理函数，例如，框架收到消息包时会调用onRecvMsg函数，收到定时器事件时会调用onTime函数，收到信号事件时会调用onSignal函数。echo服务主要关心的是onRecvMsg函数。当echo服务收到消息时，框架会自动调用CwxEchoApp的onRecvMsg函数。开发者只需要重载这个函数，实现自己的业务逻辑（消息处理）就可以。</p>
-<p>代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">int CwxEchoApp::onRecvMsg(CwxMsgBlock* msg, CwxAppHandler4Msg&amp; conn, CwxMsgHead const&amp; header, bool&amp; bSuspendConn)&#123;</span><br><span class="line">    msg-&gt;event().setSvrId(conn.getConnInfo().getSvrId());</span><br><span class="line">    msg-&gt;event().setHostId(conn.getConnInfo().getHostId());</span><br><span class="line">    msg-&gt;event().setConnId(conn.getConnInfo().getConnId());</span><br><span class="line">    msg-&gt;event().setIoHandle(conn.getHandle());</span><br><span class="line">    msg-&gt;event().setConnUserData(NULL);</span><br><span class="line">    msg-&gt;event().setMsgHeader(header);</span><br><span class="line">    msg-&gt;event().setEvent(CwxEventInfo::RECV_MSG);</span><br><span class="line">    msg-&gt;event().setTimestamp(CwxDate::getTimestamp());</span><br><span class="line">    ///不停止继续接收</span><br><span class="line">    bSuspendConn = false;</span><br><span class="line">    ///将消息放到线程池队列中，有内部的线程调用其处理handle（CwxEchoEventHandler）来处理</span><br><span class="line">    m_threadPool-&gt;append(msg);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Cwinux的架构比较复杂，处理了从最底层socket fd上读取并构造消息，创建线程池，分发消息，处理消息，以及更复杂的异步Task。除了整个架构比较复杂外，细节也比较多，例如，建立Tcp监听时有两种模式可选，对应的响应函数不同（一个由框架接收数据生成消息，另一个只是由框架通知有数据到来）。因此，个人以为，在使用Cwinux前最好先对源码有一些了解。</p>
-<p>此外，单从学习角度看，Cwinux框架涉及到的Linux环境编程知识覆盖面广，用法典型，文档和注释都非常规范详实，是学习Linux环境编程的一个很好的材料。</p>
-</div></article></div></div><!--!--><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/">LoopJump&#039;s Blog</a><p class="is-size-7"><span>&copy; 2024 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
-            article: {
-                highlight: {
-                    clipboard: true,
-                    fold: 'unfolded'
-                }
-            }
-        };</script><script data-pjax src="/js/column.js"></script><!--!--><script data-pjax src="/js/main.js" defer></script><!--!--></body></html>
+  </body>
+</html>
