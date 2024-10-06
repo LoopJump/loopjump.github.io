@@ -1,103 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>Cwinux简介 | LoopJump&#39;s Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。 Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Cwinux简介">
-<meta property="og:url" content="http://example.com/Cwinux%E7%AE%80%E4%BB%8B/index.html">
-<meta property="og:site_name" content="LoopJump&#39;s Blog">
-<meta property="og:description" content="Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。 Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2014-10-05T03:00:00.000Z">
-<meta property="article:modified_time" content="2024-10-05T04:02:45.623Z">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="LoopJump's Blog" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Cwinux简介 - LoopJump&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="LoopJump&#039;s Blog"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LoopJump&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。 Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地"><meta property="og:type" content="article"><meta property="og:title" content="Cwinux简介"><meta property="og:url" content="http://example.com/Cwinux%E7%AE%80%E4%BB%8B/"><meta property="og:site_name" content="LoopJump&#039;s Blog"><meta property="og:description" content="Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。 Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:published_time" content="2014-10-05T03:00:00.000Z"><meta property="article:modified_time" content="2024-10-05T04:02:45.623Z"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/Cwinux%E7%AE%80%E4%BB%8B/"},"headline":"Cwinux简介","image":["http://example.com/img/og_image.png"],"datePublished":"2014-10-05T03:00:00.000Z","dateModified":"2024-10-05T04:02:45.623Z","author":{"@type":"Person","name":"John Doe"},"publisher":{"@type":"Organization","name":"LoopJump's Blog","logo":{"@type":"ImageObject"}},"description":"Cwinux是什么2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。 Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地"}</script><link rel="canonical" href="http://example.com/Cwinux%E7%AE%80%E4%BB%8B/"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
 
-  
-  
-<meta name="generator" content="Hexo 7.3.0"></head>
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">LoopJump&#39;s Blog</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">关注数据存储和计算</a>
-        </h2>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-Cwinux简介" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/Cwinux%E7%AE%80%E4%BB%8B/" class="article-date">
-  <time class="dt-published" datetime="2014-10-05T03:00:00.000Z" itemprop="datePublished">2014-10-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Cwinux简介
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="Cwinux是什么"><a href="#Cwinux是什么" class="headerlink" title="Cwinux是什么"></a><strong>Cwinux是什么</strong></h2><p>2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。</p>
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-1-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/">LoopJump&#039;s Blog</a></div><div class="navbar-menu"><div class="navbar-end"></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-12"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2014-10-05T03:00:00.000Z" title="2014/10/5 11:00:00">2014-10-05</time></span><span class="level-item">Updated&nbsp;<time dateTime="2024-10-05T04:02:45.623Z" title="2024/10/5 12:02:45">2024-10-05</time></span></div></div><h1 class="title is-3 is-size-4-mobile">Cwinux简介</h1><div class="content"><h2 id="Cwinux是什么"><a href="#Cwinux是什么" class="headerlink" title="Cwinux是什么"></a><strong>Cwinux是什么</strong></h2><p>2013年7、8月份，我在腾讯实习的时候，mentor安排我学习cwinux这个开源项目。实习期间阅读了cwinux项目的部分源代码，受益良多，现在写成博客分享交流，欢迎各位读者批评指正。</p>
 <p>Cwinux是国人开源的一个Linux下的通信框架，C++语言编写。该框架（架构）内部集成了通信channel、信号处理、时钟处理、日志处理。 可以充分的利用多核的OS。通过此架构，可以方便地开发网络应用。</p>
 <p>从这里可以下载源码：</p>
 <p>GoogleCode地址：<a target="_blank" rel="noopener" href="http://code.google.com/p/cwinux/">http://code.google.com/p/cwinux/</a></p>
@@ -121,126 +53,11 @@
 
 <p>Cwinux的架构比较复杂，处理了从最底层socket fd上读取并构造消息，创建线程池，分发消息，处理消息，以及更复杂的异步Task。除了整个架构比较复杂外，细节也比较多，例如，建立Tcp监听时有两种模式可选，对应的响应函数不同（一个由框架接收数据生成消息，另一个只是由框架通知有数据到来）。因此，个人以为，在使用Cwinux前最好先对源码有一些了解。</p>
 <p>此外，单从学习角度看，Cwinux框架涉及到的Linux环境编程知识覆盖面广，用法典型，文档和注释都非常规范详实，是学习Linux环境编程的一个很好的材料。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/Cwinux%E7%AE%80%E4%BB%8B/" data-id="cm1vmnc890002dq415wbiheiy" data-title="Cwinux简介" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Cwinux源码解析1
-        
-      </div>
-    </a>
-  
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%902/">Cwinux源码解析2</a>
-          </li>
-        
-          <li>
-            <a href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/">Cwinux源码解析1</a>
-          </li>
-        
-          <li>
-            <a href="/Cwinux%E7%AE%80%E4%BB%8B/">Cwinux简介</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2024 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
+</div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%901/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Cwinux源码解析1</span></a></div></nav><!--!--></div><!--!--><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/">LoopJump&#039;s Blog</a><p class="is-size-7"><span>&copy; 2024 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><!--!--><script data-pjax src="/js/main.js" defer></script><!--!--></body></html>
