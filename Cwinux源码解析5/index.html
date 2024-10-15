@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Cwinux源码解析5 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Cwinux源码解析5</h2>
+  <p class="post-date">2014-01-09</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>在描述了Reactor模式后，本文介绍Cwinux中关于Reactor模式的具体实现。</p>
+<h3 id="CwxAppHandler4Base"><a href="#CwxAppHandler4Base" class="headerlink" title="CwxAppHandler4Base"></a>CwxAppHandler4Base</h3><p>CwxAppHandler4Base 是Reactor模式中的EventHandler的实现，EventHandle是对CwxAppHandler4Base的封装。其代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class EventHandle &#123;</span><br><span class="line">   public:</span><br><span class="line">      EventHandle() &#123;</span><br><span class="line">         m_mask = 0;</span><br><span class="line">         m_handler = NULL;</span><br><span class="line">      &#125;</span><br><span class="line">      inline bool isReg() &#123;</span><br><span class="line">         return (m_mask &amp; CwxAppHandler4Base::RW_MASK) != 0;</span><br><span class="line">      &#125;</span><br><span class="line">   public:</span><br><span class="line">      int m_mask;</span><br><span class="line">      CwxAppHandler4Base* m_handler;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>代码中的m_mask是事件掩码（不同位表示读&#x2F;写&#x2F;超时&#x2F;信号等事件）。CwxAppHandler4Base是具体的事件处理者（Handler）。CwxAppHandler4Base的最主要的函数是handle_event函数，该函数用来处理事件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">class CWX_API CwxAppHandler4Base&#123;</span><br><span class="line">public:</span><br><span class="line">    ///定义事件类型</span><br><span class="line">     enum&#123;</span><br><span class="line">        TIMEOUT_MASK = 0x01,</span><br><span class="line">        READ_MASK = 0x02,</span><br><span class="line">        ...</span><br><span class="line">        ALL_EVENTS_MASK =  TIMEOUT_MASK| READ_MASK| WRITE_MASK| SIGNAL_MASK| PERSIST_MASK</span><br><span class="line">    &#125;;</span><br><span class="line">public :</span><br><span class="line">    /**</span><br><span class="line">    @brief Handler的事件通知回调。</span><br><span class="line">    @param [in] event  发生的事件类型，为TIMEOUT_MASK、READ_MASK、WRITE_MASK、SIGNAL_MASK的组合。</span><br><span class="line">    @param [in] handle  发生的事件的handle。</span><br><span class="line">    @return -1：失败，reactor会主动调用close； 0：成功；</span><br><span class="line">    */</span><br><span class="line">    virtual int handle_event(int event, CWX_HANDLE handle=CWX_INVALID_HANDLE)=0;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    CwxAppReactor *        m_reactor; ///&lt;reactor对象的指针</span><br><span class="line">    int                    m_regType; ///&lt;handler的reactor注册类型</span><br><span class="line">    CWX_HANDLE             m_handler; ///&lt;事件的io handle</span><br><span class="line">    int                    m_type; ///&lt;event handle type;</span><br><span class="line">    CWX_UINT64             m_ullTimeout; ///&lt;超时的时刻</span><br><span class="line">    int                    m_index;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>CwxAppHandler4Base有一个字段m_handle，即文件描述符fd。其中open函数和close函数用于打开和关闭这个fd。handle_event函数，该函数用来处理事件。</p>
+<h3 id="CwxAppHandler4Msg"><a href="#CwxAppHandler4Msg" class="headerlink" title="CwxAppHandler4Msg"></a>CwxAppHandler4Msg</h3><p>CwxAppHandler4Base是抽象的EventHandler。Reactor模式中的ConcreateEventHandler 包括CwxAppHandler4Msg等。CwxAppHandler4Msg都是从CwxAppHandler4Base继承的子类。该类能够从fd上读取数据，并生成消息对象，或者将消息从网络上发送出去（发送给fd对应的网络连接）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">class CWX_API CwxAppHandler4Msg : public CwxAppHandler4Base</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    /**</span><br><span class="line">    @brief 初始化建立的连接，并往Reactor注册连接</span><br><span class="line">    @param [in] arg 建立连接的acceptor或为NULL</span><br><span class="line">    @return -1：放弃建立的连接； 0：连接建立成功</span><br><span class="line">    */</span><br><span class="line">    virtual int open (void * arg= 0);</span><br><span class="line">    /**</span><br><span class="line">    @brief 接受连接上的事件</span><br><span class="line">    @param [in] event 连接的handle上的事件</span><br><span class="line">    @param [in] handle  发生的事件的handle。</span><br><span class="line">    @return -1：处理失败； 0：处理成功</span><br><span class="line">    */</span><br><span class="line">    virtual int handle_event(int event, CWX_HANDLE handle=CWX_INVALID_HANDLE);</span><br><span class="line">    ///handle close</span><br><span class="line">    virtual int close(CWX_HANDLE handle=CWX_INVALID_HANDLE);</span><br><span class="line">    ///发送消息</span><br><span class="line">    virtual int handle_output();</span><br><span class="line">    ///接收消息</span><br><span class="line">    virtual int handle_input();</span><br><span class="line">    ///超时</span><br><span class="line">    virtual void handle_timeout();</span><br><span class="line">private:</span><br><span class="line">    ///以非阻塞的方式，发送消息。返回值,-1: failure; 0: not send all;1:send a msg</span><br><span class="line">    inline int nonBlockSend();</span><br><span class="line">protected:</span><br><span class="line">    CwxMsgHead           m_header;</span><br><span class="line">    CwxAppConnInfo       m_conn;///&lt;connection information</span><br><span class="line">    CwxMsgBlock*         m_curSndingMsg; ///&lt;current sending msg;</span><br><span class="line">    CwxMsgBlock*         m_waitSendMsgHead; ///&lt;The header for wait to be sent msg.</span><br><span class="line">    CwxMsgBlock*         m_waitSendMsgTail;   ///&lt;The tail for wait to be sent msg.</span><br><span class="line">    char                 m_szHeadBuf[CwxMsgHead::MSG_HEAD_LEN];///&lt;the buf for header</span><br><span class="line">    CwxMsgBlock*         m_recvMsgData; ///&lt;the recieved msg data</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>CwxAppHandler4Msg的handle_event函数实现如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> @brief 接受连接上的到达数据</span><br><span class="line"> @param [in] handle 连接的handle</span><br><span class="line"> @return -1：关闭的连接； 0：接收数据成功</span><br><span class="line"> */</span><br><span class="line">int CwxAppHandler4Msg::handle_event(int event, CWX_HANDLE)</span><br><span class="line">&#123;</span><br><span class="line">    if (CwxAppConnInfo::ESTABLISHED == m_conn.getState())  ///通信状态</span><br><span class="line">    &#123;</span><br><span class="line">        CWX_ASSERT((event &amp; ~CwxAppHandler4Base::RW_MASK) == 0);</span><br><span class="line">        if (CWX_CHECK_ATTR(event, CwxAppHandler4Base::WRITE_MASK))</span><br><span class="line">        &#123;</span><br><span class="line">            handle_output();</span><br><span class="line">        &#125;</span><br><span class="line">        if (CWX_CHECK_ATTR(event, CwxAppHandler4Base::READ_MASK))</span><br><span class="line">        &#123;</span><br><span class="line">            handle_input();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (CwxAppConnInfo::CONNECTING == m_conn.getState())  ///等待连接状态</span><br><span class="line">    &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">        return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码中m_conn表示连接的属性，其定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class CWX_API CwxAppConnInfo</span><br><span class="line">&#123;</span><br><span class="line">    CWX_UINT32         m_uiSvrId;  ///&lt;svr id</span><br><span class="line">    CWX_UINT32         m_uiHostId; ///&lt;host id</span><br><span class="line">    CWX_UINT32         m_uiConnId;  ///&lt;connection id</span><br><span class="line">    CWX_UINT32         m_uiListenId; ///&lt;accept connection&#x27;s  acceptor ID. for passive conn.</span><br><span class="line">    CWX_UINT16         m_unState; ///&lt;connection state.</span><br><span class="line">    bool               m_bActiveConn; ///&lt; sign for active connection.</span><br><span class="line">    bool               m_bRawData; ///&lt; sign for raw data connection</span><br><span class="line">    void*              m_pUserData; ///&lt;user dat for connection</span><br><span class="line">    CwxAppHandler4Msg*  m_pHandler; ///&lt;连接对应的Handler</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>m_conn.getState()返回该连接的状态。handle_event函数中，如果连接的状态是ESTABLISHED，则判断事件掩码，针对写事件和读事件分别调用handle_output()函数和handle_input()函数。</p>
+<p>以handle_input()为例，其实现如下（其中删除了错误检查&#x2F;更新统计量等部分代码）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">int CwxAppHandler4Msg::handle_input()</span><br><span class="line">&#123;</span><br><span class="line">	bool bSuspend = false;</span><br><span class="line">	if (getApp()-&gt;isStopped())</span><br><span class="line">		return 0;</span><br><span class="line">	ssize_t recv_size = 0;</span><br><span class="line">	ssize_t need_size = 0;</span><br><span class="line">	int result = 0;</span><br><span class="line">	if (this-&gt;m_conn.isRawData()) //recv raw data（该数据流是普通的字节流，不是消息对象）</span><br><span class="line">	&#123;</span><br><span class="line">		bSuspend = false;</span><br><span class="line">		result = this-&gt;getApp()-&gt;onRecvMsg(*this, bSuspend);</span><br><span class="line">		return result &gt;= 0 ? 0 : -1;</span><br><span class="line">	&#125;</span><br><span class="line">	//接收到的数据实际是消息对象</span><br><span class="line">	while (1)</span><br><span class="line">	&#123;</span><br><span class="line">		need_size = CwxMsgHead::MSG_HEAD_LEN - this-&gt;m_uiRecvHeadLen;</span><br><span class="line">		if (need_size &gt; 0) //接收到的数据还不是一个完整的包</span><br><span class="line">		&#123;</span><br><span class="line">			recv_size = CwxSocket::recv(getHandle(), this-&gt;m_szHeadBuf + this-&gt;m_uiRecvHeadLen, need_size);</span><br><span class="line">			this-&gt;m_uiRecvHeadLen += recv_size;</span><br><span class="line">			if (recv_size &lt; need_size)</span><br><span class="line">			&#123;</span><br><span class="line">				m_conn.setContinueRecvNum(0);</span><br><span class="line">				return 0;</span><br><span class="line">			&#125;</span><br><span class="line">			this-&gt;m_szHeadBuf[this-&gt;m_uiRecvHeadLen] = 0x00;</span><br><span class="line">			if (!m_header.fromNet(this-&gt;m_szHeadBuf))</span><br><span class="line">			&#123;</span><br><span class="line">				CWX_ERROR((&quot;Msg header is error.&quot;));</span><br><span class="line">				return -1;</span><br><span class="line">			&#125;</span><br><span class="line">			this-&gt;m_recvMsgData = CwxMsgBlockAlloc::malloc(m_header.getDataLen());</span><br><span class="line">		&#125; //end  if (need_size &gt; 0)</span><br><span class="line">		//接收消息内容数据</span><br><span class="line">		need_size = m_header.getDataLen() - this-&gt;m_uiRecvDataLen;</span><br><span class="line">		if (need_size &gt; 0) //还没有接收到该消息内容的完整数据</span><br><span class="line">		&#123;</span><br><span class="line">			recv_size = CwxSocket::recv(getHandle(), this-&gt;m_recvMsgData-&gt;wr_ptr(), need_size);</span><br><span class="line">			//move write pointer</span><br><span class="line">			this-&gt;m_recvMsgData-&gt;wr_ptr(recv_size);</span><br><span class="line">			this-&gt;m_uiRecvDataLen += recv_size;</span><br><span class="line">		&#125;http://loopjump.com/wp-admin/post-new.php#</span><br><span class="line">		//notice recieving a msg.</span><br><span class="line">		if (!this-&gt;m_recvMsgData)</span><br><span class="line">			this-&gt;m_recvMsgData = CwxMsgBlockAlloc::malloc(0);</span><br><span class="line">		bSuspend = false;</span><br><span class="line">		result = this-&gt;getApp()-&gt;recvMessage(m_header, this-&gt;m_recvMsgData, *this, bSuspend);</span><br><span class="line">	&#125;</span><br><span class="line">	return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Cwinux中建立的网络连接上的数据有可能是<strong>消息</strong>或者是<strong>raw data</strong>。前者（消息）会由Cwinux来进行接收数据并打包成消息，用户得到的就是一个接收好的消息对象。后者（raw data）指的是这个连接上的数据不是消息，用户要自己读取所有的字节数据并处理。这是连接的两种模式，具体使用哪种模式是在用户建立连接时通过参数指定的。另外，代码中**this-&gt;getApp()**相关的代码是AppFramework相关的内容，我们会在后面解释这些代码。</p>
+<p>handle_input实现过程：首先判断该连接是消息模式还是raw data模式。如果是raw data模式，则调用**result &#x3D; this-&gt;getApp()-&gt;onRecvMsg(*this, bSuspend);**函数。该函数会通知用户接收数据（后面详解）。如果是消息模式，则先读取数据，形成一个消息头，然后根据消息头中记录的长度，读取一个完整的消息，并将这个消息放在m_recvMsgData对象中，最后通知用户接收该消息。</p>
+<p>handle_output()函数实现如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">int CwxAppHandler4Msg::handle_output()</span><br><span class="line">&#123;</span><br><span class="line">   int result = 0;</span><br><span class="line">   CWX_UINT32 uiNum = 0;</span><br><span class="line">   bool bCloseConn = false;</span><br><span class="line">   bool bReconn = false;</span><br><span class="line">   CWX_UINT32 uiReconnDelay = 0;</span><br><span class="line">   // The list had better not be empty, otherwise there&#x27;s a bug!</span><br><span class="line">   while (1)</span><br><span class="line">   &#123;</span><br><span class="line">      while (1)</span><br><span class="line">      &#123;</span><br><span class="line">         result = this-&gt;getNextMsg();</span><br><span class="line">         if (0 == result)</span><br><span class="line">            return this-&gt;cancelWakeup();</span><br><span class="line">         if (CWX_CHECK_ATTR(this-&gt;m_curSndingMsg-&gt;send_ctrl().getMsgAttr(), CwxMsgSendCtrl::BEGIN_NOTICE))</span><br><span class="line">         &#123;</span><br><span class="line">            if (-1 == this-&gt;getApp()-&gt;onStartSendMsg(m_curSndingMsg, *this))</span><br><span class="line">            &#123;</span><br><span class="line">                this-&gt;m_conn.setWaitingMsgNum(this-&gt;m_conn.getWaitingMsgNum() - 1);</span><br><span class="line">                continue; //next msg;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125; //end if (this-&gt;m_curSndingMsg-&gt;IsBeginNotice())</span><br><span class="line">           //it&#x27;s a msg which need be sent.</span><br><span class="line">         break;                  //break while</span><br><span class="line">      &#125; //end while</span><br><span class="line">      result = this-&gt;nonBlockSend();</span><br><span class="line">   &#125;</span><br><span class="line">   return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先从以保存的消息列表中取出一个消息，然后调用nonBlockSend函数发送该消息。nonBlockSend调用CwxSocket::write将消息发送出去。</p>
+<p>好，先小结一下前面所说的内容：Cwinux中，CwxAppHandler4Base是Reactor模式中的EventHandler，是个父类，它定义了handle_event这样的一个接口。CwxAppHandler4Base派生的子类如CwxAppHandler4Msg在其覆盖（override）的handle_event函数中处理具体的事件。</p>
+<h3 id="CwxAppEpoll"><a href="#CwxAppEpoll" class="headerlink" title="CwxAppEpoll"></a>CwxAppEpoll</h3><p>CwxAppEpoll是Cwinux中的epoll引擎的封装，同时CwxAppEpoll封装了fd到EventHandle（mask+CwxAppHandler4Base）的映射。</p>
+<p>CwxAppEpoll的代码如下（部分）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">class CWX_API CwxAppEpoll</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">   CwxAppEpoll(bool bEnableSignal = true);</span><br><span class="line">   ~CwxAppEpoll();</span><br><span class="line">public:</span><br><span class="line">   int init();</span><br><span class="line">   /**</span><br><span class="line">    @brief 注册IO事件处理handle。</span><br><span class="line">    @param [in] handle 监测的IO handle</span><br><span class="line">    @param [in] event_handler io handle对应的event handler。</span><br><span class="line">    @param [in] mask 注册的事件掩码，为READ_MASK、WRITE_MASK、PERSIST_MASK、TIMEOUT_MASK组合</span><br><span class="line">    @param [in] uiMillSecond 多少毫秒超时。0表示没有超时设置。</span><br><span class="line">    @param [in] bForkAdd 是否是fork后重新添加。</span><br><span class="line">    @return -1：失败；0：成功；</span><br><span class="line">    */</span><br><span class="line">   int registerHandler(CWX_HANDLE handle, CwxAppHandler4Base *event_handler, int mask, CWX_UINT32 uiMillSecond = 0);</span><br><span class="line">   CwxAppHandler4Base* removeHandler(CWX_HANDLE handle);</span><br><span class="line">   int suspendHandler(CWX_HANDLE handle, int suspend_mask);</span><br><span class="line">   int resumeHandler(CWX_HANDLE handle, int resume_mask);</span><br><span class="line">   int registerSignal(int signum, CwxAppHandler4Base *event_handler);</span><br><span class="line">   int removeSignal(CwxAppHandler4Base *event_handler);</span><br><span class="line">   CwxAppHandler4Base* removeSignal(int sig);</span><br><span class="line">   int scheduleTimer(CwxAppHandler4Base *event_handler, CwxTimeValue const &amp;interval);</span><br><span class="line">   int cancelTimer(CwxAppHandler4Base *event_handler);</span><br><span class="line">   int forkReinit();</span><br><span class="line">   /**</span><br><span class="line">    @brief 检测事件。</span><br><span class="line">    @param [in] callback 事件的回调函数</span><br><span class="line">    @param [in] arg 回调函数的参数</span><br><span class="line">    @param [in] uiMiliTimeout 超时的毫秒数，0表示一直阻塞到事件发生。</span><br><span class="line">    @return -1：失败；0：成功</span><br><span class="line">    */</span><br><span class="line">   int poll(REACTOR_CALLBACK callback, void* arg, CWX_UINT32 uiMiliTimeout = 0);</span><br><span class="line">   void stop();</span><br><span class="line">   CwxTimeValue const&amp; getCurTime() const;</span><br><span class="line">private:</span><br><span class="line">   EventHandle m_eHandler[CWX_APP_MAX_IO_NUM]; ///&lt;epoll的event handler</span><br><span class="line">   CwxMinHeap&lt;CwxAppHandler4Base&gt; m_timeHeap; ///&lt;时间堆</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>m_eHandler描述了fd到EventHandle的映射。某个fd上有事件发生，可以查询m_eHandler数组来获得该fd上事件处理handler。registerHandler和resumeHandler等都是维护这个数据结构的函数。另外，CwxAppEpoll除了处理网络连接上的事件之外，还处理了signal的事件和超时事件。超时事件是由m_timeHeap时间堆来维护的。</p>
+<p>CwxAppEpoll最重要的函数当然是执行多路分发的poll函数。</p>
+<p>poll函数处理了网络连接上的读写等事件、信号signal事件和超时事件（代码经过了简化）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">int CwxAppEpoll::poll(REACTOR_CALLBACK callback, void* arg, CWX_UINT32 uiMiliTimeout)</span><br><span class="line">&#123;</span><br><span class="line">   /*计算最近一次超时事件还有多长时间发生。*/</span><br><span class="line">   timeout(ullTimeout); //从时间堆里获取堆顶元素的最小值。</span><br><span class="line">   //计算下次超时还有多长时间，记录在tv中。</span><br><span class="line">   num = epoll_wait(m_epfd, m_events, CWX_APP_MAX_IO_NUM, tv);</span><br><span class="line">   if (num &gt; 0)</span><br><span class="line">   &#123;</span><br><span class="line">      for (i = 0; i &lt; num; i++) //epoll的通用写法</span><br><span class="line">      &#123;</span><br><span class="line">         event = &amp;m_events[i];</span><br><span class="line">         if (event-&gt;events &amp; EPOLLIN)</span><br><span class="line">            mask |= CwxAppHandler4Base::READ_MASK;</span><br><span class="line">         if (event-&gt;events &amp; EPOLLOUT)</span><br><span class="line">            mask |= CwxAppHandler4Base::WRITE_MASK;</span><br><span class="line">         handler = m_eHandler[event-&gt;data.fd].m_handler; //根据fd得到对应的EventHandle</span><br><span class="line">         callback(handler, mask, CWX_CHECK_ATTR(m_eHandler[event-&gt;data.fd].m_mask, CwxAppHandler4Base::PERSIST_MASK), arg); //执行回调函数</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   //检测处理信号signal事件</span><br><span class="line">   if (m_bSignal &amp;&amp; m_bEnableSignal)</span><br><span class="line">   &#123;</span><br><span class="line">      if (m_bStop)</span><br><span class="line">         return 0;</span><br><span class="line">      m_bSignal = 0;</span><br><span class="line">      for (i = 0; i &lt; CWX_APP_MAX_SIGNAL_ID; i++)</span><br><span class="line">      &#123;</span><br><span class="line">         if (m_arrSignals[i]) //id为i的信号发生信号事件。</span><br><span class="line">         &#123;</span><br><span class="line">            m_arrSignals[i] = 0; //清空</span><br><span class="line">            callback(m_sHandler[i], CwxAppHandler4Base::SIGNAL_MASK, true, arg); //执行回调函数</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   //检测超时事件</span><br><span class="line">   while (!m_timeHeap.isEmpty() &amp;&amp; (m_timeHeap.top()-&gt;getTimeout() &lt; ullNow))</span><br><span class="line">   &#123;</span><br><span class="line">      if (m_timeHeap.top()-&gt;getHandle() != CWX_INVALID_HANDLE)</span><br><span class="line">      &#123;</span><br><span class="line">         handler = removeHandler(m_timeHeap.top()-&gt;getHandle());</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">         handler = m_timeHeap.pop();</span><br><span class="line">      &#125;</span><br><span class="line">      callback(handler, CwxAppHandler4Base::TIMEOUT_MASK, false, arg);</span><br><span class="line">   &#125;</span><br><span class="line">   return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码首先处理计算超时时间，tv记录下次超时事件还有多长时间。</p>
+<p>然后调用epoll_wait来查询网络连接上是否有事件发生。epoll_wait会等待tv时间，期间如果某些连接上有事件发生，则epoll_wait返回，num记录了有多少连接上有事件发生。当有事件发生时，针对这些连接上的事件执行对应的handle。具体通过callback来执行。</p>
+<p>信号处理类似，某些信号发生时，对应位置被置位。检查所有位置，发生信号的话，就执行对应的处理handler。</p>
+<p>超时事件通过最小堆来完成，不断地从堆中取出已经超时的handler，执行对应的处理handler。</p>
+<p>好，先小结一下这段内容：CwxAppEpoll是对epoll的封装，同时维护了fd到EventHandle的映射关系。执行poll函数后，能够检测到网络连接上的事件、信号事件和超时事件，并分别处理。</p>
+<h3 id="CwxAppReactor"><a href="#CwxAppReactor" class="headerlink" title="CwxAppReactor"></a>CwxAppReactor</h3><p>下面看一下Reactor类。</p>
+<p>Cwinux中的CwxAppReactor是Reactor模式中Reactor的具体实现。</p>
+<p>主要成员变量：</p>
+<ol>
+<li>*<em>AppEpoll</em> m_engine;**即一个epoll引擎，通过这个引擎，Reactor监测事件的发生并处理事件。</li>
+<li>**m_connId[];**该数组维护了文件描述符fd到 连接ID（connId，整形）的映射。关于connId，当新的连接建立时，由Cwinux指定一个新的整形数字作为新连接的id。参见代码CwxAppTcpAcceptor::makeHander函数。这样Cwinux就可以从fd直接找到对应的connId，同时已知connId能够通过m_connMap这一数据结构得到fd。</li>
+<li>**hash_map&lt;ConnIdType,Handler4Base*&gt; m_connMap;*<em>维护了connId到Handler4Base</em>的映射关系。给定一个connId，Cwinux能够得到对应的Handler4Base*，通过Handler4Base的getHandle()函数可以得到对应的文件描述符fd。</li>
+</ol>
+<p>主要成员函数包括run和callback函数。</p>
+<p>run函数代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">@brief 架构事件的循环处理API，实现消息的分发。</span><br><span class="line">@return -1：失败；0：正常退出</span><br><span class="line">*/</span><br><span class="line">int CwxAppReactor::run(REACTOR_EVENT_HOOK hook, void* arg, bool  bOnce, CWX_UINT32 uiMiliTimeout)</span><br><span class="line">&#123;</span><br><span class="line">    int ret = 0;</span><br><span class="line">    if (!bOnce)</span><br><span class="line">    &#123;</span><br><span class="line">        if (!m_bStop || !m_engine)</span><br><span class="line">        &#123;</span><br><span class="line">            CWX_ERROR((&quot;CwxAppReactor::open() must be invoke before CwxAppReactor::run()&quot;));</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    m_bStop = false;</span><br><span class="line"></span><br><span class="line">    do</span><br><span class="line">    &#123;</span><br><span class="line">        &#123;</span><br><span class="line">            ///带锁执行event-loop</span><br><span class="line">            CwxMutexGuard&lt;CwxMutexLock&gt; lock(&amp;m_lock);</span><br><span class="line">            ret = m_engine-&gt;poll(CwxAppReactor::callback, this, uiMiliTimeout);</span><br><span class="line">        &#125;</span><br><span class="line">        if (m_bStop)</span><br><span class="line">        &#123;</span><br><span class="line">            CWX_DEBUG((&quot;Stop running for stop&quot;));</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        if (0 != ret)</span><br><span class="line">        &#123;</span><br><span class="line">            if ((-1 == ret) &amp;&amp; (EINTR != errno))            &#123;</span><br><span class="line">                CWX_ERROR((&quot;Failure to running epoll with -1, errno=%d&quot;, errno));</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ///调用hook</span><br><span class="line">        if (hook)</span><br><span class="line">        &#123;</span><br><span class="line">            if (0 != hook(arg))</span><br><span class="line">            &#123;</span><br><span class="line">                CWX_DEBUG((&quot;Stop running for hook() without 0&quot;));</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ///等待其他的线程执行各种操作。</span><br><span class="line">        m_rwLock.acquire_write();</span><br><span class="line">        m_rwLock.release();</span><br><span class="line">     &#125;while(!m_bStop &amp;&amp; !bOnce);</span><br><span class="line">   return ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简言之，run函数的代码结构是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">run()</span><br><span class="line">&#123;</span><br><span class="line">    do</span><br><span class="line">    &#123;</span><br><span class="line">        m_engine-&gt;poll(callback);</span><br><span class="line">    &#125;while(!stop);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>run函数的所有核心工作都是有AppEpoll的poll来完成的。</p>
+<p>callback函数也很简单。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">void CwxAppReactor::callback(CwxAppHandler4Base* handler, int mask, bool bPersist, void *arg)</span><br><span class="line">&#123;</span><br><span class="line">    CwxAppReactor* reactor = (CwxAppReactor*)arg;</span><br><span class="line">    if (!bPersist)</span><br><span class="line">    &#123;</span><br><span class="line">        switch(handler-&gt;getRegType())</span><br><span class="line">        &#123;</span><br><span class="line">        case REG_TYPE_IO:</span><br><span class="line">            reactor-&gt;m_connId[handler-&gt;getHandle()] = CWX_APP_INVALID_CONN_ID;</span><br><span class="line">            break;</span><br><span class="line">        default:</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int ret = handler-&gt;handle_event(mask, handler-&gt;getHandle());</span><br><span class="line"></span><br><span class="line">    if (-1 == ret)</span><br><span class="line">    &#123;</span><br><span class="line">        handler-&gt;close(handler-&gt;getHandle());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简言之，就是执行参数中handler的具体动作（调用handle_event函数）。</p>
+<p>总结：</p>
+<p>对照Reactor模式，看Cwinux中相应的实现：CwxAppHandler4Base 是Reactor模式中的EventHandler的实现，EventHandle是对CwxAppHandler4Base的封装；CwxAppEpoll是多路复用引擎；CwxAppReactor是对应于Reactor模式中的Reactor的实现。此外，CwxAppReactor通过两个数据结构，维护了fd到connId的映射。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%904/">
+        <span class="nav-arrow">← </span>
+        
+          Cwinux源码解析4
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%906/">
+        
+          Cwinux源码解析6
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/Cwinux源码解析5/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

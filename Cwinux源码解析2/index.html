@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Cwinux源码解析2</h2>
-  <p class="post-date">2014-10-05</p>
+  <p class="post-date">2014-01-07</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -179,7 +179,7 @@
 <p>Cwinux中，CwxCommander符合第一种情形。</p>
 <p>对于第一种情形，例如，在Java GUI编程中，我们可以使用库中自带工具箱中的Menu类来添加一个菜单。该Menu类的开发者并不知道某个Menu的MenuItem对应的动作时什么，但可以指定一个Command类，这个Command类具有一个函数execute。Menu的使用者从Command派生一个子类ConcreteCommand，在ConcreteCommand的execute函数中实现具体的工作。这种例子中，Command模式是面向对象版本的回调函数机制。</p>
 <p>Command的结构：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/01/Commander_pattern.gif">http://loopjump.com/wp-content/uploads/2014/01/Commander_pattern.gif</a></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/Commander_pattern.gif" alt="Command_patter"></p>
 <p>CwxCommander，CwxCmdOp等类就是Cwinux中Command模式的实现。</p>
 <p>在cmn&#x2F;CwxCommander.h文件中定义了两个类 CwxCmdOp和CwxCommander。</p>
 <p>CwxCmdOp代码如下：</p>
@@ -216,7 +216,7 @@
 
 <p>dispatch函数中，首先根据消息的SVR_ID属性查找对应的CwxCmdOp类型的Handle，然后根据消息的事件类型属性查找对应的操作函数，最后调用该操作函数（CwxCommander的几个静态函数）。CwxCommander的这几个静态函数实际执行的是Handle对应的操作函数。</p>
 <p>综上，CwxCommander及相关类逻辑结构如图示。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/01/Commander_newsize.jpg">http://loopjump.com/wp-content/uploads/2014/01/Commander_newsize.jpg</a></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/Commander_newsize.jpg" alt="Commander_newsize"></p>
 <p>结合线程池的实现，将上述内容概述如下：</p>
 <p>用户（使用Cwinux的应用开发者）在应用初始化时建立线程池，并创建Commander。然后实现CwxCmdOp的子类XxxHandle用于处理消息。用户将XxxHandle注册到Commander中。用户从网络上接收到的消息包，并投入到线程池中的消息队列中。线程池会从消息队列中不断地读取消息并通过Commander方式执行dispatch函数将消息分发到具体的操作函数来处理该消息。</p>
 </section>
@@ -236,9 +236,9 @@
       </a>
     
     
-      <a class="nav-right" href="/hello-world/">
+      <a class="nav-right" href="/Cwinux%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%903/">
         
-          Hello World
+          Cwinux源码解析3
         
         <span class="nav-arrow"> →</span>
       </a>
