@@ -10,7 +10,7 @@
   
   <title>
     
-      几道有趣的面试题 | LoopJump&#39;s Blog
+      《挑战程序设计竞赛》读书笔记2 - 贪心算法 动态规划 | LoopJump&#39;s Blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -156,8 +156,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>几道有趣的面试题</h2>
-  <p class="post-date">2014-01-24</p>
+  <h2>《挑战程序设计竞赛》读书笔记2 - 贪心算法 动态规划</h2>
+  <p class="post-date">2014-02-03</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,55 +165,54 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>在Quora上看到一个有趣的问题。”What are the best programming interview questions you’ve ever asked or been asked?” （在编程面试中，你问过或者被问过的最好的问题是什么）里面有几道题目很有意思，在这里分享给大家。</p>
-<p><strong>第一道题</strong>：有一个长度为N+1的数组，里面的元素都是1~N的整数，但有些数字可能重复多次。例如1,1,3 ,3或者 1,3,2,2。现在要求打印出重复的数字（有多个数字重复时，可打印任意一个）。</p>
-<p>解答：</p>
+    <section class="markdown-content"><p>过了第一章的热身题之后，随后的题目难多了。本文只是对书中的部分题目，做了笔记。更多题目和详解，读者请参考原书和《算法导论》，《计算机算法设计与分析》（王晓东）等书。</p>
+<h3 id="2-2节贪心法"><a href="#2-2节贪心法" class="headerlink" title="2.2节贪心法"></a><strong>2.2节贪心法</strong></h3><p>贪心法是不断地取当前最优策略的算法设计方法。</p>
+<h3 id="找零钱问题："><a href="#找零钱问题：" class="headerlink" title="找零钱问题："></a><strong>找零钱问题</strong>：</h3><p>对于1,5,10,50,100,500面值的硬币各有Ci个，要支付A元，至少需要几个硬币。</p>
+<p>直观上，我们知道，为了使硬币数目最少，则尽量优先使用最大币值的硬币。</p>
+<h3 id="区间问题："><a href="#区间问题：" class="headerlink" title="区间问题："></a><strong>区间问题</strong>：</h3><p>有n项工作，每项工作分别在si开始，在ti结束。对于每项工作，你都可以决定是否参加（一旦参加就不必须从头到尾完成该工作）。要求你选择尽量多的工作。注意，同一时间只能做一项工作，也就是选择工作时间区间不能重合。</p>
+<p>为了使我们能够选择尽量多的工作，我们希望在选择时，优先选择结束时间早的工作。按照这个贪心策略，可以求得最优解。有其他贪心策略可选，但不一定能够取到最优解。也就是说，贪心算法并不总是能够求出最优解。</p>
+<p>通常，我们在给出一个贪心策略后，要证明这个策略能够取到最优解，即该问题该具有贪心选择性质。贪心满足性质是指所求问题的整体最优解可以通过一系列局部最优的选择达到。</p>
+<p>对于具体的问题，要确定是否具有贪心选择性质，应该进行证明。通常的证明方法是：(1)先考察问题的一个最优解，然后修改这个最优解使之可以从贪心选择开始；(2)在确定了初始的贪心选择后，原问题变为规模更小的类似子问题，然后通常可以用数学归纳法证明，通过每一步的最优策略选择，最终可以得到问题的整体最优值。第二步的关键在于利用该问题的最优子结构性质（最优子结构性质：如果解S是问题P的最优解，且S包含初始贪心选择a，则<strong>S’&#x3D;S-{a}<strong>是子问题</strong>P’</strong>的最优解）。</p>
+<h3 id="2-3动态规划"><a href="#2-3动态规划" class="headerlink" title="2.3动态规划"></a><strong>2.3动态规划</strong></h3><p>动态规划是常用的算法设计思想。</p>
+<p>动态规划将问题化为子问题，这些子问题通常不是互相独立的。</p>
+<h3 id="01背包问题"><a href="#01背包问题" class="headerlink" title="01背包问题"></a><strong>01背包问题</strong></h3><p>书中介绍了动态规划求解01背包问题。由于背包问题有多种变体，本文将书中的该问题抄录如下：</p>
+<p>有n个重量和价值分别为wi和vi的物品，从这些物品中挑选出总重量不超过W的物体，求所有挑选方案中价值总和的最大值。</p>
+<p>动态规划求解问题的4个步骤如下：</p>
 <ol>
-<li><p>O(N^2)的方法是每次检查一个元素，看是不是重复。</p>
+<li><p> 找出最优解的性质，并刻画其结构特征。</p>
 </li>
-<li><p>相比之下，更容易想到的是O(N logN)的算法，先排序，重复数字会在邻接位置。</p>
+<li><p> 递归定义最优值。</p>
 </li>
-<li><p>还有花费空间来换时间的方法。建一个位图，对每一个数字，检查对应位置是否已经置位。该算法是O(N)时间复杂度和O(N)空间复杂度。</p>
+<li><p> 以自底向上的方式计算最优值。</p>
 </li>
-<li><p>还有一种O(N)时间复杂度和O(1)空间复杂度的算法。我们将原数组a先变换成：如果元素i出现一次，它就在位置i处；如果元素j出现多次，它除了在位置j处之外，还占据某些其他未出现的元素的位置。然后从头遍历数组，如果出现a[i] !&#x3D; i的情况，则a[i]是重复出现的数字。变换过程可参考 <a target="_blank" rel="noopener" href="http://blog.csdn.net/yutianzuijin/article/details/11633079">缺失的数字分析</a> 和 <a target="_blank" rel="noopener" href="http://blog.csdn.net/yutianzuijin/article/details/11384507">数组统计分析的另一种方法</a>。</p>
-</li>
-<li><p>题目增加限制，如果不允许修改原数组，应该怎样做。直接上答案：统计1<del>N&#x2F;2的个数，如果个数大于N&#x2F;2，则说明1</del>N&#x2F;2中有重复数字（鸽巢原理）。否则说明N&#x2F;2+1~N中有重复数字。递归有重复数字的那一半。算法复杂度是O(N*logN)。</p>
+<li><p> 根据计算最优值时得到的信息，构造最优解。</p>
 </li>
 </ol>
-<p>按照答主的描述，走到第5时，通常都需要一些提示。如果能答出5的答案，面试官应该就比较满意了。</p>
-<p><strong>第二道题</strong>：去掉大小王的52张扑克牌，你和你的朋友事先约定一种策略，使得：我任意给你5张扑克牌，你选择一张留下，剩余的4张给你的朋友，你的朋友能够根据事先约定的策略，知道你留下的牌是什么。</p>
-<p>我觉得这道题难在如何进行编码。题目中没有任何能够进行编码的暗示，这时候要抛开限制，自己构造出编码的基础。</p>
-<p>答主给的答案如下。</p>
-<p>首先要传递花色这个信息。5张牌4种花色，一定有两张或以上的拍具有同样的花色，可以留一张该花色的牌。用同花色的牌传递花色信息。可用的牌剩下3张。3张牌大小顺序可以作为一种编码方式。3!&#x3D;6中排列可以产生6中信号。但还不够覆盖13张牌。这时，注意到同花色的牌只用到了花色，其数字没有用到。定义牌之间的距离。将距1,2,3…J,Q,K视为首尾相连的环，其距离定义为两个数字相距不超过6的那个距离（13张牌一定有不超过6的距离，否则x和y两个方向都超过6，则至少需要14张牌）。如dist(J, 4) &#x3D; 6, dist(J, 5) &#x3D; dist(5, J) &#x3D; 6。这样，我们在同花色的两张牌中，保留较小的那张，你的朋友从排列中得到1<del>6的某个数字，再加上同花色的牌面值，模除13即可。所以，你和你的朋友需要事先约定第一张牌作为同花色牌，什么排列顺序表示1</del>6的哪个数字。</p>
-<p>评论中有人提到，可以加上正反信息，你把牌交给你朋友时，面朝上的牌和面朝下的牌代表0和1，也能编码出所需要的信息。不再赘述。</p>
-<p><strong>第三道题</strong>：原文是这样的。</p>
-<p>Write a function that takes a function and two ints and applies it to the two ints. E.g.</p>
-<p>$ arith sum 1 2</p>
-<p>3</p>
-<p>$ arith divide 6 3</p>
-<p>2</p>
-<p>我没弄清楚这道题想考察什么东西。例子给的是shell方式的使用接口。</p>
-<p>看评论后，有人说是传递函数指针。难怪答主说：Good luck with that if your CS degree was taught in Java :P。哈哈，Java达到传递函数指针的效果是比C语言麻烦的多。</p>
-<p><strong>第四道题</strong>：从连续不断的数字流中随机选取一个数字（数字流只能过一遍），要求保证任意时刻，已经过去的数字流中任意一个数字被选中的概率相等。</p>
-<p>这道题我在面试网易游戏的时候遇到过，解答参见 <a target="_blank" rel="noopener" href="http://loopjump.com/job_2013/">找工作备忘</a>。</p>
-<p><strong>第五道题</strong>：这位答主说，他在面试Fb时，曾经被要求实现一个线索二分查找树（我只记得大概的概念了）。还有要求实现饼排序。参见：<a target="_blank" rel="noopener" href="http://www.cnblogs.com/apprentice89/archive/2012/12/23/2829812.html">煎饼堆问题（转载）</a>。</p>
-<p><strong>第六道题</strong>：给定整数N，计算从1到N的数字的二进制表示中所有1的个数。</p>
-<p>这个题目挺有趣的。但是答主没给解答，而且0评论。</p>
-<p>比较容易想到的就是统计每一个数字中1的个数。注意到 n &amp; (n-1)可以消除n的最后一个1。</p>
-<p>如果要直接统计1到N中1的个数，可能需要仔细想一想，我们先看看0~23的二进制表示（0不影响结果）。针对每一列，都有规律，例如，第一列是 01循环出现，第二列是0011循环出现，第三列是00001111循环出现……</p>
-<p>按列统计，</p>
-<p>第一列出现1的个数为：(N+1)&#x2F;2</p>
-<p>第二列出现1的个数为：(N+1)&#x2F;4 * 2 + ( (N+1)%4&gt;2 ? (N+1)%4 - 2 : 0 )</p>
-<p>第三列出现1的个数为：(N+1)&#x2F;8 * 4 + ( (N+1)%8&gt;4 ? (N+1)%8 - 4 : 0 )</p>
-<p>第K列出现1的个数为：(N+1)&#x2F;(2^K) * (2^(K-1)) + ( (N+1)%(2^K)&gt;2^(K-1) ? (N+1)%(2^K)-2^(K-1):0 )</p>
-<p>所以只需要按列计算就可以达到O(Column)的复杂度。</p>
-<p>代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">int count(int n)&#123;</span><br><span class="line"></span><br><span class="line">         int k = 1, c = 0;</span><br><span class="line"></span><br><span class="line">         while( (1&lt;&lt; k ) &lt; n )&#123;</span><br><span class="line">                   c = c + (n+1)/(1&lt;&lt;k)*(1&lt;&lt;(k-1));</span><br><span class="line">                   if((n+1)%(1&lt;&lt;k) &gt; (1&lt;&lt;(k-1)))</span><br><span class="line">                            c = c + (n+1)%(1&lt;&lt;k)-(1&lt;&lt;(k-1));</span><br><span class="line">                   k++;</span><br><span class="line">         &#125;</span><br><span class="line">         return c;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>有的回答认为面试考这些题意义不大，Google面试已经减少了此类问题。不过我觉得能活跃一下大脑总是不错的。</p>
-<p>当然，还有来歪楼的回答：</p>
-<p>When can you start?</p>
-<p>Always puts a smile on my face.</p>
+<p>在上述01背包问题中，我们定义为从第i个物品开始挑选出总重小于j的问题的最优值。</p>
+<p>则 i&#x3D;n时，dp[n][j]&#x3D;0</p>
+<p>i!&#x3D;n时，</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/ed6a58ee-4517-4de0-93a3-7579a6ffd517/dp_formula_1.png" alt="dp_formula_1.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/05/dp_formula_1.png">http://loopjump.com/wp-content/uploads/2014/05/dp_formula_1.png</a></p>
+<p>这个公式是说，如果剩余的重量j小于第i个物体的重量，则第i个物体根部就不能放进去，所以。否则，第i个物体可以放进去。当然，即使可以放进去，我们也要查看到底应不应该放进去。所以考察两种情况，一种是将第i个物品放进去，另一种是不放进去。我们取这两个子问题的最优的那个。</p>
+<p>在定义了最优值之后，我们要自底向上计算最优值。我们把递归式的计算过程图示化如下：</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/99e256ef-002e-4f4f-98d7-2a599f8b327f/DP_01.png" alt="DP_01.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/05/DP_01.png">http://loopjump.com/wp-content/uploads/2014/05/DP_01.png</a></p>
+<h3 id="最长公共子序列（Longest-Common-Subsequence-LCS）"><a href="#最长公共子序列（Longest-Common-Subsequence-LCS）" class="headerlink" title="最长公共子序列（Longest Common Subsequence LCS）"></a><strong>最长公共子序列</strong>（Longest Common Subsequence LCS）</h3><p>公共子序列不必连续，也就是说，a1b2c3d4和e1f2g3h4的最长公共子序列是1234。</p>
+<p>LCS的最优解定义为：</p>
+<p>s1 s2 … si和t1 t2 … tj对应的LCS的长度。</p>
+<p>则s1 s2 …sisi+1和t1 t2 …tjtj+1对应的LCS可能的情况是：</p>
+<ol>
+<li><p> 如果si+1&#x3D;tj+1，则在s1 s2 …si和t1 t2 …tj的LCS上加上si+1</p>
+</li>
+<li><p> s1 s2 …sisi+1和t1 t2 …tj的LCS</p>
+</li>
+<li><p> s1 s2 …si和t1 t2 …tjtj+1的LCS</p>
+</li>
+</ol>
+<p>所以有如下递归式：</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bceb2aa5-319e-4bf9-8244-6b8d50f4573b/dp_formula_21.png" alt="dp_formula_21.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/05/dp_formula_21.png">http://loopjump.com/wp-content/uploads/2014/05/dp_formula_21.png</a></p>
+<p>然后自底向上填表就可以了。如果不清楚填表方向，可以像上一道题一样画出表格，标出方向。</p>
 </section>
     <!-- Tags START -->
     
@@ -223,17 +222,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/Cpp-typename%E7%94%A8%E6%B3%95/">
+      <a class="nav-left" href="/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2%E6%B1%82%E8%A7%A3%E9%9D%92%E8%9B%99%E4%BA%A4%E6%8D%A2%E4%BD%8D%E7%BD%AE%E5%B0%8F%E6%B8%B8%E6%88%8F/">
         <span class="nav-arrow">← </span>
         
-          Cpp typename用法
+          深度优先搜索求解青蛙交换位置小游戏
         
       </a>
     
     
-      <a class="nav-right" href="/%E3%80%8A%E6%8C%91%E6%88%98%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AB%9E%E8%B5%9B%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B01/">
+      <a class="nav-right" href="/EPaxos%E5%8D%8F%E8%AE%AE%E8%A7%A3%E8%AF%BB/">
         
-          《挑战程序设计竞赛》读书笔记1
+          EPaxos协议解读
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -272,7 +271,7 @@
 
 <script>
   (function () {
-    var url = 'http://example.com/几道有趣的面试题/';
+    var url = 'http://example.com/《挑战程序设计竞赛》读书笔记2-贪心算法-动态规划/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
