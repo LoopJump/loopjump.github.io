@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      深度优先搜索求解青蛙交换位置小游戏 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>深度优先搜索求解青蛙交换位置小游戏</h2>
+  <p class="post-date">2014-02-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>在读《挑战程序设计竞赛》时，想到了以前玩的一个小游戏—<a target="_blank" rel="noopener" href="http://www.36qp.net/news/xinwen/201207/65848.shtml">青蛙交换位置游戏</a>。</p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/frog.png" alt="frog.png"></p>
+<p>游戏说明:</p>
+<p>(1) 用鼠标点青蛙头部向前跳，两边不同顏色的青蛙互換位置是最終目標.</p>
+<p>(2) 可以前進一步.</p>
+<p>(3) 最多只能跳過一個青蛙.</p>
+<p>(4) 一次一步，不限顏色</p>
+<p>(5) 只能前進.不能後退.</p>
+<p>(6) 按红色箭头，游戏复原。</p>
+<p>(7) 此题肯定有解，不要怀疑。</p>
+<p>本文用DFS搜索算法求解了这个游戏。</p>
+<p>类似的问题都可以按部就班地求解。</p>
+<p><strong>第一步</strong>，定义状态。</p>
+<p>状态定义为char[7]数组，表示图中的7个位置，向右跳的青蛙记为’R’， 向左跳的青蛙记为’L’，空白位置记为空格’ ’。所以初始状态为[RRR LLL]。</p>
+<p>代码中，状态用结构体state_t表示。</p>
+<p>bool check_finish(state_t state)函数用于检查给定的状态是否是终止状态。</p>
+<p><strong>第二步</strong>，定义获取下一个状态。</p>
+<p>按照题目描述的跳跃规则，给定一个状态时，我们能够求出该状态能够产生的新的状态。例如，从[RRR LLL]能够产生[RR RLLL]，[RRRL LL]等。</p>
+<p>代码中，list<state_t> get_children(state_t state)函数用于产生下一个状态列表。</p>
+<p><strong>第三步</strong>，执行DFS进行搜索。</p>
+<p>搜索框架也是非常确定的结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">bool dfs(state_t state)&#123;</span><br><span class="line">    if(check_finish(state))&#123;</span><br><span class="line">        cout&lt;&lt;&quot;Finish!&quot;&lt;&lt;endl;</span><br><span class="line">        print_stack();</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    list&lt;state_t&gt; children = get_children(state);</span><br><span class="line"></span><br><span class="line">    list&lt;state_t&gt;::iterator iter = children.begin();</span><br><span class="line">    for( ; iter != children.end(); iter++)&#123;</span><br><span class="line">        state_stack[stack_top++] = (*iter);</span><br><span class="line">        if(dfs(*iter))</span><br><span class="line">            return true;</span><br><span class="line">        stack_top--;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，就这三步，是不是很简单？</p>
+<p>完整的代码大约只有100多行，本文罗列如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;list&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">typedef struct state &#123;</span><br><span class="line">    char state_array[7];</span><br><span class="line">&#125;state_t;</span><br><span class="line"></span><br><span class="line">void move(state_t&amp; state, int from, int to)&#123;</span><br><span class="line">    char tmp = state.state_array[from];</span><br><span class="line">    state.state_array[from] = state.state_array[to];</span><br><span class="line">    state.state_array[to] = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">inline bool check_finish(state_t state)&#123;</span><br><span class="line"></span><br><span class="line">    return  state.state_array[0] == &#x27;R&#x27; &amp;&amp;</span><br><span class="line">        state.state_array[1] == &#x27;R&#x27; &amp;&amp;</span><br><span class="line">        state.state_array[2] == &#x27;R&#x27; &amp;&amp;</span><br><span class="line">        state.state_array[3] == &#x27; &#x27;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#define SIZE 25</span><br><span class="line">state_t state_stack[SIZE];</span><br><span class="line">int stack_top=0;</span><br><span class="line"></span><br><span class="line">void print_state(state_t state)&#123;</span><br><span class="line">    int i;</span><br><span class="line">    for(i=0; i&lt;7; i++)&#123;</span><br><span class="line">        cout&lt;&lt;state.state_array[i];</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void print_stack()&#123;</span><br><span class="line">    int i;</span><br><span class="line">    for(i=0; i&lt;stack_top; i++)&#123;</span><br><span class="line">        print_state(state_stack[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">list&lt;state_t&gt; get_children(state_t state)&#123;</span><br><span class="line"></span><br><span class="line">    list&lt;state_t&gt; children;</span><br><span class="line">    int blank;</span><br><span class="line">    for(blank = 0; blank &lt; 7; blank++)&#123;</span><br><span class="line">        if(state.state_array[blank] == &#x27; &#x27;)</span><br><span class="line">            break;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(blank+1&lt;=6 &amp;&amp; state.state_array[blank+1]==&#x27;R&#x27;)&#123;</span><br><span class="line">        state_t child = state;</span><br><span class="line">        move(child, blank+1, blank);</span><br><span class="line">        children.push_back(child);</span><br><span class="line">    &#125;</span><br><span class="line">    if(blank+2&lt;=6 &amp;&amp; state.state_array[blank+2]==&#x27;R&#x27;)&#123;</span><br><span class="line">        state_t child = state;</span><br><span class="line">        move(child, blank+2, blank);</span><br><span class="line">        children.push_back(child);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(blank-1&gt;=0 &amp;&amp; state.state_array[blank-1]==&#x27;L&#x27;)&#123;</span><br><span class="line">        state_t child = state;</span><br><span class="line">        move(child, blank-1, blank);</span><br><span class="line">        children.push_back(child);</span><br><span class="line">    &#125;</span><br><span class="line">    if(blank-2&gt;=0 &amp;&amp; state.state_array[blank-2]==&#x27;L&#x27;)&#123;</span><br><span class="line">        state_t child = state;</span><br><span class="line">        move(child, blank-2, blank);</span><br><span class="line">        children.push_back(child);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return children;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool dfs(state_t state)&#123;</span><br><span class="line"></span><br><span class="line">    if(check_finish(state))&#123;</span><br><span class="line">        cout&lt;&lt;&quot;Finish!&quot;&lt;&lt;endl;</span><br><span class="line">        print_stack();</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    list&lt;state_t&gt; children = get_children(state);</span><br><span class="line"></span><br><span class="line">    if(children.size()==0)</span><br><span class="line">        return false;</span><br><span class="line"></span><br><span class="line">    list&lt;state_t&gt;::iterator iter = children.begin();</span><br><span class="line">    for( ; iter != children.end(); iter++)&#123;</span><br><span class="line">        state_stack[stack_top++] = (*iter);</span><br><span class="line">        if(dfs(*iter))</span><br><span class="line">            return true;</span><br><span class="line">        stack_top--;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line"></span><br><span class="line">    state_t root;</span><br><span class="line">    root.state_array[0] = &#x27;L&#x27;;</span><br><span class="line">    root.state_array[1] = &#x27;L&#x27;;</span><br><span class="line">    root.state_array[2] = &#x27;L&#x27;;</span><br><span class="line">    root.state_array[3] = &#x27; &#x27;;</span><br><span class="line">    root.state_array[4] = &#x27;R&#x27;;</span><br><span class="line">    root.state_array[5] = &#x27;R&#x27;;</span><br><span class="line">    root.state_array[6] = &#x27;R&#x27;;</span><br><span class="line"></span><br><span class="line">    dfs(root);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Finish!</span><br><span class="line">LLLR RR</span><br><span class="line">LL RLRR</span><br><span class="line">L LRLRR</span><br><span class="line">LRL LRR</span><br><span class="line">LRLRL R</span><br><span class="line">LRLRLR</span><br><span class="line">LRLR RL</span><br><span class="line">LR RLRL</span><br><span class="line">RLRLRL</span><br><span class="line">R LRLRL</span><br><span class="line">RRL LRL</span><br><span class="line">RRLRL L</span><br><span class="line">RRLR LL</span><br><span class="line">RR RLLL</span><br><span class="line">RRR LLL</span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/note_of_progamming_contest_chanllege_book_1/">
+        <span class="nav-arrow">← </span>
+        
+          《挑战程序设计竞赛》读书笔记1
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/note_of_progamming_contest_chanllege_book_3/">
+        
+          《挑战程序设计竞赛》读书笔记3-图算法,图搜索,最短路,最小生成树
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/dfs_frog_game/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
