@@ -193,7 +193,7 @@
 <p>i!&#x3D;n时，<br>$$<br>dp[i][j] &#x3D; \begin{cases}<br>dp[i][j+1], &amp;j&lt;w[i] \\<br>max(dp[i+1][j], dp[i+1][j-w_i]+vi), &amp;otherwise<br>\end{cases}<br>$$</p>
 <p>这个公式是说，如果剩余的重量j小于第i个物体的重量，则第i个物体根部就不能放进去，所以。否则，第i个物体可以放进去。当然，即使可以放进去，我们也要查看到底应不应该放进去。所以考察两种情况，一种是将第i个物品放进去，另一种是不放进去。我们取这两个子问题的最优的那个。</p>
 <p>在定义了最优值之后，我们要自底向上计算最优值。我们把递归式的计算过程图示化如下：</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/DP_01.png" alt="DP_01.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/DP_01.png" alt="DP_01.png"></p>
 <h3 id="最长公共子序列（Longest-Common-Subsequence-LCS）"><a href="#最长公共子序列（Longest-Common-Subsequence-LCS）" class="headerlink" title="最长公共子序列（Longest Common Subsequence LCS）"></a><strong>最长公共子序列</strong>（Longest Common Subsequence LCS）</h3><p>公共子序列不必连续，也就是说，a1b2c3d4和e1f2g3h4的最长公共子序列是1234。</p>
 <p>LCS的最优解定义为：</p>
 <p>s1 s2 … si和t1 t2 … tj对应的LCS的长度。</p>

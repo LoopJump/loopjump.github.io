@@ -172,11 +172,11 @@
 <p>例如：P1&#x3D;(1,11)，P2&#x3D;(5,3)，则格点有(2,9), (3,7), (4,5)三个。</p>
 <p>一种朴素的想法是枚举满足 min(x1,x2)&lt;&#x3D; x &lt;&#x3D; max(x1,x2), min(y1,y2)&lt;&#x3D; y &lt;&#x3D; max(y1,y2)的所有x,y，判断是否在线段上，其复杂度为O(|x2-x1|*|y2-y1|)。</p>
 <p>书中说，事实上，该问题答案为|x2-x1|和|y2-y1|的最大公约数减1，并给出了一个图示如图。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/gp_1.png" alt="gp_1.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/gp_1.png" alt="gp_1.png"></p>
 <p>图中画的最下面的一个三角形正好以P2结尾，说明该问题答案为|x2-x1|和|y2-y1|的最大公约数减1。书中并未给出这个证明。本文将说明，最下面的一个三角形确实是正好以P2结尾。我们用反证法来证明。假设最下面的一个三角形<strong>不是</strong>正好以P2结尾，则可能是如下的情况，如图2。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/gp_2.png" alt="gp_2.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/gp_2.png" alt="gp_2.png"></p>
 <p>如图，假设A1,…An是P1P2上的所有格点，且A1是离P1最近的格点。如果最后一个三角形AnCnP3不是正好以P2结束，则我们可以将三角形AnBnP2平移至三角形P1B1A1中，如图3。则E1也是格点，与A1是离P1最近的格点矛盾。得证。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/gp_3.png" alt="gp-3.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/gp_3.png" alt="gp-3.png"></p>
 <p>得到了这个结论，剩下的就可以用辗转相除法求得最终的结果。</p>
 <p>2.6节其他题目涉及到数论。没学过数论真是硬伤啊，等以后补充了相关知识之后再补充本章节其他内容。</p>
 </section>

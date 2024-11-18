@@ -205,17 +205,17 @@
 <p>O(n2logn)：对于想找出是否存在a,b,c,d使得a+b+c+d&#x3D;M，我们预先计算出c+d的所有n2个和，并排序后放在新的数组S中。循环a,b，在数组S中二分查找。该算法空间复杂度为O(n2)。</p>
 <p>应该还有一个O(n3)的算法。</p>
 <p>在指定了M-a-b的值之后，查找满足c+d&#x3D;M-a-b的c和d时，可以预先将原数组排序，然后令c和d分别从数组首尾两端开始向中间移动。如图示。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/c%2Bd1.png" alt="c+d1.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/c%2Bd1.png" alt="c+d1.png"></p>
 <p>记M-c-d为K。如果c+d &lt;K，说明当前的c不会被选择，因为连最大的d都不能配合它，所以c向前走。同样，如果c+d&gt;K，说明当前的d不会被选择，d也向前走（c和d的前相反）。因此O(n)时间内可以确定是否有合适的c和d。外层循环a,b，内层相向查找c+d，复杂度是O(n3)，比O(n2logn)算法差，但空间复杂度为O(1)。</p>
 <p><strong>2.1穷竭搜索</strong></p>
 <p>常见的搜索方法有深度优先搜索（DFS）和宽度优先搜索（BFS），对应辅助的数据结构为栈（Stack）和队列（Queue）。</p>
 <p>深度优先搜索（DFS）：从当前状态开始，向下转移到下一个状态，直到状态无法向下转移，这时回退到前一状态，继续转移到另一个下一状态，直到找到最终的解。如图示。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/DFS.png" alt="DFS.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/DFS.png" alt="DFS.png"></p>
 <p>初始状态为状态A，状态H为最终的解。</p>
 <p>A -&gt; B -&gt; C -&gt; E 此时状态E不能继续向下转移，则回退到C继续向C的下一个状态F转移。</p>
 <p>在上图这个例子中，DFS搜索过程如图中数字和箭头所示。</p>
 <p>宽度优先搜索BFS：总是先搜索最近距离的状态。BFS借助队列Queue，执行过程大致如下，首先将初始状态加入Queue，然后不断地从Queue中取出队列首部的状态，将该状态的最近邻居加入队列，如此往复，直到取空了队列或者找到了解。如图示（图中此时队列已经删除A和B）。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/BFS1.png" alt="BFS1.png"></p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/BFS1.png" alt="BFS1.png"></p>
 <p>状态如果简单，可以是一个整形或者pair等；如果状态复杂时，通常要封装成一个类来表示一个状态。</p>
 <p>在多本算法教材上，都介绍了回溯。<strong>回溯（backtrack）</strong>是最常见的搜索算法。本文综合另外两本算法教材（见文末参考），在这里补充回溯的相关知识。</p>
 <p>回溯法是“通用的解题法”，可以用来系统地搜索一个问题的所有解。与其说回溯是一个算法，不如说它是一个算法框架。</p>

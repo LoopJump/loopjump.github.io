@@ -159,62 +159,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/nosql_survey_note/">NoSQL数据库综述和选型阅读笔记</a>
-      </h2>
-      <p class="article-date">October 10, 2024</p>
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/nosql_survey_note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/wpformular_example/">WordPress公式范例</a>
-      </h2>
-      <p class="article-date">October 10, 2024</p>
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/wpformular_example/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/ubuntu_compile_install_new_kernel/">Ubuntu 12.04编译安装3.15.6新内核</a>
-      </h2>
-      <p class="article-date">October 10, 2024</p>
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/ubuntu_compile_install_new_kernel/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/spanner_sql_engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
-      </h2>
-      <p class="article-date">October 10, 2024</p>
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/spanner_sql_engine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/%E5%85%AC%E5%BC%8F%E4%BE%8B%E5%AD%90/">公式例子</a>
       </h2>
       <p class="article-date">October 6, 2024</p>
@@ -240,6 +184,84 @@
         
       </div>
       <a class="more" href="/hello-world/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/wpformular_example/">WordPress公式范例</a>
+      </h2>
+      <p class="article-date">June 20, 2015</p>
+      
+      <div class="article-summary">
+        
+          没想到wordpress的latex插件支持的这么好。
+写了几个例子，**右键”Show Math As”&#x3D;&gt;”Tex Commands”**可以看原始文本。
+花体字母$\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$
+$\mathcal{abcde ...
+        
+      </div>
+      <a class="more" href="/wpformular_example/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/spanner_paper_note/">Google Spanner论文阅读笔记</a>
+      </h2>
+      <p class="article-date">June 15, 2015</p>
+      
+      <div class="article-summary">
+        
+          Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
+        
+      </div>
+      <a class="more" href="/spanner_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/percolator_paper_note/">Percolator论文阅读笔记</a>
+      </h2>
+      <p class="article-date">June 10, 2015</p>
+      
+      <div class="article-summary">
+        
+          Percolator是Google在2011年发的论文，用于替换MapReduce做索引。核心是分布式事务和观察者通知机制。
+概述Google搜索引擎建立网页索引：通过处理网页库，会建好一个索引库。之后爬虫会新抓下来少量页面（相比于原始网页库的数量）。对于新抓来的页面，如何处理？有两种方式。 ...
+        
+      </div>
+      <a class="more" href="/percolator_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/bigtable_paper_note/">再读Bigtable论文</a>
+      </h2>
+      <p class="article-date">June 2, 2015</p>
+      
+      <div class="article-summary">
+        
+          本文是Bigtable论文的阅读笔记，比较简略。
+1 基本概念介绍Bigtable本质上是GFS之上对GFS文件数据的一层索引。
+1.1 Bigtable的数据模型一个稀疏的分布式的持久化的多维度的排序的map。所谓map，就是key-value对。
+!http://loopjump.com ...
+        
+      </div>
+      <a class="more" href="/bigtable_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/gfs_paper_note/">再读GFS论文</a>
+      </h2>
+      <p class="article-date">June 1, 2015</p>
+      
+      <div class="article-summary">
+        
+          之前上学的时候读过Google三架马车的论文，后续再读时，发现有些地方以前理解还是不够深刻。本文是重新学习GFS论文时记录的阅读笔记，行文比较散，主要是记录一下自己比较感兴趣的点，有需要的同学还是请直接参考原始论文。
+1 背景用大量普通机器搭建集群，因此节点失效成为集群中常态的问题，GFS必 ...
+        
+      </div>
+      <a class="more" href="/gfs_paper_note/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -292,23 +314,6 @@ RMQ是指给定若干个数据a[]，找出a[i…j]的最小值，同时允许更
         
       </div>
       <a class="more" href="/note_of_progamming_contest_chanllege_book_5/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note_of_progamming_contest_chanllege_book_4/">《挑战程序设计竞赛》读书笔记4-格点问题的证明</a>
-      </h2>
-      <p class="article-date">February 4, 2014</p>
-      
-      <div class="article-summary">
-        
-          《挑战程序设计竞赛》读书笔记（四）格点问题的证明
-《挑战程序设计竞赛》2.6节第一道题中讲解了求线段上格点个数的问题，该解答给出了结果，但中间过程省略了不少内容。本文补充了相关的证明和解释。
-问题描述如下：
-格点是指平面坐标系中，横纵坐标都是整数的点。给定平面上两个格点，P1(x1,y1)， ...
-        
-      </div>
-      <a class="more" href="/note_of_progamming_contest_chanllege_book_4/">Read more</a>
     </article>
   
 
