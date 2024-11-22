@@ -165,7 +165,43 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>来源：AWS re: invent 2018</p>
+<h3 id="Pattern-1-checksum-all-of-the-things"><a href="#Pattern-1-checksum-all-of-the-things" class="headerlink" title="Pattern 1: checksum all of the things"></a>Pattern 1: checksum all of the things</h3><h3 id="Pattern-2-Cryptgraphic-Authentication"><a href="#Pattern-2-Cryptgraphic-Authentication" class="headerlink" title="Pattern 2: Cryptgraphic Authentication"></a>Pattern 2: Cryptgraphic Authentication</h3><p>Encrypt and authenticate everything.</p>
+<p>Control Planes are powerful and security critical systems.</p>
+<p>Be able to revoke and rotate every credentials. But also watch out for certificate expiries.[??]</p>
+<p>Prevent human access to production credentials.</p>
+<p>Never allow a non-production control plane to talk to the production data plane.</p>
+<h3 id="Pattern-3-Cells-Shells-and-Poison-Tasters"><a href="#Pattern-3-Cells-Shells-and-Poison-Tasters" class="headerlink" title="Pattern 3: Cells, Shells and Poison Tasters"></a>Pattern 3: Cells, Shells and Poison Tasters</h3><p>we divide up our control planes horizontally into regions, availability zones and cells.</p>
+<p>it’s also common to compartmentalize control planes so that the data plane is insulated from control plance crashes.</p>
+<p>poison tasters: check up front that is a change is safe.[??]</p>
+<h3 id="Pattern-4-Asynchronous-Coupling"><a href="#Pattern-4-Asynchronous-Coupling" class="headerlink" title="Pattern 4: Asynchronous Coupling"></a>Pattern 4: Asynchronous Coupling</h3><p>Synchronous systems are very strongly coupled.</p>
+<p>A problem in a synchronous downstream dependency has immediate impact on the upstream callers.</p>
+<p>Retries from upstream callers can all-too-easily fan-out and amplify problems.</p>
+<p>Asynchronous coupling systems tend to be more tolerant.</p>
+<p>Can make partial progress even when some components are unavailable.</p>
+<p>Workflows and queues can be tuned to have deterministic retry behaviors.[?!]</p>
+<h3 id="Pattern-5-Closed-Feedback-Loops"><a href="#Pattern-5-Closed-Feedback-Loops" class="headerlink" title="Pattern 5: Closed Feedback Loops"></a>Pattern 5: Closed Feedback Loops</h3><h3 id="Pattern-6-Small-pushes-and-large-pulls"><a href="#Pattern-6-Small-pushes-and-large-pulls" class="headerlink" title="Pattern 6: Small pushes and large pulls"></a>Pattern 6: Small pushes and large pulls</h3><p>very frequently asked question: is it better to push or to pull?</p>
+<p>for example: should data plane hosts accept connections and be pushed configurations or should they connect to the control plane and pull them?</p>
+<p>it’s really the wrong question.</p>
+<p>Long lived connections can support pushing timely updates regardless of the direction of the connection.</p>
+<p>better to ask: which fleet is bigger? in general, small fleets should connect to bigger fleets.</p>
+<p>this avoids the problems of small fleets being overwhelmed with thundering herds and retry storms.</p>
+<h3 id="Patter-7-Avoid-Cold-Start-and-Cold-Caches"><a href="#Patter-7-Avoid-Cold-Start-and-Cold-Caches" class="headerlink" title="Patter 7: Avoid Cold Start and Cold Caches"></a>Patter 7: Avoid Cold Start and Cold Caches</h3><p>cache are bi-modal systems. super fast when they have entries, and slow when they are empty.</p>
+<p>a thundering herd hitting a cold cache can prevent it from ever getting warm.</p>
+<p>retry storms often need to be moderated by throttles.</p>
+<p>work out if you really need a cache at all.</p>
+<p>pre-warm caches before acception requests.</p>
+<p>consider serving stale entries when backends are unavailable.</p>
+<h3 id="Pattern-8-Throttles"><a href="#Pattern-8-Throttles" class="headerlink" title="Pattern 8: Throttles"></a>Pattern 8: Throttles</h3><p>Throttles and rate-limits are often needed to moderate problems requestors and to dampen fluctuating systems.</p>
+<p>takes careful work to ensure that throttling does not impact the end curstomer experience.</p>
+<h3 id="Pattern-9-Delta"><a href="#Pattern-9-Delta" class="headerlink" title="Pattern 9: Delta"></a>Pattern 9: Delta</h3><p>data with versions.</p>
+<h3 id="Pattern-10-Modality-and-Constant-Work"><a href="#Pattern-10-Modality-and-Constant-Work" class="headerlink" title="Pattern 10: Modality and Constant-Work"></a>Pattern 10: Modality and Constant-Work</h3><p>so far, we can build a loosely coupled control plane, with deltas to minimize work, and throttles to keep things safe.</p>
+<p>but what if a LOT of things change at the same time?</p>
+<p>we don’t want to build up backlogs and queues and introduce lag.</p>
+<p>systems that changes performance in responsce to workload or data patterns can be fragile.</p>
+<p>example: relational databases are great for flexible businiess queries but terrible for stable control planes. hidden optimizations and query plan flips can wreck chaos.</p>
+<p>deployments, peak events, power events, all incur risk because they can be new modes.</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,13 +210,20 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/basic_paxos_proof/">
+      <a class="nav-left" href="/calcite-intro/">
         <span class="nav-arrow">← </span>
         
-          Basic Paxos证明
+          Calcite简介
         
       </a>
     
+    
+      <a class="nav-right" href="/blue-eye-puzzle-from-tao/">
+        
+          蓝眼睛谜题
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 
