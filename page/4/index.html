@@ -159,145 +159,162 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/rsm_questions/">漫谈复制状态机的几个有趣的问题</a>
+        <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">April 10, 2019</p>
       
       <div class="article-summary">
         
-          
+          《Distributed consensus revised》 Heidi Howard
+整篇论文151页，粗略通读了一遍，主要是了解各个变体的基本思路和正确性直觉的理解，更形式化的证明基本上都跳过了。
+这里假设读者对Basic Paxos有了一定了解，看过Lamport的那篇原始论文。另外 ...
         
       </div>
-      <a class="more" href="/rsm_questions/">Read more</a>
+      <a class="more" href="/consensus-revised-paper/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/sdpaxos_paper/">SDPaxos优雅的折中</a>
+        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">March 10, 2019</p>
       
       <div class="article-summary">
         
-          
+          《Designing Access Methods: The RUM Conjecture》
+这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
+就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
         
       </div>
-      <a class="more" href="/sdpaxos_paper/">Read more</a>
+      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/spanner_sql_engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
+        <a href="/data_model_history/">以史为鉴：数据模型变迁史</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">February 10, 2018</p>
       
       <div class="article-summary">
         
-          
+          这两天看了篇数据模型的论文，What Goes Around Comes Around。这篇论文是2005年Stonebraker和Hellerstein两位泰斗写的，讲的是数据库的数据模型35年的变迁历史，另外论文还总结了一些经验。
+这是一个非常有趣的话题，能够让我们更多地去从市场和产品角 ...
         
       </div>
-      <a class="more" href="/spanner_sql_engine/">Read more</a>
+      <a class="more" href="/data_model_history/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/tidb_devcon2019/">TiDB DevCon 2019</a>
+        <a href="/dbms_arch/">数据库系统组件</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">February 10, 2018</p>
       
       <div class="article-summary">
         
-          
-        
-      </div>
-      <a class="more" href="/tidb_devcon2019/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/time_clock_order/">分布式系统的时间、时钟和事件序</a>
-      </h2>
-      <p class="article-date">October 10, 2024</p>
-      
-      <div class="article-summary">
-        
-          Time, Clocks, and the Ordering of Events in a Distributed System这篇论文Lamport发表于1978年，讨论的是分布式系统下的时钟和事件序问题。
+          读了Architecture of a Database System这篇经典论文，挑了些不太熟悉的内容做了笔记。
+论文内容基本上谈不上是在讲架构吧，基本上就是罗列了下有哪些组件，而且内容基本上针对原来传统数据库的。
 
-!http://loopjump.com/wp-content/uploads/ ...
+!http://loopjump.com/wp-content/uplo ...
         
       </div>
-      <a class="more" href="/time_clock_order/">Read more</a>
+      <a class="more" href="/dbms_arch/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/transaction_thoughts/">关于事务的一点琐碎思考</a>
+        <a href="/deep_class/">Deep Class</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">February 10, 2018</p>
       
       <div class="article-summary">
         
-          
+          最近看了个有趣的talk：”A Philosophy of Software Design” by John Ousterhout。
+地址：https://www.youtube.com/watch?v=bmSAYlu0NcY
+https://www.youtube.com/watch?v= ...
         
       </div>
-      <a class="more" href="/transaction_thoughts/">Read more</a>
+      <a class="more" href="/deep_class/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/ubuntu_compile_install_new_kernel/">Ubuntu 12.04编译安装3.15.6新内核</a>
+        <a href="/dynamo_paper_note/">Dynamo论文阅读笔记</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">February 10, 2017</p>
       
       <div class="article-summary">
         
-          
+          Dynamo: Amazon’s Highly Available Key-value Store
+Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
+Dynamo系统 ...
         
       </div>
-      <a class="more" href="/ubuntu_compile_install_new_kernel/">Read more</a>
+      <a class="more" href="/dynamo_paper_note/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/whyfp_note/">Why Functional Programming Matters 阅读笔记</a>
+        <a href="/cap_theory/">浅析CAP理论</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">December 10, 2016</p>
       
       <div class="article-summary">
         
-          本文是 Why Functional Programming Matters的阅读笔记，用相对通俗的语言解读了这篇论文，并对我觉得重要的一些点做了一些解释，欢迎在读这篇论文的朋友留言交流。不得不说的是，这篇论文大量涉及到SICP这本书中的知识，所以如果能看过SICP再看这篇论文，相信应该会轻 ...
+          CAP理论是Eric Brewer在2000年前后提出的一个设计上的折中原则，大意是说，一个系统在Consistency、Availability、Partition Tolerance三者之间无法兼顾，必须舍弃一个。
+Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（ ...
         
       </div>
-      <a class="more" href="/whyfp_note/">Read more</a>
+      <a class="more" href="/cap_theory/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/split_order_hash/">Split-Order Hash基本原理</a>
+        <a href="/distributed_consistency_model/">浅析分布式一致性模型</a>
       </h2>
-      <p class="article-date">October 10, 2024</p>
+      <p class="article-date">November 10, 2016</p>
       
       <div class="article-summary">
         
-          
-        
-      </div>
-      <a class="more" href="/split_order_hash/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/%E5%85%AC%E5%BC%8F%E4%BE%8B%E5%AD%90/">公式例子</a>
-      </h2>
-      <p class="article-date">October 6, 2024</p>
-      
-      <div class="article-summary">
-        
-          在图中，$a \to b$意味着从(a)可以沿着线到(b)，例如$p_1 \to r_4$。
+          一致性术语的理解一致性这个中文术语在计算机的不同领域有不同的含义，对应的英文术语也是不一样的：Consistency, Consensus, Coherence等等。
+就这三个术语而言，其区别可以简单的如下理解：
 
+Coherence这个单词只在Cache Coherence场景下出现过，它 ...
         
       </div>
-      <a class="more" href="/%E5%85%AC%E5%BC%8F%E4%BE%8B%E5%AD%90/">Read more</a>
+      <a class="more" href="/distributed_consistency_model/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/clean-code-note/">代码整洁之道 读书笔记</a>
+      </h2>
+      <p class="article-date">October 11, 2016</p>
+      
+      <div class="article-summary">
+        
+          Chapter 1 整洁代码Lebanc’s Law: later equals never.
+Chapter 2 有意义的命名Chapter 3 函数每个函数一个抽象层级
+Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误处理Chap ...
+        
+      </div>
+      <a class="more" href="/clean-code-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/blue-eye-puzzle-from-tao/">蓝眼睛谜题</a>
+      </h2>
+      <p class="article-date">October 10, 2016</p>
+      
+      <div class="article-summary">
+        
+          陶哲轩的博客上的一个puzzle。
+地址在这里：https://terrytao.wordpress.com/2008/02/05/the-blue-eyed-islanders-puzzle/ 。你可以直接跳过去读原文。
+这是发生在一个在虚构的岛上的故事，不过因为这里面的逻辑本身就非常微妙 ...
+        
+      </div>
+      <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
     </article>
   
 

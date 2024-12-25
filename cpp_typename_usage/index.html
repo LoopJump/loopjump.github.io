@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>C++ typename用法</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2016-07-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,35 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>C++中typename关键字的使用方法</p>
+<h3 id="1-用在模板定义里，标明其后的模板参数是类型参数。"><a href="#1-用在模板定义里，标明其后的模板参数是类型参数。" class="headerlink" title="1.用在模板定义里，标明其后的模板参数是类型参数。"></a>1.用在模板定义里，标明其后的模板参数是类型参数。</h3><p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename T, typename Y&gt;</span><br><span class="line">T foo(const T&amp; t, const Y&amp; y) &#123; /*....*/ &#125;;</span><br><span class="line"></span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">class CTest &#123;</span><br><span class="line">private:</span><br><span class="line">   T t;</span><br><span class="line">public:</span><br><span class="line">   //...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实，这里最常用的是使用关键字class，而且二者功能完全相同，这里的class和定义类时的class完全是两回事,C++当时就是为了减少关键字，才使用了class.但最终却不得不引入了typename，究竟是什么原因呢？请看第二条，也就是typename的第二个用法。</p>
+<h3 id="2-模板中标明“内嵌依赖类型名”"><a href="#2-模板中标明“内嵌依赖类型名”" class="headerlink" title="2. 模板中标明“内嵌依赖类型名”"></a>2. 模板中标明“内嵌依赖类型名”</h3><p>这里有三个词，内嵌、依赖、类型名。那么什么是“内嵌依赖类型名（nested dependent type name）”?</p>
+<p>请看SGI STL里的一个例子，只是STL中count范型算法的实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">template&lt;class _InputIter, class _Tp&gt;</span><br><span class="line">typename iterator_traits&lt;_InputIter&gt;::difference_type count(_InputIter __first, _InputIter __last,const_Tp&amp; __value) &#123;</span><br><span class="line">   __STL_REQUIRES(_InputIter, _InputIterator);</span><br><span class="line">   __STL_REQUIRES(typename iterator_traits&lt;_InputIter&gt;::value_type,</span><br><span class="line">         _EqualityComparable);</span><br><span class="line">   __STL_REQUIRES(_Tp, _EqualityComparable);</span><br><span class="line">   typename iterator_traits&lt;_InputIter&gt;::difference_type __n = 0;</span><br><span class="line">   for (; __first != __last; ++__first)</span><br><span class="line">      if (*__first == __value)</span><br><span class="line">         ++__n;</span><br><span class="line">   return __n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有三个地方用到了typename：返回值、参数、变量定义。分别是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typename iterator_traits&lt;_InputIter&gt;::difference_type</span><br><span class="line"></span><br><span class="line">typename iterator_traits&lt;_InputIter&gt;::value_type</span><br><span class="line"></span><br><span class="line">typename iterator_traits&lt;_InputIter&gt;::difference_type __n = 0；</span><br></pre></td></tr></table></figure>
+
+<p>difference_type， value_type就是依赖于_InputIter（模板类型参数）的类型名。源码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">template&lt;class_Iterator&gt;</span><br><span class="line">structiterator_traits &#123;</span><br><span class="line">    typedef typename _Iterator::iterator_category  iterator_category;</span><br><span class="line">    typedef typename _Iterator::value_type         value_type;</span><br><span class="line">    typedef typename _Iterator::difference_type    difference_type;</span><br><span class="line">    typedef typename _Iterator::pointer      pointer;</span><br><span class="line">    typedef typename _Iterator::reference    reference;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>内嵌是指定义在类名的定义中的。以上difference_type和value_type都是定义在iterator_traits中的。</p>
+<p>依赖是指依赖于一个模板参数。typename iterator_traits&lt;_InputIter&gt;::difference_type中difference_type依赖于模板参数_InputIter.</p>
+<p>类型名是指这里最终要指出的是个类型名，而不是变量。例如iterator_traits&lt;_InputIter&gt;::difference_type完全有可能是类iterator_traits&lt;_InputIter&gt;类里的一个static对象。而且当我们这样写的时候，C++默认就是解释为一个变量的。所以，为了和变量区分，必须使用typename告诉编译器。</p>
+<p>那么是不是所有的T::type_or_variable，或者tmpl<T>::type_or_variable都需要使用typename呢？不是，有以下两个例外。</p>
+<h3 id="3-例外"><a href="#3-例外" class="headerlink" title="3. 例外"></a>3. 例外</h3><p>(1)     类模板定义中的基类列表。</p>
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">template&lt;class T&gt;</span><br><span class="line">class Derived: public Base&lt;T&gt;::XXX &#123;</span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>(2)     类模板定义中的初始化列表。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Derived(int x) :Base&lt;T&gt;::xxx(x) &#123;...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么这里不需要呢？因为编译器知道这里需要的是类型还是变量。</p>
+<p>(i)基类列表里肯定是类型名，(ii)初始化列表里肯定是成员变量名。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +202,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/basic_paxos_proof/">
+      <a class="nav-left" href="/wpformular_example/">
         <span class="nav-arrow">← </span>
         
-          Basic Paxos证明
+          WordPress公式范例
         
       </a>
     
     
-      <a class="nav-right" href="/consensus-revised-paper/">
+      <a class="nav-right" href="/blue-eye-puzzle-from-tao/">
         
-          Jeff Dean点赞的Consensus Revised论文在说啥？
+          蓝眼睛谜题
         
         <span class="nav-arrow"> →</span>
       </a>

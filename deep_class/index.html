@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Deep Class</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2018-02-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,30 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>最近看了个有趣的talk：”A Philosophy of Software Design” by John Ousterhout。</p>
+<p>地址：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=bmSAYlu0NcY">https://www.youtube.com/watch?v=bmSAYlu0NcY</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=bmSAYlu0NcY">https://www.youtube.com/watch?v=bmSAYlu0NcY</a></p>
+<p>记录几个有趣的点。</p>
+<h3 id="抽象还是分解"><a href="#抽象还是分解" class="headerlink" title="抽象还是分解"></a><strong>抽象还是分解</strong></h3><p>如果要选一个概念，贯穿整个计算机系统，应该选哪个呢？</p>
+<p>John Ousterhout问过Donald Knuth，Knuth给的答案是layers of abstraction。</p>
+<p>John Ousterhout自己觉得是problem decomposition，要注意隔离复杂度。</p>
+<h3 id="关于Deep-Class"><a href="#关于Deep-Class" class="headerlink" title="关于Deep Class"></a>关于Deep Class</h3><p>很直观的表述方式。应该尽量写Deep Class。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e3cdcc16-e007-4456-a236-11b81f3de153/class.png" alt="class.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/class.png">http://loopjump.com/wp-content/uploads/2018/11/class.png</a></p>
+<p>对比Java的IO接口和Unix IO接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fileStream = new FileInputStream(fileName);</span><br><span class="line">BufferedInputStream bufferedStream = new BufferedInputStream(fileStream);</span><br><span class="line">ObjectInputStream objectStream = new ObjectInputStream(bufferedStream);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int open(const char* path, int flags, mode_t permissions) );</span><br><span class="line">int close(int fd);</span><br><span class="line">ssize_t read(int fd, void* buffer, size_t count);</span><br><span class="line">ssize_t write(int fd, const void* buffer, size_t count);</span><br><span class="line">off_t lseek(int fd, off_t offset, int referencePosition;</span><br></pre></td></tr></table></figure>
+
+<h3 id="闲扯decomposition"><a href="#闲扯decomposition" class="headerlink" title="闲扯decomposition"></a>闲扯decomposition</h3><p>① John Ousterhout是Raft作者的导师 &amp; John Ousterhout觉得要注重problem decomposition。</p>
+<p>② Raft声称其特点是understandable。</p>
+<p>③ 有不少熟悉Multi-Paxos和Raft的人，并不满意②的说法，因为他们觉得Raft NOT convincible。</p>
+<p>④ 显然③是对的。</p>
+<p>⑤ 我觉得，复杂度有时候是根植于问题本质的，无法消解。</p>
+<p>⑥ 所幸工程上⑤这种本质复杂的东西并不多，绝大部分复杂度应该都是自己作出来的。</p>
+<p>⑦ 这些自作的复杂度会导致：想不清楚细节、迟迟不能稳定、改动越来越难。</p>
+<p>⑧ 因为⑦，这个视频还是值得一看的，当然肯定也不能把它当银弹，因为软件工程领域没有银弹。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,10 +197,10 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/designing-access-methods-the-rum-conjecture/">
+      <a class="nav-left" href="/dynamo_paper_note/">
         <span class="nav-arrow">← </span>
         
-          RUM Conjecture
+          Dynamo论文阅读笔记
         
       </a>
     

@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>RUM Conjecture</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2019-03-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,25 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>《Designing Access Methods: The RUM Conjecture》</p>
+<p>这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。</p>
+<p>就RUM猜想本身的可信程度而言，我个人觉得一般，不过这种三角可视化的总结非常有趣，可以一读。</p>
+<h3 id="What-is-RUM-Conjecture"><a href="#What-is-RUM-Conjecture" class="headerlink" title="What is RUM Conjecture"></a>What is RUM Conjecture</h3><p>作者总结了Access Method的一些trade off，审视了RUM三种开销：R是read overhead，U是update overhead，M是memory(or storage) overhead，提出了RUM猜想：</p>
+<blockquote>
+<p>designing access methods that set an upper bound for two of the RUM overheads, leads to a hard lower bound for the third overhead which cannot be further reduced。</p>
+</blockquote>
+<p>就是说，如果你的access method能够确保RUM中的任意两个开销的最坏情况的上限，那么剩下的那个开销的最好的情况就很难优化的很好。</p>
+<p>论文提到，某些access method会将索引压缩存放，那么通过引入computation &#x2F; engineering这种场外信息，RUM猜想的可信程度会有些折扣。不过RUM猜想作为一个对access method的RUM三种开销总结，仍然有些价值。只是我们在遇到新的access method设计问题的时候，不能轻易放弃探索“全面好”的方案，尤其是遇到特定场景下的问题，相反RUM猜想可以视为一个探索的工具。</p>
+<h3 id="RUM-in-Practice"><a href="#RUM-in-Practice" class="headerlink" title="RUM in Practice"></a>RUM in Practice</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b616dbc9-a68d-4dea-b106-ad15364e8673/rum_in_practice.png" alt="rum_in_practice.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/03/rum_in_practice.png">http://loopjump.com/wp-content/uploads/2019/03/rum_in_practice.png</a></p>
+<p>每个access method设计在RUM空间占一个点或者（允许通过调优）占一个区域。</p>
+<ul>
+<li><strong>Read-optimized Access Method</strong>: Hash, B-Tree, Tries, Prefix B-Tree, Skiplist etc</li>
+<li><strong>Write-optimized Differential Structures</strong>: LSM Tree, Partitioned B-Tree, Materialized Sort-Merge algorithm, Stepped Merge algorithm, Positional Diffferential Tree, LA-Tree, FD-Tree etc.</li>
+<li><strong>Space-efficient access method</strong>: compression tech, lossy index(such as Blomm filters), Space indexes(ZoneMaps) etc.</li>
+</ul>
+<p>其他略。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +192,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/distributed_consistency_model/">
+      <a class="nav-left" href="/data_model_history/">
         <span class="nav-arrow">← </span>
         
-          浅析分布式一致性模型
+          以史为鉴：数据模型变迁史
         
       </a>
     
     
-      <a class="nav-right" href="/deep_class/">
+      <a class="nav-right" href="/consensus-revised-paper/">
         
-          Deep Class
+          Jeff Dean点赞的Consensus Revised论文在说啥？
         
         <span class="nav-arrow"> →</span>
       </a>

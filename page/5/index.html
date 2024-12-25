@@ -159,32 +159,18 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/hello-world/">Hello World</a>
+        <a href="/cpp_typename_usage/">C++ typename用法</a>
       </h2>
-      <p class="article-date">October 5, 2024</p>
+      <p class="article-date">July 10, 2016</p>
       
       <div class="article-summary">
         
-          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer ...
+          C++中typename关键字的使用方法
+1.用在模板定义里，标明其后的模板参数是类型参数。例如
+12345678910template&lt;typename T, typename Y&gt;T foo(const T&amp; t, const Y&amp; y) &#123; /*. ...
         
       </div>
-      <a class="more" href="/hello-world/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/blue-eye-puzzle-from-tao/">蓝眼睛谜题</a>
-      </h2>
-      <p class="article-date">October 10, 2016</p>
-      
-      <div class="article-summary">
-        
-          陶哲轩的博客上的一个puzzle。
-地址在这里：https://terrytao.wordpress.com/2008/02/05/the-blue-eyed-islanders-puzzle/ 。你可以直接跳过去读原文。
-这是发生在一个在虚构的岛上的故事，不过因为这里面的逻辑本身就非常微妙 ...
-        
-      </div>
-      <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
+      <a class="more" href="/cpp_typename_usage/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -216,6 +202,22 @@ $\mathcal{abcde ...
         
       </div>
       <a class="more" href="/spanner_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/db_isolation_level/">浅谈数据库隔离级别</a>
+      </h2>
+      <p class="article-date">June 10, 2015</p>
+      
+      <div class="article-summary">
+        
+          关系型数据库具备事务ACID的特性：原子性、一致性、隔离性、持久性。
+原子性是说，事务的操作要么都完成，要么都不完成。一致性是说事务不能破坏数据库的一些约束。隔离性是说，并发事务执行时，如何看到其他事务的执行结果。持久性是说，宕机重启后，数据库状态还能恢复。
+在分布式数据库中，原子性通常可以 ...
+        
+      </div>
+      <a class="more" href="/db_isolation_level/">Read more</a>
     </article>
   
     <article class="article-card">
