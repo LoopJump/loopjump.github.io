@@ -206,112 +206,112 @@
 <p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c98fe3a3-7ed7-4677-b3e7-30b8daa76656/case1-2.png" alt="case1-2.png"></p>
 <p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/case1-2.png">http://loopjump.com/wp-content/uploads/2017/03/case1-2.png</a></p>
 <p>如图示，7个副本，大于等于4即为多数派。假设副本1提出command A，副本2提出B，并且并发发送给3、4、5、6、7五个副本。假设4、5先收到A后收到B，6、7相反。如果3先A后B，那么A就收到1、3、4、5四个副本的相应，A就可以commit并响应客户端了。相反，如果3先B后A，则B就可以commit了。不管3是哪种情况，假设此时集群宕机且1、2、3无法恢复，则剩余多数派4、5、6、7在线但是却无法区分到底是A commit还是B commit了。</p>
-<p>带着这几个性质和如何定序、如何恢复的问题，我们来看协议的描述。EPaxos论文中描述了基本EPaxos和优化EPaxos两个，后者是在前者基础上做了优化，将fast quorum从(2F)降低到了(\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor)。基本EPaxos只能容忍一个节点失效，所以也无法用到实际，优化EPaxos中，fast path在N&#x3D;3,5时，消息数目是最优的。我们直接看优化EPaxos。</p>
+<p>带着这几个性质和如何定序、如何恢复的问题，我们来看协议的描述。EPaxos论文中描述了基本EPaxos和优化EPaxos两个，后者是在前者基础上做了优化，将fast quorum从$2F$降低到了$\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor$。基本EPaxos只能容忍一个节点失效，所以也无法用到实际，优化EPaxos中，fast path在N&#x3D;3,5时，消息数目是最优的。我们直接看优化EPaxos。</p>
 <h3 id="EPaxos用到的几个概念"><a href="#EPaxos用到的几个概念" class="headerlink" title="EPaxos用到的几个概念"></a>EPaxos用到的几个概念</h3><p>在描述前，先描述几个概念。</p>
 <p>在EPaxos中，每一个command γ都附带<strong>attribute</strong>，其中包括<strong>deps</strong>和<strong>seq</strong>。deps记录了跟γ冲突的command的instance id，γ依赖这些instance id对应的command。deps中维护的依赖关系就是定序用的关系，γ要排在deps中 的command后面。seq是一个序列号，用来在execution阶段打破循环依赖。</p>
-<p>接收client请求的副本称之为这个command (\gamma)的<strong>command leader</strong>，记作(L_\gamma)。每个副本都会持久化记录到<strong>cmds</strong>中，通过(Q.i)这种instance id来索引并读写。</p>
+<p>接收client请求的副本称之为这个command $\gamma$的<strong>command leader</strong>，记作$L_\gamma$。每个副本都会持久化记录到<strong>cmds</strong>中，通过$Q.i$这种instance id来索引并读写。</p>
 <p>协议分成两个部分，首先是正常处理客户端请求的处理过程，这个过程包括三个阶段：(1) Phase1 Establish ordering constraints (2) Paxos-Accept Phase (3) Commit Phase。其中一个命令可能走Phase1 + Paxos-Accept Phase + Commit Phase，或者Phase 1 + Commit Phase，前者称之为<strong>slow path</strong>，后者称之为<strong>fast path</strong>。</p>
-<p>需要提前指明的是，优化EPaxos采用的是<strong>thrifty</strong>模式，<strong>fast quorum</strong>是 (\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor)，其中F为系统容忍的少数派，command leader向 (\mathcal{F}) 个副本发送pre-accept请求，而不是向 2F+1 个副本发送请求等待 (\mathcal{F})个回应。</p>
+<p>需要提前指明的是，优化EPaxos采用的是<strong>thrifty</strong>模式，<strong>fast quorum</strong>是 $\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor$，其中F为系统容忍的少数派，command leader向 $\mathcal{F}$ 个副本发送pre-accept请求，而不是向 2F+1 个副本发送请求等待 $\mathcal{F}$个回应。</p>
 <h2 id="协议详细介绍"><a href="#协议详细介绍" class="headerlink" title="协议详细介绍"></a>协议详细介绍</h2><h3 id="接收命令并尝试commit的过程"><a href="#接收命令并尝试commit的过程" class="headerlink" title="接收命令并尝试commit的过程"></a><strong>接收命令并尝试commit的过程</strong></h3><p>（注意协议描述中每个请求都应该带着proposal id，这里为了描述简单忽略了）：</p>
 <p><strong>Phase 1: Establish ordering constraints</strong></p>
 <ul>
 <li><strong>副本L收到客户端的请求γ（2,3,4原子执行）：</strong></li>
 </ul>
 <ol>
-<li>递增L的instance id (i_L \leftarrow i_L+1)</li>
-<li>(seq_\gamma \leftarrow 1 + max({cmds_L[Q][j].seq | Q.j \in Interf_{L,\gamma}} \cup {0}))，其中(Interf_{L,\gamma})是cmds（持久化的记录集合）中记录的跟γ有冲突的instance的集合。</li>
-<li>(deps_\gamma \leftarrow Interf_{L,\gamma})</li>
-<li>(cmds_L[L][i_L] \leftarrow (\gamma, seq_\gamma, deps_\gamma, pre\text{-}accepted))</li>
-<li>发送 (PreAccept(\gamma, seq_\gamma, deps_\gamma, L.i_L)) 给所有(\mathcal{F})中的节点（L自己除外）。</li>
+<li>递增L的instance id $i_L \leftarrow i_L+1$</li>
+<li>$seq_\gamma \leftarrow 1 + max({cmds_L[Q][j].seq | Q.j \in Interf_{L,\gamma}} \cup {0})$，其中$Interf_{L,\gamma}$是cmds（持久化的记录集合）中记录的跟γ有冲突的instance的集合。</li>
+<li>$deps_\gamma \leftarrow Interf_{L,\gamma}$</li>
+<li>$cmds_L[L][i_L] \leftarrow (\gamma, seq_\gamma, deps_\gamma, pre\text{-}accepted)$</li>
+<li>发送 $PreAccept(\gamma, seq_\gamma, deps_\gamma, L.i_L)$ 给所有$\mathcal{F}$中的节点（L自己除外）。</li>
 </ol>
 <ul>
-<li><strong>副本R收到(PreAccept(\gamma, seq_\gamma, deps_\gamma, L.i_L))（6,7,8原子执行）：</strong></li>
+<li><strong>副本R收到$PreAccept(\gamma, seq_\gamma, deps_\gamma, L.i_L)$（6,7,8原子执行）：</strong></li>
 </ul>
 <ol>
-<li>(seq_\gamma \leftarrow max({seq_\gamma} \cup {1+cmds_r[Q][j].seq|Q.j \in Interf_{R,\gamma}}))</li>
-<li>(deps_\gamma \leftarrow deps_\gamma \cup Interf_{R,\gamma})</li>
-<li>(cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, pre\text{-}accepted))</li>
-<li>向L回复(PreAcceptOK(\gamma, seq_\gamma, deps_\gamma, L.i_L))</li>
+<li>$seq_\gamma \leftarrow max({seq_\gamma} \cup {1+cmds_r[Q][j].seq|Q.j \in Interf_{R,\gamma}})$</li>
+<li>$deps_\gamma \leftarrow deps_\gamma \cup Interf_{R,\gamma}$</li>
+<li>$cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, pre\text{-}accepted)$</li>
+<li>向L回复$PreAcceptOK(\gamma, seq_\gamma, deps_\gamma, L.i_L)$</li>
 </ol>
 <ul>
 <li><strong>副本L收到至少F个副本回应的PreAcceptOK响应之后：</strong></li>
 </ul>
 <ol>
-<li>如果从(\mathcal{F}-{L})收到的( seq_\gamma)和(deps_\gamma)没有变化，并且FP-deps-committed条件满足，那么在(L.i)上对((\gamma, seq_\gamma, deps_\gamma))执行Commit Phase</li>
+<li>如果从$\mathcal{F}-{L}$收到的$ seq_\gamma$和$deps_\gamma$没有变化，并且FP-deps-committed条件满足，那么在$L.i$上对$(\gamma, seq_\gamma, deps_\gamma)$执行Commit Phase</li>
 <li>否则</li>
 </ol>
-<p>(deps_\gamma \leftarrow Union(deps_\gamma\ from\ all\ replies))</p>
-<p>(seq_\gamma \leftarrow max({seq_\gamma\ from\ all\ replies}))</p>
-<p>在(L.i)上对((\gamma, seq_\gamma, deps_\gamma))执行Paxos-Accept</p>
+<p>$deps_\gamma \leftarrow Union(deps_\gamma\ from\ all\ replies)$</p>
+<p>$seq_\gamma \leftarrow max({seq_\gamma\ from\ all\ replies})$</p>
+<p>在$L.i$上对$(\gamma, seq_\gamma, deps_\gamma)$执行Paxos-Accept</p>
 <p>其中，<strong>FP-deps-committed</strong>：当前command得deps中所有command都在某些回应中被标记为Committed了。</p>
 <p><strong>Phase 2: Paxos-Accept</strong></p>
 <ul>
-<li><strong>Command Leader L对于instance id为(L.i)的((\gamma, seq_\gamma, deps_\gamma))：</strong></li>
+<li><strong>Command Leader L对于instance id为$L.i$的$(\gamma, seq_\gamma, deps_\gamma)$：</strong></li>
 </ul>
 <ol>
-<li>(cmds_L[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, accepted))</li>
-<li>将(Accept(\gamma, seq_\gamma, deps_\gamma, L.i_L))发送给至少(\lfloor N&#x2F;2 \rfloor)个其他副本</li>
+<li>$cmds_L[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, accepted)$</li>
+<li>将$Accept(\gamma, seq_\gamma, deps_\gamma, L.i_L)$发送给至少$\lfloor N&#x2F;2 \rfloor$个其他副本</li>
 </ol>
 <ul>
-<li><strong>副本R收到(Accept(\gamma, seq_\gamma, deps_\gamma, ))之后，</strong></li>
+<li><strong>副本R收到$Accept(\gamma, seq_\gamma, deps_\gamma, )$之后，</strong></li>
 </ul>
 <ol>
-<li>(cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, accepted))</li>
-<li>向L回应 (AcceptOK(\gamma, L.i))</li>
+<li>$cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, accepted)$</li>
+<li>向L回应 $AcceptOK(\gamma, L.i)$</li>
 </ol>
 <ul>
-<li><strong>Command Leader L在收到至少(\lfloor N&#x2F;2 \rfloor)个AcceptOK之后：</strong></li>
+<li><strong>Command Leader L在收到至少$\lfloor N&#x2F;2 \rfloor$个AcceptOK之后：</strong></li>
 </ul>
 <ol>
-<li>在(L.i)上((\gamma, seq_\gamma, deps_\gamma))执行Commit Phase</li>
+<li>在$L.i$上$(\gamma, seq_\gamma, deps_\gamma)$执行Commit Phase</li>
 </ol>
 <p><strong>Commit Phase</strong></p>
 <ul>
-<li><strong>Command Leader L对于instance id为(L.i)的((\gamma, seq_\gamma, deps_\gamma))：</strong></li>
+<li><strong>Command Leader L对于instance id为$L.i$的$(\gamma, seq_\gamma, deps_\gamma)$：</strong></li>
 </ul>
 <ol>
-<li>(cmds_L[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, committed))</li>
-<li>向client回应(\gamma) 已经commit成功了</li>
-<li>向所有其他副本发送 (Commit(\gamma, seq_\gamma, deps_\gamma, L.i_L))消息</li>
+<li>$cmds_L[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, committed)$</li>
+<li>向client回应$\gamma$ 已经commit成功了</li>
+<li>向所有其他副本发送 $Commit(\gamma, seq_\gamma, deps_\gamma, L.i_L)$消息</li>
 </ol>
 <ul>
-<li><strong>副本R收到(Commit(\gamma, seq_\gamma, deps_\gamma, L.i_L))消息：</strong></li>
+<li><strong>副本R收到$Commit(\gamma, seq_\gamma, deps_\gamma, L.i_L)$消息：</strong></li>
 </ul>
 <ol>
-<li>(cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, committed))</li>
+<li>$cmds_R[L][i] \leftarrow (\gamma, seq_\gamma, deps_\gamma, committed)$</li>
 </ol>
 <h3 id="恢复阶段Explicit-Prepare"><a href="#恢复阶段Explicit-Prepare" class="headerlink" title="恢复阶段Explicit Prepare"></a><strong>恢复阶段Explicit Prepare</strong></h3><ul>
 <li><strong>副本Q怀疑L失效，尝试去恢复L.i这个instance。</strong></li>
 </ul>
 <ol>
-<li>递增ballot number：设Q知道的最大proposal id是(epoch.b.Q)，则使用新的proposal id (epoch.(b+1).Q)</li>
-<li>向所有副本（包括自己）发送(Prepare(epoch.(b+1).Q))，等待至少多数派的回应。</li>
-<li>假设所有回应中最大ballot number的是(ballot_{max})，定义(\mathcal{R})是所有回应中ballot number等于(ballot_{max})的响应的集合。</li>
-<li>如果(\mathcal{R})没有关于这个instance id的任何信息，那么推出恢复阶段，副本Q对L.i实例尝试去commit no-op。</li>
-<li>如果(\mathcal{R})中包含了至少一条((\gamma, seq_\gamma, deps_\gamma, committed))，则对L.i实例((\gamma, seq_\gamma, deps_\gamma))执行Commit Phase。</li>
-<li>如果(\mathcal{R})中包含了至少一条((\gamma, seq_\gamma, deps_\gamma, accept))，则对L.i实例((\gamma, seq_\gamma, deps_\gamma))执行Paxos-Accept Phase。</li>
-<li>如果至少(\lfloor\frac{F+1}{2}\rfloor)个副本回应了pre-accept，并且它们回应的(seq_\gamma, deps_\gamma)都与L.i的epoch.0.b那轮PreAccept请求中记录相同，那么就进入TryPreAccept阶段，否则就回到slow path重新来一遍commit。</li>
+<li>递增ballot number：设Q知道的最大proposal id是$epoch.b.Q$，则使用新的proposal id $epoch.(b+1).Q$</li>
+<li>向所有副本（包括自己）发送$Prepare(epoch.(b+1).Q)$，等待至少多数派的回应。</li>
+<li>假设所有回应中最大ballot number的是$ballot_{max}$，定义$\mathcal{R}$是所有回应中ballot number等于$ballot_{max}$的响应的集合。</li>
+<li>如果$\mathcal{R}$没有关于这个instance id的任何信息，那么推出恢复阶段，副本Q对L.i实例尝试去commit no-op。</li>
+<li>如果$\mathcal{R}$中包含了至少一条$(\gamma, seq_\gamma, deps_\gamma, committed)$，则对L.i实例$(\gamma, seq_\gamma, deps_\gamma)$执行Commit Phase。</li>
+<li>如果$\mathcal{R}$中包含了至少一条$(\gamma, seq_\gamma, deps_\gamma, accept)$，则对L.i实例$(\gamma, seq_\gamma, deps_\gamma)$执行Paxos-Accept Phase。</li>
+<li>如果至少$\lfloor\frac{F+1}{2}\rfloor$个副本回应了pre-accept，并且它们回应的$seq_\gamma, deps_\gamma$都与L.i的epoch.0.b那轮PreAccept请求中记录相同，那么就进入TryPreAccept阶段，否则就回到slow path重新来一遍commit。</li>
 </ol>
 <p><strong>TryPreAccept阶段</strong></p>
-<p>副本Q发送(TryPreAccept(L.i, \gamma, deps_\gamma, seq_\gamma))给(\mathcal{F})中未回应过pre-accept response的副本。</p>
+<p>副本Q发送$TryPreAccept(L.i, \gamma, deps_\gamma, seq_\gamma)$给$\mathcal{F}$中未回应过pre-accept response的副本。</p>
 <ul>
-<li><strong>副本R收到(TryPreAccept(L.i, \gamma, deps_\gamma, seq_\gamma))之后，如果R现在记录了command (\delta)，同时满足如下三个条件：</strong><ul>
-<li>(\gamma \text{~} \delta)</li>
-<li>(\gamma \notin deps_\delta)</li>
-<li>(\delta \notin deps_\gamma) 或者 (\delta \in deps_\gamma and seq_\delta \le seq_\gamma)</li>
+<li><strong>副本R收到$TryPreAccept(L.i, \gamma, deps_\gamma, seq_\gamma)$之后，如果R现在记录了command $\delta$，同时满足如下三个条件：</strong><ul>
+<li>$\gamma \text{~} \delta$</li>
+<li>$\gamma \notin deps_\delta$</li>
+<li>$\delta \notin deps_\gamma$ 或者 $\delta \in deps_\gamma and seq_\delta \le seq_\gamma$</li>
 </ul>
 </li>
 </ul>
-<p>就回应NACK，并带上冲突command的一些信息（包括(\delta)的instance id、command leader、instance的状态如pre-accepted&#x2F;accepted&#x2F;committed），否则就回应ACK。</p>
+<p>就回应NACK，并带上冲突command的一些信息（包括$\delta$的instance id、command leader、instance的状态如pre-accepted&#x2F;accepted&#x2F;committed），否则就回应ACK。</p>
 <ul>
 <li><strong>副本Q在收到TryPreAccept的响应之后，顺序进行如下的条件判断：</strong></li>
 </ul>
 <ol>
-<li>如果pre-accepted的副本数目已经大于等于F+1，则Q退出恢复过程，开始对L.i实例(\gamma, deps_\gamma, seq_\gamma) 执行Paxos-Accept阶段。</li>
-<li>如果某个TryPreAccept NACK中反馈了存在一个已经committed的冲突command，则退出恢复阶段，从头开始slow path来在L.i实例上重新尝试提交(\gamma)。</li>
-<li>如果某个TryPreAccept NACK中反馈了一个实例(\delta)，其中(\delta \notin deps_\gamma)并且(L_\gamma \in \mathcal{F}_\gamma)，则退出恢复阶段，从头开始slow path来在L.i实例上重新尝试提交(\gamma)。</li>
-<li>如果存在command (\gamma_0)，Q是先尝试恢复(\gamma_0)，但因为发现可能需要先恢复跟(\gamma_0)冲突的(\gamma)。在这种情况下，如果发现(\gamma_0)的command leader是(\gamma)的fast quorum中的一个，那么就退出(\gamma)的恢复，从头开始slow path来重新提交(\gamma)。</li>
-<li>如果前面的条件都不满足，Q就推迟defer (\gamma)的恢复，先恢复与(\gamma)冲突的某个command。</li>
+<li>如果pre-accepted的副本数目已经大于等于F+1，则Q退出恢复过程，开始对L.i实例$\gamma, deps_\gamma, seq_\gamma$ 执行Paxos-Accept阶段。</li>
+<li>如果某个TryPreAccept NACK中反馈了存在一个已经committed的冲突command，则退出恢复阶段，从头开始slow path来在L.i实例上重新尝试提交$\gamma$。</li>
+<li>如果某个TryPreAccept NACK中反馈了一个实例$\delta$，其中$\delta \notin deps_\gamma$并且$L_\gamma \in \mathcal{F}_\gamma$，则退出恢复阶段，从头开始slow path来在L.i实例上重新尝试提交$\gamma$。</li>
+<li>如果存在command $\gamma_0$，Q是先尝试恢复$\gamma_0$，但因为发现可能需要先恢复跟$\gamma_0$冲突的$\gamma$。在这种情况下，如果发现$\gamma_0$的command leader是$\gamma$的fast quorum中的一个，那么就退出$\gamma$的恢复，从头开始slow path来重新提交$\gamma$。</li>
+<li>如果前面的条件都不满足，Q就推迟defer $\gamma$的恢复，先恢复与$\gamma$冲突的某个command。</li>
 </ol>
 <h2 id="协议的部分解释和证明"><a href="#协议的部分解释和证明" class="headerlink" title="协议的部分解释和证明"></a>协议的部分解释和证明</h2><p>这个过程比较复杂，要先梳理清楚核心思想。EPaxos首先尝试将一条command通过Fast Path提交，Fast Path提交时，command leader将已知的依赖属性（用于确定order）连同command自身多播到Fast Quorum，如果Fast Quorum中没有副本反对这个order，那就commit成功。如果达不到Fast Quorum，而只是简单的多数派，那就走Paxos的两阶段。</p>
 <p>根据协议的内容，我们能够琢磨出这样一个结论：在某个副本R上，针对某个instance L.i，其状态可能是pre-accepted、accepted、committed。这三个状态代表了不同程度的确定性。</p>
@@ -321,34 +321,34 @@
 <p>由此，再看恢复阶段的逻辑，就会简单一些。</p>
 <p>Explicit Prepare中发起prepare请求和收集多数派响应，以及查看最大ballot number的响应集合（Basic Paxos中提到的MaxVote）都是跟Basic Paxos协议一致的，这里不再解释。</p>
 <p>Explicit Prepare中24行（多数派没见过该command）、25行（确定已经commit了）、26行（依赖关系已经不会被推翻了）也比较容易理解。</p>
-<p>我们重点描述27行的条件“如果至少(\lfloor\frac{F+1}{2}\rfloor)个副本回应了pre-accept，并且它们回应的(seq_\gamma, deps_\gamma)都与L.i的epoch.0.b那轮PreAccept请求中记录相同”的操作。相比前面24行、25行、26行的条件，这种情况的结果是不确定的。有可能(L_\gamma)只多播了(\lfloor\frac{F+1}{2}\rfloor)个副本，也可能已经达到了(F+\lfloor\frac{F+1}{2}\rfloor)，所以要经过TryPreAccept阶段。</p>
-<p>在TryPreAccept阶段，我们要坚持一个原则：除非已经确定(\gamma)没有commit，否则就要假设(\gamma)已经commit，在恢复阶段就要尽力把(\gamma) commit掉<strong>。</strong>后面的优化和证明都是这个原则引申出来的。</p>
+<p>我们重点描述27行的条件“如果至少$\lfloor\frac{F+1}{2}\rfloor$个副本回应了pre-accept，并且它们回应的$seq_\gamma, deps_\gamma$都与L.i的epoch.0.b那轮PreAccept请求中记录相同”的操作。相比前面24行、25行、26行的条件，这种情况的结果是不确定的。有可能$L_\gamma$只多播了$\lfloor\frac{F+1}{2}\rfloor$个副本，也可能已经达到了$F+\lfloor\frac{F+1}{2}\rfloor$，所以要经过TryPreAccept阶段。</p>
+<p>在TryPreAccept阶段，我们要坚持一个原则：除非已经确定$\gamma$没有commit，否则就要假设$\gamma$已经commit，在恢复阶段就要尽力把$\gamma$ commit掉<strong>。</strong>后面的优化和证明都是这个原则引申出来的。</p>
 <p>接下来我们逐个看TryPreAccept阶段各个场景。</p>
 <p>第28行如果pre-accepted的副本数目已经大于等于F+1，表示至少多数派已经认可了这一顺序关系，此时直接走Paxos-Accept即可。</p>
-<p>第29行如果某个TryPreAccept NACK中反馈了存在一个已经committed的冲突command，那么根据FP-deps-committed条件，(\gamma)确定是未commit的。此时从头开始走slow path。</p>
-<p>第30行如果某个TryPreAccept NACK中反馈了一个实例(\delta)，其中(\delta \notin deps_\gamma)并且(L_\gamma \in \mathcal{F}_\gamma)，因为协议使用的是thrifty模式，因此可以确定(\gamma)没有commit，则从头开始slow path。</p>
-<p>第31行如果存在command (\gamma_0)，Q之前先是尝试恢复(\gamma_0)，但因为发现可能需要先恢复跟(\gamma_0)冲突的(\gamma)。在这种情况下，如果发现(\gamma_0)的command leader是(\gamma)的fast quorum中的一个，同样是因为thrifty模式，(\gamma)一定是没有commit的，所以可以从头开始slow path。</p>
-<p>只剩下最后一种情况，第32行，如果前面的条件都不满足，Q就推迟(\gamma)的恢复，先恢复与(\gamma)冲突的某个command。</p>
-<p>从上面的描述，我们可以看到，当我们尽可能根据已有的信息判定出来(\gamma)可以走Paxos-Accept或者确认未commit直接从头开始slow path。除此之外，我们仍然有可能无法推断出确定的信息，此时(\gamma)的恢复就被defer了。 那么问题来了，有没有可能我们一直在推迟某几个instance？答案是不会的。</p>
-<p>接下来我们就要一步步理解为什么EPaxos的fast quorum是一个如此奇怪的值(\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor)。</p>
-<p>试想，如果我们让(\mathcal{F})足够大，比如(\mathcal{F}&#x3D;N)，那么我们很容易推断出一个command是不是通过fast path来commit了：恢复阶段只要有一个副本反馈说没有记录过pre-accept就足够确定是没有通过fast path来commit了。如果(\mathcal{F})太小也不行，我们已经看过了，N&#x3D;7的情况下，至少得超过多数派。</p>
-<p>那么，为什么(\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor)是合适的呢？我们接下来证明一下为什么这个值就可以避免TryPreAccept过程处于一直推迟的状态。需要注意的是，虽然我们是拿着这个值去证明不会推迟，但是证明在该值下不会推迟可以简单地转化为证明在不会推迟的前提下求这个值至少是多少。</p>
-<p>我们只证明一个简单的情况：不存在(\gamma)和(\delta)两个command的恢复过程互相等待对方。更大的循环等待证明过程我也没看，读者感兴趣可以参考证明的技术报告。我们用反证法，假设二者互相defer。</p>
-<p>首先定义(RESP_\gamma)是(\gamma)的fast quorum（记作(QUOR_\gamma)）中回应了TryPreAccept的副本的集合。类似地定义(RESP_\delta)。</p>
-<p>R在恢复(\gamma)和(\delta)时，可以得出如下的几个结论：</p>
-<p>(|RESP_\gamma| \ge \lfloor\frac{F+1}{2}\rfloor)</p>
-<p>(|RESP_\delta| \ge \lfloor\frac{F+1}{2}\rfloor)</p>
-<p>(RESP_\gamma \cap RESP_\delta &#x3D; \emptyset)</p>
-<p>(L_\gamma \notin QUOR_\delta)</p>
-<p>(L_\delta \notin QUOR_\gamma)</p>
-<p>前两个是因为无法确定是不是经过fast path才会推迟恢复，如果这两个条件不满足，容易推断出少于(\mathcal{F})的节点记录了pre-accept。第3个结论是因为不可能有副本记录了两个冲突的pre-accepted command，这个副本一定更新了冲突中的某一个deps。同样的原因可以推出第4和第5个结论（注意协议是thrifty模式）。</p>
-<p>接下来还有一个重要的结论。因为Explicit Prepare至少收到了多数派的响应之后才会做判断，所以最多还有F个副本没有回应。因为副本R在推迟(\gamma)转而尝试确定(\delta)，所以(L_\gamma)一定在F个未回应的副本中，否则(L_\gamma)回应了R，那么R就得知了(\gamma)的状态，因为只有(L_\gamma)才会通过fast path来commit (\gamma)。又因为(L_\gamma \notin QUOR_\delta)，所以(|RESP_\delta| \ge \lfloor\frac{F+1}{2}\rfloor + 1)。</p>
-<p>注意因为假设了(\gamma)和(\delta)的过程互相defer，所以结论中(\gamma)和(\delta)互换仍是成立的。接下来，我们注意到一个事实：(QUOR_\gamma)和(RESP_\delta)和({L_\delta})三个集合是disjoint的，然而三者的基数加起来至少是(F+\lfloor\frac{F+1}{2}\rfloor+\lfloor\frac{F+1}{2}\rfloor+1+1\gt 2F+1)。这是不可能的，因此互相defer而推进不了的假设是错误的。</p>
+<p>第29行如果某个TryPreAccept NACK中反馈了存在一个已经committed的冲突command，那么根据FP-deps-committed条件，$\gamma$确定是未commit的。此时从头开始走slow path。</p>
+<p>第30行如果某个TryPreAccept NACK中反馈了一个实例$\delta$，其中$\delta \notin deps_\gamma$并且$L_\gamma \in \mathcal{F}_\gamma$，因为协议使用的是thrifty模式，因此可以确定$\gamma$没有commit，则从头开始slow path。</p>
+<p>第31行如果存在command $\gamma_0$，Q之前先是尝试恢复$\gamma_0$，但因为发现可能需要先恢复跟$\gamma_0$冲突的$\gamma$。在这种情况下，如果发现$\gamma_0$的command leader是$\gamma$的fast quorum中的一个，同样是因为thrifty模式，$\gamma$一定是没有commit的，所以可以从头开始slow path。</p>
+<p>只剩下最后一种情况，第32行，如果前面的条件都不满足，Q就推迟$\gamma$的恢复，先恢复与$\gamma$冲突的某个command。</p>
+<p>从上面的描述，我们可以看到，当我们尽可能根据已有的信息判定出来$\gamma$可以走Paxos-Accept或者确认未commit直接从头开始slow path。除此之外，我们仍然有可能无法推断出确定的信息，此时$\gamma$的恢复就被defer了。 那么问题来了，有没有可能我们一直在推迟某几个instance？答案是不会的。</p>
+<p>接下来我们就要一步步理解为什么EPaxos的fast quorum是一个如此奇怪的值$\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor$。</p>
+<p>试想，如果我们让$\mathcal{F}$足够大，比如$\mathcal{F}&#x3D;N$，那么我们很容易推断出一个command是不是通过fast path来commit了：恢复阶段只要有一个副本反馈说没有记录过pre-accept就足够确定是没有通过fast path来commit了。如果$\mathcal{F}$太小也不行，我们已经看过了，N&#x3D;7的情况下，至少得超过多数派。</p>
+<p>那么，为什么$\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor$是合适的呢？我们接下来证明一下为什么这个值就可以避免TryPreAccept过程处于一直推迟的状态。需要注意的是，虽然我们是拿着这个值去证明不会推迟，但是证明在该值下不会推迟可以简单地转化为证明在不会推迟的前提下求这个值至少是多少。</p>
+<p>我们只证明一个简单的情况：不存在$\gamma$和$\delta$两个command的恢复过程互相等待对方。更大的循环等待证明过程我也没看，读者感兴趣可以参考证明的技术报告。我们用反证法，假设二者互相defer。</p>
+<p>首先定义$RESP_\gamma$是$\gamma$的fast quorum（记作$QUOR_\gamma$）中回应了TryPreAccept的副本的集合。类似地定义$RESP_\delta$。</p>
+<p>R在恢复$\gamma$和$\delta$时，可以得出如下的几个结论：</p>
+<p>$|RESP_\gamma| \ge \lfloor\frac{F+1}{2}\rfloor$</p>
+<p>$|RESP_\delta| \ge \lfloor\frac{F+1}{2}\rfloor$</p>
+<p>$RESP_\gamma \cap RESP_\delta &#x3D; \emptyset$</p>
+<p>$L_\gamma \notin QUOR_\delta$</p>
+<p>$L_\delta \notin QUOR_\gamma$</p>
+<p>前两个是因为无法确定是不是经过fast path才会推迟恢复，如果这两个条件不满足，容易推断出少于$\mathcal{F}$的节点记录了pre-accept。第3个结论是因为不可能有副本记录了两个冲突的pre-accepted command，这个副本一定更新了冲突中的某一个deps。同样的原因可以推出第4和第5个结论（注意协议是thrifty模式）。</p>
+<p>接下来还有一个重要的结论。因为Explicit Prepare至少收到了多数派的响应之后才会做判断，所以最多还有F个副本没有回应。因为副本R在推迟$\gamma$转而尝试确定$\delta$，所以$L_\gamma$一定在F个未回应的副本中，否则$L_\gamma$回应了R，那么R就得知了$\gamma$的状态，因为只有$L_\gamma$才会通过fast path来commit $\gamma$。又因为$L_\gamma \notin QUOR_\delta$，所以$|RESP_\delta| \ge \lfloor\frac{F+1}{2}\rfloor + 1$。</p>
+<p>注意因为假设了$\gamma$和$\delta$的过程互相defer，所以结论中$\gamma$和$\delta$互换仍是成立的。接下来，我们注意到一个事实：$QUOR_\gamma$和$RESP_\delta$和${L_\delta}$三个集合是disjoint的，然而三者的基数加起来至少是$F+\lfloor\frac{F+1}{2}\rfloor+\lfloor\frac{F+1}{2}\rfloor+1+1\gt 2F+1$。这是不可能的，因此互相defer而推进不了的假设是错误的。</p>
 <h2 id="Execution-Read"><a href="#Execution-Read" class="headerlink" title="Execution &amp; Read"></a>Execution &amp; Read</h2><p>这部分内容简单了解了下，没有仔细看。</p>
-<h3 id="执行算法"><a href="#执行算法" class="headerlink" title="执行算法"></a>执行算法</h3><p>对于R.i的instance command (\gamma)，其execution算法如下：</p>
+<h3 id="执行算法"><a href="#执行算法" class="headerlink" title="执行算法"></a>执行算法</h3><p>对于R.i的instance command $\gamma$，其execution算法如下：</p>
 <ol>
 <li>等待i instance变为committed</li>
-<li>构建dependency graph：command作为节点、依赖作为有向边，从(\gamma)开始，反复处理(\gamma)所以来的command，以及所依赖的command所依赖的command…</li>
+<li>构建dependency graph：command作为节点、依赖作为有向边，从$\gamma$开始，反复处理$\gamma$所以来的command，以及所依赖的command所依赖的command…</li>
 <li>求出图的强连通分支</li>
 <li>对强连通分支的反向拓扑顺序依次执行如下操作：</li>
 </ol>
