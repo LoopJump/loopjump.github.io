@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>搭建Linux内核调试环境</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2019-02-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,24 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>这篇文章介绍下在MacOSX如何用gdb + vmware的方式调试Linux内核。</p>
+<h3 id="一：安装Vmware-Fusion"><a href="#一：安装Vmware-Fusion" class="headerlink" title="一：安装Vmware Fusion"></a>一：安装Vmware Fusion</h3><h3 id="二：安装gdb"><a href="#二：安装gdb" class="headerlink" title="二：安装gdb"></a>二：安装gdb</h3><p>注意这里需要安装高版本的gdb，这里安装的是8.2版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://ftp.gnu.org/gnu/gdb/gdb-8.2.tar.gz</span><br><span class="line">tar xf gdb-8.2.tar.gz</span><br><span class="line">cd gdb-8.2</span><br><span class="line">./configure --build=x86_64-apple-darwin14.0.0 --target=x86_64-vfs-linux --with-python</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<h3 id="三：下载guest-os并安装"><a href="#三：下载guest-os并安装" class="headerlink" title="三：下载guest os并安装"></a>三：下载guest os并安装</h3><p>这里安装的是Ubuntu 18.04（内核版本4.18）</p>
+<h3 id="四：下载并安装新内核"><a href="#四：下载并安装新内核" class="headerlink" title="四：下载并安装新内核"></a>四：下载并安装新内核</h3><p>这里下载4.19的内核，配置编译，注意：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONFIG_RANDOMIZE_BASE=n（KASLR 内核地址随机化）</span><br><span class="line">CONFIG_DEBUG_INFO=y (允许gdb调试)</span><br><span class="line">CONFIG_GDB_SCRIPTS=y</span><br><span class="line">CONFIG_X86_NEED_RELOCS=n (关闭内存动态布局)</span><br><span class="line">CONFIG_RANDOMIZE_MEMORY=n</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">make -j16</span><br><span class="line">make -j16 modules</span><br><span class="line">make modules_install</span><br><span class="line">make install</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<h3 id="五：配置vmware，支持gdb远程调试"><a href="#五：配置vmware，支持gdb远程调试" class="headerlink" title="五：配置vmware，支持gdb远程调试"></a>五：配置vmware，支持gdb远程调试</h3><p>在虚拟机的安装目录下，找到包文件 <em>Ubuntu 64 位 18.04</em>，右键显示包内容，打开<em>Ubuntu 64 位 18.04.vmx</em>，添加一行内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">debugStub.listen.guest64 = &quot;1&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="六：gdb调试"><a href="#六：gdb调试" class="headerlink" title="六：gdb调试"></a>六：gdb调试</h3><p>将编译出来的新内核的vmlinux从guest os拷贝到host os下的目录</p>
+<p>启动vmware中的guest os</p>
+<p>用gdb远程连接并调试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">(gdb) file vmlinux</span><br><span class="line">(gdb) target remote:8864</span><br><span class="line">(gdb) b cmdline_proc_show  # 虚拟机中执行 `cat /proc/cmdline` 触发断点</span><br><span class="line">...</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  cmdline_proc_show (m=0xffff88018763b500, v=0x1 &lt;irq_stack_union+1&gt;) at fs/proc/cmdline.c:8</span><br><span class="line">#1  0xffffffff812ccdfa in seq_read (file=0xffff88016b348d00, buf=&lt;optimized out&gt;, size=&lt;optimized out&gt;, ppos=0xffffc9000368fee8) at fs/seq_file.c:229</span><br><span class="line">#2  0xffffffff81324b8e in proc_reg_read (file=&lt;optimized out&gt;, buf=&lt;optimized out&gt;, count=&lt;optimized out&gt;, ppos=&lt;optimized out&gt;) at fs/proc/inode.c:231</span><br><span class="line">#3  0xffffffff812a422a in __vfs_read (file=0xffff88018763b500, buf=&lt;optimized out&gt;, count=&lt;optimized out&gt;, pos=0xffffc9000368fee8) at fs/read_write.c:416</span><br><span class="line">#4  0xffffffff812a43fe in vfs_read (file=0xffff88016b348d00, buf=0x7f4de8fa3000 &lt;error: Cannot access memory at address 0x7f4de8fa3000&gt;, count=131072, pos=0xffffc9000368fee8) at fs/read_write.c:452</span><br><span class="line">#5  0xffffffff812a49c5 in ksys_read (fd=&lt;optimized out&gt;, buf=0x7f4de8fa3000 &lt;error: Cannot access memory at address 0x7f4de8fa3000&gt;, count=131072) at fs/read_write.c:578</span><br><span class="line">#6  0xffffffff812a4a4a in __do_sys_read (count=&lt;optimized out&gt;, buf=&lt;optimized out&gt;, fd=&lt;optimized out&gt;) at fs/read_write.c:588</span><br><span class="line">#7  __se_sys_read (count=&lt;optimized out&gt;, buf=&lt;optimized out&gt;, fd=&lt;optimized out&gt;) at fs/read_write.c:586</span><br><span class="line">#8  __x64_sys_read (regs=&lt;optimized out&gt;) at fs/read_write.c:586</span><br><span class="line">#9  0xffffffff8100427a in do_syscall_64 (nr=&lt;optimized out&gt;, regs=0x1 &lt;irq_stack_union+1&gt;) at arch/x86/entry/common.c:290</span><br><span class="line">#10 0xffffffff81c00088 in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:238</span><br><span class="line">Backtrace stopped: Cannot access memory at address 0x1fec0</span><br><span class="line">(gdb) f 0</span><br><span class="line">#0  cmdline_proc_show (m=0xffff88018763b500, v=0x1 &lt;irq_stack_union+1&gt;) at fs/proc/cmdline.c:8</span><br><span class="line">8	&#123;</span><br><span class="line">(gdb) p m</span><br><span class="line">$2 = (struct seq_file *) 0xffff88018763b500</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +191,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/epaxos_paper_note/">
+      <a class="nav-left" href="/10-patterns-for-controlling-the-cloud-in-aws/">
         <span class="nav-arrow">← </span>
         
-          EPaxos协议解读
+          10 Patterns for Controlling the Cloud in AWS
         
       </a>
     
     
-      <a class="nav-right" href="/basic_paxos_proof/">
+      <a class="nav-right" href="/designing-access-methods-the-rum-conjecture/">
         
-          Basic Paxos证明
+          RUM Conjecture
         
         <span class="nav-arrow"> →</span>
       </a>

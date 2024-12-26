@@ -159,53 +159,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
-      </h2>
-      <p class="article-date">April 10, 2019</p>
-      
-      <div class="article-summary">
-        
-          《Distributed consensus revised》 Heidi Howard
-整篇论文151页，粗略通读了一遍，主要是了解各个变体的基本思路和正确性直觉的理解，更形式化的证明基本上都跳过了。
-这里假设读者对Basic Paxos有了一定了解，看过Lamport的那篇原始论文。另外 ...
-        
-      </div>
-      <a class="more" href="/consensus-revised-paper/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
-      </h2>
-      <p class="article-date">March 10, 2019</p>
-      
-      <div class="article-summary">
-        
-          《Designing Access Methods: The RUM Conjecture》
-这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
-就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
-        
-      </div>
-      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/data_model_history/">以史为鉴：数据模型变迁史</a>
-      </h2>
-      <p class="article-date">February 10, 2018</p>
-      
-      <div class="article-summary">
-        
-          这两天看了篇数据模型的论文，What Goes Around Comes Around。这篇论文是2005年Stonebraker和Hellerstein两位泰斗写的，讲的是数据库的数据模型35年的变迁历史，另外论文还总结了一些经验。
-这是一个非常有趣的话题，能够让我们更多地去从市场和产品角 ...
-        
-      </div>
-      <a class="more" href="/data_model_history/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/dbms_arch/">数据库系统组件</a>
       </h2>
       <p class="article-date">February 10, 2018</p>
@@ -223,18 +176,45 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/deep_class/">Deep Class</a>
+        <a href="/epaxos_paper_note/">EPaxos协议解读</a>
       </h2>
-      <p class="article-date">February 10, 2018</p>
+      <p class="article-date">March 10, 2017</p>
       
       <div class="article-summary">
         
-          最近看了个有趣的talk：”A Philosophy of Software Design” by John Ousterhout。
-地址：https://www.youtube.com/watch?v=bmSAYlu0NcY
-https://www.youtube.com/watch?v= ...
+          引言这是2013年SOSP的会议论文，讲述了一个leaderless的一致性协议EPaxos。不得不说的是，这篇论文写的实在是难读，一方面协议确实比Multi Paxos协议复杂很多，另一方面是行文上有些地方不通顺。我看的资料是会议论文和两个版本的EPaxos证明的技术报告。会议论文简洁但是 ...
         
       </div>
-      <a class="more" href="/deep_class/">Read more</a>
+      <a class="more" href="/epaxos_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/flp_proof_note/">FLP impossibility证明阅读笔记</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+      <div class="article-summary">
+        
+          分布式系统一致性协议里面有一个FLP impossibility的结论，这个结论是说，在分布式系统中，异步网络（消息延迟可能任意大或丢失，消息可能乱序），只要有一个进程失效（进程死亡或者足够长时间不响应），就不可能设计出一个确定性的一致性协议。
+该结论由Fisher、Lynch、Paters ...
+        
+      </div>
+      <a class="more" href="/flp_proof_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/flexible_paxos_quorum_revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+      <div class="article-summary">
+        
+          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
+        
+      </div>
+      <a class="more" href="/flexible_paxos_quorum_revisited/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -251,6 +231,22 @@ Dynamo系统 ...
         
       </div>
       <a class="more" href="/dynamo_paper_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/gdb_tips/">gdb调试技巧</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+      <div class="article-summary">
+        
+          Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。
+使用gdb前，代码要用gcc -g选项编译以带上符号表。
+调试C++程序的基本环境设置1234567set print pretty onset print  ...
+        
+      </div>
+      <a class="more" href="/gdb_tips/">Read more</a>
     </article>
   
     <article class="article-card">

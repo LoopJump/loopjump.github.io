@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Flexible Paxos - 重新审视Paxos协议中的Quorum</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2017-02-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,25 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prepare&#x2F;accept阶段的quorum有交集即可。</p>
+<p>我们从Basic Paxos证明过程简单描述为什么放宽后算法依然正确（原论文最后给了一个TLA+的形式化证明）。</p>
+<p>在前文<a target="_blank" rel="noopener" href="http://loopjump.com/basic_paxos_proof/">Basic Paxos证明过程</a>中，我们看到，Theorem 1的证明关键点在于(\exists B\triangle\in (C_{qrm} \cap B_{vot}))。( B\triangle )的存在，使得如果后续的Ballot C想投票，则在prepare阶段，一定会通过(MaxVote(C_{bal}, C_{qrm}, \mathcal{B}) )问到Ballot B投的dec。</p>
+<p>那么，在Basic Paxos协议中，(\exists B\triangle\in (C_{qrm} \cap B_{vot}))条件之所以成立，是因为 ( B_{qrm} \subseteq B_{vot}) 并且 ( B_{qrm} \cap C_{qrm}\neq \emptyset)。</p>
+<p>由此我们可以知道，Basic Paxos协议要求任何quorum都是有交集是保证Paxos协议正确性的<strong>充分不必要条件</strong>。我们可以把约束放宽到<strong>( C_{qrm} \cap B_{vot} \neq \emptyset )</strong>即可。</p>
+<p>这个条件表达的意思是，<strong>prepare阶段和accept阶段的quorum交集不空即可</strong>。文中称这种协议为Flexible Paxos。</p>
+<p>放宽的方式可以多种多样。论文描述了几种可能的方式。为行文描述方便，prepare阶段的quorum记为Q1，accept阶段的则记为Q2。</p>
+<h3 id="第一种，Majority-quorums"><a href="#第一种，Majority-quorums" class="headerlink" title="第一种，Majority quorums"></a><strong>第一种，Majority quorums</strong></h3><p>也是多数派的约束，但是跟Basic Paxos略有差别。在Basic Paxos中，要求两个阶段的quorum都至少是$$n&#x2F;2+1$$。这里可以放宽为，如果n是偶数，$$Q_1$$为至少是$$n&#x2F;2+1$$，$$Q_2$$至少是$$n&#x2F;2$$。n是奇数的话，不能按这种方式放宽。</p>
+<p>如果正好$$n&#x2F;2$$的机器宕机了，Multi Paxos中，只要leader仍然活着，accept阶段可以继续progress（注，Multi Paxos协议中，prepare请求为从某个instance之后的所有的无穷多个instance做prepare）。不过如果leader宕机了，Mutli Paxos需要重新执行prepare阶段时，也是无法进行下去的。</p>
+<h3 id="第二种，Simple-quorums"><a href="#第二种，Simple-quorums" class="headerlink" title="第二种，Simple quorums"></a><strong>第二种，Simple quorums</strong></h3><p>在第一种majority quorumns基础上继续的一个泛化，把条件改为$$ |Q_1| + |Q2| &gt; N $$。</p>
+<p>这种方式下，$$Q_1$$如果设大，$$Q_2$$就可设小一点。那么，accept阶段就可以减少需要同步的节点数，只是leader宕机后重新prepare时就只能容忍较少的节点宕机。反之，accept阶段需要同步的节点更多，但重新prepare时只需要较少的节点在线。</p>
+<p>这种quorum跟Dynamo的NRW方案很像：数据被冗余N份，写操作只写其中的W份，读操作只读取R份，如果W+R&gt;N，则一定能不会漏掉早于读取前完成的写结果。Paxos也是类似，在prepare阶段也一定要获取到可能已经被确认的决议的值。</p>
+<h3 id="第三种-Grid-quorum"><a href="#第三种-Grid-quorum" class="headerlink" title="第三种 Grid quorum"></a><strong>第三种 Grid quorum</strong></h3><p>Grid quorum system：将$$N$$个节点分为$$ N&#x3D;N_1*N_2 $$的矩阵。</p>
+<p>Paxos要求任意两个quorum都有交集。因此在grid quorum system里，Paxos可以选择quorum为一行加一列。任意两个quorum都有交集，如左图。这种选择最多允许任意$$Min(N_1,N_2)$$个节点宕机，即宕机一整行或者一整列就会导致协议走不下去。假设蓝色表示$$Q_1$$，绿色表示$$Q_2$$。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/66c14b3a-3915-47d0-938d-55928c8562e2/grid.png" alt="grid.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/01/grid.png">http://loopjump.com/wp-content/uploads/2017/01/grid.png</a></p>
+<p>在Flexible Paxos协议下，根据$$Q_1$$和$$Q_2$$交集不空的约束，$$Q_1$$可以为一行大小$$N_1$$，$$Q_2$$可以为一列大小$$N_2$$。这样，正常运行无宕机时，只需要同步$$N_2$$个节点即可。</p>
+<p>需要指出的是，与simple quorum system不一样，grid quorum system下，节点本身不再是完全对等的。例如在上图中，4个节点宕机，左图prepare和accept阶段都无法推进，但是右图中，如果4个节点在同一列，则accept阶段可以继续推进，只要不需要进行prepare阶段，系统仍可持续服务。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +192,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/gdb_tips/">
+      <a class="nav-left" href="/dynamo_paper_note/">
         <span class="nav-arrow">← </span>
         
-          gdb调试技巧
+          Dynamo论文阅读笔记
         
       </a>
     
     
-      <a class="nav-right" href="/epaxos_paper_note/">
+      <a class="nav-right" href="/flp_proof_note/">
         
-          EPaxos协议解读
+          FLP impossibility证明阅读笔记
         
         <span class="nav-arrow"> →</span>
       </a>

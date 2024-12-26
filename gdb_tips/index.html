@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>gdb调试技巧</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2017-02-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,51 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。</p>
+<p>使用gdb前，代码要用gcc -g选项编译以带上符号表。</p>
+<h3 id="调试C-程序的基本环境设置"><a href="#调试C-程序的基本环境设置" class="headerlink" title="调试C++程序的基本环境设置"></a>调试C++程序的基本环境设置</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set print pretty on</span><br><span class="line">set print object on</span><br><span class="line">set print static-members off</span><br><span class="line">set print vtbl on</span><br><span class="line">set print demangle on</span><br><span class="line">set demangle-style gnu-v3</span><br><span class="line">set print sevenbit-strings off</span><br></pre></td></tr></table></figure>
+
+<h3 id="在gdb里面临时执行一些shell命令，可以用gdb的shell命令"><a href="#在gdb里面临时执行一些shell命令，可以用gdb的shell命令" class="headerlink" title="在gdb里面临时执行一些shell命令，可以用gdb的shell命令"></a>在gdb里面临时执行一些shell命令，可以用gdb的shell命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; shell pwd</span><br><span class="line">或者先进入shell</span><br><span class="line">gdb&gt; shell</span><br><span class="line">$ pwd</span><br><span class="line">$ exit // 退出shell，回到gdb</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看当前堆栈"><a href="#查看当前堆栈" class="headerlink" title="查看当前堆栈"></a>查看当前堆栈</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; bt // backtrace</span><br><span class="line">也可以先切换到其他线程，看其他线程的当前堆栈</span><br><span class="line">gdb&gt; info thread // 查看所有线程</span><br><span class="line">gdb&gt; thread 12 // 切换到12号线程</span><br><span class="line">gdb&gt; bt</span><br></pre></td></tr></table></figure>
+
+<h3 id="断点的几个技巧"><a href="#断点的几个技巧" class="headerlink" title="断点的几个技巧"></a>断点的几个技巧</h3><p>条件断点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; break foo if x&gt;0</span><br><span class="line">commands</span><br><span class="line">printf &quot;x is %dn&quot;,x</span><br><span class="line">continue</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>在x&gt;0时，停止并执行一系列commands。</p>
+<h3 id="打印变量或内存print命令"><a href="#打印变量或内存print命令" class="headerlink" title="打印变量或内存print命令"></a>打印变量或内存print命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; p *arr@23  // 将arr视为长度为23的数组打印出来</span><br><span class="line">gdb&gt; p/x my_var // 以16进制打印my_var，除x外，还有c/d等</span><br><span class="line">gdb&gt; x mem_addr // 查看mem_addr地址对应的内存内容</span><br></pre></td></tr></table></figure>
+
+<p>打印格式的调整：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; set print pretty // 打印struct/class时，gdb会带缩进</span><br><span class="line">gdb&gt; set print static-member off // 打印对象时，不打印对象的static变量</span><br><span class="line">gdb&gt; set print element 23 // 打印数组时，最多打印几个对象，0为不限</span><br></pre></td></tr></table></figure>
+
+<h3 id="打印函数局部static-thread变量"><a href="#打印函数局部static-thread变量" class="headerlink" title="打印函数局部static __thread变量"></a>打印函数局部static __thread变量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C/C++ code</span><br><span class="line">void foo() &#123;</span><br><span class="line">  static __thread my_var = 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">gdb&gt; thread 12</span><br><span class="line">gdb&gt; p ‘foo::my_var’</span><br></pre></td></tr></table></figure>
+
+<p>不过这个命令在某些环境下不能生效，不知道为什么。</p>
+<h3 id="打印真实类型"><a href="#打印真实类型" class="headerlink" title="打印真实类型"></a>打印真实类型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set print object on</span><br><span class="line">print base_class_ptr</span><br></pre></td></tr></table></figure>
+
+<h3 id="disassemble"><a href="#disassemble" class="headerlink" title="disassemble"></a>disassemble</h3><p>除了查看汇编之外，这个命令在某些情况下还可以用来查看某个地址上存放的是什么对象。因为C++对象布局的原因，假设可以确认某个地址（例如内存分配器的一块内存）存放了一个C++对象（假设有虚表指针），那么直接disassemble这个对应到虚表指针的地址，可以看到一个mangled符号名字，基本就可以确定上面存放的是什么对象了。</p>
+<p>我之前在排查一个内存泄漏的问题时用过这个技巧，内存分配器实现时可以检测是否有泄漏，并且能够知道哪些内存块被泄漏了，但是因为只能在分配器对象析构时才能确定内存泄漏，所以并不方便知道是哪个使用者泄漏了（把使用者id传进来太麻烦）。通过这种办法能够先确定是哪个使用者泄漏了，进而缩小问题范围。</p>
+<h3 id="dump-memory把一段内存内容转储到文件中"><a href="#dump-memory把一段内存内容转储到文件中" class="headerlink" title="dump memory把一段内存内容转储到文件中"></a>dump memory把一段内存内容转储到文件中</h3><p>我之前在排查某个问题时，需要在coredump中将一个哈希表的内容打印出来。假设哈希表实现为大数组（数组内的元素只存放指针），拉链解决冲突。那么，就可以用gdb脚本（我们后面会给出一个详细的例子）将所有的元素打印出来。不过这里有个问题：gdb是解释执行的，非常慢，导致打印一个大的哈希表耗时可能达到几天之久。</p>
+<p>假设哈希表数组大小为一千万，但是实际有效元素只有几万，并且数组中无效元素都是NULL指针。那么就可以先将数组dump memory到文件，用shell脚本先过滤掉NULL元素，只遍历剩下的有效指针，在我遇到的这个场景下，遍历耗时从7天降到了10分钟。</p>
+<p>不过还遇到一个麻烦，gdb不支持将shell命令结果存入gdb变量中，所以只能拼凑一个临时的gdb脚本，里面有shell脚本生成的诸如set my_gdb_var &#x3D; ‘pwd’等内容，然后在gdb环境下source这个临时脚本，曲线地将内容加载到gdb变量中。</p>
+<h3 id="gdb脚本示例"><a href="#gdb脚本示例" class="headerlink" title="gdb脚本示例"></a>gdb脚本示例</h3><p>gdb脚本是一个非常好用的利器，比如在coredump文件中，你可能想知道某个链表&#x2F;哈希表等数据结构里面都有什么元素，可以写脚本遍历打印出来。这里给一个例子。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">struct Node</span><br><span class="line">&#123;</span><br><span class="line">  int val_;</span><br><span class="line">  Node *next_;</span><br><span class="line">  Node(int v) : val_(v), next_(nullptr) &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">  Node *head = new Node(0);</span><br><span class="line">  Node *curr = head;</span><br><span class="line">  for (int i = 1; i &lt; 10; i++) &#123;</span><br><span class="line">    curr-&gt;next_ = new Node(i);</span><br><span class="line">    curr = curr-&gt;next_;</span><br><span class="line">  &#125;</span><br><span class="line">  abort(); // abort for gdb core dump file.</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>gdb脚本代码print_my_list_script.gdb</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">define print_my_list</span><br><span class="line">  set $curr = $arg0</span><br><span class="line">  while $curr</span><br><span class="line">    printf &quot;%d &quot;, $curr-&gt;val_</span><br><span class="line">    set $curr = $curr-&gt;next_</span><br><span class="line">  end</span><br><span class="line">  printf &quot;\n&quot;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>执行脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb)source print_my_list_script.gdb</span><br><span class="line">(gdb)print_my_list head</span><br><span class="line">0 1 2 3 4 5 6 7 8 9</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="gdb打印STL库"><a href="#gdb打印STL库" class="headerlink" title="gdb打印STL库"></a>gdb打印STL库</h3><p>大部分内置STL库对应的gdb脚本，都可以在这里下载 <a target="_blank" rel="noopener" href="http://www.yolinux.com/TUTORIALS/src/dbinit_stl_views-1.03.txt">http://www.yolinux.com/TUTORIALS/src/dbinit_stl_views-1.03.txt</a></p>
+<p>不过这里没有unordered_map，这里我写了一个例子，读者如果需要，可以自己写一个。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;unordered_map&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">struct Student</span><br><span class="line">&#123;</span><br><span class="line">  int val_1_;</span><br><span class="line">  int val_2_;</span><br><span class="line">&#125;;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">  unordered_map&lt;int, Student&gt; m;</span><br><span class="line">  for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">    Student s;</span><br><span class="line">    s.val_1_ = i;</span><br><span class="line">    s.val_2_ = i;</span><br><span class="line">    m.insert(&#123;i, s&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  abort(); // abort to get a coredump file</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">define dump_map_new</span><br><span class="line">  set $map = $arg0</span><br><span class="line">  set $head_node = $map._M_h._M_before_begin._M_nxt</span><br><span class="line">  set $curr_node = $head_node</span><br><span class="line">  while $curr_node</span><br><span class="line">    set $iter_node = (std::__detail::_Hash_node&lt;std::pair&lt;int const, Student&gt;, false&gt; *)($curr_node)</span><br><span class="line">    set $addr = &amp;($iter_node-&gt;_M_storage._M_storage)</span><br><span class="line">    set $iter_pair = (std::pair&lt;int const, Student&gt; *)($addr)</span><br><span class="line">    printf &quot;key=%d, value=&#123;%d, %d&#125;\n&quot;, $iter_pair-&gt;first, $iter_pair-&gt;second.val_1_, $iter_pair-&gt;second.val_2_</span><br><span class="line">    set $curr_node = $curr_node-&gt;_M_nxt</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>注意：$curr_node的类型，可以在gdb下print 这个map看下（可能需要先disable pretty-printer）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) source dump_map_new.gdb</span><br><span class="line">(gdb) dump_map_new m</span><br><span class="line">key=9, value=&#123;9, 9&#125;</span><br><span class="line">key=8, value=&#123;8, 8&#125;</span><br><span class="line">key=7, value=&#123;7, 7&#125;</span><br><span class="line">key=6, value=&#123;6, 6&#125;</span><br><span class="line">key=5, value=&#123;5, 5&#125;</span><br><span class="line">key=4, value=&#123;4, 4&#125;</span><br><span class="line">key=0, value=&#123;0, 0&#125;</span><br><span class="line">key=1, value=&#123;1, 1&#125;</span><br><span class="line">key=2, value=&#123;2, 2&#125;</span><br><span class="line">key=3, value=&#123;3, 3&#125;</span><br></pre></td></tr></table></figure>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +218,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/flp_proof_note/">
+      <a class="nav-left" href="/cap_theory/">
         <span class="nav-arrow">← </span>
         
-          FLP impossibility证明阅读笔记
+          浅析CAP理论
         
       </a>
     
     
-      <a class="nav-right" href="/flexible_paxos_quorum_revisited/">
+      <a class="nav-right" href="/dynamo_paper_note/">
         
-          Flexible Paxos - 重新审视Paxos协议中的Quorum
+          Dynamo论文阅读笔记
         
         <span class="nav-arrow"> →</span>
       </a>
