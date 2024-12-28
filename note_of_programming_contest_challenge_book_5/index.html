@@ -10,7 +10,7 @@
   
   <title>
     
-      《挑战程序设计竞赛》读书笔记3-图算法,图搜索,最短路,最小生成树 | LoopJump&#39;s Blog
+      《挑战程序设计竞赛》读书笔记5-尺取法 | LoopJump&#39;s Blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -82,7 +82,25 @@
       
         <li class="list-item">
           
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
             <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
           
         </li>
       
@@ -116,7 +134,25 @@
         
           <li class="menu-item">
             
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
               <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
             
           </li>
         
@@ -156,8 +192,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>《挑战程序设计竞赛》读书笔记3-图算法,图搜索,最短路,最小生成树</h2>
-  <p class="post-date">2014-02-03</p>
+  <h2>《挑战程序设计竞赛》读书笔记5-尺取法</h2>
+  <p class="post-date">2014-02-05</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,35 +201,22 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="2-5节图"><a href="#2-5节图" class="headerlink" title="2.5节图"></a><strong>2.5节图</strong></h1><h3 id="1-图的搜索"><a href="#1-图的搜索" class="headerlink" title="1. 图的搜索"></a><strong>1. 图的搜索</strong></h3><p>图的搜索可以用BFS和DFS。</p>
-<p>二分图问题描述如下：给定一个图，判定是否可以用两种颜色涂顶点，使得有边相邻的两个顶点不同色。</p>
-<p>这个问题可以用DFS遍历求解。着色时，确定当前点的颜色后，当前点相邻的点的颜色也随之确定。在DFS遍历过程中，如果没有出现着色冲突，说明可以用两种颜色着色。</p>
-<h3 id="2-最短路问题"><a href="#2-最短路问题" class="headerlink" title="2. 最短路问题"></a><strong>2. 最短路问题</strong></h3><p>最短路问题有多种算法，适用于不同的场景。</p>
-<p>常用的Dijkstra算法用于求解没有负边的单源最短路的情况，其时间复杂度是O(|E|<em>log|V|)。Bellman-Ford算法可以处理有负边的单源最短路问题 ，其时间复杂度是O(|V|</em>|E|)。Floyd-Warshall算法用于求解所有点对最短路问题（没有负权环），其时间复杂度是O(|V|­3)。</p>
-<p>Floy-Warshall算法的思路很有意思。</p>
-<p>定义 <strong>dij(k)</strong> 为从i到j的，中间只经过{1,2…k}中的顶点的最短路径。</p>
-<p>则：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0cf122ea-f7ad-4d3b-8f09-1cfdcbafc8fc/floyd1.png" alt="floyd1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/05/floyd1.png">http://loopjump.com/wp-content/uploads/2014/05/floyd1.png</a></p>
-<p>根据这个公式，可以写出非常简单的代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D = W</span><br><span class="line">for k = 1 to n</span><br><span class="line">    for i = 1 to n</span><br><span class="line">        for j = 1 to n</span><br><span class="line">            D[i][j] = min( D[i][j], D[i][k]+D[k][j] )</span><br></pre></td></tr></table></figure>
-
-<h3 id="Roadblocks问题（P108）："><a href="#Roadblocks问题（P108）：" class="headerlink" title="Roadblocks问题（P108）："></a><strong>Roadblocks问题</strong>（P108）：</h3><p>求出图中指定的起点s和终点e之间次短路（第二短的路径）。</p>
-<p>次短路问题和最短路问题类似。</p>
-<p>假设s和e之间的次短路经过v，其中v到e有边。则，s到e的次短路只能是如下两种情况：</p>
-<ol>
-<li><p> s到u的最短路加上边 v -&gt; e</p>
-</li>
-<li><p> s到u的次短路加上边 v -&gt; e</p>
-</li>
-</ol>
-<p>这样，我们要求出s到每个点的最短路和次短路。接下来，可以按照Dijkstra算法，在记录最短路的时候，同时记录次短路（多几次比较）就可以了。</p>
-<h3 id="3-最小生成树"><a href="#3-最小生成树" class="headerlink" title="3. 最小生成树"></a><strong>3. 最小生成树</strong></h3><p>最小生成树常用的算法包括Prim算法和Kruskal算法。</p>
-<p>Prim算法将顶点集合分为T和V-T，初始时T&#x3D;{v}，v为任意顶点。每次都从跨T和V-T两个集的边中选出最短边的加入生成树中，直到T &#x3D;V。时间复杂度是O(|E|*log|V|)。</p>
-<p>Kruskal算法思想比较简单。为了取得最小生成树，每次都取剩余边中最小的边，如果这个边加入书中之后不会造成环，则加入，否则丢掉重新选择。时间复杂度是O(|E|*log|V|)。</p>
-<h3 id="Conscription招兵问题（P109）"><a href="#Conscription招兵问题（P109）" class="headerlink" title="Conscription招兵问题（P109）"></a><strong>Conscription招兵问题（P109）</strong></h3><p>问题描述：需征女兵N名，男兵M名，每征一人花费10000美元，但是如果已经征募的兵中有亲密的人，则花费会减少一定数值，该数值等于二人的亲密度。现给出若干个亲密度，求征兵最少花费。</p>
-<p>把人当做顶点，亲密关系当做有权边，则问题变成了从图（可能不连通）中找一颗树（或者一个森林），使得该树（森林）的边权和最大。注意，因为招募过程中不会产生环路（环路中先招的那个人肯定得花10000美元，而不是10000减去某个亲密度）。</p>
-<p>接下来，将边权值变为原来的相反数，用最小生成树算法求解。</p>
+    <section class="markdown-content"><p>3.2节讲了一个很通用的方法，叫尺取法。</p>
+<p>尺取法通常设定前后两个指针，不断地按照某种策略移动前后指针，考察前后指针所限定的区间。</p>
+<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/two_pointer.png" alt="two_pointer.png"></p>
+<p>例如例题3.2.1：给定长度为n的整数序列，求出总和不小于S的连续子序列的长度的最小值。按照尺取法，设定前后指针s&#x3D;0,t&#x3D;0,然后将s向前移动，判断t~s之间的区间是否满足要求，如果小于S，s继续移动，直到和大于等于S为止。此时将t向前移动。反复进行该过程，期间记录长度，并更新长度的最小值。复杂度为O(N)。</p>
+<p>事实上，前后指针，或者叫双指针的方法适用于更广的问题。这里列举几个例子。</p>
+<p><strong>Case 1</strong>：判断数组a[0…n-1]中是否存在两个数其和为S。</p>
+<p>Solution：先排序，然后设定首尾指针head&#x3D;0, tail&#x3D;n-1，两个指针向中间移动。当a[head] + a[tail] &lt; S时，head++，否则tail–。</p>
+<p><strong>Case 2</strong>：单链表中，如何在O(N)时间复杂度和O(1)的空间复杂度找到倒数第k个节点？</p>
+<p>Solution：除了先遍历一遍求得长度外，另一种有趣的方法是设定两个指针s和t，让s先向前移动k个节点，然后s和t同时移动，当s到链表尾时，t正好在倒数第k个。</p>
+<p><strong>Case 3</strong>：判断链表是否有环。</p>
+<p>Solution：这是经典的面试问题了。设定两个指针，quick和slow，均初始化为链表头，quick每次移动两个节点，slow每次移动一个节点。当quick和slow相遇时，说明有环，如果指针遇到链表尾，说明无环（有环链表不会出现尾）。</p>
+<p><strong>Case 4</strong>：两个单链表相交成Y型，求交点，要求仅遍历一遍，空间复杂度O(1)。</p>
+<p>Solution：这道题比较tricky。在给定的复杂度限定下，可以从一个链表头开始，将该链表所有的节点的next指针置为NULL，然后从另一个链表头开始，遍历，遇到NULL指针表示走到了交点。</p>
+<p>（该方法破坏了链表结构，所以实践中应该不会用到这种方法，写在这里权当开拓思路了）</p>
+<p>如果不是复杂度限定，我们有多种方法找到交点。这里我们提供几种比较容易想到的方法：方法1：先分别遍历一遍，求出两个链表的长度L1、L2（设L1 &gt; L2），长的先移动L1-L2个节点，然后两个链表的指针同时走并进行比较，指针相等则说明是交点。</p>
+<p>方法2：遍历其中一条链表，将该链表的所有节点地址存入map，然后遍历另一条链表，如果节点地址出现在了map中，说明这个节点是交点。</p>
 </section>
     <!-- Tags START -->
     
@@ -203,17 +226,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/dfs_frog_game/">
+      <a class="nav-left" href="/note_of_programming_contest_challenge_book_4/">
         <span class="nav-arrow">← </span>
         
-          深度优先搜索求解青蛙交换位置小游戏
+          《挑战程序设计竞赛》读书笔记4-格点问题的证明
         
       </a>
     
     
-      <a class="nav-right" href="/note_of_progamming_contest_challenge_book_2/">
+      <a class="nav-right" href="/note_of_programming_contest_challenge_book_6/">
         
-          《挑战程序设计竞赛》读书笔记2-贪心算法,动态规划
+          《挑战程序设计竞赛》读书笔记6-线段树和RMQ
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -252,7 +275,7 @@
 
 <script>
   (function () {
-    var url = 'http://example.com/note_of_progamming_contest_challenge_book_3/';
+    var url = 'http://example.com/note_of_programming_contest_challenge_book_5/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
