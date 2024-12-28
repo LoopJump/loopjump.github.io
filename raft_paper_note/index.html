@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Raft论文解读</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2016-10-23</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,125 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>Raft论文解读</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>Raft是针对复制日志的一致性协议。效果上，Raft等价于multi-paxos协议；效率上和Paxos一样。但是Raft协议的整体结构与Paxos差别比较大，Raft协议更加容易理解，也更加适合工程实现。Raft为了使协议更加容易理解，将一致性协议拆分为独立的几个要素：选主、日志复制、safety。相比Paxos，Raft通过加强对状态一致性的约束来减少需要考虑的状态数目。实际课堂授课测验显示，对学生来说，Raft比Paxos更加容易理解。Raft也提出了一种新的成员变更方案，通过重叠多数派的方法来保证safety。</p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>一致性协议是通过将一组机器协同工作，来对抗其中部分机器宕机。因此，一致性协议在构建高可靠的大规模分布式系统中，发挥了关键的作用。Paxos在过去十年统治了分布式系统一致性协议，各种实现要么是Paxos的变体，要么深受Paxos影响。课堂上也通过Paxos讲授一致性协议。然而Paxos难以理解，另外，Paxos距离实用还要做很复杂的修改。因此，作者实现了Raft。Raft的一个重要的目标就是understandability。</p>
+<p>为了提高understandability，Raft解耦了选主、日志复制、safety，另外Raft减小了状态空间（相比Paxos，Raft减小了不确定性的程度，减少了机器之间的不一致性的程度）。</p>
+<p>Raft的一些特色：</p>
+<ul>
+<li>Strong leader：Raft约束日志只能从leader流向follower。</li>
+<li>Leader election：Raft使用随机化的定时器来选主。</li>
+<li>Membership change：Raft使用joint consensus方案来做成员变更。</li>
+</ul>
+<h2 id="2-Replicated-State-Machine"><a href="#2-Replicated-State-Machine" class="headerlink" title="2. Replicated State Machine"></a>2. Replicated State Machine</h2><p>一致性协议通常在复制状态机Replicated State Machine的场景下出现。在复制状态机中，状态机复制在多台机器之上来对抗部分机器的宕机。Chubby、Zookeeper就是使用复制状态机的典型例子。</p>
+<p>复制状态机的结构如图。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/481e332e-d0bb-4461-8ce7-c8af4fdf37f8/state_machine.png" alt="state_machine.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/state_machine.png">http://loopjump.com/wp-content/uploads/2016/10/state_machine.png</a></p>
+<p>每台机器都存储了一系列的日志，每条日志都是一条command。已确认的日志会被状态机顺序执行。一致性协议模块会保证每台机器上的已确认的日志是一样的，因此内存中的状态机也是一致的，输出也是一致的。一致性协议模块从客户端接收到一条命令，并添加到日志中，然后和其他机器的一致性模块通信，来保证日志最终都是一样的。一旦一条日志被确认了，那么，少数派的机器宕机并不会影响对外服务。整个系统看起来就像是一个高可用的状态机。</p>
+<p>一致性协议有如下的特点：</p>
+<ul>
+<li>保证safety：不管网络延迟或者分区，网络包丢失、重复或者乱序，都要保证一致性。</li>
+<li>可用性：只要多数派机器在线，就应该能提供服务。</li>
+<li>不依赖时钟来保证正确性：时钟出错或者网络消息延迟过大只是会导致可用性，并不会导致一致性错误。</li>
+<li>通常，一次网路来回的事件就可以对一个command确认。</li>
+</ul>
+<h2 id="3-What’s-wrong-with-Paxos"><a href="#3-What’s-wrong-with-Paxos" class="headerlink" title="3. What’s wrong with Paxos?"></a>3. What’s wrong with Paxos?</h2><p>Paxos第一个问题：不易理解。</p>
+<p>Paxos第二个问题：Paxos距离构建一个实用的分布式系统还差很多，原始论文更多强调Basic Paxos，对Multi Paxos涉及不多，只是讲述了原理，并没有形成一个完整的算法。</p>
+<p>Paxos第三个问题：Paxos协议的架构太差。主要强调了Basic Paxos协议的正确性，且对选主是弱依赖。</p>
+<p>Raft作者反复提及Paxos不好理解，给出的理由如很多论文继续解释Paxos或者课堂授课实验等，其实都不太充分。Lamport在原始论文中虚构了一个海岛上的议会制度，除了单词陌生之外，其实大部分内容都是比较清晰的。实际只要多看下Basic Paxos证明过程应该就能理解了，Multi-Paxos是基于在Accept阶段才明确需要什么内容进行投票。</p>
+<p>至于Paxos不能开箱即用、选主依赖问题等，这并不是Paxos论文的侧重点。</p>
+<p>不管怎么说，Raft确实比Paxos简单了。</p>
+<h2 id="4-Designing-for-understandability"><a href="#4-Designing-for-understandability" class="headerlink" title="4. Designing for understandability"></a>4. Designing for understandability</h2><p>Raft的几个目标：对于系统实现来说，协议要完整实用；协议安全性有保证；通常场景下效率高；易理解。</p>
+<p>Raft解决”难理解”这个问题上，采用了两个思路：</p>
+<p>其一，问题分解，将复杂问题分解成几个简单的问题；</p>
+<p>其二，简化状态空间，更强的一致性，减少不确定性。</p>
+<h2 id="5-The-Raft-consensus-algorithm"><a href="#5-The-Raft-consensus-algorithm" class="headerlink" title="5. The Raft consensus algorithm"></a>5. The Raft consensus algorithm</h2><p>Raft首先选主，然后leader全权负责同步日志。有了leader极大地简化了日志复制：leader可以单方面决定日志写在什么位置上；日志流只能是从leader到follower。</p>
+<p>Raft保证了如下的safety：</p>
+<p><strong>Election Safety</strong>：在一个给定的term内，最多一个leader被选出来。</p>
+<p><strong>Leader Append-Only</strong>：leader从来不覆写或者删除日志，只会追加新日志。</p>
+<p><strong>Log Matching</strong>：如果两个主机的副本上的日志文件中，包含一条相同term和log id的entry，那么，这两个日志文件在这条日志之前的内容都是相同的（字节流级别的一致）。</p>
+<p><strong>Leader Completeness</strong>：如果一条日志已经commit了，那么这条日志一定会出现在term最大的leader的日志文件中。</p>
+<p><strong>State Machine Safety</strong>：如果一个主机应用了一条日志，那么，其他主机不可能应用一条相同log id而内容却不同的日志。</p>
+<h3 id="5-1-Raft-Basic"><a href="#5-1-Raft-Basic" class="headerlink" title="5.1 Raft Basic"></a>5.1 Raft Basic</h3><p>Raft中的server只有三种状态：Leader &#x2F; Follower &#x2F; Candidate。通常情况下（无主备切换时），一个leader其他是follower。Follower处于被动的状态，它不能发起任何请求，只能回应leader和candidate的请求。Leader处理客户端的请求，如果客户端请求发到了follower，follower负责将请求重定向到leader。Candidate是选主过程中用于选出新主。状态转移图如下：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/state.png">http://loopjump.com/wp-content/uploads/2016/10/state.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/8974c0d4-c74e-45bf-a5a3-1fe971c69ed0/state.png" alt="state.png"></p>
+<p>Raft将时间划分为term。Term可以是任意长度的时间段。Term有一个连续递增的id。每个term以选主开始，选主过程中，若干candidate尝试成为leader。选主过程成功之后进度normal operation的阶段，leader开始服务。选主可能因为选票分裂而失败，此时当前term没有leader，在下一个term继续选主。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4a5d3c71-b93a-40a4-8873-bd0daed59f27/election.png" alt="election.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/election.png">http://loopjump.com/wp-content/uploads/2016/10/election.png</a></p>
+<p>Term是需要持久化保存的。因为是分布式环境，所以不同的机器维护的term可能不一样，term是一个逻辑时钟（参见<a target="_blank" rel="noopener" href="http://loopjump.com/time_clock_order/">分布式系统下的时间 时钟 事件序 论文解读</a>），因此，当一台机器在与其他机器通信时发现自己的term比较小，应该推进本地的term。如果一台机器发现请求方的term比较小，则要拒绝请求。如果一个candidate发现自己的term落后了，就要退回到follower。</p>
+<p>机器之间使用RPC通信，Raft中只有两种RPC：RequstVote和AppendEntries。RequstVote RPC用于candidate在选主期间拉票。AppendEntries RPC用于leader复制日志到follower，同时也作为主备之间的心跳RPC。RPC请求收不到任何结果时，要定时重试。为了优化性能，RPC可以并发发起。</p>
+<h3 id="5-2-Leader-Election"><a href="#5-2-Leader-Election" class="headerlink" title="5.2 Leader Election"></a>5.2 Leader Election</h3><p>Raft使用了心跳机制来触发选主。Server刚启动时，状态处于follower，只要follewer一直收到leader或者candidate发来的rpc，就保持为follower。Leader周期性地向follower发送心跳（用的是AppendEntries RPC，里面不带日志内容）来保持leader的权限。如果一个follower在election timeout时间内没有收到leader的心跳，follower就认为没有leader了，就会开始选主。</p>
+<p>开始选主时，follower先递增本地term（要持久化），然后主机状态切换为candidate。然后主机向其他发送拉票请求，同时也给自己投票。Candidate在这个状态等待，直到如下三种情况发生：</p>
+<ul>
+<li>a) 该candidate赢得了选主</li>
+<li>b) 其他机器成为了leader</li>
+<li>c) 超时间内未能选主成功</li>
+</ul>
+<p>一个candidate赢得选主的判定：在相同的term内，收到了多数派的投票。在给定的term内，每台机器都只能按照先来先服务的规则投一个candidate（要持久化）。收到多数派才可能成为leader，可以避免出现双主。选主成功之后，新主向其他主机发送心跳AppendEntries RPC，宣告自己当选了。</p>
+<p>在选主时间内， candidate如果收到了其他主机宣告当选的心跳AppendEntries RPC且RPC中携带的term比本机维护的term更大或相等，本机就自动退为follower。</p>
+<p>超时时间未能内选主成功，可能是发生了选票分裂。同时有若干参与者拉票，选票分流，没有candidate能够拉倒多数派的选票。选主失败时，所有candidate递增term开始下一轮。为了减少选票分裂出现的概率，选举超时时间使用随机化的方法避开多个candidate同时拉票。</p>
+<p>Raft的选主方案的进化。一开始Raft使用的是ranking system，每个candidate都分配一个唯一的rank，低rank的主机收到高rank的主机的拉票请求，就把自己转为follower，这样rank高的就能尽快被选出来（可能在下一轮选主中）。这个方案有些微妙的可用性问题：如果高rank的主机宕机了，低rank的主机还要等超时才有机会转为candidate。这个方案调整了几次，每次调整都引入新的corner case。最后才选择了这个随机化方案。</p>
+<p>Raft的选主方案还要加上一些约束，以支持log replication实现。</p>
+<h3 id="5-3-Log-replication"><a href="#5-3-Log-replication" class="headerlink" title="5.3 Log replication"></a>5.3 Log replication</h3><p>Leader被选出来之后，就开始服务客户端的请求。Leader收到客户端请求之后，将命令记入日志并同步到follower。当这条日志被确认之后，就把日志对应的命令应用到状态机。如果某个follower没有收到AppendEntries RPC，leader会不停地重试，确保follower最终有全部的日志。</p>
+<p>日志组织方式如图，</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/5124f425-81c9-4ada-8e58-bfdcd38a8e1d/log_org.png" alt="log_org.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/log_org.png">http://loopjump.com/wp-content/uploads/2016/10/log_org.png</a></p>
+<p>每条日志都记录了term值，这个值是提交这条日志的leader当时的term值。这个term值可以用以检测不一致性。</p>
+<p>当leader将日志复制到多数派的时候，这条日志就commit了。Raft保证任何commit的日志最终都会被副本的状态机执行。</p>
+<p>Raft约束日志是连续commit的，leader维护最大已经commit的日志id，并将这个信息附加到AppendEntries告知follower，follower了解到之后即可将本机已有的且已经commit的日志应用到本地的状态机。</p>
+<p>Raft维护了更高级别的不同主机之间的日志的一致性，简化了系统的行为、使得系统行为更加可预测、更容易保证safety。</p>
+<p>Raft保证了如下的约束（Log Matching Safety）：</p>
+<ul>
+<li>不同主机上日志文件中，相同term和相同log id的日志内容一定相同。</li>
+<li>这条相同的日志之前的日志文件内容也一定相同。</li>
+</ul>
+<p>实现这两点也很简单。第一点，只要保证leader给每一条log id只分配一条日志即可。第二点，由AppendEntries RPC保证，AppendEntries RPC在消息中携带term和前一条log id。如果follower发现自己本地的日志并不匹配这个AppendEntries RPC中的log id时，会拒绝这条日志。因此按照归纳法，就可以证明只要某条日志被接收了，那么前面的日志都被接收了，前面的日志文件内容都是一致的。</p>
+<p>正常运行时，主备之间通常都是一致的，AppendEntries RPC也一直成功。但是如果有leader宕机了，就会有不一致。例如如图。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/57970b4e-519c-4dec-b3c4-4273129f5d9e/diff.png" alt="diff.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/diff.png">http://loopjump.com/wp-content/uploads/2016/10/diff.png</a></p>
+<p>主备不一致可能有如下几种情况：少了一些日志（term可能相同或者少了）；多了一些未commit的日志（term可能多了也可能少了）；某些term多了一些日志且某些term少了一些日志。</p>
+<p>Raft中如何解决这些不一致呢？leader强制让follower的日志文件复制leader的日志文件，即follower上不一致的日志文件内容被覆写。新主上任之后，在和某个follower同步日志时，先确定和这个follower最后一条相同的日志，然后用leader上的内容覆盖之后不相同的部分。当然，为了避免已经commit的日志被覆盖，选主时需要特别注意，后面会讨论这个问题。</p>
+<p>Leader确定与follower不一致点的方法：leader维护一个log id，初始为leader本地最大的log id，然后发送AppendEntries RPC到follower，follower在收到AppendEntries之后，检查RPC中携带的term和log id（leader上被追加的这条日志的前面一条日志的term和log id），如果follower本地没有这条日志，就拒绝此次AppendEntries RPC，leader就能知道follower的同步点更靠前，逐渐就能知道同步点的位置。当然，实际实现时，会使用更有效率的方法。</p>
+<p>通过这种方法，leader上任后，并不需要做特殊的操作，只用AppendEntries就可以逐渐使follower上的日志文件保持一致。Leader从不覆写自己的日志文件，即Leader Append-Only Property。</p>
+<h3 id="5-4-Safety"><a href="#5-4-Safety" class="headerlink" title="5.4 Safety"></a>5.4 Safety</h3><h3 id="5-4-1-Election-restriction"><a href="#5-4-1-Election-restriction" class="headerlink" title="5.4.1 Election restriction"></a>5.4.1 Election restriction</h3><p>这节描述如何保证日志流只从leader流向follower。</p>
+<p>如果不对选主加约束，那么，可能一个落后的follower被选为主，落后的那些日志可能已经commit了，要保证log matching property，就必然要有从旧主或者其他不落后的follower上拉取这些已经commit的日志。</p>
+<p>Raft使用的方案是：确保包含所有commit日志的candidate才能有机会被选为leader。因为一条日志commit，必然在任意一个多数派中，至少有一台主机包含了这条日志。选举时，candidate要和至少多数派的主机通信，通信时带上自己本地的日志信息（本地最后一条的term和log id），接收消息的主机发现发送消息的candidate的日志并不比我本地更新，就拒绝投票。也就是说，candidate至少是某个多数派中拥有最新日志的主机，才能被选为leader。</p>
+<h3 id="5-4-2-Commit-entries-from-previous-terms"><a href="#5-4-2-Commit-entries-from-previous-terms" class="headerlink" title="5.4.2 Commit entries from previous terms"></a>5.4.2 Commit entries from previous terms</h3><p>考虑如下的场景：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/prev_term.png">http://loopjump.com/wp-content/uploads/2016/10/prev_term.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/541e4587-3a06-454e-9f15-03e45d3a3bf3/prev_term.png" alt="prev_term.png"></p>
+<p>假设宕机和恢复比较频繁，就可能出现上图的场景（具体过程见原文此图的注解）。在(c)时，S1在将log id&#x3D;2的日志同步到S3之后，就会发现log id&#x3D;2的日志已经在多数派上复制成功了。假设这时Raft将log id&#x3D;2的日志应用到了本地状态机。在(d)中，log id&#x3D;2（term&#x3D;3）的日志也被复制到多数派了，且已经覆盖了所有的term&#x3D;2的log id&#x3D;2的日志。因此已经应用到状态机上的term&#x3D;2,log id&#x3D;2的日志就丢失了。</p>
+<p>相比起如何解决这个问题，思考这个问题是如何引入的更加有意思。S1上的term&#x3D;2,log id&#x3D;2的日志，在进行复制时，使用的term仍然是term&#x3D;2，而不是S1最新的term。在本地term较大的时候去复制term小的日志，这个是不合理的。但是为了维持Leader Append-Only的性质，只能想办法解决。</p>
+<p>虽然问题复杂，但是解决方却案很简单：leader只能对本term的日志通过counting replica的方式确定commit与否，对与之前的term，则通过确定本term日志commit和Log Matching Property来间接确定commit。</p>
+<p>没有持久化的信息来记录当前最大commit id，给宕机重启带来了一些问题。集群宕机重启之后，主备应该如何设置最大commit id？只能是先设置到最近一次checkpoint之后的第一条log id。然后等有最新term的日志被commit了，才能将最大commit id推进到最新log id，apply id也一样，此时才能开始不断递增apply id逐条日志开始应用到状态机。</p>
+<h3 id="5-4-3-Safety-argument"><a href="#5-4-3-Safety-argument" class="headerlink" title="5.4.3 Safety argument"></a>5.4.3 Safety argument</h3><p>这节主要证明Leader Completeness Property。证明要点：选主时要获得多数派的支持，一条已经确认的日志被多数派保存下来，两个多数派一定有交集。</p>
+<p>证明过程略。</p>
+<h3 id="5-5-Follower-and-candidate-crash"><a href="#5-5-Follower-and-candidate-crash" class="headerlink" title="5.5 Follower and candidate crash"></a>5.5 Follower and candidate crash</h3><p>Raft处理follower和candidate失败的方式是一致的：AppendEntries和RequestVote RPC重，Raft的RPC都是幂等的。</p>
+<h3 id="5-6-Timing-and-availability"><a href="#5-6-Timing-and-availability" class="headerlink" title="5.6 Timing and availability"></a>5.6 Timing and availability</h3><p>Raft协议的正确性本身不依赖时钟同步、事件耗时长短，但是可用性受影响比较大。</p>
+<h2 id="6-Cluster-Membership-changes"><a href="#6-Cluster-Membership-changes" class="headerlink" title="6. Cluster Membership changes"></a>6. Cluster Membership changes</h2><p>之前的讨论都是假设成员组是不变的。这一节描述Raft的成员变更方案。</p>
+<p>要保证成员变更过程中的safety，就要保证在任何时候，都不会出现双主。</p>
+<p>如果一次成员变更中，将成员组立刻切换为新的成员组，那么就会因为各个成员之间不能同时生效而导致双主，如图。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4e1791d7-2719-4886-9d4d-32db80a8bbe7/disjoint-majorities.png" alt="disjoint-majorities.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/disjoint-majorities.png">http://loopjump.com/wp-content/uploads/2016/10/disjoint-majorities.png</a></p>
+<p>从(S1,S2,S3)变为(S1,S2,S3,S4,S5)的变更中，因为各个成员上变更生效时间不同，可能导致在中间某个时刻，出现两个disjoint majorities，两个多数派能够分别选主并服务客户端，导致一致性无法保证。</p>
+<p>为了保证safety，常规的解法是使用两个阶段。例如，在Viewstamped Replication协议里，成员变更先停止旧的成员组，然后启用新的成员组，但是这样导致中间会有停服务的问题。</p>
+<p>Raft里采用的两阶段方案是，集群先进入一个称之为Joint Consensus的过渡状态，等过渡状态commit了，再只使用新的成员组。在Joint Consensus中，不管是日志复制（客户端提交的普通日志）还是选主，都要在新旧两个成员组C_old、C_new内分别形成多数派。</p>
+<p>成员变更命令通过成员变更日志作为载体复制到其他副本。一个副本只要收到了成员变更日志，之后的日志就立刻使用新的成员组开始工作，不管这条成员变更是不是commit了。也就是说，leader要用两个多数派C_old,new同时满足来commit这条成员变更日志。</p>
+<p>因为有Joint Consensus，所以在C_old,new commit之前，C_new无法单方面确认任何事情。那么，在C_old,new commit之前如果leader宕机了呢？这种情况下，C_old或者C_old,new可能选出新的leader（取决于新主上是否有C_old,new这条日志）。同样，C_new仍然无法单方面确认任何事情。</p>
+<p>一旦C_old,new commit了，那么即使leader宕机，选出来的新leader也一定有C_old,new这条日志了（选主的约束：Leader拥有全部commit的日志）。此时，leader发起一个成员变更，将状态转为只使用C_new的状态（这条日志也记为C_new）。直到C_new被commit了，C_old便不再被需要。成员变更的两个阶段就完成了。</p>
+<p>这个过程如图示：</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/062c0318-224b-4d84-8d13-cc0c7081dba0/joint_consensus.png" alt="joint_consensus.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/joint_consensus.png">http://loopjump.com/wp-content/uploads/2016/10/joint_consensus.png</a></p>
+<p>成员变更保证safety，要遵循的原则是：在任何时候都不允许C_old和C_new同时可以单方面做决定。例如图中上半部分，C_old和C_new分别可以单方面做决定的时间段是没有重叠的，中间使用C_old,new过渡。</p>
+<p>成员变更还有三个延伸的问题：</p>
+<p><strong>问题1</strong>：新加入的主机上可能没有任何日志，在实际执行成员变更前，我们希望这台主机先作为观察者基本追上leader的日志，再做成员变更。否则加入的这台空机器在追上之前，几乎起不到高可用的目的。</p>
+<p><strong>问题2</strong>：如果leader并不是C_new的一员，那么leader要卸任。因为C_new的commit是这个leader主导的，因此在C_new commit之后，leader要卸任。</p>
+<p><strong>问题3</strong>：如果是机器下线的变更，被下线的机器因为不会再收到C_new中的leader的心跳而超时触发选主了。C_new中的leader因为term比下线机器的term小，因此会卸任，又因为C_new中的副本拥有最多的日志，选主约束仍会从C_new中选出一个leader。同样，下线的机器会再次超时，又触发选主，周而复始，虽然不会有safety问题，但是可用性却因为leader反复卸任再上任而降低。Raft的方法也很简单：如果一台主机认为还有leader，那么就不会给其他人投票。这是一个非常有效的补丁（是补丁），这个补丁完美躲避了对选举核心机制的修改，我真是不知道说什么好了。</p>
+<p>Raft在Joint Consensus之后，引入了一阶段成员变更：在一次只变更一个成员组的情况下，成员变更可以直接从C_old变为C_new，接收到C_new的成员立刻使用新的成员组。</p>
+<p>因为每次只变更一个成员，所以新旧多数派必有交集（可以按照奇偶加减成员四种情况穷举推算）。 那么，即使没有过渡阶段，也不会出现新旧成员组同时能够单方面做决定的情况。</p>
+<p>在Raft博士论文中有论述，读者可以参考。</p>
+<h2 id="7-Client-and-log-compaction"><a href="#7-Client-and-log-compaction" class="headerlink" title="7. Client and log compaction"></a>7. Client and log compaction</h2><p>讲的是API，state machine checkpoint，本节略。</p>
+<h2 id="8-Implementation-and-evaluation"><a href="#8-Implementation-and-evaluation" class="headerlink" title="8. Implementation and evaluation"></a>8. Implementation and evaluation</h2><p>略。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +292,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/reconfig_state_machine/">
+      <a class="nav-left" href="/clean-code-note/">
         <span class="nav-arrow">← </span>
         
-          Reconfiguring a State Machine
+          代码整洁之道 读书笔记
         
       </a>
     
     
-      <a class="nav-right" href="/raft_one_server_reconfiguration/">
+      <a class="nav-right" href="/distributed_consistency_model/">
         
-          Raft One-Server成员变更
+          浅析分布式一致性模型
         
         <span class="nav-arrow"> →</span>
       </a>

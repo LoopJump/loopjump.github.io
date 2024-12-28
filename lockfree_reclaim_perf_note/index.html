@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>LockFree数据结构的内存回收性能测试</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2016-03-12</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,40 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>最近在搞性能优化，读了一篇挺有意思的相关论文。</p>
+<p>Performance of memory reclamation for lockless synchronization</p>
+<h2 id="几种Memory-Reclaimation-Scheme"><a href="#几种Memory-Reclaimation-Scheme" class="headerlink" title="几种Memory Reclaimation Scheme"></a><strong>几种Memory Reclaimation Scheme</strong></h2><p>评测了几种回收机制的性能：</p>
+<ol>
+<li><p>QSBR  quiescent-state-based reclaimation</p>
+</li>
+<li><p>EBR   epoch-based reclaimation</p>
+</li>
+<li><p>HPBR  hazard-pointer-based reclaimation</p>
+</li>
+<li><p>LFRC  lock-free reference counting</p>
+</li>
+</ol>
+<p><strong>结论：没有一个各个场景都胜出的机制。数据结构算法本身、负载、执行环境都会影响选型。</strong></p>
+<h2 id="回收机制简介"><a href="#回收机制简介" class="headerlink" title="回收机制简介"></a><strong>回收机制简介</strong></h2><p>a grace period：有时间段[a,b]，如果在b之后，所有在a之前删除的元素都可以被释放，那么[a,b]被称为a grace period。</p>
+<h3 id="QSBR简介"><a href="#QSBR简介" class="headerlink" title="QSBR简介"></a><strong>QSBR简介</strong></h3><p>QSBR是通过quiescent state来检测grace period。如果线程T在某时刻不再持有共享对象的引用，那么该线程T在此时就处于quiescent state。如果一个时间区间内，所有线程都曾处于quiescent state，那么这个区间就是一个grace period。QSBR需要实现时明确手动指明在算法某一步处于quiescent state。</p>
+<p>具体实现时，可以在时间轴上划分出interval，每个interval内，每一个线程至少有一次quiescent state。那么当前interval删除的对象的内存可以在下一个interval结束时释放掉。</p>
+<p>需要注意的是，QSBR是个blocking的算法。如果某个线程卡死了，那么就等不到grace period了，最终导致内存都无法释放。</p>
+<h3 id="EBR简介"><a href="#EBR简介" class="headerlink" title="EBR简介"></a><strong>EBR简介</strong></h3><p>EBR将所有的线程的操作都归到某个epoch，通过有条件地增大epoch值来限制只使用连续三个epoch值，使得每个线程本地的epoch最多只落后全局epoch一个，线程在epoch维度上基本上是齐步走的。</p>
+<p>具体实现时，设置一个全局的global_epoch，每个线程操作前将线程本地的local_epoch设置为global_epoch。</p>
+<p>当线程尝试周期性更新global_epoch时，如果发现每一个在临界区内的线程的local_epoch都等于global_epoch，则递增global_epoch，否则放弃递增保持原来的值（有线程还在更旧的epoch）。如果更新成功，表明global_epoch-2时期下被删除的对象都可以回收。因为只需要三个连续epoch，所以可以用模3的方式修改epoch。</p>
+<h3 id="HPBR简介"><a href="#HPBR简介" class="headerlink" title="HPBR简介"></a><strong>HPBR简介</strong></h3><p>Hazard Pointer思路比较简单，线程在使用一个共享对象时，为了避免该共享对象被释放，将其指针放在本线程局部声明成风险指针保护起来。如果某个线程想释放一个对象对象时，先看看有没有其他线程保护该对象，没有线程保护时才释放。</p>
+<p>Hazard Pointer适合lock free的queue或者stack之类的简单数据结构，这种数据结构要保护的指针只有一两个。如果是hash或者tree等基本不实用。</p>
+<h3 id="LFRC简介"><a href="#LFRC简介" class="headerlink" title="LFRC简介"></a><strong>LFRC简介</strong></h3><p>不太实用。略。</p>
+<h2 id="影响回收性能的因素"><a href="#影响回收性能的因素" class="headerlink" title="影响回收性能的因素"></a><strong>影响回收性能的因素</strong></h2><h3 id="Memory-Consistency"><a href="#Memory-Consistency" class="headerlink" title="Memory Consistency"></a><strong>Memory Consistency</strong></h3><p>通常lock free代码假设内存模型是sequentially consistent。但是实际实现的时候可以放松，以避免不必要的fence。</p>
+<h3 id="Workload-contention-scheduling"><a href="#Workload-contention-scheduling" class="headerlink" title="Workload,contention,scheduling"></a><strong>Workload,contention,scheduling</strong></h3><p>workload: queue通常是更新操作，而hash往往读多写少。</p>
+<p>contention: 算法是否受多线程竞争影响，例如HPBR在double check以确保将正确的指针保护起来的时候，double check可能失败。</p>
+<p>scheduling: 基于grace period的算法会有不利的影响，HPBR不受影响。</p>
+<h3 id="Memory-constraint"><a href="#Memory-constraint" class="headerlink" title="Memory constraint"></a><strong>Memory constraint</strong></h3><p>使用的内存大小限制。这个因素需要考虑，是因为不同的回收算法对内存使用是否bounded是不一样的。</p>
+<h2 id="测试结果-Summary"><a href="#测试结果-Summary" class="headerlink" title="测试结果 &amp; Summary"></a><strong>测试结果 &amp; Summary</strong></h2><p>详见原始论文。测试用的数据结构是linked-list和queue。</p>
+<p>在单线程测试下，主要耗时在原子操作，扫描hazard pointer并不大（注，HPBR中扫描操作的频率可以通过参数控制）。</p>
+<p>在需要遍历的list比较长时，HPBR需要更多的原子操作，开销较大（注，HPBR方式下的lockfree list search需要逐个保护所查找过程中访问到的节点，不过没看懂为什么一次search保护了所有访问的节点，按我的理解应该只需要保护现在正在访问到的节点）。</p>
+<p>QSBR和EBR本身就要依赖grace period足够频繁。如果因为线程抢占或者写操作太多，grace period被停顿了，内存就可能爆了。这个问题可以缓解：通过如果发现操作时内存不足就放弃CPU，让其他拖后腿的线程尽快完成操作。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +207,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/manmonth-note/">
+      <a class="nav-left" href="/transaction_thoughts/">
         <span class="nav-arrow">← </span>
         
-          人月神话 读书笔记
+          关于事务的一点琐碎思考
         
       </a>
     
     
-      <a class="nav-right" href="/lattice-in-anna/">
+      <a class="nav-right" href="/cpp_typename_usage/">
         
-          Anna KVS中的Lattice是什么
+          C++ typename用法
         
         <span class="nav-arrow"> →</span>
       </a>

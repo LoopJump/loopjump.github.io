@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Reconfiguring a State Machine</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2017-04-03</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,39 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>Reconfiguring a State Machine这篇论文主要讲解成员组reconfigure，即成员变更。发表时间还是2010年，相比Paxos原始论文的发表时间已经过去20年了。本博文先解读这篇论文，Raft做成员变更的方案后面另文阐述。</p>
+<p>Reconfiguration是指在分布式系统执行过程中，改变系统内进程（副本）集合的动作。例如，Paxos成员组从(S1,S2,S3)变为(S1,S2)。成员变更可以改变成员组大小（从五个副本改为三个副本），负载均衡等引发的迁移、系统运维增删机器等都可以通过成员变更解决。</p>
+<p>Reconfiguration有两个思路：</p>
+<p><strong>思路一</strong>：让状态机自己指定configuration。</p>
+<p><strong>思路二</strong>：通过停止旧的configuration下的状态机、使用新的configuration来恢复继续执行状态机。</p>
+<p>原文中分别称这两个思路为Reconfiguration Made Easy&#x2F;Harder。</p>
+<h2 id="Reconfiguration-Made-Easy"><a href="#Reconfiguration-Made-Easy" class="headerlink" title="Reconfiguration Made Easy"></a>Reconfiguration Made Easy</h2><p>在Basic Paxos中，一个paxos实例在执行过程中所使用的成员组是固定的，prepare和accept阶段使用同一个成员组，比如错误的的跑法：prepare阶段向(S1,S2,S3)发送prepare请求，收集到S1,S2视为多数派之后，向(Sa,Sb,Sc)发送accept请求。</p>
+<p>那么一个很自然的思路就是，对于每个instance都指定一个成员组。需要注意的是，成员组的值是什么是要在进程间达成一致的。最简单的方法就是在引入cfg作为状态机的一部分，其中cfg是指当前所使用的成员组。定义 command rcfg(C)是将状态机的cfg修改为C，并且在本instance执行完之后立刻生效，这种方案记为R1。</p>
+<p>注意到，instance i所使用的成员组是i-1的实例执行完之后的状态机中cfg的值。</p>
+<p>在instance i确认前，别的proposer可能有机会在instance i上提出一个rcfg(C)的 command，因此instanec i+1 需要等待instance i确认之后才能确定自己应该使用的成员组，也就是说R1这种方案无法并发确认。</p>
+<p>一个简单的修改是，将rcfg(C)定义为本instance i往后推a个，从i+a-1这个instance开始使用新的成员组，于是就留下了一个大小为a的并发窗口。这个方案记为Ra。Ra方案下如果想尽早使用新的成员组，就可以立刻提交a-1个noop command来加速instance id的推进。在Ra下，reconfiguration的propose和普通状态机的propose过程是一样的。</p>
+<p>当然，这里只是描述了成员组变更的方法，具体应用时，还要考虑新加节点要先追日志之类的问题，这类问题在Raft论文里面描述更加详细。</p>
+<h2 id="Reconfiguration-Made-Harder"><a href="#Reconfiguration-Made-Harder" class="headerlink" title="Reconfiguration Made Harder"></a>Reconfiguration Made Harder</h2><p>在Ra方案中，引入了a这么个窗口大小，如果a设置比较大就会引入过多的noop，如果太小就会限制并发。这里还有一种更彻底的方法，在成员变更过程中允许任意程度的并发，即思路二。</p>
+<p>我们要构造一个支持reconfigurable的状态机，可以通过组合一系列non-reconfigurable的状态机来接力的方式实现：状态机v先停止工作，然后状态机v+1使用新的成员组，v+1的初始状态为v的最终的状态。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/1d83450f-8439-4db8-b77a-ac6178e6b8a1/relay.png" alt="relay.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/04/relay.png">http://loopjump.com/wp-content/uploads/2017/04/relay.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/04/relay.png">http://loopjump.com/wp-content/uploads/2017/04/relay.png</a></p>
+<p>这个思路下要解决三个正交的问题：停止当前的状态机；选择下一个状态机的成员组；组合一系列状态机。下面分别描述三个问题。</p>
+<h3 id="停止状态机"><a href="#停止状态机" class="headerlink" title="停止状态机"></a>停止状态机</h3><p>停止状态机有如下几种方案：The Stop Sign；Padding；The Brick Wall。</p>
+<h3 id="方案1-The-Stop-Sign"><a href="#方案1-The-Stop-Sign" class="headerlink" title="方案1 The Stop Sign"></a><strong>方案1 The Stop Sign</strong></h3><p>Stop Sign方法是定义一个特殊的stop command，表示其后的instance都不对状态机有影响。在这种方式下，某个instance要执行，需要等前面所有的instance已经确认。</p>
+<p>类似于Ra是对R1的一种推广，delayed Stop Sign方法中，定义stop command表示其后a条 command之后的 command对状态机无影响。</p>
+<h3 id="方案2-Padding"><a href="#方案2-Padding" class="headerlink" title="方案2 Padding"></a><strong>方案2 Padding</strong></h3><p>如同batch几个 command成一个 command一样，也可以batch无穷多个noop command。</p>
+<p>在Padding中，客户端对instance i到无穷propose noop command。如果对于所有的正整数j，instance j被确认，那么状态机就停止了。</p>
+<h3 id="方案3-The-Brick-Wall"><a href="#方案3-The-Brick-Wall" class="headerlink" title="方案3 The Brick Wall"></a><strong>方案3 The Brick Wall</strong></h3><p>Brick Wall方案是使用Stoppable Paxos算法。类似于Stop Sign方法，Stoppable Paxos定义一种特殊的stop command，但是跟Stop Sign不同的是，Stoppable Paxos不允许stop command之后的command被确认。</p>
+<p>Stoppable Paxos可以参考相关的论文，这里只是简单描述下。在Basic Paxos的P1b的消息收集满多数派之后，相比Basic Paxos，Stoppable Paxos对于propose多了两条限制。简单来说，就是前面某个instance有可能是stop command，就不允许propose；如果后面某个instance已经propose了一个影响状态机的command，前面就不允许propose stop command。通过这种方式就保证了stop之后不会再propose新的command。</p>
+<h3 id="选择新的成员组"><a href="#选择新的成员组" class="headerlink" title="选择新的成员组"></a><strong>选择新的成员组</strong></h3><p>从状态机v转到状态机v+1，如何选择状态机v+1使用的成员组，有两种方法：</p>
+<p>方法1：让状态机v选择一个成员组。</p>
+<p>方法2：使用一个独立的实例，使用状态机v的成员组。</p>
+<p>方法1中，需要保证在状态机v停止之前要有一个成员变更的command被确认了，但是如果有多个成员变更呢（在Brick Wall下没有这种问题），需要按某种规则选择一个。</p>
+<p>方法2的好处是，状态机v+1的开始可以早于状态机v的结束，不过提前开始新的状态机不见得有啥意义，毕竟状态机是需要连续接上才有意义。</p>
+<h3 id="状态机command-sequence接力"><a href="#状态机command-sequence接力" class="headerlink" title="状态机command sequence接力"></a><strong>状态机command sequence接力</strong></h3><p>这个主要是说，状态机v的command的编号可以从v-1的最后一个command的编号接着来。一个状态机最后一个command是多少取决于状态机是怎么停止的。</p>
+<h2 id="小总结"><a href="#小总结" class="headerlink" title="小总结"></a>小总结</h2><p>这篇论文主要还是描述一些思路，具体实践问题Raft博士论文描述的更加详细。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +206,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/rsm_questions/">
+      <a class="nav-left" href="/epaxos_paper_note/">
         <span class="nav-arrow">← </span>
         
-          漫谈复制状态机的几个有趣的问题
+          EPaxos协议解读
         
       </a>
     
     
-      <a class="nav-right" href="/raft_paper_note/">
+      <a class="nav-right" href="/raft_one_server_reconfiguration/">
         
-          Raft论文解读
+          Raft One-Server成员变更
         
         <span class="nav-arrow"> →</span>
       </a>

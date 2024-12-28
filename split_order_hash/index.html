@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Split-Order Hash基本原理</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2016-12-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,26 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>之前阅读论文并实现了一个可扩展的哈希表，已经在生产环境使用。这里简单描述一下思路，详细的实现可以参见论文。</p>
+<p>哈希的常规实现方式是开辟一个长度为N的大数组，新插入一个元素时，先根据元素hash值模除N，将元素节点插入这个桶，桶上有元素，一般可以拉链解决冲突。当元素越来越多，每个桶上链表就会比较长，查找操作耗时增加。此时哈希表要扩展。扩展时，哈希表长度从N扩展到2N，就需要将原来第0个桶上的元素挑出来，转移到第N个桶上。例如，N&#x3D;16，hash&#x3D;0&#x2F;16&#x2F;32&#x2F;48的元素都在0号桶，当扩展到2N&#x3D;32时，hash&#x3D;16&#x2F;48的元素要移动到16号桶上。移动元素时，给两个桶加锁，然后操作两个桶的链表。</p>
+<p>这里简介一种不需要加桶锁的算法，Split Order Hash。</p>
+<p>先假设我们已经有了一个抽象数据类型ResizableArray，另外算法不关心内存回收。</p>
+<p>假设一开始size&#x3D;4，如左侧图示。hash值为0,4,8,12的key都会落在bucket 0上。如果要把size扩展到8，那么，其中4和12要转移到bucket 4上。如果bucket 0上的元素就是按照前一部分属于bucket 0，后一部分属于bucket 4，那么扩展就容易的多，可以直接把bucket 4指向分界点即可，如红色所示。那么，如何在扩展前就将数据按照适合分裂的顺序排好（注意，将来可能还要扩展到16,32…，因该顺序要支持递归分裂）？我们发现，bucket 0和bucket 4的元素有着天然的区分，如果哈希值是x..x000就会落在bucket 0，如果最低位是x..x100就会落在bucekt 4（其中x为0或1的任意值）。</p>
+<p>注意到这个现象之后，我们将哈希值位翻转，即可保证想要的顺序，即000x..x &lt; 001x..x。该顺序也满足递归分裂的要求。位翻转后的顺序即定义为split-order。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/39a38971-2031-498d-9cd2-02c10d83e21d/pic.png" alt="pic.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/12/pic.png">http://loopjump.com/wp-content/uploads/2016/12/pic.png</a></p>
+<p>一些经验教训：</p>
+<ol>
+<li>实际实现时，也可以考虑用分位点的思路来写代码，道理是一样的。</li>
+<li>扩展时，并不是每次都要真的将size加倍，比如，size&#x3D;64可以扩展为size&#x3D;80，那么bucket 81~127视为不需要填充即可。</li>
+<li>所有的桶节点都可以串起来。</li>
+<li>填充桶（桶节点串到链表）：需要先设置bucket_node的next指针，然后用CAS原子地串到链表，在CAS成功之前，桶不能被视为有效，等CAS成功之后才能对外生效。所以正在被填充的桶生效时机不能依赖next指针是否为空来判断。</li>
+<li>桶可以惰性填。</li>
+<li>注意避免false sharing。</li>
+<li>计算负载因子时，需要维护一个原子计数器。原子加1在多线程环境下成本很高（要走核间通信），可以考虑用概率算法，维护一个不精确的负载因子（我这边实测概率算法效果很好）。</li>
+<li>lock free的程序编写和调试都比较麻烦，要仔细思考各种可能的并发场景，并尽量减少状态。</li>
+</ol>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +193,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/spanner_sql_engine/">
+      <a class="nav-left" href="/distributed_consistency_model/">
         <span class="nav-arrow">← </span>
         
-          Spanner - Becoming a SQL System论文阅读笔记
+          浅析分布式一致性模型
         
       </a>
     
     
-      <a class="nav-right" href="/sdpaxos_paper/">
+      <a class="nav-right" href="/cap_theory/">
         
-          SDPaxos优雅的折中
+          浅析CAP理论
         
         <span class="nav-arrow"> →</span>
       </a>

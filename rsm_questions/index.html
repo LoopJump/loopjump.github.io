@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>漫谈复制状态机的几个有趣的问题</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2016-10-02</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,29 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>读过Paxos等论文的读者，应该对复制状态机（Replicated State Machine）的概念并不陌生。复制状态机在分布式系统中是一个很简单却很强大的模型，也是一种很有价值的思想。</p>
+<p>模型一句话描述就是：多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/958ed6c5-c87d-4ff5-a0f6-8c61328ecdbc/state_machine.png" alt="state_machine.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/state_machine.png">http://loopjump.com/wp-content/uploads/2016/10/state_machine.png</a></p>
+<p>这里有几个有趣的问题。</p>
+<h3 id="复制状态机保持一致是什么意思？"><a href="#复制状态机保持一致是什么意思？" class="headerlink" title="复制状态机保持一致是什么意思？"></a><strong>复制状态机保持一致是什么意思？</strong></h3><p>实际上，与其说是一致，其实可以泛化为分布式的两个节点状态存在某种约束。</p>
+<p>以数据库redo日志作为command为例（后文描述中不区分二者），这里构造几个例子。两个节点经历同样序列的redo日志之后：</p>
+<p><strong>例子1</strong>：两个LSM Tree型的存储引擎的memtable的内容保持了一致（假设只有memtable，下同）。</p>
+<p><strong>例子2</strong>：一个是LSM Tree引擎的memtable的状态，另一个是类似于Innodb引擎中page的状态，两个状态在逻辑上是一致的。</p>
+<p><strong>例子3</strong>：一个是Innodb引擎的page状态，一个是保存了根据redo解析出来的SQL dml语句的文本文件，两个状态在逻辑上是一致的。</p>
+<p><strong>例子4</strong>：两个同构的引擎，redo日志中有一条特殊的日志是“根据本机时区生成当前时间”，两个引擎的内容虽然不一致，但是实际上仍是保持了某种约束。</p>
+<p>所以你看，只要打开脑洞，复制状态机模型是非常强大有用的。</p>
+<h3 id="复制状态机的转移一定要顺序转移吗？"><a href="#复制状态机的转移一定要顺序转移吗？" class="headerlink" title="复制状态机的转移一定要顺序转移吗？"></a><strong>复制状态机的转移一定要顺序转移吗？</strong></h3><p>先说结论：顺序转移是复制状态机模型定义引入的（理论上）不必要的约束。</p>
+<p>需要说明的是，这里我们说的是Paxos&#x2F;Raft主正常服务过程，不是新主上任的过程。</p>
+<p>复制状态机是个抽象的模型，它并不能把实际问题中的并发现象涵括在内。</p>
+<p>数据库中，一段时间内处理的客户端命令请求中，可能有些命令之间是有顺序依赖的，有些却没有。例如，多个并发事务在修改同一行时，并发控制算法往往会依赖行锁对几个事务定序（比如后面的事务重试加锁，等前面的完成），那么这几个修改命令就是有顺序关系的，此外还有外部一致性引入的顺序等。另一方面，一张表上可能有多个并发的事务在修改不同的行，这些并发的修改命令就没有预设的先后顺序。也就是说，如果要考察一段时间内的命令集合上的依赖关系（或者称之为顺序关系），这个二元关系实际应该是个<strong>偏序关系</strong>（partial order）。</p>
+<p>但是在复制状态机模型描述中，却给命令集合上强制定义了一个<strong>全序关系</strong>（total order），当然，这个全序关系是真实偏序关系的超集。两个集合的差，就是这个模型引入的不必要的额外约束。</p>
+<p>那么，状态一定要顺序转移吗？顺序转移固然理解和实现简单，在理论上但却没有必要。如果一个状态机需要服务查询读请求，那么仅根据偏序关系转移状态机也是没有问题的（一个写事务与一个读事务并发，该读事务读到或者读不到这个写事务都是合理的）。极端一点地说，如果一个状态机连查询读都可以不支持（仅用于高可用备份，不提供读），那么内存状态甚至都不必按照偏序关系来转移，只要能够依赖redo来调整成偏序关系依赖就行，中间状态是什么样并不重要。</p>
+<p><em>当然，如果顺序转移的成本可以接受，或者乱序转移的收益没有那么高（这取决于并发控制部分设计），使用顺序转移的方案，实现上会更简单，系统更加<strong>reasonable</strong>，代码质量更容易保证。</em></p>
+<h3 id="复制状态机和命令序列是什么关系"><a href="#复制状态机和命令序列是什么关系" class="headerlink" title="复制状态机和命令序列是什么关系"></a><strong>复制状态机和命令序列是什么关系</strong></h3><p>或者换个问法，复制状态机为什么要和一个命令序列关联起来，又或者说为什么要定义一个全序关系来描述这个模型。</p>
+<p>我想有两个原因，第一是因为模型描述上简单，只关注最核心的思想。第二是因为Multi-Paxos或者Raft是依赖leader的一致性协议。这也很好理解，因为这个全序关系就是这个leader来确定的，leader给incoming的命令分配了一个序号。</p>
+<p>对于一些leaderless的Paxos变体，你会看到不一样的复制状态机定义，EPaxos尤为典型。在EPaxos中，多个副本之间不再是一个leader多个follower，而是每个节点都是平等的，都可以处理写请求，各个节点都分别服务了落在各自节点上的写请求，然后同步到其他副本。整个状态机的在命令层面的映射就变成了包含所有paxos group中各个副本上服务的写事务对应的命令，这显然就不是一个序列，而是一组序列，这个状态机的转移也就谈不上顺序转移了。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +196,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/sdpaxos_paper/">
+      <a class="nav-left" href="/google_spanner/">
         <span class="nav-arrow">← </span>
         
-          SDPaxos优雅的折中
+          Spanner(OSDI&#39;12)论文阅读笔记
         
       </a>
     
     
-      <a class="nav-right" href="/reconfig_state_machine/">
+      <a class="nav-right" href="/blue-eye-puzzle-from-tao/">
         
-          Reconfiguring a State Machine
+          蓝眼睛谜题
         
         <span class="nav-arrow"> →</span>
       </a>

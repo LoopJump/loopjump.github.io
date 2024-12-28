@@ -159,130 +159,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/dbms_arch/">数据库系统组件</a>
-      </h2>
-      <p class="article-date">February 10, 2018</p>
-      
-      <div class="article-summary">
-        
-          读了Architecture of a Database System这篇经典论文，挑了些不太熟悉的内容做了笔记。
-论文内容基本上谈不上是在讲架构吧，基本上就是罗列了下有哪些组件，而且内容基本上针对原来传统数据库的。
-
-!http://loopjump.com/wp-content/uplo ...
-        
-      </div>
-      <a class="more" href="/dbms_arch/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/epaxos_paper_note/">EPaxos协议解读</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-      <div class="article-summary">
-        
-          引言这是2013年SOSP的会议论文，讲述了一个leaderless的一致性协议EPaxos。不得不说的是，这篇论文写的实在是难读，一方面协议确实比Multi Paxos协议复杂很多，另一方面是行文上有些地方不通顺。我看的资料是会议论文和两个版本的EPaxos证明的技术报告。会议论文简洁但是 ...
-        
-      </div>
-      <a class="more" href="/epaxos_paper_note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/flp_proof_note/">FLP impossibility证明阅读笔记</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-      <div class="article-summary">
-        
-          分布式系统一致性协议里面有一个FLP impossibility的结论，这个结论是说，在分布式系统中，异步网络（消息延迟可能任意大或丢失，消息可能乱序），只要有一个进程失效（进程死亡或者足够长时间不响应），就不可能设计出一个确定性的一致性协议。
-该结论由Fisher、Lynch、Paters ...
-        
-      </div>
-      <a class="more" href="/flp_proof_note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/flexible_paxos_quorum_revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-      <div class="article-summary">
-        
-          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
-        
-      </div>
-      <a class="more" href="/flexible_paxos_quorum_revisited/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/dynamo_paper_note/">Dynamo论文阅读笔记</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-      <div class="article-summary">
-        
-          Dynamo: Amazon’s Highly Available Key-value Store
-Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
-Dynamo系统 ...
-        
-      </div>
-      <a class="more" href="/dynamo_paper_note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/gdb_tips/">gdb调试技巧</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-      <div class="article-summary">
-        
-          Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。
-使用gdb前，代码要用gcc -g选项编译以带上符号表。
-调试C++程序的基本环境设置1234567set print pretty onset print  ...
-        
-      </div>
-      <a class="more" href="/gdb_tips/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/cap_theory/">浅析CAP理论</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-      <div class="article-summary">
-        
-          CAP理论是Eric Brewer在2000年前后提出的一个设计上的折中原则，大意是说，一个系统在Consistency、Availability、Partition Tolerance三者之间无法兼顾，必须舍弃一个。
-Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（ ...
-        
-      </div>
-      <a class="more" href="/cap_theory/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/distributed_consistency_model/">浅析分布式一致性模型</a>
-      </h2>
-      <p class="article-date">November 10, 2016</p>
-      
-      <div class="article-summary">
-        
-          一致性术语的理解一致性这个中文术语在计算机的不同领域有不同的含义，对应的英文术语也是不一样的：Consistency, Consensus, Coherence等等。
-就这三个术语而言，其区别可以简单的如下理解：
-
-Coherence这个单词只在Cache Coherence场景下出现过，它 ...
-        
-      </div>
-      <a class="more" href="/distributed_consistency_model/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/clean-code-note/">代码整洁之道 读书笔记</a>
       </h2>
       <p class="article-date">October 11, 2016</p>
@@ -311,6 +187,132 @@ Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误�
         
       </div>
       <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/rsm_questions/">漫谈复制状态机的几个有趣的问题</a>
+      </h2>
+      <p class="article-date">October 2, 2016</p>
+      
+      <div class="article-summary">
+        
+          读过Paxos等论文的读者，应该对复制状态机（Replicated State Machine）的概念并不陌生。复制状态机在分布式系统中是一个很简单却很强大的模型，也是一种很有价值的思想。
+模型一句话描述就是：多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。
+
+!h ...
+        
+      </div>
+      <a class="more" href="/rsm_questions/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/google_spanner/">Spanner(OSDI'12)论文阅读笔记</a>
+      </h2>
+      <p class="article-date">September 21, 2016</p>
+      
+      <div class="article-summary">
+        
+          Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
+        
+      </div>
+      <a class="more" href="/google_spanner/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/time_clock_order/">分布式系统的时间、时钟和事件序</a>
+      </h2>
+      <p class="article-date">September 10, 2016</p>
+      
+      <div class="article-summary">
+        
+          Time, Clocks, and the Ordering of Events in a Distributed System这篇论文Lamport发表于1978年，讨论的是分布式系统下的时钟和事件序问题。
+
+!http://loopjump.com/wp-content/uploads/ ...
+        
+      </div>
+      <a class="more" href="/time_clock_order/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/manmonth-note/">人月神话 读书笔记</a>
+      </h2>
+      <p class="article-date">August 18, 2016</p>
+      
+      <div class="article-summary">
+        
+          最近听到一个度量软件复杂度的概念，叫decoupling level，想起来以前买过一本《人月神话》，这两天把它从书堆里面翻出来了。虽然书有300多页，不过里面大部分观点，我想从业者应该都认可，因此书里的新东西并不多。
+Chapter 1： 焦油坑职业的乐趣：工作的创造性；产品有价值；零件正 ...
+        
+      </div>
+      <a class="more" href="/manmonth-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/cpp_typename_usage/">C++ typename用法</a>
+      </h2>
+      <p class="article-date">July 10, 2016</p>
+      
+      <div class="article-summary">
+        
+          C++中typename关键字的使用方法
+1.用在模板定义里，标明其后的模板参数是类型参数。例如
+12345678910template&lt;typename T, typename Y&gt;T foo(const T&amp; t, const Y&amp; y) &#123; /*. ...
+        
+      </div>
+      <a class="more" href="/cpp_typename_usage/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lockfree_reclaim_perf_note/">LockFree数据结构的内存回收性能测试</a>
+      </h2>
+      <p class="article-date">March 12, 2016</p>
+      
+      <div class="article-summary">
+        
+          最近在搞性能优化，读了一篇挺有意思的相关论文。
+Performance of memory reclamation for lockless synchronization
+几种Memory Reclaimation Scheme评测了几种回收机制的性能：
+
+QSBR  quiescent- ...
+        
+      </div>
+      <a class="more" href="/lockfree_reclaim_perf_note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/transaction_thoughts/">关于事务的一点琐碎思考</a>
+      </h2>
+      <p class="article-date">March 2, 2016</p>
+      
+      <div class="article-summary">
+        
+          最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。
+在某些实现下，2PC会影响MVCC ?MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布 ...
+        
+      </div>
+      <a class="more" href="/transaction_thoughts/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/ubuntu_compile_install_new_kernel/">Ubuntu 12.04编译安装3.15.6新内核</a>
+      </h2>
+      <p class="article-date">October 3, 2015</p>
+      
+      <div class="article-summary">
+        
+          最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。
+在某些实现下，2PC会影响MVCC ?MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布 ...
+        
+      </div>
+      <a class="more" href="/ubuntu_compile_install_new_kernel/">Read more</a>
     </article>
   
 

@@ -157,7 +157,7 @@
 
     <div id="article-banner">
   <h2>Raft的乱序commit和乱序apply</h2>
-  <p class="post-date">2024-10-10</p>
+  <p class="post-date">2017-03-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -165,7 +165,17 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><p>不知怎么地，前一阵子知乎上对Raft的乱序的问题的讨论就变多了。我觉得其实这个问题可讨论的东西并不多。</p>
+<p>Raft作者觉得Multi Paxos太复杂，所以搞了一个Raft。Raft加了很多约束，其中可能最重要的一条就是只能顺序commit。</p>
+<p>所以，顺序commit的锅，Raft是得好好背着，翻不了案的。</p>
+<p>值得谈一谈的是乱序apply。</p>
+<p>能不能乱序apply本质上取决于你的状态机的设计。</p>
+<p>比如，考虑rocksdb的crash recovery(almost same as follower replay)过程，wal日志apply的时候，因为日志里面每个修改都是带版本号的（rocksdb记录的是逻辑日志），所以即使是乱序apply的，最终也能调成正确的顺序。不过，值得注意的是，在rocksdb(LSM Tree)里面，如果memtable占内存比较大了，就要switch memtable，通常为了简化系统，会在这里做个apply barrier，这通常依赖顺序地submit replay task这样一个机制，因此这里乱序就不是彻底的乱序，甚至可以说只是apply动作乱序，而submit apply是顺序的。</p>
+<p>再比如，考虑innodb的wal日志，它记录的是page的变更历史，这个是不容易调序的。那它的乱序有没有什么办法呢？</p>
+<p>PolarFS(VLDB2018)里面介绍了一个ParallelRaft，在apply这一步做了乱序增强：每条wal entry都额外再记录一个apply info，这个apply info存的是这条日志往前的N条日志所修改的page id。这样在不冲突的情况下，就可以最多允许并发窗口为N的并发apply（也因此有必要实现并发commit）。</p>
+<p>如果consensus支持乱序commit但是状态机不支持乱序apply，那么乱序commit还有意义吗？</p>
+<p>唔，这个问题有争议，扯多了就成了毫无意义的口水仗。</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -174,17 +184,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/quorum_sys_failure_probability/">
+      <a class="nav-left" href="/dynamo_paper_note/">
         <span class="nav-arrow">← </span>
         
-          Quorum System的故障概率和负载
+          Dynamo论文阅读笔记
         
       </a>
     
     
-      <a class="nav-right" href="/newsql/">
+      <a class="nav-right" href="/flp_proof_note/">
         
-          What&#39;s Really New with NewSQL
+          FLP impossibility证明阅读笔记
         
         <span class="nav-arrow"> →</span>
       </a>
