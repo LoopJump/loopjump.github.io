@@ -302,16 +302,18 @@ $\mathcal{abcde ...
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/spanner_paper_note/">Google Spanner论文阅读笔记</a>
+        <a href="/db_isolation_level/">浅谈数据库隔离级别</a>
       </h2>
-      <p class="article-date">June 15, 2015</p>
+      <p class="article-date">June 10, 2015</p>
       
       <div class="article-summary">
         
-          Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
+          关系型数据库具备事务ACID的特性：原子性、一致性、隔离性、持久性。
+原子性是说，事务的操作要么都完成，要么都不完成。一致性是说事务不能破坏数据库的一些约束。隔离性是说，并发事务执行时，如何看到其他事务的执行结果。持久性是说，宕机重启后，数据库状态还能恢复。
+在分布式数据库中，原子性通常可以 ...
         
       </div>
-      <a class="more" href="/spanner_paper_note/">Read more</a>
+      <a class="more" href="/db_isolation_level/">Read more</a>
     </article>
   
 
