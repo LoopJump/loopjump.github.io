@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      What&#39;s Really New with NewSQL | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>What's Really New with NewSQL</h2>
+  <p class="post-date">2017-02-09</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>这篇文章介绍的面很广，提到了诸多系统，不过每个点都不太细。另外虽然是16年的文章，但不知道为啥还是感觉有点陈旧了。。。简单来说，当个手册看吧，遇到具体细节问题，可以找文中提到的具体系统参考下。这里捡我感兴趣的点罗列了一下，详细内容读者可以看原文。</p>
+<h3 id="DBMS简史"><a href="#DBMS简史" class="headerlink" title="DBMS简史"></a><strong>DBMS简史</strong></h3><p>1968年第一个DBMS上线，IBM在数据库领域发力甚早，比如System R，不过没有对外。</p>
+<p>70年代，Oracle发布了第一个版本。</p>
+<p>1983年IBM推出了DB2。</p>
+<p>80年代，面向对象的数据库问世，不过缺乏像SQL一样的标准接口而未能广为使用，不过面向对象数据库中一些想法，如支持XML等，在后来的NoSQL中又得到了应用。</p>
+<p>90年代，出现了一些开源的数据库产品，如MySQL、Postgres。</p>
+<p>00年代，大规模互联网应用给数据库带来了很大的冲击，这一阶段有些中间件的解决方案。有公司开始尝试搞分布式DBMS，最终导致了NoSQL运动。NoSQL里面最著名的是Google Bigtable和Amazon Dynamo。</p>
+<p>00年代末，很多应用更强调强一致、支持事务，使用NoSQL的接口往往导致应用代码很复杂，这些因素最终促使了NewSQL的诞生。</p>
+<h3 id="NewSQL的分类"><a href="#NewSQL的分类" class="headerlink" title="NewSQL的分类"></a><strong>NewSQL的分类</strong></h3><p>NewSQL是指一类关系型数据库，即有NoSQL的扩展性，又支持ACID事务。</p>
+<p>NewSQL分成三类：New Architecture、Transparent Sharding Middleware、Database-as-a-Service。</p>
+<p><strong>New Architecture</strong></p>
+<p>分布式设架构设计，一般是share-nothing的架构，支持mutli-node concurrency control、fault tolerance through replication、flow control、distributed query processing。因为针对分布式环境设计，所以可以做的优化空间更多，比如查询优化、节点间通信（不必依赖中间件中心节点）等。该思路下一般（Spanner不是）要自己管理数据存储和分布，以支持将请求发到数据而不是将数据带到请求节点。</p>
+<p>因为是全新的架构，兼容和系统生态会是一个大问题。以我看到的情况，坦白地说，这些工作都是偏离core-tech之外的dirty work。</p>
+<p>典型系统：Clustrix、Google Spanner、H-Store、HyPer、MemSQL、NuoDB、Pivotal GemFire XD、SAP HANA、VoltDB。</p>
+<p><strong>Transparent Sharding Middleware</strong></p>
+<p>中间件思路下，有一个中心组件用来路由请求、协调事务（应该是协调完成分布式事务）、管理数据分布、副本复制、数据在节点间分区。每个节点上都运行一个单机版的数据库实例，上面有一个组件用于该实例与中心组件交互。整个集群对外是一个逻辑实例。</p>
+<p>优势：应用往往已经很适合这种架构，所以不需要做什么改动。</p>
+<p>劣势：单节点上的传统数据库是面向磁盘设计的，针对大内存和多核机器无法高效利用；另外就是复杂查询的查询计划和优化在中间件和各节点上会有重复工作。</p>
+<p>典型系统：dbShards、MariaDB MaxScale、ScaleArc、ScaleBase。</p>
+<p><strong>Database-as-a-Service</strong></p>
+<p>云数据库</p>
+<p>典型系统：Amazon Aurora、ClearDB</p>
+<h3 id="最新的技术点"><a href="#最新的技术点" class="headerlink" title="最新的技术点"></a><strong>最新的技术点</strong></h3><p>这一节新东西不多，只提一下我觉得有点意思的点。</p>
+<p><strong>面向内存的存储设计</strong></p>
+<p>内存要自己管理起来，不要依赖OS。</p>
+<p><strong>Partitioning &#x2F; Sharding</strong> 略</p>
+<p><strong>Concurrency Control</strong> 略</p>
+<p><strong>Secondary Index</strong></p>
+<p>分布式集群里面维护全局索引不好解决（产生大量分布式事务）。</p>
+<p>业务可以额外再搞个纯内存cache系统来放索引，索引失效要自己搞（要仔细考虑原子性、一致性这些问题）。数据库内核开发者成功将难题扔给了应用开发者……</p>
+<p><strong>Replication</strong> 略</p>
+<p><strong>Crash Recovery</strong> 略</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/nosql_survey_note/">
+        <span class="nav-arrow">← </span>
+        
+          NoSQL数据库综述和选型阅读笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/dynamo_paper_note/">
+        
+          Dynamo论文阅读笔记
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/newsql/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

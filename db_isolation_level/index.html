@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      浅谈数据库隔离级别 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>浅谈数据库隔离级别</h2>
+  <p class="post-date">2015-06-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>关系型数据库具备事务ACID的特性：原子性、一致性、隔离性、持久性。</p>
+<p>原子性是说，事务的操作要么都完成，要么都不完成。一致性是说事务不能破坏数据库的一些约束。隔离性是说，并发事务执行时，如何看到其他事务的执行结果。持久性是说，宕机重启后，数据库状态还能恢复。</p>
+<p>在分布式数据库中，原子性通常可以用两阶段提交（2PC）等协议保证。持久性靠持久化的日志文件。一致性和隔离性两个关系比较密切，本文基于经典论文A Critiqueof ANSI SQL Isolation Levels（后简称Critique论文），浅谈隔离级别。</p>
+<p>这篇论文的陈述思路是：标准委员会搞了一套标准来定义隔离级别，然而本文作者Jim Gray等大牛表示这个标准有点问题，于是写了这么一篇论文。说标准阐述语义有点窄，还有就是没能涵盖一些彼时比较新的数据库技术，例如Snapshot隔离级别等。</p>
+<p>首先是一些名词的定义。</p>
+<p><strong>history</strong> : 若干并发事务的某个执行序列。</p>
+<p><strong>Serializable</strong> 的定义：严格定义比较繁琐。如果事务T1的操作op1和事务T2的操作op2作用于同一数据，且至少一个写操作，那么称两个操作冲突。对于并发执行的事务，以操作为点、冲突为边，构造的图称之为依赖图。两个history的依赖图如果具有相同的依赖图和相同的提交事务，那么两个history就是等价的。如果history跟某个串行执行的history等价，那么就称该history是serializable的。</p>
+<h2 id="隔离级别的定义"><a href="#隔离级别的定义" class="headerlink" title="隔离级别的定义"></a><strong>隔离级别的定义</strong></h2><p>隔离级别定义方式比较混乱。现在回头看的话，大致可以按照如下思路理解：早期基于锁定义的隔离级别；而ANSI SQL标准尝试从实现无关的角度定义了隔离级别；而Critique这篇论文又对标准定义的隔离级别提出了一些改进，而MVCC等数据库技术出现之后，又需要重新补充一些分析和定义。如图示。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9fdba6cd-f785-43d7-a0fe-8d9b037802b6/isolation_define.png" alt="isolation_define.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/06/isolation_define.png">http://loopjump.com/wp-content/uploads/2015/06/isolation_define.png</a></p>
+<p>本文择其要者，简述一下。</p>
+<h2 id="基于锁的定义"><a href="#基于锁的定义" class="headerlink" title="基于锁的定义"></a><strong>基于锁的定义</strong></h2><p>锁可以分为读锁、写锁；或者长锁、短锁；或者数据项锁、谓词锁。</p>
+<p>其中，长锁指加锁后直到事务结束才释放锁。</p>
+<p>谓词锁指对一个谓词逻辑加锁，例如，lock on (age &lt; 10) 这一谓词锁，可以阻止对满足该谓词的元组的修改和增删。</p>
+<p>根据不同的加锁策略，可以支持不同的隔离级别。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/1f85f17d-d1c0-4817-9268-289e8638b650/degree_of_consistency.png" alt="degree_of_consistency.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/06/degree_of_consistency.png">http://loopjump.com/wp-content/uploads/2015/06/degree_of_consistency.png</a></p>
+<p>该表比较简单，不再赘述。</p>
+<p>另外，两阶段封锁（2 Phase Lock）可以保证serializable。其中2PL指事务加锁和解锁分为两个明显的界限，在前一阶段只加锁，后一阶段只释放锁。至于2PL为何能够保证serializable，读者可以参考教科书。</p>
+<h2 id="原始ANSI标准和Critique论文完善的隔离级别定义"><a href="#原始ANSI标准和Critique论文完善的隔离级别定义" class="headerlink" title="原始ANSI标准和Critique论文完善的隔离级别定义"></a><strong>原始ANSI标准和Critique论文完善的隔离级别定义</strong></h2><p>ANSI标准尝试定义一个实现无关的隔离级别。ANSI标准是基于表现出来的异常现象（phenomena）来定义隔离级别。这个想法很好，但是后来发现漏洞也有。其一是这种定义是通过自然语言描述，不够严谨；其二是后续有多了MVCC等技术，隔离级别的定义也需要相应改动。</p>
+<p>这里，我们直接从完善后的隔离级别定义说起。</p>
+<p>首先定义几种异常现象：P0, P1, P2, P3, P4, P4C, A5A, A5B。</p>
+<h3 id="P0-Dirty-Write"><a href="#P0-Dirty-Write" class="headerlink" title="P0 Dirty Write"></a><strong>P0 Dirty Write</strong></h3><p>P0的访问模式是：w1[x], w2[x], c1 or a1。</p>
+<p>这个访问模式指的是事务T1写了x，然后事务T2写了x，然后T1提交或者回滚。</p>
+<p>如果数据库允许P0这种情况发生，可能违反一致性约束。不过这也不算大问题，更为严重的问题是很难在允许这种异常的情况下，通过restore before-image来undoupdate，恢复机制不好搞了。例如：</p>
+<p>x&#x3D;0, w1[x&#x3D;1], w2[x&#x3D;2], a1</p>
+<p>这个history下，如果通过restore before-image来undo update，可能带来如下问题：</p>
+<p>T2记录undo日志的话，要记下(T2改x之前，x&#x3D;1)，但是如果T1回滚，则undo日志就不对了。</p>
+<p>基于这个考虑，数据库都不允许P0发生。</p>
+<h3 id="P1-Dirty-Read"><a href="#P1-Dirty-Read" class="headerlink" title="P1 Dirty Read"></a><strong>P1 Dirty Read</strong></h3><p>P1的访问模式是w1[x], r2[x], c1 or a1</p>
+<p>允许P1发生的话，事务可能读到不一致的数据状态。</p>
+<p>例如：</p>
+<p>C(x,y): x+y &#x3D; 100</p>
+<p>History: [x&#x3D;50,y&#x3D;50], r1[x&#x3D;50], w1[x&#x3D;10], r2[x&#x3D;10], r2[y&#x3D;50], c2, r1[y&#x3D;50], w1[y&#x3D;90], c1。</p>
+<p>T2读到了x&#x3D;10, y&#x3D;50的不一致的状态。</p>
+<p>P1异常被用于区别Read Uncommitted和Read Committed隔离级别。</p>
+<h3 id="P2-Non-Repeatable-Read"><a href="#P2-Non-Repeatable-Read" class="headerlink" title="P2 Non-Repeatable Read"></a><strong>P2 Non-Repeatable Read</strong></h3><p>P2的访问模式是 r1[x], w2[x], c1 or a1</p>
+<p>P2异常是，T2提交前后T1可能读取到数据可能不一致或者违反约束。</p>
+<p>数据不一致History: r1[x&#x3D;50], w2[x&#x3D;10], c2 ,r1[x&#x3D;10], c1</p>
+<p>违反约束C(x,y): x+y&#x3D;100</p>
+<p>History: r1[x&#x3D;50], r2[x&#x3D;50], w2[x&#x3D;10], r2[y&#x3D;50], w2[y&#x3D;90], c2, r1[y&#x3D;90], c1</p>
+<p>P2可以用于区别Read Committed和Repeatable Read。</p>
+<h3 id="P3-Phantom"><a href="#P3-Phantom" class="headerlink" title="P3 Phantom"></a><strong>P3 Phantom</strong></h3><p>P3的访问模式是r1[P], w2[y in P], c1 or a1</p>
+<p>P3异常是，谓词对应的数据集合在T1读取后被T2修改。</p>
+<p>P3用于区别Repeatable Read和Serializable。</p>
+<p>P1 ~ P3是Critique paper基于ANSI标准定义的异常情况A1~A3，重新表述而来。P和A对应的差别是，P是更加宽泛的解释，也就是说，P异常描述了更多的history，至于为何将A重新表述为P，主要原因是，A描述下，某些违反约束的history不会被视为异常。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/265e3481-d78c-479e-86b1-713d6d4bd8e9/ansi_isolation.png" alt="ansi_isolation.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/06/ansi_isolation.png">http://loopjump.com/wp-content/uploads/2015/06/ansi_isolation.png</a></p>
+<p>Table3锁定义的隔离级别与T2锁定义的隔离级别，同名隔离级别是等价的。这个结论是通过论述加锁策略排除异常的方式得来的。</p>
+<p>后续针对新出现的技术如Snapshot Isolation等，需要扩展上述隔离级别的定义。</p>
+<h3 id="P4-Lost-Update"><a href="#P4-Lost-Update" class="headerlink" title="P4 Lost Update"></a><strong>P4 Lost Update</strong></h3><p>P4的访问模式r1[x], w2[x], w1[x], c1</p>
+<p>P4的问题是T2的可能会丢失。</p>
+<h3 id="P4C-Lost-Update"><a href="#P4C-Lost-Update" class="headerlink" title="P4C Lost Update"></a><strong>P4C Lost Update</strong></h3><p>P4C是P4类似的一个访问模式，rc1[x], w2[x], w1[x], c1</p>
+<p>其中rc1[x]指通过Cursor来访问x。</p>
+<p>Cursor Stability隔离级别是在Read Committed的基础上排除了P4C。大致原理是锁定游标锁引用的行，这个实际是比较弱的限制，只是锁定了一行（假设一个游标）。</p>
+<p>P4是针对Snapshot Isolation出现的。Snapshot Isolation是一种多版本并发控制方式。大致原理为：每个事务读写各自的快照；快照是Start-Timestamp（某个早于该事务开始的时间）时的已提交状态；写不阻塞读；写事务更新自己的快照，更新可被本事务读取，但不影响其他事务的快照。提交时按照First-Committer-Wins原则提交。First-Committer-Wins是指如果在本事务的执行时间区间 [StartTimestamp, CommitTimeStamp]内，没有更新了同样数据的其他并发事务提交，那么本事务才能提交。这个提交原则保证了Snapshot Isolation不会违背P4。</p>
+<p>在MVCC机制下，分析异常情况的方式也有差异。MVCC下，通常会考虑约束违反（Constraint Violation）这类异常情况，分析不一致性（inconsistent analysis）。</p>
+<h3 id="A5A-Read-Skew"><a href="#A5A-Read-Skew" class="headerlink" title="A5A Read Skew"></a><strong>A5A Read Skew</strong></h3><p>r1[x], w2[x], w2[y], c2, r1[y], c1 or a1</p>
+<h3 id="A5B-Write-Skew"><a href="#A5B-Write-Skew" class="headerlink" title="A5B Write Skew"></a><strong>A5B Write Skew</strong></h3><p>r1[x], r2[y], w1[y], w2[x], c1 and c2</p>
+<p>A5A是P2的特例。A5A带来的问题是，可能违反约束（见P2）。</p>
+<p>由Snapshot Isolation的特性容易知道，Snapshot Isolation可以拒绝A5A。</p>
+<p>A5B的情况复杂一些。我们举个例子，假如允许同一个人的两个银行账户x,y出现负值，只要保证C(x,y) : (x+y&gt;&#x3D;0)为TURE即可。（下例中，每个事务单独保证C(x,y)，但history不能保证）</p>
+<p>History: r1[x&#x3D;50], r1[y&#x3D;50], r2[x&#x3D;50], r2[y&#x3D;50], w1[x&#x3D;-40], w2[y&#x3D;-40], c2, c1</p>
+<p>A5B可能发生在Snapshot Isolation隔离级别下。</p>
+<h2 id="Oracle-Read-Consistency"><a href="#Oracle-Read-Consistency" class="headerlink" title="Oracle Read Consistency"></a><strong>Oracle Read Consistency</strong></h2><p>Oracle使用多版本的大致机制如图：</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d5188172-f8c8-4a05-b4aa-f99e88d322f5/oracle.gif" alt="oracle.gif"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/06/oracle.gif">http://loopjump.com/wp-content/uploads/2015/06/oracle.gif</a></p>
+<p>当前事务拿到的快照为SCN&#x3D;10023，假如该事务扫表，对于第三行，会读取10008那个版本的数据。</p>
+<p>Oracle Read Consistency 每条语句执行前重新计算最新快照。因此可以读到语句开始前最新提交的数据。这种机制允许P2。Oracle的提交遵循First-Write-Win，也就是谁先写谁为准，后续要写的事务只能abort。</p>
+<p>用户也可以手动设置，使得每个事务执行前计算快照。这两种拿快照的方式分别对应Statement-Level Read Consistency 和 Transaction-Level Read Consistency。</p>
+<p>当然，论文里提到的这个Oracle Read Consistency基本等价于Oracle提到的Read Committed隔离级别。Oracle也可以设置为Serializable的隔离级别（非真正的serializable）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>综合上述论述，得到的结论可以归纳为一张表和一张图。</p>
+<p>从图中可以看到各厂家宣称的隔离级别名字其实挺混乱的。DB2的Repeatable Read其实就是Serializable，而Oracle的Serializable却不是图上的Serializable，相反地，Oracle的最高隔离级别也不能排除A5B。据说，PostgreSQL在Snapshot Isolation基础上支持Serializable，也有相关的论文介绍相关的技术(SSI)。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/percolator_paper_note/">
+        <span class="nav-arrow">← </span>
+        
+          Percolator论文阅读笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/spanner_paper_note/">
+        
+          Google Spanner论文阅读笔记
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/db_isolation_level/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

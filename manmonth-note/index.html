@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      人月神话 读书笔记 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>人月神话 读书笔记</h2>
+  <p class="post-date">2016-08-18</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>最近听到一个度量软件复杂度的概念，叫decoupling level，想起来以前买过一本《人月神话》，这两天把它从书堆里面翻出来了。虽然书有300多页，不过里面大部分观点，我想从业者应该都认可，因此书里的新东西并不多。</p>
+<h3 id="Chapter-1：-焦油坑"><a href="#Chapter-1：-焦油坑" class="headerlink" title="Chapter 1： 焦油坑"></a><strong>Chapter 1： 焦油坑</strong></h3><p><strong>职业的乐趣</strong>：工作的创造性；产品有价值；零件正常运转的魅力；持续学习的快乐。</p>
+<p><strong>职业的苦恼</strong>：追求完美；他人设定目标；寻找bug是痛苦的。</p>
+<h3 id="Chapter-2：-人月神话"><a href="#Chapter-2：-人月神话" class="headerlink" title="Chapter 2： 人月神话"></a><strong>Chapter 2： 人月神话</strong></h3><p>在很多项目中，缺乏合理的进度安排是造成项目滞后的最主要的原因。</p>
+<ul>
+<li>对估算技术缺乏有效研究</li>
+<li>估算技术时常隐含地假设了人和月可以互换</li>
+<li>软件经理通常不会有耐心做估量</li>
+<li>对进度缺乏跟踪和监督</li>
+<li>当意识到进度偏移时，下意识反应是增加人力</li>
+</ul>
+<p><strong>乐观主义</strong>：程序员大都是乐观主义，但这种乐观主义理应受到慎重的分析。</p>
+<p><strong>人月估计量</strong>：适用于项目被拆解成很多个可以并行的小任务的场景，否则必须考虑沟通的工作量。新进来的人员也需要培训。</p>
+<p><strong>空泛的估量</strong>：客户给的时间很紧，但项目经理需要挺直腰杆。</p>
+<p><strong>Brooks法则</strong>：向进度落后的项目增加人手，只会使进度更加落后。?!</p>
+<h3 id="Chapter-3：-外科手术队伍"><a href="#Chapter-3：-外科手术队伍" class="headerlink" title="Chapter 3： 外科手术队伍"></a><strong>Chapter 3： 外科手术队伍</strong></h3><p>优秀程序员和较差程序员差别可能比想象中的还要大：2倍年薪带来的是10倍生产率和5倍编程速度。</p>
+<p>需要沟通的人员数量严重影响着开发成本。</p>
+<p><strong>Mills的建议</strong>：架构师（或首席程序员）做分解，其他人做支持。</p>
+<h3 id="Chapter-4：-贵族专制、民主政治和系统设计"><a href="#Chapter-4：-贵族专制、民主政治和系统设计" class="headerlink" title="Chapter 4： 贵族专制、民主政治和系统设计"></a><strong>Chapter 4： 贵族专制、民主政治和系统设计</strong></h3><p><strong>概念完整性</strong>：各个系统组件之间一系列连贯的设计思路。</p>
+<p>功能与理解上的复杂度的比值才是系统设计的最终测试标准。:)</p>
+<p>概念的完整性要求设计必须由一个人或者非常少数互有默契的人员来实现。但实现压力又要求很多人开发，所以设计和开发要想办法分开。</p>
+<p>架构师时常需要专制。</p>
+<h3 id="Chapter-5：-画蛇添足"><a href="#Chapter-5：-画蛇添足" class="headerlink" title="Chapter 5： 画蛇添足"></a><strong>Chapter 5： 画蛇添足</strong></h3><h3 id="Chapter-6：-贯彻执行"><a href="#Chapter-6：-贯彻执行" class="headerlink" title="Chapter 6： 贯彻执行"></a><strong>Chapter 6： 贯彻执行</strong></h3><p>使用形式化的语言，更精确。</p>
+<p>周会和年会。</p>
+<p>架构理解和解释最好沉淀成文字。</p>
+<h3 id="Chapter-7：-为什么巴比伦塔会失败"><a href="#Chapter-7：-为什么巴比伦塔会失败" class="headerlink" title="Chapter 7： 为什么巴比伦塔会失败"></a><strong>Chapter 7： 为什么巴比伦塔会失败</strong></h3><p><strong>大型编程项目的组织架构</strong></p>
+<p>团队组织的目的是减少所需交流和合作的数量。所以要做人力划分和限定职责范围。</p>
+<p>树状组织结构并不能用来描述交流沟通。</p>
+<h3 id="Chapter-8：-胸有成竹"><a href="#Chapter-8：-胸有成竹" class="headerlink" title="Chapter 8： 胸有成竹"></a><strong>Chapter 8： 胸有成竹</strong></h3><h3 id="Chapter-9：-削足适履"><a href="#Chapter-9：-削足适履" class="headerlink" title="Chapter 9： 削足适履"></a><strong>Chapter 9： 削足适履</strong></h3><p><strong>规模控制</strong>：需要设定每个部分的规模目标（设计容量），通常需要对可用方案有深刻理解。</p>
+<h3 id="Chapter-10：-提纲挈领"><a href="#Chapter-10：-提纲挈领" class="headerlink" title="Chapter 10： 提纲挈领"></a><strong>Chapter 10： 提纲挈领</strong></h3><h3 id="Chapter-11：-未雨绸缪"><a href="#Chapter-11：-未雨绸缪" class="headerlink" title="Chapter 11： 未雨绸缪"></a><strong>Chapter 11： 未雨绸缪</strong></h3><p>唯一不变的就是变化本身。</p>
+<h3 id="Chapter-12：-干将莫邪"><a href="#Chapter-12：-干将莫邪" class="headerlink" title="Chapter 12： 干将莫邪"></a><strong>Chapter 12： 干将莫邪</strong></h3><p>工具的重要性。</p>
+<h3 id="Chapter-13：-整体与部分"><a href="#Chapter-13：-整体与部分" class="headerlink" title="Chapter 13： 整体与部分"></a><strong>Chapter 13： 整体与部分</strong></h3><p>系统各个部分的开发者都会做出一些假设，这些假设之间的不匹配是大多数致命和难以察觉的bug的主要来源。</p>
+<p>1971 Niklaus Wirth提出了一个理念：系统开发分为架构设计、设计实现和物理编码，每个步骤都可以自上而下的方法实现，即先有个粗略大致的思路，再精细化。</p>
+<p>系统集成测试的时间一般比预期的长。</p>
+<h3 id="Chapter-14：-祸起萧墙"><a href="#Chapter-14：-祸起萧墙" class="headerlink" title="Chapter 14： 祸起萧墙"></a><strong>Chapter 14： 祸起萧墙</strong></h3><p>里程碑：需要是可度量的，清晰的。</p>
+<p>PERT图（就是一种数据结构教科书上讲的Ativity On Edge网络）。</p>
+<h3 id="Chapter-15：-另外一面"><a href="#Chapter-15：-另外一面" class="headerlink" title="Chapter 15： 另外一面"></a><strong>Chapter 15： 另外一面</strong></h3><p>流程图是吹捧得最过分的一种文档。?!</p>
+<h3 id="Chapter-16：-没有银弹，软件工程中的根本问题和次要问题"><a href="#Chapter-16：-没有银弹，软件工程中的根本问题和次要问题" class="headerlink" title="Chapter 16： 没有银弹，软件工程中的根本问题和次要问题"></a>Chapter 16： 没有银弹，软件工程中的根本问题和次要问题</h3><p>作者认为，软件开发中困难的部分是规格说明、设计和测试这些概念上的结构，而不是对概念进行表达和对实现逼真程度进行验证。</p>
+<blockquote>
+<p>注：这句话写得着实有些抽象。我对这句话的理解是，根本的困难是把问题的本质是什么理清楚，也就是需要你动用洞察力的那些事情。第四章所描述的概念完整性，大概意思就是各个模块都在描述一个东西。读者有不一样的看法烦请指出。</p>
+</blockquote>
+<p>如果这是事实，那么软件开发天生就没有银弹。考虑如下软件系统的几个内在特性：复杂度、一致性、可变性、不可预见性。</p>
+<p>复杂度：计算机有大量的状态，大量不同的实体。Todo</p>
+<p>一致性：面对复杂度，物理学家们坚信这些复杂度背后一定有一个简洁通用的理论，而程序员没有这种信念，因为这些复杂度往往是人造成的，而不是自然的规律。</p>
+<p><strong>以往解决次要困难的一些突破</strong></p>
+<p>更加易用的高级语言；分时[没理解…]；统一编程环境；</p>
+<p><strong>银弹的希望</strong></p>
+<p>更好的高级语言；面向对象编程；人工智能；专家系统；”自动”编程；图形化编程；程序验证（这个目前看着是一个事倍功半的鸡肋思路）。</p>
+<p>注：看着都不大有希望。作者确信将来也不会出现。</p>
+<p><strong>针对概念上的根本问题的颇具前途的方法</strong></p>
+<p>购买现成的软件（注：…）；需求精炼和快速原型；增量开发；卓越的设计人员。</p>
+<h3 id="Chapter-17：-再论“没有银弹”"><a href="#Chapter-17：-再论“没有银弹”" class="headerlink" title="Chapter 17： 再论“没有银弹”"></a>Chapter 17： 再论“没有银弹”</h3><p>本章题记是 “生死有命，富贵在天”。如此悲壮的想法……</p>
+<p>不过这本书随书附带了一本小册子，里面有大概十页内容讲述了本书作者Brook和另外一位大牛Cox关于到底有没有银弹的辩论。</p>
+<p>Cox对有银弹很乐观：Cox认为这些软件开发碰到的困难都是正常的（注：乐观的人大概都是这么想?!）；这些复杂度不是病因，而是症状，真正的病因是缺乏利益驱使来让更多公司编写和买卖各种粒度的组件。这把尚方宝剑不是技术上的，是软件思维的变化。</p>
+<h3 id="Chapter-18：-《人月神话》的观点：是与非？"><a href="#Chapter-18：-《人月神话》的观点：是与非？" class="headerlink" title="Chapter 18： 《人月神话》的观点：是与非？"></a>Chapter 18： 《人月神话》的观点：是与非？</h3><h3 id="Chapter-19：-20年后的《人月神话》"><a href="#Chapter-19：-20年后的《人月神话》" class="headerlink" title="Chapter 19： 20年后的《人月神话》"></a>Chapter 19： 20年后的《人月神话》</h3><p>END</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/cpp_typename_usage/">
+        <span class="nav-arrow">← </span>
+        
+          C++ typename用法
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/time_clock_order/">
+        
+          分布式系统的时间、时钟和事件序
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/manmonth-note/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

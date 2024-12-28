@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      NoSQL数据库综述和选型阅读笔记 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>NoSQL数据库综述和选型阅读笔记</h2>
+  <p class="post-date">2017-02-08</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>前一阵子看到的一篇比较详细的NoSQL数据库的综述 <em>NoSQL Database Systems: A Survey and Decision Guidance</em>，归类梳理了NoSQL数据库，并提供了选型决策树，非常有价值。仔细阅读了下，发现好多NoSQL系统连名字都没听过，汗。文中图片点击可看大图。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a><strong>Introduction</strong></h2><p>传统关系型数据库(RDBMS)提供了很强大的机制来存储和查询结构化的数据。RDBMS支持强一致和事务，可靠性、稳定性非常高。然而最近几年产生了大量的数据缺额无法用传统关系型数据库存储和处理，比如社交网络上产生的用户数据、传感器网络产生的数据。这些数据被称为Big Data。适用于Big Data的NoSQL数据库顺势出现，它们通常都有很好的水平扩展能力和更高的可用性，但同时牺牲的是丰富的查询能力和一致性保证。</p>
+<h2 id="High-level-System-Classification"><a href="#High-level-System-Classification" class="headerlink" title="High-level System Classification"></a><strong>High-level System Classification</strong></h2><p>NoSQL类型各异，这里采用两种分类方式：根据数据模型、根据CAP折中策略。</p>
+<h3 id="根据数据模型分类"><a href="#根据数据模型分类" class="headerlink" title="根据数据模型分类"></a><strong>根据数据模型分类</strong></h3><p><strong>Key-Value Stores</strong>：key-value存储存放的是key-value对的集合，只支持get和set接口。存放的value值对于key-value存储来说是透明的，key-value存储因此被认为是schemaless的。</p>
+<p>这种数据模型的优点是简单，数据分区和查询都很容易，也容易做到低延迟和高吞吐。但是这种数据库不支持复杂查询（例如范围查询），数据的分析需要在应用端做。</p>
+<p><strong>Document Stores</strong>：文档存储是一个key-value存储，但是限制value是半结构化的数据（如JSON文档）。相比key-value存储，文档存储更加灵活，不仅支持根据key取出一个完整的文档，还支持文档的部分字段的查询，聚集查询和全文索引都支持。</p>
+<p><strong>Wide-Column Stores</strong>：宽列存储，以Bigtable为代表，模型为一个关系型的表，表中有很多稀疏的列。宽列存储更接近分布式的multi-level sorted map：第一级key是row keys，第二级key是column keys。宽列存储的设计支持任意多列，若干列可以合成一个column family。存取时，通常不能一次取出一整行，但是往往能够高效压缩和存取一行的一部分列。所有行是有序存放的（即sorted map），物理磁盘上也是放在一块，高效支持row range scan。数据按照range分区，每个分区称之为tablet，若干tablets分散在不同机器上。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/28544a00-2f3f-4d72-a2ac-1d6d9a883170/wcs.png" alt="wcs.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/wcs.png">http://loopjump.com/wp-content/uploads/2017/02/wcs.png</a></p>
+<h3 id="根据Consistency-Availability折中方式分"><a href="#根据Consistency-Availability折中方式分" class="headerlink" title="根据Consistency-Availability折中方式分"></a><strong>根据Consistency-Availability折中方式分</strong></h3><p>CAP理论的相关内容可以参见这里。粗略地说，NoSQL数据库要在CAP中三选二，即要么是AP，要么是CP，要么是CA。CAP本身强调的是在面临分区时如何抉择，但是没有描述正常情况下的CA折中。所以Daniel Abadi引入了PACELC。</p>
+<p>PACELC：在Partition发生时，在Availability-Consistency之间折中，否则Else在正常场景下在Latency-Consistency之间折中。</p>
+<p>不过NoSQL数据库并不是比较容易就归到某个折中下。</p>
+<h2 id="Techniques"><a href="#Techniques" class="headerlink" title="Techniques"></a><strong>Techniques</strong></h2><p>主要从四个方面Sharding、Replication、Storage Management、Query Processing来分析design space（design space这个名词真形象~）。如图。<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/design-space.png">http://loopjump.com/wp-content/uploads/2017/02/design-space.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2fb1540f-1bc5-4fcd-b483-d544c1fab5b3/design-space.png" alt="design-space.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/design-space.png">http://loopjump.com/wp-content/uploads/2017/02/design-space.png</a></p>
+<p>我们逐个看下。</p>
+<h3 id="Sharding"><a href="#Sharding" class="headerlink" title="Sharding"></a><strong>Sharding</strong></h3><p>传统数据库的分布式方案通常是shared-disk architecture，多个节点连到同一份存储上。NoSQL通常是shared-nothing architecture。</p>
+<p>分布方式主要有三种：range sharding、hash sharding、entity-group sharding。</p>
+<p><strong>range shardin</strong>g能够方便地支持scan操作，但是需要一个协调者的角色来管理range到节点的分配，同时还要自动检测热点range并拆分。宽表Bigtable、HBase、Hypertable、文档数据库MongoDB、RethinkDB、Espresso、DocumentDB等都属于这类sharding。</p>
+<p><strong>hash sharding</strong>针对每个对象，通过对象的主键hash值模除节点数目来确定哪个节点服务该对象。该方式缺点明显，不容易支持scan操作。key-value数据库Cassandra、Azure Tables属于这类sharding。另外的缺点就是当增删节点时，数据需要重新分配位置。consistent hash减缓了这种弊端（关于consistent hash，可以参见这里）。</p>
+<p><strong>Entity-group sharding</strong>这种方式的主要目的是支持单分区内事务。应用指明或者数据库根据schema推断，来将不同表的部分数据作为一个实体组，例如按照user_id划分的多张表，实体组内数据更新可以原子地持久化，不需要2PC提交来解决分布式事务。G-Store、MegaStore、Relational Cloud、Cloud SQL Server等都是这类。</p>
+<h3 id="Repliacation"><a href="#Repliacation" class="headerlink" title="Repliacation"></a><strong>Repliacation</strong></h3><p>主要从两个角度看：when，修改什么时候传播到副本；where：修改如何被接受。</p>
+<p>从when的角度分成两类：eager(synchronous)将修改到所有副本之后才返回客户端修改成功；lazy(asynchronous)不等修改传播到副本就返回客户端成功，异步地传播修改。</p>
+<p>eager方式强一致，但高延迟。lazy方式延迟低，因为允许副本数据分叉（不一致，旧数据可能被读到）。</p>
+<p>从where角度分成两类：master-slave(primary copy)只允许master上接受修改；update-anywhere(multi-master)任何副本都可以接受修改。</p>
+<p>anywhere方式要求有额外的机制来检测冲突的修改。例如，versioning, vector clock, gossiping和read repair等。</p>
+<p>两种分法下的四种组合都是可能的。eager anywhere如分布式关系型数据库megastore；lazy master-slave如HBase、MongoDB；lazy anywhere如Dynamo、Cassandra。还有些数NoSQL数据库把latency-consistency的决定权丢给了客户端。</p>
+<p>when-where分法并不全面，比如replica之间的距离等因素无法划归到里面去。Geo-replication在系统规模达到跨地域时也是一个不可忽视的要素。Eager geo-replication如Megastore、Spanner（placement）、MDCC（不了解…）、Mencius（replica轮流做leader）。lazy geo-replciation如Dynamo、Cassandra、Bigtable、PNUTS、Walter、COPS（后面两个个不了解…）。</p>
+<h3 id="Storage-Management"><a href="#Storage-Management" class="headerlink" title="Storage Management"></a><strong>Storage Management</strong></h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/442262be-719d-4cdf-81bb-c44b5eb4c16a/storage.png" alt="storage.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/storage.png">http://loopjump.com/wp-content/uploads/2017/02/storage.png</a></p>
+<p>一种提高存储系统性能的方式是构建内存数据库In-memory Database，代价是内存的高成本和抵抗宕机（例如loggging）。内存状态就地修改，logging能够将随机写转化为顺序写。</p>
+<p>有些NoSQL数据库持久化的存储也使用就地修改的方式，这会导致比较多的随机写，一种减缓这种随机写的方式是使用LSM树(Log-Structured Merge Tree)，Bigtable为其代表。LSM Tree及其变体Sorted Array Merge Tree(SAMT)和Cache-Oblivious Look-ahead Array(COLA)在NoSQL领域应用广泛，如Cassandra、CouchDB、LevelDB、RethinkDB、RockdDB、InfluxDB、TokuDB等。值得注意的是，通过loggging方式将随机写转化为顺序写比较容易，但是如何支持高效的随机读和顺序读挑战比较大，因为这需要一些合适的索引结构，比如CouchDB中的Copy-On-Write的Btree。LSM方式的另外一个问题是垃圾回收（compaction）。</p>
+<h3 id="Query-Processing"><a href="#Query-Processing" class="headerlink" title="Query Processing"></a><strong>Query Processing</strong></h3><p>NoSQL数据库的查询能力是跟数据分布模式、提供的一致性和数据模型相关的。</p>
+<p>Primary key lookup基于主键的查询在所有NoSQL数据库都是支持。Filter query在range和hash partition都容易做（range partition下通过filtered full-table scans，hash partition下通过scatter-gather模式）。</p>
+<p>为了提高效率，可以建索引。不过全局索引很难做，因为全局索引也要分区，这就导致更新操作除了更新原始数据表，还要更新索引表，很容易引入跨很多个分区的分布式事务造成性能问题。有些系统采用最终一致性的索引来避免这个问题，有的系统干脆就不支持全局索引。</p>
+<p>Query planning查询计划对于aggregation和join来说是非常必要的，因为如果在客户端做的话，会非常低效。</p>
+<p>In-database analytics可以在数据库内部实现如MongoDB、Riak、CouchDB，或者可以通过外部分析品台如Hadoop、Spark、Flink等完成（Cassandra和HBase属于这种）。</p>
+<p>Materialized view物化视图也是降低查询延迟的一种方式，物化视图随着数据的更新而更新。物化视图也有和全局索引类似的问题。</p>
+<p>NoSQL数据库要支持near-real-time analytic可以通过Lambda Architecture或者Kappa Architecture。Lambda Architecture用流式处理的系统如Storm来补充批处理的系统如Hadoop。</p>
+<p>Kappa Architecture只使用流式处理方式，不再使用批处理。</p>
+<h2 id="Decision-Tree-Conclusion"><a href="#Decision-Tree-Conclusion" class="headerlink" title="Decision Tree &amp; Conclusion"></a><strong>Decision Tree &amp; Conclusion</strong></h2><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2af48f0d-5969-4bad-ae27-667eb41c7db0/decision-tree.png" alt="decision-tree.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/decision-tree.png">http://loopjump.com/wp-content/uploads/2017/02/decision-tree.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/02/table.png">http://loopjump.com/wp-content/uploads/2017/02/table.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2886deb4-c222-4c74-9f13-a98f97e73edd/table.png" alt="table.png"></p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/cap_theory/">
+        <span class="nav-arrow">← </span>
+        
+          浅析CAP理论
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/newsql/">
+        
+          What&#39;s Really New with NewSQL
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/nosql_survey_note/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

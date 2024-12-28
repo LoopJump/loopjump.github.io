@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      关于事务的一点琐碎思考 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>关于事务的一点琐碎思考</h2>
+  <p class="post-date">2016-03-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。</p>
+<h3 id="在某些实现下，2PC会影响MVCC"><a href="#在某些实现下，2PC会影响MVCC" class="headerlink" title="在某些实现下，2PC会影响MVCC ?"></a><strong>在某些实现下，2PC会影响MVCC ?</strong></h3><p>MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布式事务时，有可能遇到类似于下面的问题：2PC中参与者prepare之后收到协调者的commit&#x2F;abort通知之前是未决的状态，该参与者不知道事务是提交还是回滚，新的读事务拿了v1作为快照读版本，v1可能大于该分布式事务的提交版本，这种情况下可能出现等待。</p>
+<p>这个问题在按事务粒度实现MVCC下（例如HANA、InnoDB）不会出现。在有全局授时服务器的设计下似乎也避免不了。</p>
+<h3 id="HANA支持外部一致性？"><a href="#HANA支持外部一致性？" class="headerlink" title="HANA支持外部一致性？"></a><strong>HANA支持外部一致性？</strong></h3><p>HANA支持分布式快照。在假设系统出现分布式事务数量比较少的前提下，使用了一个中心协调节点。HANA单机写事务优化成无需经过中心协调节点，分布式快照（类似于InnoDB的ReadView）使用global tid和local tid两组事务集合表示。HANA没有明确说明该方案是不是支持外部一致性，按照分析应该是不支持的。</p>
+<p>数据库或者说存储系统是不是要支持外部一致性，这个可能大家的观点并不统一。我个人比较赞同这个观点：用户在使用存储系统的时候，可能默认就是认为系统要支持外部一致性，反而是不支持外部一致性的系统需要明确告知用户。</p>
+<p>没有找到明确的理论分析，不过我觉得，<strong>分布式数据库要支持外部一致性，则必须对单机事务提交也要显式或隐式地进行同步</strong>。Google Spanner可以依赖TrueTime，像Percolator&#x2F;TiDB可以依赖全局授时服务器，这些中心化的组件（硬件&#x2F;软件），本质上还是做单机操作的同步。</p>
+<p>之前读Lamport的Time Clock and Order of Event这篇经典论文，有一段<a target="_blank" rel="noopener" href="http://loopjump.com/time_clock_order/">系统外部事件序的内容</a>（物理时钟一节）。我的理解是，<strong>分布式系统内部的happen-before关系是可以完全追踪的，无非是成本高低，但是系统外部的happen-before关系（论文里面举例发完消息之后打电话通知）要想被分布式系统支持，必须通过某种方式从外部引入。论文提出了如果外部的happen-before关系的两个事件发生时间间隔越大，本地时钟离绝对时钟越接近，越不容易出异常（很符合直觉），并给出了定量的理论分析</strong>。</p>
+<h3 id="1024个核上MVCC算法的瓶颈在哪？"><a href="#1024个核上MVCC算法的瓶颈在哪？" class="headerlink" title="1024个核上MVCC算法的瓶颈在哪？"></a><strong>1024个核上MVCC算法的瓶颈在哪？</strong></h3><p>读了一篇论文，评估了几种并发控制算法在硬件扩展到1024核的时候的表现。多看了一下基于时间戳的MVCC算法，算法的瓶颈是分配时间戳!?</p>
+<p>该论文结论是目前的并发控制算法都不靠谱，将来的方向是……软硬件协同设计~</p>
+<p>我觉得，硬件扩展到1024核之后，恐怕不只是数据库会有巨大的挑战，从CPU Cache间通信，到OS调度，到数据库，到业务层线程模型，估计处处都是挑战吧。</p>
+<h3 id="分布式数据库的技术趋势"><a href="#分布式数据库的技术趋势" class="headerlink" title="分布式数据库的技术趋势"></a><strong>分布式数据库的技术趋势</strong></h3><p>目前比较显著的一个趋势，新的硬件可能会极大地影响数据库系统的架构。比如，RDMA等技术可能影响分布式系统，尤其是分布式事务的设计，将来或许会促进分布式事务在业务上的进一步使用。还有非易失内存NVM等，也会有比较大的影响。HTM等对数据结构的设计实现上的影响可能也会越来越多吧。</p>
+<p>另外，DPDK等绕过OS内核的一些改善软件栈的思路，已经在一些基础软件中有应用了（补充，腾讯开源了f-stack框架）。</p>
+<p>持续关注这个话题。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/ubuntu_compile_install_new_kernel/">
+        <span class="nav-arrow">← </span>
+        
+          Ubuntu 12.04编译安装3.15.6新内核
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/lockfree_reclaim_perf_note/">
+        
+          LockFree数据结构的内存回收性能测试
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/transaction_thoughts/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

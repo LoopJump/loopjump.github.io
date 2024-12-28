@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Flexible Paxos - 重新审视Paxos协议中的Quorum | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Flexible Paxos - 重新审视Paxos协议中的Quorum</h2>
+  <p class="post-date">2017-02-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prepare&#x2F;accept阶段的quorum有交集即可。</p>
+<p>我们从Basic Paxos证明过程简单描述为什么放宽后算法依然正确（原论文最后给了一个TLA+的形式化证明）。</p>
+<p>在前文<a target="_blank" rel="noopener" href="http://loopjump.com/basic_paxos_proof/">Basic Paxos证明过程</a>中，我们看到，Theorem 1的证明关键点在于(\exists B\triangle\in (C_{qrm} \cap B_{vot}))。( B\triangle )的存在，使得如果后续的Ballot C想投票，则在prepare阶段，一定会通过(MaxVote(C_{bal}, C_{qrm}, \mathcal{B}) )问到Ballot B投的dec。</p>
+<p>那么，在Basic Paxos协议中，(\exists B\triangle\in (C_{qrm} \cap B_{vot}))条件之所以成立，是因为 ( B_{qrm} \subseteq B_{vot}) 并且 ( B_{qrm} \cap C_{qrm}\neq \emptyset)。</p>
+<p>由此我们可以知道，Basic Paxos协议要求任何quorum都是有交集是保证Paxos协议正确性的<strong>充分不必要条件</strong>。我们可以把约束放宽到<strong>( C_{qrm} \cap B_{vot} \neq \emptyset )</strong>即可。</p>
+<p>这个条件表达的意思是，<strong>prepare阶段和accept阶段的quorum交集不空即可</strong>。文中称这种协议为Flexible Paxos。</p>
+<p>放宽的方式可以多种多样。论文描述了几种可能的方式。为行文描述方便，prepare阶段的quorum记为Q1，accept阶段的则记为Q2。</p>
+<h3 id="第一种，Majority-quorums"><a href="#第一种，Majority-quorums" class="headerlink" title="第一种，Majority quorums"></a><strong>第一种，Majority quorums</strong></h3><p>也是多数派的约束，但是跟Basic Paxos略有差别。在Basic Paxos中，要求两个阶段的quorum都至少是$$n&#x2F;2+1$$。这里可以放宽为，如果n是偶数，$$Q_1$$为至少是$$n&#x2F;2+1$$，$$Q_2$$至少是$$n&#x2F;2$$。n是奇数的话，不能按这种方式放宽。</p>
+<p>如果正好$$n&#x2F;2$$的机器宕机了，Multi Paxos中，只要leader仍然活着，accept阶段可以继续progress（注，Multi Paxos协议中，prepare请求为从某个instance之后的所有的无穷多个instance做prepare）。不过如果leader宕机了，Mutli Paxos需要重新执行prepare阶段时，也是无法进行下去的。</p>
+<h3 id="第二种，Simple-quorums"><a href="#第二种，Simple-quorums" class="headerlink" title="第二种，Simple quorums"></a><strong>第二种，Simple quorums</strong></h3><p>在第一种majority quorumns基础上继续的一个泛化，把条件改为$$ |Q_1| + |Q2| &gt; N $$。</p>
+<p>这种方式下，$$Q_1$$如果设大，$$Q_2$$就可设小一点。那么，accept阶段就可以减少需要同步的节点数，只是leader宕机后重新prepare时就只能容忍较少的节点宕机。反之，accept阶段需要同步的节点更多，但重新prepare时只需要较少的节点在线。</p>
+<p>这种quorum跟Dynamo的NRW方案很像：数据被冗余N份，写操作只写其中的W份，读操作只读取R份，如果W+R&gt;N，则一定能不会漏掉早于读取前完成的写结果。Paxos也是类似，在prepare阶段也一定要获取到可能已经被确认的决议的值。</p>
+<h3 id="第三种-Grid-quorum"><a href="#第三种-Grid-quorum" class="headerlink" title="第三种 Grid quorum"></a><strong>第三种 Grid quorum</strong></h3><p>Grid quorum system：将$$N$$个节点分为$$ N&#x3D;N_1*N_2 $$的矩阵。</p>
+<p>Paxos要求任意两个quorum都有交集。因此在grid quorum system里，Paxos可以选择quorum为一行加一列。任意两个quorum都有交集，如左图。这种选择最多允许任意$$Min(N_1,N_2)$$个节点宕机，即宕机一整行或者一整列就会导致协议走不下去。假设蓝色表示$$Q_1$$，绿色表示$$Q_2$$。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/66c14b3a-3915-47d0-938d-55928c8562e2/grid.png" alt="grid.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/01/grid.png">http://loopjump.com/wp-content/uploads/2017/01/grid.png</a></p>
+<p>在Flexible Paxos协议下，根据$$Q_1$$和$$Q_2$$交集不空的约束，$$Q_1$$可以为一行大小$$N_1$$，$$Q_2$$可以为一列大小$$N_2$$。这样，正常运行无宕机时，只需要同步$$N_2$$个节点即可。</p>
+<p>需要指出的是，与simple quorum system不一样，grid quorum system下，节点本身不再是完全对等的。例如在上图中，4个节点宕机，左图prepare和accept阶段都无法推进，但是右图中，如果4个节点在同一列，则accept阶段可以继续推进，只要不需要进行prepare阶段，系统仍可持续服务。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/gdb_tips/">
+        <span class="nav-arrow">← </span>
+        
+          gdb调试技巧
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/out_of_order_commit_apply_in_raft/">
+        
+          Raft的乱序commit和乱序apply
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/flexible_paxos_quorum_revisited/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

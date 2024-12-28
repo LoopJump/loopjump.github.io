@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Google Spanner论文阅读笔记 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Google Spanner论文阅读笔记</h2>
+  <p class="post-date">2015-06-15</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文出来的时候，应该还没有一个系统做到这一点。</p>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1 概述"></a><strong>1 概述</strong></h2><p>对于外部来说，Spanner将数据分散到众多Paxos状态机，Paxos成员组甚至可能是分布在全球范围的。Spanner还自动处理failove、数据分片的分裂、迁移等问题。</p>
+<p>Spanner关注的核心是跨数据中心的数据副本，先是实现了分布式系统的基础架构，然后在此之上实现了数据库特性。这些数据库特性相比Bigtable&#x2F;Megastore更加贴近于传统数据库的概念，而做这些特性的出发点是Bigtable&#x2F;Megastore的功能支持对应用来说，仍然不够。例如，强一致性，schema演化变更。Spanner在Bigtable类似的KV存储之上，将数据版本化以支持MVCC，对外提供类SQL的查询接口。</p>
+<h3 id="Spanner的两个特色"><a href="#Spanner的两个特色" class="headerlink" title="Spanner的两个特色"></a><strong>Spanner的两个特色</strong></h3><p>第一个特色，副本配置可由应用细粒度地动态控制。</p>
+<p>这一点是非常自然的，Spanner底层是一个跨数据中心的分布式系统，Paxos写多数派即同步成功，这两者加一块，自然就会有副本地理分布的考量。不同地域之间的网络延迟是一个重要的考量因素，如何部署才能使得多数派之间的网络延迟可以接受，用户所在地理位置和服务该用户的副本如何减少物理距离（也即如何在用户这个粒度上支持动态控制副本），都是需要考虑的问题。</p>
+<p>第二个特色，Spanner支持外部一致性的读写和全局一致性的快照读。这个feature是依赖全局的提交版本号（即提交时间戳，以下不做区分）实现的。它保证了外部一致性external consistency，即linearizability：T1 commit早于T2 start，那么，T1的提交时间戳就应该比T2的提交时间戳小。这个feature对于外部应用客户端来说，是非常有意义的。如果一个应用有如下的逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exec T1(x=1);</span><br><span class="line">if T1 success</span><br><span class="line">    exec T2(y=1);</span><br></pre></td></tr></table></figure>
+
+<p>如果外部一致性保证不了，那么并发的另一个客户端读x和y时，可能看到y生效但是x没有生效。</p>
+<h2 id="2-实现"><a href="#2-实现" class="headerlink" title="2 实现"></a><strong>2 实现</strong></h2><h3 id="Spanner的部署方式"><a href="#Spanner的部署方式" class="headerlink" title="Spanner的部署方式"></a><strong>Spanner的部署方式</strong></h3><p>Spanner的部署方式，或者说server组织方式如下图。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9b8b286a-3d24-4f7c-a26a-8a1cd9c92252/spanner_deplpoy.png" alt="spanner_deplpoy.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/spanner_deplpoy.png">http://loopjump.com/wp-content/uploads/2016/09/spanner_deplpoy.png</a></p>
+<p>一个zone可以理解为一个数据中心，或者直接理解为机房。Zone内部有若干spanserver。Zonemaster负责将数据分配到spanserver，location proxy用于支持客户端查询数据分配情况。一个Spanner包含多个zone、一个universemaster、一个placement driver，总称universe。Universemaster是一个控制台服务器，用于监控和debug。Placement driver用于universe级别的跨zone数据迁移。因为Spanner本身已经是全球规模的部署，每个Spanner已经包含了数量巨大的spanserver，所以基本上也不需要几个universe。从这个部署方式看，Google的存储系统仍然沿用了Master-Slave的大模式，当然，此处master负载并不重。</p>
+<p><strong>Spanserver软件栈</strong></p>
+<p>Spanserver软件栈如图。它描述了从日志持久化到2PC的lock管理部件，内容涉及还比较多。</p>
+<p>Tablet的概念与Bigtable差不多，但是key同时绑定一个时间戳，这个时间戳就是MVCC的版本号。Tablet的数据都在B-tree-like的文件 + write ahead log中间，存放于Colossus。Colossus是GFS II代，针对小文件做了优化。</p>
+<p>Spanserver的每个tablet上运行一个Paxos状态机。状态机的元数据和Paxos日志都存到tablet中。当前实现下，一次写操作要写盘两次：一次是tablet的write ahead log，一次是Paxos log。论文说写两次，而且Paxos日志写到tablet中，这个还不太清楚是如何做的。Paxos日志要同步到其他副本上，而tablet本身的数据或者日志都是server local的，这个需要做区分。按照replicated state machine这个概念，持久化的数据只要一份就好。状态通过日志做变更或者重启恢复。我们这里也不纠缠这个问题，论文说这个设计是非预期的，正在改为只写一次。</p>
+<p>另外，Basic Paxos的性能因为2阶段的RPC导致性能问题，因此，实用的Paxos实现，如Multi Paxos或者Raft，其性能都依赖有一个相对稳定的leader replica。这一点并不难做到，毕竟除了宕机等事件，通常并不需要主动切换leader。这里我们假定相对稳定的leader replica已经做到了。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/spanserver_software_stack.png">http://loopjump.com/wp-content/uploads/2016/09/spanserver_software_stack.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b07ae88f-4ebf-4846-8812-fdab8c1da624/spanserver_software_stack.png" alt="spanserver_software_stack.png"></p>
+<p>Leader replica在replica之上，维护了lock table。这个lock是指数据库行锁，lock table主要管理2PC阶段的锁。</p>
+<p>说到2PC，这里简单描述一下。2PC的目的是为了支持分布式事务的原子提交，避免只提交事务的一部分。协议本身理解起来非常简单，在若干参与者者中，选择一个作为协调者（理论上可以选择一个跟本事务无关的参与者），所有参与者先执行prepare，prepare成功的参与者就确保可以提交或者回滚，但暂时既不提交也不回滚，协调者收集所有的参与者的prepare结果，如果都成功，就通知所有的参与者提交，否则就通知所有参与者回滚。协议本身很简单，但是具体实现还有不少坑。</p>
+<p>Leader上为了支持2PC事务，引入一个transaction manager。按照两阶段和主备，一个事务的副本在事务层的角色分为participant leader、participant slave、coordinator leader、coordinator slave。单tablet上（本质上说，同一个Paxos）上的事务都可以从两阶段优化成一个阶段，因为单个tablet持久化是原子地成功或者失败的，不需要引入2PC来协调事务提交的原子性。</p>
+<p>软件栈描述过程中，我们着眼于tablet。下面我们关注下数据模型更细节的层次。</p>
+<h3 id="Data-Model"><a href="#Data-Model" class="headerlink" title="Data Model"></a><strong>Data Model</strong></h3><p>Spanner底层存储的是有序的KeyValue集合，在数据模型上，细化了directory这个概念。一个directory是连续的一组KeyValue，这些KeyValue的前缀是一致的。这里没有具体约束前缀是什么，后面可以看到directory的具体应用，举个例子，一个directory存储的都是前缀为user_id&#x3D;100的相册的数据之类的。之所以这样设计，是为了使directory成为数据放置的单位，只有这样，才能达到前面所述应用能够在user_id粒度上控制数据的placement。Directory可以在Paxos组之间移动，而Directory也是跨Paxos组迁移的最小单位。</p>
+<p>Directory和tablet的关系：在Bigtable中，一个tablet覆盖了MinKey &#x3D;&gt; MaxKey的所有row space，在Spanner中，directory是可以类比为bigtable的tablet更细粒度的版本、而Spanner的tablet则单纯地是directory的集合，并不覆盖一段row space所有key-value记录。</p>
+<p>这边给的迁移速度是一个direcotry在几秒内迁完。可以猜测的是这个速度限制主要是迁移源端的读取速度。考虑到Spanner目前每个Paxos write都要写两次，key-value部分的数据都是连续存放的，读起来应该不会太慢，而Paxos日志的读取估计会比较费时。也可能是迁移有限流。</p>
+<p>因为迁移的耗时比较长，所以迁移本身不适合做成一个事务，因为对普通事务的阻塞太长。迁移时，先在后台迁移数据，等只剩最后一点数据时，原子地迁移最后一点数据和更新Paxos组的Meta信息。</p>
+<p>文中还提到，如果一个directory太大，可能会拆分成sub-directory，即fragment。Fragment除了数据时directory的一部分之外，其在Spanner中的地位都是跟directory等价的。</p>
+<p>Spanner对应用呈现的是：模式化的半关系型表的数据模型、类SQL的查询语言、通用事务支持。</p>
+<p>前面提到的directory的粒度问题，引入了另一个使用上的模式或者叫范式。每个数据库，都需要应用将各个表设计成层级（hierarchy）的样子。各张表的数据是交错（interleave）和级联的（cascade）。这个举个例子就很清楚了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE Users &#123;</span><br><span class="line">    uid INT64 NOT NULL, email STRING</span><br><span class="line">&#125; PRIMARY KEY (uid), DIRECTORY;</span><br><span class="line">CREATE TABLE Albums &#123;</span><br><span class="line">    uid INT64 NOT NULL, aid INT64 NOT NULL,</span><br><span class="line">    name STRING</span><br><span class="line">&#125; PRIMARY KEY (uid, aid), INTERLEAVE IN PARENT Users ON DELETE CASCADE;</span><br></pre></td></tr></table></figure>
+
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/interleave.png">http://loopjump.com/wp-content/uploads/2016/09/interleave.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0feb6290-1068-459f-8842-e36796b813ee/interleave.png" alt="interleave.png"></p>
+<p>这个例子是说，创建两张表，一张是user表，一张是albums表，一个用户有多个相册。那么，就需要将这两张表设计成层级的。即user表是父表，albums表是子表。Key-value数据存放时，子表的数据交错放入父表对应的user_id之后。每个user_id对应的一key-value就是一个directory。</p>
+<p>这种数据模型对于应用感知locality很有必要。</p>
+<h2 id="3-True-Time"><a href="#3-True-Time" class="headerlink" title="3 True Time"></a><strong>3 True Time</strong></h2><p>True Time是Spanner最亮眼的地方。</p>
+<p>先看看True Time提供了哪些功能&#x2F;API：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/true_time.png">http://loopjump.com/wp-content/uploads/2016/09/true_time.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/8f5ddb88-022e-4138-9514-4f787175df19/true_time.png" alt="true_time.png"></p>
+<p>接口语义很清晰。TT.now()返回的是一个时间戳区间，TrueTime保证调用now函数时，绝对时间一定在这个时间戳区间内。TT.after和TT.before都是对TT.now的封装。</p>
+<p>我认为，本质上，TrueTime是个全序时钟，只不过这个时钟不是全局时间点而是全局时间段，这一点也是Spanner实现外部一致性的根本支持。</p>
+<p>实现：实现细节论文也没有太多详述，只是描述了大致的原理。每个数据中心都有一个timer master，用以校正全局时钟。每台机器都有一个timeslave daemon来找master poll时间。Master之间为了降低硬件失效，都配了两套时钟硬件：GPS和原子钟。两套硬件失效的因素不同，因此同时失效的概率会比较小。Slave会poll问时间，然后有一套算法来交叉验证。</p>
+<h2 id="4-Concurrency-Control"><a href="#4-Concurrency-Control" class="headerlink" title="4 Concurrency Control"></a><strong>4 Concurrency Control</strong></h2><p>这节是讲述TrueTime如何应用到并发控制的。</p>
+<p>Spanner支持的事务类型：读写事务read-write transactions、只读事务（客户端显示指明是只读）read-only transactions、快照读snapshot isolation。</p>
+<p>只读事务不阻塞写，而且只读事务可以在备机上读（前提备机已经有足够新的数据，怎么叫足够新，后面会解释）。</p>
+<p>快照读事务是读过去一个时间点的快照，这个时间点可以是用户指定，也可以是指定一个时间戳上界，Spanner选一个合适的时间戳作为快照点。快照读事务同样不阻塞写。</p>
+<p>对于只读事务和快照读事务来说，只要选定了时间点，事务总是可以提交的，除非选的快照点太旧，对应的数据被回收了。只读事务对数据库自身的数据状态没有影响，因此即使在某台机器上读了一半的数据时，机器宕机，仍然可以换机器用一样的时间戳重试，结果不会有变化。</p>
+<h3 id="外部一致性保证"><a href="#外部一致性保证" class="headerlink" title="外部一致性保证"></a><strong>外部一致性保证</strong></h3><p>读写事务使用两阶段锁（two phase locking, 2PL），因此给读写事务指定时间戳的时机可以是在全部锁已申请到锁释放前的任何时刻。Spanner给事务指定的时间戳是Paxos write用的时间戳，这个时间戳是代表了事务提交的时间。</p>
+<p>那么，Paxos write用的时间戳是如何指定的呢？这个时间戳就是由leader replica简单地按照递增的顺序指定的。当然，这之外还需要一个约束：在切换leader replica时，仍然保证跨主备切换下的时间戳也是递增的。这个约束论文称之为单调不变性monotonicity invariant。</p>
+<p>这个约束如何实现？首先，Spanner的paxos leader lease已经保证leader的lease没有交集，在此条件下，在发生主备切切换时，主想卸任要先等一下。思路很简单，详细的分析在附录A上有，不再赘述。</p>
+<p>Spanner还保证了外部一致性约束（external consistency invariant）：如果T2开始前T1已经提交，则T1的提交时间戳早于T2的提交时间戳，即</p>
+<p>(t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start}) \Rightarrow s_1 &lt; s_2)</p>
+<p>其中，(t_{abs}(e))指事件e的绝对时间戳，(e_1^{commit})是(T_1)的提交事件，(e_2^{start})是(T_2)的开始事件，(s_1)和(s_2)分别是Spanner给(T_1)、(T_2)指定的提交时间戳。</p>
+<p>那么，这个约束又是如何保证的呢？只要保证两条规则：Start规则和Commit Wait规则即可。这里定义(e_i^{server})为事务(T_i)的coordinator leader收到提交请求的事件。</p>
+<p><strong>Start规则</strong>：coordinator leader给事务(T_i)指定的时间戳(s_i)满足 (s_i \geq TT.now().latest)  条件，其中TT.now在(e_i^{server})之后调用。</p>
+<p><strong>Commit Wait规则</strong>：(s_i \leq t_{abs}(e_i^{commit}))   ****** 这个规则是说，提交时间戳要确保比提交事件的绝对时间小，也即TT.after((s_i))为真。</p>
+<p>这两个规则就保证了外部一致性：</p>
+<p>(s_1 &lt; t_{abs}(e_1^{commit}))            (commit wait)</p>
+<p>(t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start}))        (assumption)</p>
+<p>(t_{abs}(e_2^{start}) \leq t_{abs}(e_2^{server}))       (causality)</p>
+<p>(t_{abs}(e_2^{server}) \leq s_2)              (start)</p>
+<p>(s_1 &lt; s_2)         (transitivity)</p>
+<h3 id="Spanner是如何做事务的？"><a href="#Spanner是如何做事务的？" class="headerlink" title="Spanner是如何做事务的？"></a><strong>Spanner是如何做事务的？</strong></h3><p>为了搞明白这个并发控制和外部一致性，以及后面读请求的安全快照点，需要先大致了解下Spanner是如何做事务的。</p>
+<p>client读请求直接发到对应的replica上，写的数据buffer到client自己这里，等执行结束，要提交时，将buffer的这些数据推到对应的参与者，然后选一个参与者作为协调者执行2PC，各个参与者先申请写锁，然后分配一个prepare的时间戳，然后写日志，所有参与者回应协调者，协调者选择一个时间戳s作为提交时间戳，写commit日志（协调者不写prepare日志），然后按照commit wait规则等待TT.now(s)条件满足后，将commit应用到Paxos状态机，然后通知其他参与者进入2PC Commit阶段，其他参与者明白事务确定要提交，因此写outcome日志，这个日志包含了时间戳s的值，同步该日志成功后，应用到状态机，释放锁。</p>
+<p>协调者选时间戳s要满足如下条件：1) s大于等于所有其他参与者的prepare时间戳；2)大于协调者收到client commit请求时TT.now().latest；3) 大于已经分配的时间戳。</p>
+<h3 id="安全读取时间戳-t-safe"><a href="#安全读取时间戳-t-safe" class="headerlink" title="安全读取时间戳 (t_{safe})"></a><strong>安全读取时间戳 (t_{safe})</strong></h3><p>我们来看下之前说的读请求在一个副本上可以读到多新的数据？每个副本无论主备，都维护一个(t_{safe})的时间戳，读请求可以读到这个时间戳时间的数据。(t_{safe})计算方式为：</p>
+<p>(t_{safe}&#x3D;min(t_{safe}^{Paxos}, t_{safe}^{TM}))</p>
+<p>(t_{safe}^{Paxos})指已经应用到Paxos状态机的Paxos write的时间戳的安全时间戳，因为Paxos write应用到状态机是顺序应用的，因此只要维护最后一次应用的Paxos write的时间戳就可以了。</p>
+<p>(t_{safe}^{TM})是指所有没有提交的事务的提交时间戳下界。那么，没提交的事务的提交时间戳下界怎么找呢？</p>
+<p>如果当前活跃的事务都是还未进入2PC的事务，那么，(t_{safe}^{TM})就是 (\infty)，对(t_{safe}^{TM})没有影响。这是因为读写事务的写数据会先Buffer到client，不到提交时候，不会被其他事务读到。</p>
+<p>如果某个事务已经进入2PC的prepare阶段，该参与者上事务最后是不是提交现在还确定不了，那么就需要确保(t_{safe}^{TM})不能超过这个事务将来的提交时间戳。如何保证这一点？TM先给事务的prepare事件指定一个时间戳，并且要求将来提交的时间戳比prepare的时间戳更大，那么prepare事件的时间戳肯定就是这个事务提交事件的时间戳下界。也就是论文中说的，(t_{safe}^{TM}&#x3D;min(s_{i,g}^{prepare})-1)，其中(s_{i,g}^{prepare})是组g内所有的participant leader上已prepare未commit的事务(T_i)的prepare事件的时间戳。</p>
+<p>(t_{safe}^{TM})主备上在具体实现上略有不同，备上没有TM，其信息通过Paxos同步携带，原理一致。</p>
+<p>这里需要解释的地方：为什么要取(t_{safe}^{Paxos}), (t_{safe}^{TM})二者的最小值？</p>
+<p>因为2PC协议本身的局限，参与者prepare结束后，需要死等协调者的commit or abort结论，这个阶段理论上是可以足够长时间的。这段时间内该参与者replica 上可能一直有无关的事务（修改的是该tablet上的其他row key）执行并提交，足够多的Paxos write已经被应用了，(t_{safe}^{Paxos})可能已经足够大。所以要取二者的最小值。从这个结论也能看出，如果有一个事务卡在2PC过程中，迟迟未决，那么读请求总也读不到比较新的快照点。那么，这里有一个refinement：为了避免一个卡顿的事务影响了该tablet上所有的读请求，即将(t_{safe}^{TM})从tablet粒度细化到row key range粒度，而lock table正适合做这个refinement。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/db_isolation_level/">
+        <span class="nav-arrow">← </span>
+        
+          浅谈数据库隔离级别
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/wpformular_example/">
+        
+          WordPress公式范例
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/spanner_paper_note/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
