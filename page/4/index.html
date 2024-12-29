@@ -195,7 +195,91 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/rsm_questions/">漫谈复制状态机的几个有趣的问题</a>
+        <a href="/distributed-consistency-model/">浅析分布式一致性模型</a>
+      </h2>
+      <p class="article-date">November 10, 2016</p>
+      
+      <div class="article-summary">
+        
+          一致性术语的理解一致性这个中文术语在计算机的不同领域有不同的含义，对应的英文术语也是不一样的：Consistency, Consensus, Coherence等等。
+就这三个术语而言，其区别可以简单的如下理解：
+
+Coherence这个单词只在Cache Coherence场景下出现过，它 ...
+        
+      </div>
+      <a class="more" href="/distributed-consistency-model/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/raft-paper-note/">Raft论文解读</a>
+      </h2>
+      <p class="article-date">October 23, 2016</p>
+      
+      <div class="article-summary">
+        
+          Raft论文解读
+摘要Raft是针对复制日志的一致性协议。效果上，Raft等价于multi-paxos协议；效率上和Paxos一样。但是Raft协议的整体结构与Paxos差别比较大，Raft协议更加容易理解，也更加适合工程实现。Raft为了使协议更加容易理解，将一致性协议拆分为独立的几个要素 ...
+        
+      </div>
+      <a class="more" href="/raft-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/clean-code-note/">代码整洁之道 读书笔记</a>
+      </h2>
+      <p class="article-date">October 11, 2016</p>
+      
+      <div class="article-summary">
+        
+          Chapter 1 整洁代码Lebanc’s Law: later equals never.
+Chapter 2 有意义的命名Chapter 3 函数每个函数一个抽象层级
+Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误处理Chap ...
+        
+      </div>
+      <a class="more" href="/clean-code-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/blue-eye-puzzle-from-tao/">蓝眼睛谜题</a>
+      </h2>
+      <p class="article-date">October 10, 2016</p>
+      
+      <div class="article-summary">
+        
+          陶哲轩的博客上的一个puzzle。
+地址在这里：https://terrytao.wordpress.com/2008/02/05/the-blue-eyed-islanders-puzzle/ 。你可以直接跳过去读原文。
+这是发生在一个在虚构的岛上的故事，不过因为这里面的逻辑本身就非常微妙 ...
+        
+      </div>
+      <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/basic-paxos-proof/">Basic Paxos证明</a>
+      </h2>
+      <p class="article-date">October 10, 2016</p>
+      
+        
+  <a href="/tags#paxos" >
+    <span class="tag-code">paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          
+        
+      </div>
+      <a class="more" href="/basic-paxos-proof/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/rsm-questions/">漫谈复制状态机的几个有趣的问题</a>
       </h2>
       <p class="article-date">October 2, 2016</p>
       
@@ -213,12 +297,12 @@
 !h ...
         
       </div>
-      <a class="more" href="/rsm_questions/">Read more</a>
+      <a class="more" href="/rsm-questions/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/google_spanner/">Spanner(OSDI'12)论文阅读笔记</a>
+        <a href="/google-spanner/">Spanner(OSDI'12)论文阅读笔记</a>
       </h2>
       <p class="article-date">September 21, 2016</p>
       
@@ -227,12 +311,12 @@
           Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
         
       </div>
-      <a class="more" href="/google_spanner/">Read more</a>
+      <a class="more" href="/google-spanner/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/time_clock_order/">分布式系统的时间、时钟和事件序</a>
+        <a href="/time-clock-order/">分布式系统的时间、时钟和事件序</a>
       </h2>
       <p class="article-date">September 10, 2016</p>
       
@@ -243,7 +327,7 @@
 !http://loopjump.com/wp-content/uploads/ ...
         
       </div>
-      <a class="more" href="/time_clock_order/">Read more</a>
+      <a class="more" href="/time-clock-order/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -263,7 +347,7 @@ Chapter 1： 焦油坑职业的乐趣：工作的创造性；产品有价值；�
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/cpp_typename_usage/">C++ typename用法</a>
+        <a href="/cpp-typename-usage/">C++ typename用法</a>
       </h2>
       <p class="article-date">July 10, 2016</p>
       
@@ -274,88 +358,7 @@ Chapter 1： 焦油坑职业的乐趣：工作的创造性；产品有价值；�
 12345678910template&lt;typename T, typename Y&gt;T foo(const T&amp; t, const Y&amp; y) &#123; /*. ...
         
       </div>
-      <a class="more" href="/cpp_typename_usage/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lockfree_reclaim_perf_note/">LockFree数据结构的内存回收性能测试</a>
-      </h2>
-      <p class="article-date">March 12, 2016</p>
-      
-      <div class="article-summary">
-        
-          最近在搞性能优化，读了一篇挺有意思的相关论文。
-Performance of memory reclamation for lockless synchronization
-几种Memory Reclaimation Scheme评测了几种回收机制的性能：
-
-QSBR  quiescent- ...
-        
-      </div>
-      <a class="more" href="/lockfree_reclaim_perf_note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/transaction_thoughts/">关于事务的一点琐碎思考</a>
-      </h2>
-      <p class="article-date">March 2, 2016</p>
-      
-      <div class="article-summary">
-        
-          最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。
-在某些实现下，2PC会影响MVCC ?MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布 ...
-        
-      </div>
-      <a class="more" href="/transaction_thoughts/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/ubuntu_compile_install_new_kernel/">Ubuntu 12.04编译安装3.15.6新内核</a>
-      </h2>
-      <p class="article-date">October 3, 2015</p>
-      
-      <div class="article-summary">
-        
-          最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。
-在某些实现下，2PC会影响MVCC ?MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布 ...
-        
-      </div>
-      <a class="more" href="/ubuntu_compile_install_new_kernel/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/wpformular_example/">WordPress公式范例</a>
-      </h2>
-      <p class="article-date">June 20, 2015</p>
-      
-      <div class="article-summary">
-        
-          没想到wordpress的latex插件支持的这么好。
-写了几个例子，**右键”Show Math As”&#x3D;&gt;”Tex Commands”**可以看原始文本。
-花体字母$\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$
-$\mathcal{abcde ...
-        
-      </div>
-      <a class="more" href="/wpformular_example/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/db_isolation_level/">浅谈数据库隔离级别</a>
-      </h2>
-      <p class="article-date">June 10, 2015</p>
-      
-      <div class="article-summary">
-        
-          关系型数据库具备事务ACID的特性：原子性、一致性、隔离性、持久性。
-原子性是说，事务的操作要么都完成，要么都不完成。一致性是说事务不能破坏数据库的一些约束。隔离性是说，并发事务执行时，如何看到其他事务的执行结果。持久性是说，宕机重启后，数据库状态还能恢复。
-在分布式数据库中，原子性通常可以 ...
-        
-      </div>
-      <a class="more" href="/db_isolation_level/">Read more</a>
+      <a class="more" href="/cpp-typename-usage/">Read more</a>
     </article>
   
 

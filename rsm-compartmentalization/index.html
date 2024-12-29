@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      使用Compartmentalization扩展复制状态机 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>使用Compartmentalization扩展复制状态机</h2>
+  <p class="post-date">2021-10-20</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>Scaling Replicated State Machines with Compartmentalization，VLDB 21’</p>
+<p>本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是<strong>compartmentalization</strong>，这个词本意是分离，在这里作为一种方法论，其含义是将各个功能进行剥离分开，并分别进行扩展。</p>
+<p>Multi-Paxos的多个模块都有一些实现方案上的瓶颈，假设读者已经熟悉Multi-Paxos协议内容，我们根据论文的思路看看各个瓶颈如何通过compartmentalization来扩展。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002170548164-300x160.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002170548164-300x160.png</a></p>
+<h2 id="各个功能的Compartmentalization"><a href="#各个功能的Compartmentalization" class="headerlink" title="各个功能的Compartmentalization"></a>各个功能的Compartmentalization</h2><h3 id="Proxy-Leader"><a href="#Proxy-Leader" class="headerlink" title="Proxy Leader"></a>Proxy Leader</h3><p>Proposer实际上有两块功能，一个是sequence，一个是broadcast。实际上这两个功能是可以拆开的，sequence本质上要求串行，但broadcast是完全可以并发起来的。基于此论文的方案是proposer和acceptor之间引入一层proxy leaders，proposer只负责sequence，一旦若干command确定了顺序，就可以由不同的proxy leader来负责broadcast。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002171303663-300x158.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002171303663-300x158.png</a></p>
+<h3 id="Acceptor-Grid"><a href="#Acceptor-Grid" class="headerlink" title="Acceptor Grid"></a>Acceptor Grid</h3><p>同flexible paxos，如图示。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002171446551-300x140.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002171446551-300x140.png</a></p>
+<p>需要指出的是，虽然图中一个command被chosen只需要6个acceptor中的2个相比简单多数派的4个少很多，但该grid方式最差情况下只能容忍一个acceptor失效，而简单多数派可以容忍3个。</p>
+<p>具体原理可以参考本站其他文章。</p>
+<h3 id="More-Replica"><a href="#More-Replica" class="headerlink" title="More Replica"></a>More Replica</h3><p>一个已经chosen的command，在replica上执行，完成后回包给client。</p>
+<p>扩展replica数目，可以降低每一个replica回包给client的负载，如图每个replica只需要回1&#x2F;3。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002173720693-300x133.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002173720693-300x133.png</a></p>
+<h3 id="Leaderless-Read"><a href="#Leaderless-Read" class="headerlink" title="Leaderless Read"></a>Leaderless Read</h3><p>Multi-Paxos读请求是发送到leader的，实际上读写路径可以剥离开。</p>
+<p>读请求的处理类似于Paxos Quorum Reads方法，client先问read quorum，然后以最大的log index去replica上等该log index被apply然后读取数据。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002175550201-300x167.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002175550201-300x167.png</a></p>
+<p>不过论文也没提发生leader change等情况，虽然解决起来应该也不麻烦。</p>
+<h3 id="Batch"><a href="#Batch" class="headerlink" title="Batch"></a>Batch</h3><p>就是常见的batch方法。专门搞了一层batcher来负责batch，减轻proposer负担。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002180100680-300x144.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002180100680-300x144.png</a></p>
+<h3 id="Unbatcher"><a href="#Unbatcher" class="headerlink" title="Unbatcher"></a>Unbatcher</h3><p>Unbatcher是replica回包给client的时候，跟batch对应的一个操作，这个也可以直接scale。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002180444224-300x146.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002180444224-300x146.png</a></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这篇论文的主要价值是提出了一个方法Compartmentalization，它的核心含义是分离功能并分别扩展。这是一种方法论思想，这种思想实际上在很多地方已经在用了，例如数据架构等等方面被称为disaggregation的方法也是类似的道理。</p>
+<p>而且，Compartmentalization是基于已有方案做扩展性，思路比较直观，一看就懂，因此实现也比较简单。</p>
+<p>但把Compartmentalization用在Multi-Paxos协议实现上这个想法也有一些需要探讨的地方。</p>
+<p>首先，论文做的这个工作脱离业界太远，工业界真实的数据复制系统更看重复制的延迟，而不是节点的扩展性。一者论文中Compartmentalization一招鲜，文中大部分实现scalability的手段都是以牺牲延迟为代价换来的，二者即使节点瓶颈存在，整个业务大系统有各种sharding方案来扩展，着眼于复制系统的扩展性现实意义可能不大。</p>
+<p>还有，Acceptor Grid优化思路只在比较多acceptor的情况下才有腾挪空间。业界大部分场景用的acceptor数目都是3，少量为5，除了4&#x3D;2*2的情况下可以用grid（但只能容忍一个节点宕机，所以实用性有限），3和5都没用办法用。</p>
+<p>另外，像SD-Paxos、EPaxos、Practical Fast Replication等在延迟和吞吐上做的优化相比Compartmentalization思路可能更优，当然协议比Compartmentalization更难理解，实现也更复杂。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/calvin-intro/">
+        <span class="nav-arrow">← </span>
+        
+          Calvin简介
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/content-aware-lock-scheduling/">
+        
+          Content-Aware Lock Scheduling
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/rsm-compartmentalization/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

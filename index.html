@@ -209,6 +209,67 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/access-path-in-rdbms/">Access Path Selection in a RDBMS</a>
+      </h2>
+      <p class="article-date">April 29, 2022</p>
+      
+      <div class="article-summary">
+        
+          《Access Path Selection in a Relational Database Management System》 1979
+SQL语句处理的四个阶段：Parsing, Optimization, Code Generation, Execution。
+query bloc ...
+        
+      </div>
+      <a class="more" href="/access-path-in-rdbms/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/content-aware-lock-scheduling/">Content-Aware Lock Scheduling</a>
+      </h2>
+      <p class="article-date">March 20, 2022</p>
+      
+      <div class="article-summary">
+        
+          VLDB 18’  Content-Aware Lock Scheduling for Transactional Database
+相关的证明在 Contention-aware lock scheduling for transactionaldatabases.Technical Re ...
+        
+      </div>
+      <a class="more" href="/content-aware-lock-scheduling/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
+      </h2>
+      <p class="article-date">October 20, 2021</p>
+      
+      <div class="article-summary">
+        
+          Scaling Replicated State Machines with Compartmentalization，VLDB 21’
+本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是compartmentalization，这个词本意是分离，在这里作为一种 ...
+        
+      </div>
+      <a class="more" href="/rsm-compartmentalization/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/calvin-intro/">Calvin简介</a>
+      </h2>
+      <p class="article-date">April 2, 2020</p>
+      
+      <div class="article-summary">
+        
+          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
+Calvi ...
+        
+      </div>
+      <a class="more" href="/calvin-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/calcite-intro/">Calcite简介</a>
       </h2>
       <p class="article-date">November 1, 2019</p>
@@ -223,6 +284,23 @@ Calcite的三个特点：
         
       </div>
       <a class="more" href="/calcite-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/bitcask-intro/">bitcask简介</a>
+      </h2>
+      <p class="article-date">October 29, 2019</p>
+      
+      <div class="article-summary">
+        
+          Bitcask是由Basho公司搞的一个产品。
+技术设计数据顺序追加到磁盘上的active data file，并在内存中建立hash索引。
+active data file文件长到一定程度就切成old data file，新的数据写入新的active data file。
+old data ...
+        
+      </div>
+      <a class="more" href="/bitcask-intro/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -271,86 +349,6 @@ Calcite的三个特点：
         
       </div>
       <a class="more" href="/debug-linux-kernel/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
-      </h2>
-      <p class="article-date">January 10, 2019</p>
-      
-      <div class="article-summary">
-        
-          来源：AWS re: invent 2018
-Pattern 1: checksum all of the thingsPattern 2: Cryptgraphic AuthenticationEncrypt and authenticate everything.
-Control Pla ...
-        
-      </div>
-      <a class="more" href="/10-patterns-for-controlling-the-cloud-in-aws/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lattice-in-anna/">Anna KVS中的Lattice是什么</a>
-      </h2>
-      <p class="article-date">December 9, 2018</p>
-      
-      <div class="article-summary">
-        
-          &#x2F;&#x2F; 一篇闲扯的博文
-Anna KVS官网对Anna的特性总结得非常到位：1. Crazy Fast, 2. Super-Scalable, 3. Flexibly Consistent。
-这里只关注Flexibly Consistent这一项，讲讲Anna是实现灵活的c ...
-        
-      </div>
-      <a class="more" href="/lattice-in-anna/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/quorum_sys_failure_probability/">Quorum System的故障概率和负载</a>
-      </h2>
-      <p class="article-date">November 10, 2018</p>
-      
-      <div class="article-summary">
-        
-          最近读到一个有趣的话题：Quorum System的故障概率和负载。
-首先是一些概念：
-节点集合 (V&#x3D;{v_1, v_2, .., v_n})
-Quorum  (Q\subseteq V)
-Quorum System (\mathcal{S} \subseteq 2^V)，且(Q ...
-        
-      </div>
-      <a class="more" href="/quorum_sys_failure_probability/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/spanner_sql_engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
-      </h2>
-      <p class="article-date">November 10, 2018</p>
-      
-      <div class="article-summary">
-        
-          继2012年在OSDI年发表了Spanner论文《Spanner: Google’s Globally-Distributed Database》之后，Google在SIGMODE’17上发表了第二篇关于Spanner的论文《Spanner: Becoming a SQL System》。从 ...
-        
-      </div>
-      <a class="more" href="/spanner_sql_engine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/sdpaxos_paper/">SDPaxos:在strong leader与leaderless之间折中</a>
-      </h2>
-      <p class="article-date">October 2, 2018</p>
-      
-      <div class="article-summary">
-        
-          &#x2F;&#x2F; 大半夜on-call没事干，写点东西。
-《SDPaxos: Building Efficient Semi-Decentralized Geo-replicated State Machines》(SOCC18’)
-有幸跟作者赵汉宇博士做了一次交流，我也仔细读了一遍 ...
-        
-      </div>
-      <a class="more" href="/sdpaxos_paper/">Read more</a>
     </article>
   
 

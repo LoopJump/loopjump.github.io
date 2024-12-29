@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      浅析CAP理论 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>浅析CAP理论</h2>
+  <p class="post-date">2016-12-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>CAP理论是Eric Brewer在2000年前后提出的一个设计上的折中原则，大意是说，一个系统在Consistency、Availability、Partition Tolerance三者之间无法兼顾，必须舍弃一个。</p>
+<p>Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（2003年被雅虎收购）的联合创始人和首席科学家，现在Google做基础设施建设。跟Micheal Stonebraker一样，也是一位跨学术和产业界的大牛。CAP理论就是Brewer在具体实现系统时总结提炼的设计原则。2002年，Seth Gilbert和Nanncy Lynch就CAP理论给出了较为形式化的证明。CAP理论作为一个设计折中原则，在后面的几年被人误解，因此Eric Brewer在2012年又写了一篇文章，着重解释了CAP的一些误解，一个系统并非一定要预先在CAP中彻底牺牲一个属性，更多的场景下，没有P发生时，CA可以兼得，而在P发生时，可以选择C或A中的一个，并在P结束后恢复。</p>
+<h3 id="CAP理论内容"><a href="#CAP理论内容" class="headerlink" title="CAP理论内容"></a><strong>CAP理论内容</strong></h3><p>CAP理论：任何一个网络连接起来，有数据共享（networked shared-data）的分布式系统，在consistency、availability和partition tolerant三者中无法兼顾，只能舍弃一个。其中，</p>
+<ul>
+<li>consistency (C)：任何时候，从任何副本都能读取到最新的数据，等价于系统只有一个副本（永远保持最新）。</li>
+<li>high availability (A)：数据的高可用性。</li>
+<li>partition tolerant (P)：容忍分区。</li>
+</ul>
+<p>有几个说明：</p>
+<ol>
+<li>这里说的分布式系统是指有多副本的分布式系统，有些分布式系统例如MPP类型的OLAP系统，本身很少写入，数据也不共享，每份数据完全独立，因此也谈不上CAP折中。</li>
+<li>这里consistency是指strict consistency，比如有多个副本，某个副本更新完，其他副本也立刻就能达到最新状态。</li>
+</ol>
+<h3 id="CAP理论的形式化证明"><a href="#CAP理论的形式化证明" class="headerlink" title="CAP理论的形式化证明"></a><strong>CAP理论的形式化证明</strong></h3><p>Theorem 1：在异步网络模型中，针对一个数据对象的读写无法同时保证高可用和强一致。</p>
+<p>说明，这里的异步网络模型，就是我们通常理解的分布式系统模型，每个节点都有一个本地的时钟，不同节点的时钟快慢可能不同（即逻辑时钟），网络可能丢消息（即分区）。定理1说的是，在一个可能存在P的系统中，无法同时实现CA。</p>
+<p>证明过程：</p>
+<p>通过反证法。假设存在一个算法X能够在P下还同时保证CA，我们构造一个返回不一致的请求。</p>
+<p>假设系统有两个节点，并且这两个节点网络分区成{G1, G2}，G1和G2之间的消息全部丢失。如果一个写操作发生在G1，稍后的一个读操作发生在G2，那么即使读操作是在写操作完成之后才开始，读操作也无法读到前面写操作的数据。</p>
+<p>严格一点描述，设数据对象初始为(v_0)，设(a_1)是算法的在处理写操作（该写操作的数据不等于(v_0)）的执行序列，该写请求发生在G1。因为系统要满足X保证的Availability，因此写操作一定在一段时间之后结束了。设(a_2)是算法的在处理读操作的执行序列，该读请求发生在G2，同样，因为系统要满足X保证的Availability，因此读操作一定在一段时间之后结束了。因为G1和G2之间没有任何消息通信，因此读操作一定读到的是(v_0)）。设(a)是(a_1)之后紧跟(a_2)的执行序列，在(a)中，读请求读不到最新的数据，而读请求是在写请求结束之后才开始的，因此不满足C。</p>
+<p>因为证明过中建模语言也不是完全的数学语言，这个勉强算是比较严格的证明。Lamport创造了TLA+这种模型检测语言，如果用这种方法证明，可能严格性更好。</p>
+<h3 id="CAP理论的一些误解"><a href="#CAP理论的一些误解" class="headerlink" title="CAP理论的一些误解"></a><strong>CAP理论的一些误解</strong></h3><p>关于CAP理论的一些误解：</p>
+<ol>
+<li>分区很少发生，如果没有发生分区，CA是可以同时达成的。</li>
+<li>CA的选择：不同子系统可以选择不同的策略，同一个系统在不同情况下也可以选择不同的策略。</li>
+<li>CAP三个属性都是连续的值，而不是二值选项。Availability可以是0~100，consistency也可以强弱不同，分区是否发生也并非简单的二值。</li>
+</ol>
+<p>经典的CAP解读并没有考虑延迟。CAP的精髓在于当超时发生时，在一段时间内必须做一个根本性的决定（partition decision）：是取消后续操作（降低了可用性）还是继续后续操作（可能违背一致性）。二者一定要选择一个，超时无限重试只是在拖延做决定的时间，最终等价于选择了前者。</p>
+<p>从编程角度，分区并不是一个全局共识，有些节点认为发生了分区，有些节点可能认为没有。节点在检测到分区之后，进入分区模式，此时在CA之间做选择。具体系统实现时，可以通过超时时间阈值检测分区。</p>
+<p>CAP理论的指导意义在于，设计者要在分区发生时，显式处理分区，降低分区对CA的影响。当节点检测到分区时，进入分区模式，限制某些操作，在通信恢复后，开始进行分区恢复。如下图。</p>
+<p>如果不发生分区，则状态S是可以被保持一致性的，同时可用性可以保证。当检测到分区，系统进入分区模式，此时就要做决定，允许某些可能导致一致性问题的操作继续执行。系统可能产生了不一致的状态S1、S2。在发现网络通信恢复之后，在退出分区模式之前，要将系统状态重新恢复为一致的状态。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/8c8a4b92-c4bd-4498-a007-7fa129a7de74/partition_mode.png" alt="partition_mode.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/12/partition_mode.png">http://loopjump.com/wp-content/uploads/2016/12/partition_mode.png</a></p>
+<p>从这个图我们可以看到，问题的困难在于，设计者要思考每一个不变量的维护情况，并有针对性地在Partition recovery过程中将该不变量恢复到一致状态。恢复过程需要对分区模式下做的修改进行追踪，通过版本向量是一个很好的方法，版本向量可以反映操作时间的因果依赖。有研究表明，当我们选择了可用性优先，通常最多只能将一致性恢复到这样的程度。分区恢复时，要做两件事情：两侧的状态最终必须保持一致，必须补偿分区期间产生的错误。而后者往往会影响系统上层业务。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/split-order-hash/">
+        <span class="nav-arrow">← </span>
+        
+          Split-Order Hash基本原理
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/nosql-survey-note/">
+        
+          NoSQL数据库综述和选型阅读笔记
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/cap-theory/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

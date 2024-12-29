@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      几道有趣的面试题 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>几道有趣的面试题</h2>
+  <p class="post-date">2014-01-24</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>在Quora上看到一个有趣的问题。”What are the best programming interview questions you’ve ever asked or been asked?” （在编程面试中，你问过或者被问过的最好的问题是什么）里面有几道题目很有意思，在这里分享给大家。</p>
+<p><strong>第一道题</strong>：有一个长度为N+1的数组，里面的元素都是1~N的整数，但有些数字可能重复多次。例如1,1,3 ,3或者 1,3,2,2。现在要求打印出重复的数字（有多个数字重复时，可打印任意一个）。</p>
+<p>解答：</p>
+<ol>
+<li><p>O(N^2)的方法是每次检查一个元素，看是不是重复。</p>
+</li>
+<li><p>相比之下，更容易想到的是O(N logN)的算法，先排序，重复数字会在邻接位置。</p>
+</li>
+<li><p>还有花费空间来换时间的方法。建一个位图，对每一个数字，检查对应位置是否已经置位。该算法是O(N)时间复杂度和O(N)空间复杂度。</p>
+</li>
+<li><p>还有一种O(N)时间复杂度和O(1)空间复杂度的算法。我们将原数组a先变换成：如果元素i出现一次，它就在位置i处；如果元素j出现多次，它除了在位置j处之外，还占据某些其他未出现的元素的位置。然后从头遍历数组，如果出现a[i] !&#x3D; i的情况，则a[i]是重复出现的数字。变换过程可参考 <a target="_blank" rel="noopener" href="http://blog.csdn.net/yutianzuijin/article/details/11633079">缺失的数字分析</a> 和 <a target="_blank" rel="noopener" href="http://blog.csdn.net/yutianzuijin/article/details/11384507">数组统计分析的另一种方法</a>。</p>
+</li>
+<li><p>题目增加限制，如果不允许修改原数组，应该怎样做。直接上答案：统计1<del>N&#x2F;2的个数，如果个数大于N&#x2F;2，则说明1</del>N&#x2F;2中有重复数字（鸽巢原理）。否则说明N&#x2F;2+1~N中有重复数字。递归有重复数字的那一半。算法复杂度是O(N*logN)。</p>
+</li>
+</ol>
+<p>按照答主的描述，走到第5时，通常都需要一些提示。如果能答出5的答案，面试官应该就比较满意了。</p>
+<p><strong>第二道题</strong>：去掉大小王的52张扑克牌，你和你的朋友事先约定一种策略，使得：我任意给你5张扑克牌，你选择一张留下，剩余的4张给你的朋友，你的朋友能够根据事先约定的策略，知道你留下的牌是什么。</p>
+<p>我觉得这道题难在如何进行编码。题目中没有任何能够进行编码的暗示，这时候要抛开限制，自己构造出编码的基础。</p>
+<p>答主给的答案如下。</p>
+<p>首先要传递花色这个信息。5张牌4种花色，一定有两张或以上的拍具有同样的花色，可以留一张该花色的牌。用同花色的牌传递花色信息。可用的牌剩下3张。3张牌大小顺序可以作为一种编码方式。3!&#x3D;6中排列可以产生6中信号。但还不够覆盖13张牌。这时，注意到同花色的牌只用到了花色，其数字没有用到。定义牌之间的距离。将距1,2,3…J,Q,K视为首尾相连的环，其距离定义为两个数字相距不超过6的那个距离（13张牌一定有不超过6的距离，否则x和y两个方向都超过6，则至少需要14张牌）。如dist(J, 4) &#x3D; 6, dist(J, 5) &#x3D; dist(5, J) &#x3D; 6。这样，我们在同花色的两张牌中，保留较小的那张，你的朋友从排列中得到1<del>6的某个数字，再加上同花色的牌面值，模除13即可。所以，你和你的朋友需要事先约定第一张牌作为同花色牌，什么排列顺序表示1</del>6的哪个数字。</p>
+<p>评论中有人提到，可以加上正反信息，你把牌交给你朋友时，面朝上的牌和面朝下的牌代表0和1，也能编码出所需要的信息。不再赘述。</p>
+<p><strong>第三道题</strong>：原文是这样的。</p>
+<p>Write a function that takes a function and two ints and applies it to the two ints. E.g.</p>
+<p>$ arith sum 1 2</p>
+<p>3</p>
+<p>$ arith divide 6 3</p>
+<p>2</p>
+<p>我没弄清楚这道题想考察什么东西。例子给的是shell方式的使用接口。</p>
+<p>看评论后，有人说是传递函数指针。难怪答主说：Good luck with that if your CS degree was taught in Java :P。哈哈，Java达到传递函数指针的效果是比C语言麻烦的多。</p>
+<p><strong>第四道题</strong>：从连续不断的数字流中随机选取一个数字（数字流只能过一遍），要求保证任意时刻，已经过去的数字流中任意一个数字被选中的概率相等。</p>
+<p>这道题我在面试网易游戏的时候遇到过，解答参见 <a target="_blank" rel="noopener" href="http://loopjump.com/job_2013/">找工作备忘</a>。</p>
+<p><strong>第五道题</strong>：这位答主说，他在面试Fb时，曾经被要求实现一个线索二分查找树（我只记得大概的概念了）。还有要求实现饼排序。参见：<a target="_blank" rel="noopener" href="http://www.cnblogs.com/apprentice89/archive/2012/12/23/2829812.html">煎饼堆问题（转载）</a>。</p>
+<p><strong>第六道题</strong>：给定整数N，计算从1到N的数字的二进制表示中所有1的个数。</p>
+<p>这个题目挺有趣的。但是答主没给解答，而且0评论。</p>
+<p>比较容易想到的就是统计每一个数字中1的个数。注意到 n &amp; (n-1)可以消除n的最后一个1。</p>
+<p>如果要直接统计1到N中1的个数，可能需要仔细想一想，我们先看看0~23的二进制表示（0不影响结果）。针对每一列，都有规律，例如，第一列是 01循环出现，第二列是0011循环出现，第三列是00001111循环出现……</p>
+<p>按列统计，</p>
+<p>第一列出现1的个数为：(N+1)&#x2F;2</p>
+<p>第二列出现1的个数为：(N+1)&#x2F;4 * 2 + ( (N+1)%4&gt;2 ? (N+1)%4 - 2 : 0 )</p>
+<p>第三列出现1的个数为：(N+1)&#x2F;8 * 4 + ( (N+1)%8&gt;4 ? (N+1)%8 - 4 : 0 )</p>
+<p>第K列出现1的个数为：(N+1)&#x2F;(2^K) * (2^(K-1)) + ( (N+1)%(2^K)&gt;2^(K-1) ? (N+1)%(2^K)-2^(K-1):0 )</p>
+<p>所以只需要按列计算就可以达到O(Column)的复杂度。</p>
+<p>代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">int count(int n)&#123;</span><br><span class="line"></span><br><span class="line">         int k = 1, c = 0;</span><br><span class="line"></span><br><span class="line">         while( (1&lt;&lt; k ) &lt; n )&#123;</span><br><span class="line">                   c = c + (n+1)/(1&lt;&lt;k)*(1&lt;&lt;(k-1));</span><br><span class="line">                   if((n+1)%(1&lt;&lt;k) &gt; (1&lt;&lt;(k-1)))</span><br><span class="line">                            c = c + (n+1)%(1&lt;&lt;k)-(1&lt;&lt;(k-1));</span><br><span class="line">                   k++;</span><br><span class="line">         &#125;</span><br><span class="line">         return c;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有的回答认为面试考这些题意义不大，Google面试已经减少了此类问题。不过我觉得能活跃一下大脑总是不错的。</p>
+<p>当然，还有来歪楼的回答：</p>
+<p>When can you start?</p>
+<p>Always puts a smile on my face.</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/job-2013/">
+        <span class="nav-arrow">← </span>
+        
+          校招记录
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/note-of-programming-contest-challenge-book-1/">
+        
+          《挑战程序设计竞赛》读书笔记1
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/interview-questions-1/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
