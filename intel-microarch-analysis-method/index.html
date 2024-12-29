@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Intel CPU 自上而下的微架构性能分析方法 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Intel CPU 自上而下的微架构性能分析方法</h2>
+  <p class="post-date">2020-06-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>原文：<a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html">https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html</a></p>
+<p>现代CPU一般都采用了流水线、硬件线程、乱序执行、指令级并行等技术来高效利用CPU内的各种资源。但有很多软件和算法在实现上并不能很好地利用好CPU，比如非常常见的链表会带来间接地址访问，影响硬件预取的效果，导致读数据的时候流水线冒泡（停顿）。</p>
+<p>本文描述的自上而下的微架构性能分析方法可以用来识别这类问题。</p>
+<p>现代CPU的流水线实际上相当复杂。简单地说，流水线从概念上分为前端Front-End和后端Back-End。前端负责取指和译码（将指令翻译成微操作uOps），uOps被灌到后端（这个过程被称作allocation）。后端负责监控uOps的数据是否可用，如果可用就在可用的执行单元上执行这个uOps。uOps完成时会把结果写回CPU寄存器或者内存，这个过程被称作retirement。通常大部分指令都会走完整个流水线然后retire掉，但是有些推测执行的uOps在分支预测失败的时候会直接中途cancel。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-1.png">http://loopjump.com/wp-content/uploads/2022/06/4-1.png</a></p>
+<p>较新的Intel微架构流水线前端每个节拍可以allocate 4个uOps，后端可以retire 4个uOps。Pipeline slot代表能够处理一个uOps的硬件资源。Top-Down分析方法假设每个CPU Core在每个节拍都有4个slot可用，Core内有PMU监测slot的使用情况，监测发生在allocation point，即图中星号位置。</p>
+<p>如果一个节拍内slot是空的（发生了stall），则需要判断是前端没供给得上还是后端没来得及消费。如果时前端没给slot供给得上uOps，即是Front-End Bound；如果前端供给没问题，但没法将uOps递交到后端，即是Back-End Bound，这通常是因为后端资源不足导致的；如果前端和后端都有问题，这种情况归结到Back-End Bound，因为前端问题解决了还是会卡到后端。</p>
+<p>如果流水线没有stall，确定瓶颈就需要看uOps是否最终retire了。如果确实reitre了，情况归结为Retiring，否则可能是分支预测失败或者self-modify-code的原因导致流水线被清空(flush)，这种情况归结为Bad Speculation。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-1-300x181.png">http://loopjump.com/wp-content/uploads/2022/06/5-1-300x181.png</a></p>
+<p>之所以监控在allocation point (图中星号位置) ，是因为front-end和back-end之间是生产者消费者模型，allocation point是连接二者的地方，容易判断是两侧的哪一侧的问题。</p>
+<p>Intel VTune可以用于分析识别瓶颈类型。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6.png">http://loopjump.com/wp-content/uploads/2020/06/6.png</a></p>
+<p>如图可以看到每个函数的瓶颈归类，数越大表示瓶颈越显著，其中红色表示需要关注的点。</p>
+<p><strong>微架构调优方法论</strong></p>
+<ol>
+<li>首先关注热点函数</li>
+<li>使用前述Top-Down方法评估该函数执行是否高效</li>
+<li>如果函数执行不高效，则根据瓶颈类型识别问题所在</li>
+<li>优化该问题</li>
+<li>针对各个热点函数，重复上述1-4,</li>
+</ol>
+<p><strong>Back-End瓶颈优化</strong></p>
+<p>Back-End瓶颈属于比较常见的一类，可以继续细分为memory bound和core bound，细分依据是执行单元的利用率。详细的指标可以参考 <a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/cpu-metrics-reference.html">https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/cpu-metrics-reference.html</a></p>
+<p>Memory bound的情况有比如cache miss、memory access。core bound的情况有比如除法指令要占用多个节拍，如果有多个除法指令就会争夺同一个除法部件。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7.png">http://loopjump.com/wp-content/uploads/2020/06/7.png</a></p>
+<p>针对memory bound的情况，Intel VTune工具可以进一步显示是哪个层次的存储瓶颈，包括从L1 cache到内存设备的各层。针对core bound的情况，Intel VTune可以显示Divider和Port Utilization两列情况，其中Divider指除法部件利用率，Port Utilization可以进一步展开看到各个port的利用率。</p>
+<p><strong>Front-End瓶颈优化</strong></p>
+<p>Front-End瓶颈可能来自 JIT代码和解释性代码，这类代码需要临时动态生成；带有分支跳转的代码和指令数比较多的代码也可能引起这类瓶颈。这类瓶颈一般可以通过优化代码段大小，编译器PGO等来优化。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/8.png">http://loopjump.com/wp-content/uploads/2020/06/8.png</a></p>
+<p>Intel VTune里面展示了Front-End Bound的两个方面：Front-End Latency和Front-End Bandwidth，前者反应多少节拍内没有uOps供应，后者反应有多少节拍内uOps没灌满4个。</p>
+<p><strong>Bad Speculation类型优化</strong></p>
+<p>这类问题指流水线干了一些没有用的活，这些指令最终都不能retire因而导致流水线白跑了，另外就是需要重新加载有用的指令也要耗时。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/9.png">http://loopjump.com/wp-content/uploads/2020/06/9.png</a></p>
+<p>这类问题主要就是分支预测失败导致。一般可以通过PGO来提高分支预测成功率，减少间接跳转分支等。</p>
+<p><strong>Retiring类型优化</strong></p>
+<p>一般retire高表示有用的指令都在提交，这是个好事。但是这不代表没有优化空间了。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/10-300x106.png">http://loopjump.com/wp-content/uploads/2020/06/10-300x106.png</a></p>
+<p>举个例子，CPU在执行一些很小的浮点数计算的时候，不能直接用浮点部件计算，需要执行一段特殊的uOps代码，这个过程称为FP Assists。FP Assist会显得前端供应很充足，但对于计算来讲效率其实比较低，属于是“低价走量”的情况。这种可以通过编译时制定DAZ&#x2F;FTZ来优化。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/lb-tree/">
+        <span class="nav-arrow">← </span>
+        
+          LB+Tree：面向3DXPoint优化的B+Tree
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/rsm-compartmentalization/">
+        
+          使用Compartmentalization扩展复制状态机
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="nav">none</ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/intel-microarch-analysis-method/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

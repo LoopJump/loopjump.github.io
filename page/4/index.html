@@ -195,6 +195,72 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/quorum-sys-failure-probability/">Quorum System的故障概率和负载</a>
+      </h2>
+      <p class="article-date">November 10, 2018</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近读到一个有趣的话题：Quorum System的故障概率和负载。
+首先是一些概念：
+节点集合 (V&#x3D;{v_1, v_2, .., v_n})
+Quorum  (Q\subseteq V)
+Quorum System (\mathcal{S} \subseteq 2^V)，且(Q ...
+        
+      </div>
+      <a class="more" href="/quorum-sys-failure-probability/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/spanner-sql-engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
+      </h2>
+      <p class="article-date">November 10, 2018</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          继2012年在OSDI年发表了Spanner论文《Spanner: Google’s Globally-Distributed Database》之后，Google在SIGMODE’17上发表了第二篇关于Spanner的论文《Spanner: Becoming a SQL System》。从 ...
+        
+      </div>
+      <a class="more" href="/spanner-sql-engine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/sdpaxos-paper/">SDPaxos:在strong leader与leaderless之间折中</a>
+      </h2>
+      <p class="article-date">October 2, 2018</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          &#x2F;&#x2F; 大半夜on-call没事干，写点东西。
+《SDPaxos: Building Efficient Semi-Decentralized Geo-replicated State Machines》(SOCC18’)
+有幸跟作者赵汉宇博士做了一次交流，我也仔细读了一遍 ...
+        
+      </div>
+      <a class="more" href="/sdpaxos-paper/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/data-model-history/">以史为鉴：数据模型变迁史</a>
       </h2>
       <p class="article-date">February 10, 2018</p>
@@ -212,6 +278,29 @@
         
       </div>
       <a class="more" href="/data-model-history/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/dbms-arch/">数据库系统组件</a>
+      </h2>
+      <p class="article-date">February 10, 2018</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          读了Architecture of a Database System这篇经典论文，挑了些不太熟悉的内容做了笔记。
+论文内容基本上谈不上是在讲架构吧，基本上就是罗列了下有哪些组件，而且内容基本上针对原来传统数据库的。
+
+!http://loopjump.com/wp-content/uplo ...
+        
+      </div>
+      <a class="more" href="/dbms-arch/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -319,92 +408,6 @@ Reconfiguration是指在分布 ...
         
       </div>
       <a class="more" href="/flp-proof-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          不知怎么地，前一阵子知乎上对Raft的乱序的问题的讨论就变多了。我觉得其实这个问题可讨论的东西并不多。
-Raft作者觉得Multi Paxos太复杂，所以搞了一个Raft。Raft加了很多约束，其中可能最重要的一条就是只能顺序commit。
-所以，顺序commit的锅，Raft是得好好背着， ...
-        
-      </div>
-      <a class="more" href="/out-of-order-commit-apply-in-raft/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/dynamo-paper-note/">Dynamo论文阅读笔记</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Dynamo: Amazon’s Highly Available Key-value Store
-Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
-Dynamo系统 ...
-        
-      </div>
-      <a class="more" href="/dynamo-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
-        
-      </div>
-      <a class="more" href="/flexible-paxos-quorum-revisited/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/gdb-tips/">gdb调试技巧</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。
-使用gdb前，代码要用gcc -g选项编译以带上符号表。
-调试C++程序的基本环境设置1234567set print pretty onset print  ...
-        
-      </div>
-      <a class="more" href="/gdb-tips/">Read more</a>
     </article>
   
 

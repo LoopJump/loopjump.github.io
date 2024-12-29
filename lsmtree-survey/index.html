@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LSM-Tree综述 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LSM-Tree综述</h2>
+  <p class="post-date">2020-04-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>LSM-based storage techniques: a survey （VLDBJ 2020）</p>
+<p>This paper aims to serve as a guide to the state of the art in LSM-based storage techniques for researchers, practitioners, and users.</p>
+<p>LSMTree引擎在业界已经有了很多的落地。很多NoSQL系统如Bigtable、Dynamo、HBase、Cassandra、LevelDB、RocksDB、AsterixDB底层都是LSMTree引擎。RocksDB在Facebook的实时数据处理、图处理、流式处理、OLTP等场景都有应用。阿里云RDS中，用户也可以选择InnoDB或者是X-Engine，其中X-Engine就是优化后的LSMTree引擎，高压缩省成本。</p>
+<h2 id="LSM-tree-basics"><a href="#LSM-tree-basics" class="headerlink" title="LSM-tree basics"></a>LSM-tree basics</h2><h3 id="Today’s-LSM-tree"><a href="#Today’s-LSM-tree" class="headerlink" title="Today’s LSM-tree"></a>Today’s LSM-tree</h3><p><strong>LSM Tree基础</strong></p>
+<p>LSMTree的结构大家可能都已经比较熟悉了，这里再简单描述下。</p>
+<p>LSM包含一个active memtable，请求将数据（记录的后镜像）写入顺序的wal持久化，并将数据写入active memtable，active memtable是一个内存索引结构，可以用skiplist或者B+树，当active memtable写到一定大小（或者其他条件）时，将active memtable切换成immutable memtable，并生成新的active memtable，immutable memtable将来刷到磁盘，生成磁盘索引结构，可以是sstable(sorted string table)或者磁盘B+树。磁盘上允许有多层sstable。每层结构（包括memtable）在这里都叫做一个component，点查询只需要从新到旧逐个查即可，范围查询则要同时查找所有的component，使用一个优先级队列做reconciliation。随着磁盘上的component越来越多，查询性能会越来越差，磁盘浪费也会越来越严重（因为删除是标记删除，空间并没有回收），所以需要引入merge来将多个component合并成少量的component。</p>
+<p>Merge有两个典型的策略：Leveling Merge Policy和 Tiering Merge Policy。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414152617678-300x252.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414152617678-300x252.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/fa05a2e3-116e-4caf-a84f-36ef4707b14e/image-20200414152617678.png" alt="image-20200414152617678.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414152617678-300x252.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414152617678-300x252.png</a></p>
+<ul>
+<li>Leveling Merge：每层维护一个component，层之间数据量比例为T。</li>
+<li>Tiering Merge：每层维护最多T个component，满T个就整体合并成下一层的一个component。</li>
+</ul>
+<p>两个merge policy粗略地相比，leveling merge policy维护了更少的层，因此查询性能好，tiering merge policy减少了merge的频率。</p>
+<p><strong>一些经典的优化手段</strong></p>
+<p><strong>优化一：Bloom filter</strong></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/2880px-Bloom_filter.svg_-300x108.png">http://loopjump.com/wp-content/uploads/2020/04/2880px-Bloom_filter.svg_-300x108.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/48e8c2b2-c10e-4d2a-b828-9a48df356f6f/2880px-Bloom_filter.svg_.png" alt="2880px-Bloom_filter.svg_.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/2880px-Bloom_filter.svg_-300x108.png">http://loopjump.com/wp-content/uploads/2020/04/2880px-Bloom_filter.svg_-300x108.png</a></p>
+<p>Bloom filter是个非常经典的优化。</p>
+<p>从数据结构上讲，bloom filter支持插入一个元素和查询存在性，为了优化性能占用，bf维护一个bit vector，插入一个元素x时，使用若干hash function将x映射到多个bit位，然后置位。查询元素w的存在性时，同样检查w对应的若干bit位，判定是否全为1。bloom filter存在false positive，即实际不存在，但判定为存在。但bloom filter的false positive rate可以足够低，代价是要多一些存储空间，计算公式为： ，其中k是hash function个数，n是元素的个数，m是比特位数目，k取 时，false positive rate最优。</p>
+<p>应用bloom filter时，bloom filter可以常驻内存，它对点查询的优化非常显著，因为能够显著降低不必要的IO次数。</p>
+<p><strong>优化二：Partitioning</strong></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/977f1e93-61b6-4588-aae4-250815a5da76/image-20200414155930611.png" alt="image-20200414155930611.png"></p>
+<p>Partition也是非常有效的优化。Partition的基本原理是将每层的component按照range划分成多个分区。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414155930611-300x204.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414155930611-300x204.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414155930611-300x204.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414155930611-300x204.png</a></p>
+<p>这样带来的好处很多：</p>
+<ul>
+<li>merge操作可以打散成多个小的merge操作。更精细的merge能够使merge的耗时和临时空间占用更加可控。</li>
+<li>对于顺序插入（每次都是插入更大的key，例如业务存储按时间排序类型的数据）和skewed update的情况，有可能大部分分区不需要merge，只需要merge少量的分区。</li>
+</ul>
+<p>注意到，partition优化和merge policy是正交的，但是工业界基本上只有leveling merge policy用了partition优化。</p>
+<p><strong>并发控制和recovery</strong></p>
+<p>并发控制部分主要涉及两方面，一个是事务多版本，一个是flush和merge的并发。</p>
+<p>事务多版本可以参考本博客的其他博文，flush和merge的并发因为要涉及修改component元数据信息，需要谨慎地处理任务间同步。</p>
+<p>Recovery简单地说包括两部分，一个是磁盘上的sst component恢复，主要是sst的元数据部分恢复，另一个是事务wal恢复。</p>
+<p>sst元数据恢复本质上看元数据的管理方式，通常partitioned的LSM都维护了元数据的变更历史manifest log，恢复manifest log即可。</p>
+<p>wal的恢复也比较简单，将wal数据写入memtable即可，因为LSM通常不维护undo，当然这就要求flush下去的数据必须是已经结束的事务。这个设计对大事务不利，因为大事务执行过程中可能要写超过memtable大小的数据量，但业界也已经有了比较好的解决方案。</p>
+<h3 id="Cost-Analysis"><a href="#Cost-Analysis" class="headerlink" title="Cost Analysis"></a>Cost Analysis</h3><p>这里只考虑未partition优化的LSM-Tree，几个参数及含义如下：</p>
+<ul>
+<li>T：size ratio</li>
+<li>L：总的层数</li>
+<li>B：每个page里的行数</li>
+<li>P：memory component的page数目</li>
+</ul>
+<p>假设workload的insert和delete相当，长时间运行时仍维持L层数据量。</p>
+<p>则memory component的行数为$$B\cdot P$$，第i层行数$$T^{i+1}\cdot B\cdot P$$ 。设总共$$N$$行，则最后一层的数据量为$$N\cdot\frac{T}{T+1}$$（这个是大致数值，按说要按等比数列推算，这里是依据层间数据比率算的粗略的值）。反过来，N行数据可能要有$$L&#x3D;\lceil log_T(\frac N{B\cdot P}\cdot \frac T{T+1})\rceil$$ 层。</p>
+<p><strong>write cost (write amplification)</strong></p>
+<p>衡量指标：一个写请求的数据，直到数据最后被merge到最底层时，平均的IO次数。</p>
+<p>leveling merge从memory component merge到最底层过程中，每层需要T-1次（本层满），因为该记录是同page内其他记录等价的，所以平均的IO次数是$$O(T\cdot\frac LB)$$。</p>
+<p>tiering merge中，每层每个page最多只会被merge一次，所以总共T次，page内每个记录平均IO次数是$$O(\frac L B)$$。</p>
+<p><strong>point query cost</strong></p>
+<p>点查询受bloom filter优化点影响很大。</p>
+<p>在没有bloom filter的情况下：对于leveling平均是$$O(L)$$，对于tiering平均是$$O(T\cdot L)$$。</p>
+<p>在有bloom filter的情况下：</p>
+<ul>
+<li>如果该key确实不存在，则每层触发一次IO的概率是bloom filter的false positive rate，设bloom filter的配置是总共M比特和N条记录，则概率为$$O(e^{-\frac M N})$$。<ul>
+<li>对于leveling平均IO次数是$$O(L\cdot e^{-\frac M N})$$</li>
+<li>对于tiering平均IO次数是$$O(T\cdot L\cdot e^{-\frac M N})$$。</li>
+</ul>
+</li>
+<li>如果该key确实存在，则至少触发一次IO，因为bloom filter的false positive rate远小于1，所以leveling和tiering都是$$O(1)$$。</li>
+</ul>
+<p><strong>range query cost</strong></p>
+<p>range query cost比较特殊一点，考虑查询结果只有一条和查询结果是全部记录（例如全表扫描）的两个极端例子，一条结果的查询取决于层数，全表查询取决于对底层数据量（最后一层包含了绝大部分记录）。</p>
+<p>具体地，设总共访问了s行，则如果$$\frac s B &gt; 2L$$，则称为long query，其代价：leveling为$$O(\frac s B)$$，tiering是$$O(T\cdot \frac s B)$$，如果$$\frac s B &lt; 2L$$，则称为short query，其代价：leveling为$$O(L)$$，tiering是$$O(T\cdot L)$$。</p>
+<p><strong>space amplification</strong></p>
+<p>指标为记录总数除以唯一记录数，等价于是重复率的倒数。</p>
+<p>最差的情况是：</p>
+<ul>
+<li>对于leveling，最底层的数据是无重复，但前L-1层都是对最底层的重复（update），因为最底层数据与前L-1层占比大约为T:1，所以space amplification大约为$$O(\frac{T+1}T)$$。</li>
+<li>对于tiering，最底层的T个component都是重复的，所以space amplification大约为$$O(T)$$。</li>
+</ul>
+<p>上述结果的汇总：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414195024167.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414195024167.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/f8897874-15b7-4686-b983-06132e4923d0/image-20200414195024167.png" alt="image-20200414195024167.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414195024167.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414195024167.png</a></p>
+<h2 id="LSM-tree-improvements"><a href="#LSM-tree-improvements" class="headerlink" title="LSM-tree improvements"></a>LSM-tree improvements</h2><h3 id="LSM-tree优化的分类"><a href="#LSM-tree优化的分类" class="headerlink" title="LSM-tree优化的分类"></a>LSM-tree优化的分类</h3><p>LSMTree的几个问题：</p>
+<ul>
+<li>写放大：尽管事务wal顺序写然后写memtable，避免了B+树这类in-place的修改，但merge操作还是引入了一些写放大。</li>
+<li>Merge操作：merge操作对LSM性能影响很大，merge会导致buffer cache miss，还可能导致写停顿。</li>
+<li>硬件：LSM写流程可以充分利用hdd的顺序IO，目前硬件环境发生了变化，大内存、多核、NVM等，有一些研究是针对新硬件下的LSM优化。</li>
+<li>特殊的workload：针对特定workload的优化。</li>
+<li>自动调优：RUM猜想说读&amp;写&amp;空间放大三者只能尽量优化其二，但LSM的调优选项有点多，例如内存分配、merge policy、size ratio等。</li>
+<li>二级索引：如何低代价维护二级索引。</li>
+</ul>
+<p>根据这几个问题和对应的优化，目前学术界大致的工作可以总结如图。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414204743584-1024x189.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414204743584-1024x189.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0a8c3331-498a-495e-b619-ba8d81c105fd/image-20200414204743584.png" alt="image-20200414204743584.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200414204743584-1024x189.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200414204743584-1024x189.png</a></p>
+<h3 id="降低写放大"><a href="#降低写放大" class="headerlink" title="降低写放大"></a>降低写放大</h3><h3 id="tiering"><a href="#tiering" class="headerlink" title="tiering"></a>tiering</h3><p>**WriteBuffer Tree(WB-tree)**：一种partitioned tiering with vertical grouping的变体。</p>
+<p><strong>Lightweight Compaction Tree（LWC-tree）</strong>：也是一种partitioned tiering with vertical grouping的变体，并且解决了sstable group之间的workload balance。</p>
+<p><strong>PebbleDB</strong>：还是一种partitioned tiering with vertical grouping的变体，通过某种方式来确定group的key-range。</p>
+<p><strong>dCompaction</strong>：引入一个虚拟sstable和虚拟merge的概念，虚拟merge不真做，这样等查询性能下降超过一定阈值再真触发merge。[ ? ]</p>
+<p>这几个方案都是某种partitioned tiering with vertical grouping方案，主要区别是sstable和workload负载均衡的方法。</p>
+<h3 id="Merge-skipping"><a href="#Merge-skipping" class="headerlink" title="Merge skipping"></a>Merge skipping</h3><p><strong>Skip-tree</strong>：的一个跳过某些merge操作的优化。直接将L层的key merge到 L+K 层，能跳过中间 L+1, L+2, … L+K-1 层的前提条件是这个key在中间层不存在（可以用bloom filter快速判定）。</p>
+<h3 id="Expliointing-data-skew"><a href="#Expliointing-data-skew" class="headerlink" title="Expliointing data skew"></a>Expliointing data skew</h3><p><strong>TRIAD</strong>：</p>
+<p>区分冷热key的优化：识别出hot key之后hot key和cold key区分开，只有cold key flush到 L0，hot key的多个旧版本不刷 L0（wal里面有hot key的最新版本）。</p>
+<p>其他优化：1) L0积攒若干layer后才往下merge。2) 用一段wal代替一个component的flush。</p>
+<p>注：提升写性能的优化手段声称的写性能提升，是相比未调优的Rocksdb，所以这些提升效果可能实际并不怎么样。</p>
+<h3 id="优化Merge操作"><a href="#优化Merge操作" class="headerlink" title="优化Merge操作"></a>优化Merge操作</h3><h3 id="提升merge性能"><a href="#提升merge性能" class="headerlink" title="提升merge性能"></a>提升merge性能</h3><p>VT-tree的思路是如果发现一组需要merge的sstable文件里面有key-range不交叠的page，可以让merge的resulting sstable直接指向这个page。好处是减少了读取和计算，坏处是会造成一个key-range内的page不连续（可以采用设定阈值触发该优化），另一个坏处是page不被读的话，就不会触发产生Bloom filter，VT-tree用的是quotient filter来解决这个问题。</p>
+<p>也有论文是通过流水线CPU和IO来提升merge性能，因为merge操作涉及的多个阶段消耗的资源不一样。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200422130637818-300x116.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200422130637818-300x116.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200422130637818-300x116.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200422130637818-300x116.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/94851966-491c-4251-a826-87c88945a01a/image-20200422130637818.png" alt="image-20200422130637818.png"></p>
+<h3 id="降低Buffer-Cache-Miss"><a href="#降低Buffer-Cache-Miss" class="headerlink" title="降低Buffer Cache Miss"></a>降低Buffer Cache Miss</h3><p>merge会生成的新component，如果有新的读落在这个新的component上，就会导致cache miss。如果将component全部load到内存，落它上面的读虽然不会导致cache miss，但是会挤压其他正在working page，同样会导致cache miss。</p>
+<p>Compaction management in distributed key-value (PVLDB15’) 实验分析了merge带来的性能影响，merge会消耗大量的CPU和IO资源，建议将merge操作offload到其他节点，完成用预热机制来增量地使用新的component。不过这个方法也存在一些问题，第一个问题是merge需要offload到另外的节点，第二个问题是新page与旧的hot page之间的竞争，LSbM-tree将上一层的sstable挂到新的sstable的buffer上缓和cache miss（按照cache淘汰策略被逐步淘汰）。</p>
+<h3 id="减少write-staills"><a href="#减少write-staills" class="headerlink" title="减少write staills"></a>减少write staills</h3><p>bLSM允许每层有多个component，不同层的merge可以并发，bLSM每层的速率受限于下一层的情况，像一组连起来的齿轮一样，最终限制了内存表写速率，从而避免了大停顿。</p>
+<h3 id="新硬件"><a href="#新硬件" class="headerlink" title="新硬件"></a>新硬件</h3><p><strong>大内存</strong></p>
+<p>大内存能够降低层数，对读写都有利。</p>
+<p>大内存下的问题是内存管理的开销和CPU cache miss。</p>
+<p>FolDB利用大内存的方式比较奇葩，它有两个内存结构，一个是小hash，一个是大skiplist，二者是层次关系，小hash只服务写，写满一批就插入大skiplist，大skiplist服务range query，但执行range query前要先把小hash数据搬到大skiplist里面，所以在write和range query混合场景下性能很差。</p>
+<p>Accordion的内存结构组织如图，mutable memtable变为immutable时，执行一个被称为in-memory flush的操作，将数据在内存里面排的更紧凑。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200422182146296-300x134.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200422182146296-300x134.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200422182146296-300x134.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200422182146296-300x134.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6eab2c1a-00cc-40f0-a5a0-09fdd8b9996b/image-20200422182146296.png" alt="image-20200422182146296.png"></p>
+<p><strong>多核</strong></p>
+<p>cLSM将LSM的component组织成支持并发操作的链表，flush和merge最终在修改这个链表时，都只需要原子变量操作即可。对memory component的write kv和flush用读写锁解决并发。</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><p><strong>SSD&#x2F;NVM</strong></p>
+<p>FD-tree、FD+tree、MaSM。</p>
+<p>WiskKey：因为这类新存储的随机读的性能比较高，所以一个可能的优化思路是，将key和value分开，LSM里面只有key和指向value所在WAL Log的偏移量地址。HashKV和SifrDB都采用了类似的思路。好处是写到LSM结构里面的数据量小了，写性能和merge性能会提升，但是因为LSM里面是间接指向value，读性能会下降，而且GC会比较难做。</p>
+<p>NovelLSM将NVM用作存放DRAM和SSD之间的component，另外就是去掉logging，这个思路是比较自然的想法。</p>
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3><p><strong>Native Storage</strong></p>
+<p>绕过文件系统，构建基于LSM-tree的直接存储系统（LSM-tree-based direct storage system）。</p>
+<h3 id="面向特定workload的优化"><a href="#面向特定workload的优化" class="headerlink" title="面向特定workload的优化"></a>面向特定workload的优化</h3><p><strong>LHAM(log-structured history access method)</strong> ：是给每个component关联一个timestamp range，时序查询时，可以借助这个timestamp range剪枝，merge的时候也可以通过修改merge策略使得每个component都有不交叠的时间戳。</p>
+<p><strong>LSM-trie</strong> ：LSM-trie是一个基于LSM的hash表，sstable组织上采用的是partitioned tiering，中间层直接用hash value进行trie索引。注意该结构只支持点查。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200423100848701-1024x423.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200423100848701-1024x423.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/43fce42d-a674-44b8-b5c2-573ff1af50ee/image-20200423100848701.png" alt="image-20200423100848701.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200423100848701-1024x423.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200423100848701-1024x423.png</a></p>
+<p><strong>SlimDB</strong>：面向semi-sorted数据的LSM-tree。</p>
+<p><strong>Mathieu</strong>：面向append-mostly的workload。</p>
+<h3 id="自动调优"><a href="#自动调优" class="headerlink" title="自动调优"></a>自动调优</h3><ol>
+<li><strong>参数调整</strong></li>
+</ol>
+<p><strong>Lim</strong> 提出了一个模型，假设有key分布的先验知识，基于此计算flush和merge的开销。</p>
+<p><strong>Monkey</strong> ：调优联合参数&lt;merge-policy, size-ratio, memtable-vs-blommfilter-memory quote&gt;，找到最优的参数值。</p>
+<ol start="2">
+<li><strong>Merge Policy调整</strong></li>
+</ol>
+<p><strong>Dostoevsky</strong> ：zero-result的点查、长范围查询、空间放大主要取决于最底层，但所有层对write cost都有影响。Dostoevsky引入lazy-leveling，在最底层上用leveling，上层用tiering。</p>
+<p><strong>Thonangi</strong>：研究了partition对write cost的影响。</p>
+<h3 id="-2"><a href="#-2" class="headerlink" title=""></a></h3><ol start="3">
+<li><strong>动态BloomFilter内存分配</strong></li>
+</ol>
+<p><strong>ElasticBF</strong>：可以基于key的hotness和访问频率调整bf的false positive。</p>
+<h3 id="-3"><a href="#-3" class="headerlink" title=""></a></h3><ol start="4">
+<li><strong>优化数据存放位置</strong></li>
+</ol>
+<p><strong>Mutant</strong>：云数据库将数据按照冷热存放在不同成本&#x2F;性能介质上，控制总成本。</p>
+<h3 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h3><p>二级索引两个方法：索引键和主键拼成组合键存储，或者索引键作为key，一组主键作为value。</p>
+<ol>
+<li><strong>索引结构</strong></li>
+</ol>
+<p><strong>LLSI（Log-Structured Inverted Index）</strong>：用于微博的反向索引支持查询最热的K条微博，每个post都有三个反向索引（该post的significance&#x2F;freshness&#x2F;frequency）。</p>
+<p><strong>Kim</strong>：实验分析了基于LSM的空间数据处理系统。此外还有DHB-tree(Dynamic Hilbert B+-tree)、DHVB-tree(Dynamic Hilbert Value B+-tree)、SHB-tree(Static Hilbert B+-tree)、SIF(Spatial Inverted File)。</p>
+<h3 id="-4"><a href="#-4" class="headerlink" title=""></a></h3><ol start="2">
+<li><strong>索引维护</strong></li>
+</ol>
+<p><strong>Diff-Index</strong>：因为更新操作可能导致二级索引的旧项删除和新项插入，Diff-Index提供了几种模式：</p>
+<ul>
+<li>sync-full：插入和删除都同步</li>
+<li>sync-insert：同步插入 + 异步删除（删除通过查询lazily触发）</li>
+<li>async-simple：插入和删除都异步（先把更新放到异步队列）</li>
+<li>async-session：在async-simple基础上，提供session一致性（实现方式是在client端维护local cache来保存update）。</li>
+</ul>
+<p>**DELI(Defered lightweight indexing)**：改进了Diff-Index的sync-insert，在merge时，扫描主键component，扫到一个索引列值对应的多个主键列时，把旧的主键拿出来用于删除二级索引。</p>
+<p>《Efficient data ingestion and query processing for LSM-based storage systems》（作者的另一个工作） 提出了几种基于LSM的二级索引和过滤器等方案。该工作实验分析了batched lookup、stateful B+tree search cursor 和 blocked bloom filter。其他的一些优化思路是，lasy维护二级索引，通过二级索引拿到pk后也validate一下sk。</p>
+<h3 id="-5"><a href="#-5" class="headerlink" title=""></a></h3><ol start="3">
+<li><strong>统计信息收集</strong></li>
+</ol>
+<p>Absalyamov：统计信息在flush和merge时附带做。</p>
+<ol start="4">
+<li><strong>分布式索引</strong></li>
+</ol>
+<p>HBase有global index和local index。global index借助HBase的co-process（类似触发器）实现。</p>
+<p>也有论文介绍了一个可以并发建二级索引的方法，先从各个主键索引分区生成对应的二级索引片段，然后发到其他节点执行合并。大概类似于hadoop的shuffle。</p>
+<p>另有论文介绍了异步维护物化视图的方法，基本还是先同步保存delta然后后台异步消费。</p>
+<h3 id="Tradeoff"><a href="#Tradeoff" class="headerlink" title="Tradeoff"></a>Tradeoff</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200424122635014-1024x597.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200424122635014-1024x597.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200424122635014-1024x597.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200424122635014-1024x597.png</a></p>
+<p>survey里发现很多优化工作都是在提升leveling merge policy下的写性能（这跟我所了解到的业界需求不太一样……）。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2abdc613-8423-48a3-b6ef-adc7642f4a42/image-20200424122635014.png" alt="image-20200424122635014.png"></p>
+<h2 id="LSM-based的典型系统"><a href="#LSM-based的典型系统" class="headerlink" title="LSM-based的典型系统"></a>LSM-based的典型系统</h2><p><strong>LevelDB</strong>： Google出品</p>
+<p><strong>RocksDB</strong>：Rocksdb磁盘利用率比较高，size ratio&#x3D;10的情况下，大概只有10%的空间放大。B+tree类型的存储引擎通常只有2&#x2F;3满。Rocksdb的L0是tiering，其他层是leveling。</p>
+<p><strong>Cassandra</strong>：类似于Dynamo的KV存储，每个partition用LSM组织数据。</p>
+<p><strong>AsterixDB</strong>：开源大数据管理系统。</p>
+<h2 id="未来研究方向"><a href="#未来研究方向" class="headerlink" title="未来研究方向"></a>未来研究方向</h2><ul>
+<li>全面的性能评估</li>
+<li>Partitioned 的 tiering结构</li>
+<li>混合的 merge policy</li>
+<li>减小性能抖动</li>
+<li>从LSM架构的KV存储研究到LSM的DB研究（索引、查询等）</li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/lsmtree-adaptive-mem/">
+        <span class="nav-arrow">← </span>
+        
+          LSM Tree 自适应内存管理
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/hekaton-high-perf-cc/">
+        
+          Hekaton的高性能并发控制算法
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LSM-tree-basics"><span class="toc-nav-text">LSM-tree basics</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Today%E2%80%99s-LSM-tree"><span class="toc-nav-text">Today’s LSM-tree</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Cost-Analysis"><span class="toc-nav-text">Cost Analysis</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LSM-tree-improvements"><span class="toc-nav-text">LSM-tree improvements</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#LSM-tree%E4%BC%98%E5%8C%96%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-nav-text">LSM-tree优化的分类</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%99%8D%E4%BD%8E%E5%86%99%E6%94%BE%E5%A4%A7"><span class="toc-nav-text">降低写放大</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#tiering"><span class="toc-nav-text">tiering</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Merge-skipping"><span class="toc-nav-text">Merge skipping</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Expliointing-data-skew"><span class="toc-nav-text">Expliointing data skew</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BC%98%E5%8C%96Merge%E6%93%8D%E4%BD%9C"><span class="toc-nav-text">优化Merge操作</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%8F%90%E5%8D%87merge%E6%80%A7%E8%83%BD"><span class="toc-nav-text">提升merge性能</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%99%8D%E4%BD%8EBuffer-Cache-Miss"><span class="toc-nav-text">降低Buffer Cache Miss</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%87%8F%E5%B0%91write-staills"><span class="toc-nav-text">减少write staills</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%96%B0%E7%A1%AC%E4%BB%B6"><span class="toc-nav-text">新硬件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#-1"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%9D%A2%E5%90%91%E7%89%B9%E5%AE%9Aworkload%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-nav-text">面向特定workload的优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%87%AA%E5%8A%A8%E8%B0%83%E4%BC%98"><span class="toc-nav-text">自动调优</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#-2"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#-3"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="toc-nav-text">二级索引</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#-4"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#-5"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Tradeoff"><span class="toc-nav-text">Tradeoff</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LSM-based%E7%9A%84%E5%85%B8%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="toc-nav-text">LSM-based的典型系统</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9C%AA%E6%9D%A5%E7%A0%94%E7%A9%B6%E6%96%B9%E5%90%91"><span class="toc-nav-text">未来研究方向</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/lsmtree-survey/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

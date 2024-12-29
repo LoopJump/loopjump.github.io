@@ -280,6 +280,49 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
+      </h2>
+      <p class="article-date">June 10, 2020</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          原文：https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html
+ ...
+        
+      </div>
+      <a class="more" href="/intel-microarch-analysis-method/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
+      </h2>
+      <p class="article-date">May 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《LB+Trees: Optimizing Persistent Index Performance on 3DXPoint Memory》（VLDB20’）
+这是个设计非常巧妙的数据结构，这里简单描述下核心内容，读者可以直接读原文，行文非常清晰。
+Abstract3DXPoint的有些硬件 ...
+        
+      </div>
+      <a class="more" href="/lb-tree/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/hekaton-memory-engine/">Hekaton内存引擎</a>
       </h2>
       <p class="article-date">April 21, 2020</p>
@@ -323,24 +366,9 @@ MV Storage E ...
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/calvin-intro/">Calvin简介</a>
+        <a href="/lsmtree-survey/">LSM-Tree综述</a>
       </h2>
-      <p class="article-date">April 2, 2020</p>
-      
-      <div class="article-summary">
-        
-          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
-Calvi ...
-        
-      </div>
-      <a class="more" href="/calvin-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/in-memory-database-cc-eval/">In-Memory DB的并发控制算法评估</a>
-      </h2>
-      <p class="article-date">March 29, 2020</p>
+      <p class="article-date">April 12, 2020</p>
       
         
   <a href="/tags#Database" >
@@ -350,59 +378,33 @@ Calvi ...
       
       <div class="article-summary">
         
-          An Empirical Evaluation of In-Memory Multi-Version Concurrency Control (VLDB17’)
-这篇工作梳理了MVCC的四个要点：
-
-并发控制协议
-多版本存储
-垃圾回收
-索引管理
-
-还介绍了MVCC的多种变体原理，实现了这些变 ...
+          LSM-based storage techniques: a survey （VLDBJ 2020）
+This paper aims to serve as a guide to the state of the art in LSM-based storage techniques fo ...
         
       </div>
-      <a class="more" href="/in-memory-database-cc-eval/">Read more</a>
+      <a class="more" href="/lsmtree-survey/">Read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/calcite-intro/">Calcite简介</a>
+        <a href="/lsmtree-adaptive-mem/">LSM Tree 自适应内存管理</a>
       </h2>
-      <p class="article-date">November 1, 2019</p>
+      <p class="article-date">April 3, 2020</p>
       
         
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
   </a>
 
       
       <div class="article-summary">
         
-          Calcite是Apache旗下开源的、支持多种数据源、提供查询处理&#x2F;查询优化&#x2F;查询语言的基础软件框架。
-Calcite的三个特点：
-
-标准SQL: 工业级的SQL parser, validator, JDBC Driver
-查询优化器：将查询表达为关系代数，计划生成， ...
+          LSMTree自适应内存管理Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）
+内存管理整体架构比较清晰，如图，无需赘言。
+!http://loopjump.c ...
         
       </div>
-      <a class="more" href="/calcite-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/bitcask-intro/">bitcask简介</a>
-      </h2>
-      <p class="article-date">October 29, 2019</p>
-      
-      <div class="article-summary">
-        
-          Bitcask是由Basho公司搞的一个产品。
-技术设计数据顺序追加到磁盘上的active data file，并在内存中建立hash索引。
-active data file文件长到一定程度就切成old data file，新的数据写入新的active data file。
-old data ...
-        
-      </div>
-      <a class="more" href="/bitcask-intro/">Read more</a>
+      <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
     </article>
   
 

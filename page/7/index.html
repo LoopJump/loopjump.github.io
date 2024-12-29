@@ -195,6 +195,93 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/ubuntu-compile-install-new-kernel/">Ubuntu 12.04编译安装3.15.6新内核</a>
+      </h2>
+      <p class="article-date">October 3, 2015</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近又零散地看了一些mvcc&#x2F;snapshot的东西，有了一些新的理解和观点，记录一下，内容比较碎，不一定正确，欢迎大家讨论拍砖。
+在某些实现下，2PC会影响MVCC ?MVCC相比lock-based的并发控制，可以使得写不阻塞读。不过如果如果使用基于时间戳的行级多版本，在有分布 ...
+        
+      </div>
+      <a class="more" href="/ubuntu-compile-install-new-kernel/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/wpformular-example/">WordPress公式范例</a>
+      </h2>
+      <p class="article-date">June 20, 2015</p>
+      
+        
+  <a href="/tags#Misc" >
+    <span class="tag-code">Misc</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          没想到wordpress的latex插件支持的这么好。
+写了几个例子，**右键”Show Math As”&#x3D;&gt;”Tex Commands”**可以看原始文本。
+花体字母$\mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}$
+$\mathcal{abcde ...
+        
+      </div>
+      <a class="more" href="/wpformular-example/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/db-isolation-level/">浅谈数据库隔离级别</a>
+      </h2>
+      <p class="article-date">June 10, 2015</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          关系型数据库具备事务ACID的特性：原子性、一致性、隔离性、持久性。
+原子性是说，事务的操作要么都完成，要么都不完成。一致性是说事务不能破坏数据库的一些约束。隔离性是说，并发事务执行时，如何看到其他事务的执行结果。持久性是说，宕机重启后，数据库状态还能恢复。
+在分布式数据库中，原子性通常可以 ...
+        
+      </div>
+      <a class="more" href="/db-isolation-level/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/percolator-paper-note/">Percolator论文阅读笔记</a>
+      </h2>
+      <p class="article-date">June 10, 2015</p>
+      
+        
+  <a href="/tags#Storage" >
+    <span class="tag-code">Storage</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Percolator是Google在2011年发的论文，用于替换MapReduce做索引。核心是分布式事务和观察者通知机制。
+概述Google搜索引擎建立网页索引：通过处理网页库，会建好一个索引库。之后爬虫会新抓下来少量页面（相比于原始网页库的数量）。对于新抓来的页面，如何处理？有两种方式。 ...
+        
+      </div>
+      <a class="more" href="/percolator-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/bigtable-paper-note/">再读Bigtable论文</a>
       </h2>
       <p class="article-date">June 2, 2015</p>
@@ -308,77 +395,6 @@ RMQ是指给定若干个数据a[]，找出a[i…j]的最小值，同时允许更
         
       </div>
       <a class="more" href="/note-of-programming-contest-challenge-book-4/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note-of-programming-contest-challenge-book-2/">《挑战程序设计竞赛》读书笔记2-贪心算法,动态规划</a>
-      </h2>
-      <p class="article-date">February 3, 2014</p>
-      
-      <div class="article-summary">
-        
-          过了第一章的热身题之后，随后的题目难多了。本文只是对书中的部分题目，做了笔记。更多题目和详解，读者请参考原书和《算法导论》，《计算机算法设计与分析》（王晓东）等书。
-2.2节贪心法贪心法是不断地取当前最优策略的算法设计方法。
-找零钱问题：对于1,5,10,50,100,500面值的硬币各有C ...
-        
-      </div>
-      <a class="more" href="/note-of-programming-contest-challenge-book-2/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note-of-programming-contest-challenge-book-3/">《挑战程序设计竞赛》读书笔记3-图算法,图搜索,最短路,最小生成树</a>
-      </h2>
-      <p class="article-date">February 3, 2014</p>
-      
-      <div class="article-summary">
-        
-          2.5节图1. 图的搜索图的搜索可以用BFS和DFS。
-二分图问题描述如下：给定一个图，判定是否可以用两种颜色涂顶点，使得有边相邻的两个顶点不同色。
-这个问题可以用DFS遍历求解。着色时，确定当前点的颜色后，当前点相邻的点的颜色也随之确定。在DFS遍历过程中，如果没有出现着色冲突，说明可以用 ...
-        
-      </div>
-      <a class="more" href="/note-of-programming-contest-challenge-book-3/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/dfs-frog-game/">深度优先搜索求解青蛙交换位置小游戏</a>
-      </h2>
-      <p class="article-date">February 2, 2014</p>
-      
-      <div class="article-summary">
-        
-          在读《挑战程序设计竞赛》时，想到了以前玩的一个小游戏—青蛙交换位置游戏。
-
-游戏说明:
-(1) 用鼠标点青蛙头部向前跳，两边不同顏色的青蛙互換位置是最終目標.
-(2) 可以前進一步.
-(3) 最多只能跳過一個青蛙.
-(4) 一次一步，不限顏色
-(5) 只能前進.不能後退.
-(6) 按红色箭头 ...
-        
-      </div>
-      <a class="more" href="/dfs-frog-game/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note-of-programming-contest-challenge-book-1/">《挑战程序设计竞赛》读书笔记1</a>
-      </h2>
-      <p class="article-date">February 1, 2014</p>
-      
-      <div class="article-summary">
-        
-          超哥之前推荐过《挑战程序设计竞赛》一书。书名虽然说是应对竞赛，但该书同样适合于像我这样的普通的程序员用来提高一下算法能力。
-今天读了几页，感觉收获很大，希望将来能够啃完，同时推荐给各位读者。
-关于运行时间的估算
-对于复杂度为O(n2)的算法，如果n&lt;&#x3D;1000，则要执行106 ...
-        
-      </div>
-      <a class="more" href="/note-of-programming-contest-challenge-book-1/">Read more</a>
     </article>
   
 
