@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      The Columbia Optimizer | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>The Columbia Optimizer</h2>
+  <p class="post-date">2022-06-28</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《EFFICIENCY IN THE COLUMBIA DATABASE QUERY OPTIMIZER》 1998</p>
+<p>这是Portland State University的硕士论文，作者是YONGWEN XU，相比Cascades论文的跳跃和晦涩，这篇可以说是很良心了。</p>
+<h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>当时背景下，优化器仍然是值得研究的方向，尤其是在Decision Support Systems（DSS）、OLAP、大数据量、复杂对象、新的执行技术如并行和分布式执行等等。</p>
+<p>第一代可扩展的优化器包括EXODUS、Starburst等，模块化和可扩展比较好，但搜索性能不太好。第二代如Volcano，使用了physical property来引导计划的搜索。第三代如Cascades，使用了面向对象的设计来简化实现。</p>
+<p>这三代优化器可以分为两类，一类是自下而上的动态规划（bottom-up dynamic programming）优化器，如Starburst，另一类是自上而下的分支定界的基于代价的规则驱动（top-down branch and bound rule-driven cost based）优化器，如Cascades。</p>
+<p>Columbia优化器类似Cascades优化器，并在其基础上进行了改进。</p>
+<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><h3 id="Query-Processing大致过程"><a href="#Query-Processing大致过程" class="headerlink" title="Query Processing大致过程"></a>Query Processing大致过程</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4ec66bae-40fb-45aa-8eea-7f270c1761de/image-20220503163535701.png" alt="image-20220503163535701.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220503163535701-300x158.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220503163535701-300x158.png</a></p>
+<h3 id="Groups"><a href="#Groups" class="headerlink" title="Groups"></a>Groups</h3><p><strong>Query Tree</strong> ：逻辑执行计划树</p>
+<p><strong>Excution Plan</strong> ：物理执行计划</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/07bf9f93-9a56-4102-8cbc-3eb4adcf825f/image-20220504110903709.png" alt="image-20220504110903709.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504110903709-300x240.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504110903709-300x240.png</a></p>
+<p><strong>Expression</strong> ：query tree（或者sub tree）和excution plan（或者sub plan），实际上就是逻辑和物理计划的混称，也分别称为logical expression和physical expression。</p>
+<p><strong>Group</strong> ：logical expression的所有等价的expression称为一个Group，自然是包括logical和physical expression。</p>
+<p>例如A⋈B⋈C，也写作 [ABC]的group如下：</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/f3805497-a200-4e5d-85b8-abc60c57626d/image-20220504111726146.png" alt="image-20220504111726146.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504111726146-300x109.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504111726146-300x109.png</a></p>
+<p><strong>Multi-expression</strong> ：，简写<strong>mexpr</strong>，这是基于group的一个抽象概念，是指以group为输入的逻辑算子或者物理算子。例如[AB]⋈C就是group [AB]和[C]的EQJOIN表达式。</p>
+<p>例如group [ABC]的所有的multi-expression如下。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/39609a59-6d4d-49c5-8fb1-b6de48e774f2/image-20220504112725273.png" alt="image-20220504112725273.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504112725273-300x88.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504112725273-300x88.png</a></p>
+<p>引入Multi-expression的好处是可以节省大量搜索空间，如上例中，[AB]就作为一个整体。</p>
+<h3 id="Search-Space"><a href="#Search-Space" class="headerlink" title="Search Space"></a>Search Space</h3><p>给定一个查询，其所有等价的logical query tree和physical plan构成一个搜索空间。搜索空间用group来组织以节省空间，每个group以其他group作为输入。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png">http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png">http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png</a></p>
+<p>其中final group也叫top group，它对应整个查询的执行结果，相应地，它的EQJOIN也叫top operator。operator映射到search space中的node，从初始的查询可以容易地映射到初始搜索空间（initial search space）。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/df63583d-d5a4-410b-b1a3-4798bf06f820/image-20220504114842230.png" alt="image-20220504114842230.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png</a></p>
+<p>假如我们需要找到全局最优的physical expression，则需要生成所有的physical expression及其cost，因为一个physical expression是某个logical expression的一种实现方式，因此这意味着需要生成所有的logical expression。当全部的physical expression及其cost都生成之后对应的完全扩展开的search space叫做final search space，也就是锁final search space包含了输入查询的所有等价expression(logical and physical)。</p>
+<p><strong>search space大小</strong>：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2ea73b3b-c296-4de3-a807-15c8e7dcae2a/image-20220504121749153.png" alt="image-20220504121749153.png"></p>
+<h3 id="Rule"><a href="#Rule" class="headerlink" title="Rule"></a>Rule</h3><p>规则包括pattern和substitute。从logical expression到logical expression的规则称为transformation rule，从logical expression到physical expression的规则称为implementation rule。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bbeb15b5-c565-4c36-b664-c602ad49b40a/image-20220504122349609.png" alt="image-20220504122349609.png"></p>
+<h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><h3 id="System-R-and-Starburst"><a href="#System-R-and-Starburst" class="headerlink" title="System R and Starburst"></a>System R and Starburst</h3><p>对应的两篇论文《Access Path Selection in a Relational Database Management System》和《Starburst Mid-Flight: As the Dust Clears》。</p>
+<p>Sysmtem R是cost-based优化器，采用了bottom-up动态规划搜索策略。所谓bottom-up是指当优化时先考虑低层次的expression。为了计算一个expression的最优代价，要先计算该expression的所有输入的低层次expression的cost。其计算量是指数的，因此System R也会采用一些启发算法或者搜索时某些情况下只考虑其中一些可能性。</p>
+<p>Starburst包括两个基于规则的子系统，查询重写Query Graph Model (QGM)优化器 和 plan optimizer。</p>
+<p>QGM是系统表达查询的一种数据结构，QGM优化器采用一组规则将一个QGM转成另一种更好的QGM，生成的QGM更通常更优或者更容易被进一步用基于代价的方式优化，见先前的博文介绍。</p>
+<p>Plan optimizer是一个select-project-join优化器，包含join enumerator和plan generator。</p>
+<p>Starburst优化过程即包括两个阶段，一是QGM optimizer的rewrite，二是plan optimizer生成access plan。</p>
+<p>Starburst的QGM优化器可以处理复杂的启发优化，但这里只使用了逻辑信息而没有代价信息，另外也只能处理关系代数的操作而不能扩展至非关系代数操作。</p>
+<h3 id="Exodus-and-Volcano"><a href="#Exodus-and-Volcano" class="headerlink" title="Exodus and Volcano"></a>Exodus and Volcano</h3><p>Exodus是第一个使用top-down的可扩展优化器框架，其输入是模型描述文件（描述operator）、构建和比较access plan时的一些属性函数、transformation rules、implementation rules。Exodus的主要贡献是优化器生成器框架将搜索策略和数据模型拆分开、将transformation rules和implementation rules拆分开。</p>
+<p>Volcano旨在提高Exodus的效率，将动态规划和基于physical properties的directed search、分支定界剪枝和启发式引导整合到搜索算法中，称之为directed dynamic programming。这也是一个top-down的goal-oriented（面向physical properties为goal）策略，sub expression按需优化，只有那些确定在比较优的计划中的sub expression才会被优化。Volcano已经被用于面向对象数据库产品和科学计算数据库系统中，证明了其可扩展性。</p>
+<h3 id="Cascades"><a href="#Cascades" class="headerlink" title="Cascades"></a>Cascades</h3><p>Cascades是在Exodus和Volcano的基础上的改进。</p>
+<p>一些优化点：</p>
+<ol>
+<li>将优化任务组织为数据结构</li>
+<li>将规则作为对象</li>
+<li>放置property enforcer的规则</li>
+<li>搜索执行下一步时根据promise排序move</li>
+<li>谓词作为operator（既可以作为logical也可以作为physical）</li>
+<li>允许DBI（database implementor，也就是Cascades的用户）自定义接口和子类型层次的一套抽象接口类</li>
+<li>C++语言编写，接口实现上抽象的好</li>
+<li>tracing support和更好的文档来帮助DBI</li>
+</ol>
+<p>优化过程被拆成task，实现上task对应一个对象，包含一个perform函数。Task存放在LIFO Stack中，执行时从栈顶取一个task对象执行，执行过程中可能产生新的task对象压入栈。Cascades优化器从初始query开始，触发优化top group，进而触发逐个更小的sub group的优化，group的优化即找到group中最好的plan。这个过程中除了新的task生成并压入栈之外，新的group和expression也会产生，当top group完成后，优化就结束了。</p>
+<p>和Volcano是一样，Cascades也是top-down搜索策略，也使用动态规划和memorization，一个expression在优化时，先看memorization中之前该expression有没有做过优化。但和Volcano不一样的是，Cascades是按需对group进行探索，Volcano是先穷尽所有的logical expression然后再开始physical expression，Cascades并不将这两步拆开。Cascades用户接口比Volcano也更友好。</p>
+<p>Cascades也存在一些问题，如optimizer framework和DBI的specification割裂、虚函数太多、对象分配释放太频繁，这些都会带来性能问题。另外有些剪枝技术可以应用到top-down优化器上。这也是Columbia优化器的优化目标。</p>
+<h2 id="Structure-of-the-Columbia-Optimizer"><a href="#Structure-of-the-Columbia-Optimizer" class="headerlink" title="Structure of the Columbia Optimizer"></a>Structure of the Columbia Optimizer</h2><h3 id="Overview-of-Columbia-Optimizer"><a href="#Overview-of-Columbia-Optimizer" class="headerlink" title="Overview of Columbia Optimizer"></a>Overview of Columbia Optimizer</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/403c53e4-ce4e-420d-ba83-8098b18a40f6/image-20220506203611054.png" alt="image-20220506203611054.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png</a></p>
+<p>输入是以文本的形式表达的expression，类似于LISP风格，其目的是解耦parser和optimizer，提高可扩展性。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2ab3c514-b9a3-4875-9c79-00acab5273ab/image-20220506203636736.png" alt="image-20220506203636736.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/42f2eee3-b92d-4a05-8c8d-54204bfa5860/image-20220506203653097.png" alt="image-20220506203653097.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png</a></p>
+<p>输出是以缩进的physical expression的tree形式表达。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b0ad00e6-4297-41ed-bc06-cf32548f5a8d/image-20220506203711182.png" alt="image-20220506203711182.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png</a></p>
+<p>另外两个外部依赖是Catalog和Cost Model，它们也都是以文本形式存放的，优化器读入文本，并将内容分别存入全局对象<strong>Cat</strong>和<strong>Cm</strong>（<strong>CAT</strong>类型和<strong>CM</strong>类型的对象实例）。</p>
+<h3 id="Search-Space-1"><a href="#Search-Space-1" class="headerlink" title="Search Space"></a>Search Space</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/aa8fd0b6-f9e3-4940-9728-bd1fd9b693ff/image-20220506203724907.png" alt="image-20220506203724907.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png</a></p>
+<p><strong>Search Space Structure - SSP</strong></p>
+<p>Columbia使用<strong>SSP</strong>类来表示search space，<strong>SSP</strong>类似于Cascades的<strong>MEMO</strong>。<strong>SSP</strong>包含一组Group，每个group包含一组逻辑上等价的multi-expression。</p>
+<p>初始的时候，只有initial group，优化过程会增加新的group和multi-expression逐渐扩展search space，所以其除initial group外其他group都是另外某个group的input group。</p>
+<p><strong>CopyIn</strong>函数用于将expression拷贝到search space中的multi-expression，<strong>CopyOut</strong>用于将最终结果拷贝出来。</p>
+<p><strong>Multi-expression去重</strong></p>
+<p>去重用的搜索结构，可以是一个搜索树、动态或静态hashtable。Columbia用的是静态哈希表，multi-expression的所有组件，包括算子、操作参数、input group，都会被hash到hashtable用来查重。</p>
+<p>Columbia实现上，<strong>FindDup</strong>函数负责查找并返回重复的multi-expression。</p>
+<p><strong>class GROUP</strong></p>
+<p>实现上，<strong>class GROUP</strong>用于表示group类型，因为所有的multi-expression的logical property都是一样的，所以<strong>GROUP</strong>持有一个指向logical property共享对象的指针。</p>
+<p>与Cascades相比，Columbia做了几个优化：</p>
+<ul>
+<li>group代价下界</li>
+<li>区分logical和physical multi-expression</li>
+<li>存放winner group的数据结构优化</li>
+</ul>
+<p><strong>group代价下界</strong></p>
+<p>用于剪枝，如果一个group的代价下界越高，可能被剪枝。</p>
+<p>那么下界如何估算呢？</p>
+<p>首先是一些基础定义：</p>
+<ul>
+<li>**touchcopy()**函数：表示join操作读取两个输入表的各一行并输出一行结果的代价</li>
+<li>**Fetch()**函数：从磁盘读取一个字节的平摊开销</li>
+<li>**|G|**：group G的cardinality</li>
+<li>**cucard()**函数：设表A是Group G涉及到的表，A.X是涉及到的列，则cucard(A.X)表示A.X列上unique cardinality，cucard(A)表示所有涉及到的列的cucard最大值。</li>
+</ul>
+<p>计算lower bound的公式：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c7688f95-c4f1-461d-a2fd-1b1577376ea2/image-20220506203751081.png" alt="image-20220506203751081.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png</a></p>
+<p>其中，”from other non-top joins” 的部分可以简单理解为{Ai}按升序排列，左深树join方式的最低代价值。对此项和fetch项，论文也给出了较为完善的证明过程，读者可以自行阅读。</p>
+<p><strong>区分logical和physical multi-expression</strong></p>
+<p>Cascades是将二者保存在同一个list，Columbia是分开在两个list中。</p>
+<p>分开在有些情况下更好：</p>
+<ul>
+<li>rule bindings只需要检查logical multi-expression，分开可以减少访问的内存次数</li>
+<li>如果我们在已经优化过的group上，为另一个不同的property（例如要求在另一列上有序）进行优化，则对二者处理不同：扫描physical multi-expression检查desired property是否满足条件及计算代价；扫描logical multi-expression检查是否有合适的规则可以应用，只有存在某个规则之前没被应用过，才需要对logical multi-expression应用规则优化。在这种为另一个property进行优化的场景下，Cascades会对logical multi-expression重新进行优化。</li>
+</ul>
+<p><strong>存放winner group的数据结构优化</strong></p>
+<p>winner是指在特定优化条件（例如要求结果在某列有序，代价小于某值）下，一个问题或者子问题的最优结果。同一个group在不同条件下会有不同的winner，所以group结构里面有一个winner的列表。</p>
+<p>Cascades的数据存储方式是，每个winner及其对应的优化条件作为一对存放，每对用链表连接。</p>
+<p>Columbia的数据存储方式是，用winner结构体数组来表示，每个winner结构体包含一个multi-expression、代价和对应的physical property。winner结构体比较通用，也能用于保存搜索的中间结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class WINNER</span><br><span class="line">&#123;</span><br><span class="line">    M_EXPR *MPlan;       // 当前最优的plan，为NULL表示满足PP的plan尚未找到</span><br><span class="line">    PHYS_PROP *PhysProp; // 希望达成的PP</span><br><span class="line">    COST *Cost;          // MPlan的代价，当前最优值</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Expression"><a href="#Expression" class="headerlink" title="Expression"></a>Expression</h3><p>Expression有两个类型，<strong>EXPR</strong>和<strong>M_EXPR</strong>。</p>
+<p><strong>EXPR</strong>表示查询或者子查询，包含一个operator(<strong>class OP</strong>)及其参数、input expression(class EXPR)。</p>
+<p><strong>M_EXPR</strong>表示multi-expression，M_EXPR包含一个operator、input group（EXPR是input expression）。</p>
+<p><strong>M_EXPR</strong>是group的主要组件，搜索也是面向M_EXPR来的，因此M_EXPR会有一些搜索相关的状态信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">class M_EXPR</span><br><span class="line">&#123;</span><br><span class="line">    OP* Op;              // Operator对象</span><br><span class="line">    GRP_ID* Inputs;      // Input Groups</span><br><span class="line">    GRP_ID  GrpID;       // this所在的Group ID</span><br><span class="line">    M_EXPR* NextMExpr;   // 所在Group中的M_EXPR的链表next指针</span><br><span class="line">    M_EXPR* HashPtr;     // hashtable</span><br><span class="line">    BIT_VECTOR RuleMask; // 位图，某位置值为1，则不触发对应的规则</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class EXPR_LIST</span><br><span class="line">&#123;</span><br><span class="line">    OP_ARG* op_arg;           // operator argument</span><br><span class="line">    GROUP_NO* input_group_no; // input groups</span><br><span class="line">    GROUP_NO group_no;        // this所在group</span><br><span class="line">    EXPR_LIST* group_next;    // group list</span><br><span class="line">    EXPR_LIST* bucket_next;   // hashtable</span><br><span class="line">    BIT_VECTOR dont_fire;     // 位图，某位置值为1，则不触发对应的规则</span><br><span class="line">    int arity;                // cache arity for operator</span><br><span class="line">    int task_no;              // 创建this的taks的no</span><br><span class="line">    PROPERTY_SET* phys_prop;  // physical property(如果this是physical)</span><br><span class="line">    COST* cost;               // 该mexpr的代价(如果this是physical)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Rules-BINDERY"><a href="#Rules-BINDERY" class="headerlink" title="Rules &amp; BINDERY"></a>Rules &amp; BINDERY</h3><p>Rule实现上用**<code>class RULE</code>**来表示，成员包括 rule name、antecedent（规则应用前，即pattern）、consequent（规则应用后，即substitute）。Pattern和substitute都用expression（class EXPR）对象来表达。</p>
+<p>举个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pattern     ( L(1) JOIN L(2) ) JOIN L(3)</span><br><span class="line">Substitue   L(1) JOIN ( L(2) JOIN L(3) )</span><br></pre></td></tr></table></figure>
+
+<p>这里，L(i)表示leaf operator，它在pattern和subsitute中没有其他输入，实际上可能是其他sub tree。</p>
+<p>应用某条rule时，首先是将rule的pattern绑定到Search Space中的mexpr，这是由BINDERY类来完成的。</p>
+<p>比如这样一个 mepxr [G7 JOIN G4] JOIN G10 ，其中，Gi是Group ID为i的Group， [G7 JOIN G4]是search space中的gruop，它的一个binding是 L((1)绑定G7，L(2)绑定G4，L(3)绑定G10。</p>
+<p>BINDERY负责生成所有类似这样的binding。BINDERY会对每一个input subgroup生成一个BINDERY对象，例如LTOR rule，会生成一个左input的bindery和右input的bindery。其中左input会找到两个binding，G4 JOIN G7 和 G7 JOIN G4（都是[G7 JOIN G4]的mexpr之一）。</p>
+<p>**APPLY_RULE::perform()**函数驱动上述BINDERY生成binding，并生成新的mexpr。后文会提到，O_EXPR中会尝试apply各个rule（各自创建一个APPLY_RULE对象）。</p>
+<p>RULE还有两个重要函数：</p>
+<ul>
+<li><strong>top_match()</strong> 函数是用于判断当前rule与expression的top operator是否相同，用于快速判断rule是否可以匹配expression的pattern。</li>
+<li><strong>promise()</strong> 函数根据优化上下文返回一个promise value，该值越大表示越应该尽早应用该rule，小于等于0表示不要应用；默认implementation rule更大一些。</li>
+</ul>
+<p><strong>Enforcer</strong></p>
+<p>enforcer是为了获取某些物理属性而新插入的物理算子，例如qsort operator。enforcer以group为输入，输出是相同的group但其物理属性变化了。</p>
+<p>例如一个SORT_RULE：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pattern:     L(1)</span><br><span class="line">Substitue:   QSORT L(1)</span><br></pre></td></tr></table></figure>
+
+<p>例如 <code>MERGE_JOIN(A.X, B.X), G1, G2</code> ，要求G1在A.X上有序、G2在B.X上有序，也就是search context要求G1和G2需要具备有序属性时，应用该SORT_RULE。</p>
+<p>Columbia和Cascade在这里的实现上有两处差异。</p>
+<p>一是 excluded property：Cascade用的是excluded property来避免重复apply enforcer，Columbia用的是RuleMask。</p>
+<p>二是 enforcer的表示方式：Cascade里面enforcer是一个有参数的物理算子，Columbia中是不带参数的物理算子。</p>
+<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>Task是搜索过程的执行单元，第一个task是优化整个查询，task可能会生成并调度新的Task，直到task都执行完，优化结束。</p>
+<p>实现上，<code>class TASK</code>用来表示task的抽象类，有一个context成员和一个<code>perform()</code>函数。<code>class PTASK</code>表示pending task，即待执行的task类型，所有的PTASK对象用栈（变量名PTasks）组织起来，第一个PTASK对象即是优化top group，也就是优化整个查询的task。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">optimize()</span><br><span class="line">&#123;</span><br><span class="line">  // 从top group开始优化</span><br><span class="line">  PTasks.push(new O_GROUP(TopGroup));</span><br><span class="line"></span><br><span class="line">  while (!PTasks.empty())</span><br><span class="line">  &#123;</span><br><span class="line">    TASK *NextTask = PTasks.pop();</span><br><span class="line">    NextTask-&gt;perform();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 优化结束，将结果拷出来</span><br><span class="line">  Ssp.CopyOut();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Task有几种子类型：</p>
+<ul>
+<li><strong>O_GROUP</strong> ：group optimization</li>
+<li><strong>E_GROUP</strong> ：group exploration</li>
+<li><strong>O_EXPR</strong> ：expression optimization</li>
+<li><strong>O_INPUTS</strong> ：input optimization</li>
+<li><strong>APPLY_RULE</strong> ：rule application to a mexpr</li>
+</ul>
+<p>其关系如图，其中A-&gt;B箭头表示A调用B</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png">http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png">http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png</a></p>
+<p><strong>O_GROUP</strong></p>
+<p>该类型的task是在给定context下，找到group内的最优计划，并将结果存入group的winner成员中。该任务会生成该group的所有的logical expression和physical expression，计算所有physical expression的代价。O_GROUP task会创建O_EXPR和O_INPUT。</p>
+<p>O_GROUP的主要逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">O_GROUP::perform(context)</span><br><span class="line">&#123;</span><br><span class="line">	if (lower bound of the group greater than upper bound in the context) &#123;</span><br><span class="line">		return; // 剪枝</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (there is a winner for the context) &#123;</span><br><span class="line">		return; // 已经优化过了</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 需要进行搜索</span><br><span class="line"></span><br><span class="line">	// 在context下，对group的所有logical mexpr进行优化</span><br><span class="line">	for (each logical log_mexpr in the group) &#123;</span><br><span class="line">		PTasks.push(new O_EXPR(log_mexpr, context));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 在context下，找到physical mexpr的所有</span><br><span class="line">	for (each physical phys_mexpr in the group) &#123;</span><br><span class="line">		PTask.push(new O_INPUTS(phys_mexpr, context));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>E_GROUP</strong></p>
+<p>考虑join的左结合rule，当mexpr的join operator匹配到join后，需要展开group的左输入group看是否满足左输入有join的条件，所有的左输入join需要都满足rule的join才能应用这个rule。</p>
+<p>E_GROUP通过创建所有的目标logical operator来展开group。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 对于匹配的pattern，生成所有的logical mexpr</span><br><span class="line">E_GROUP::perform(context)</span><br><span class="line">&#123;</span><br><span class="line">  if (the group has been explored before) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // group还没有探索过</span><br><span class="line">  for (each log_mexpr in the group) &#123;</span><br><span class="line">    PTasks.push(new O_EXPR(log_mexpr, context, exploring));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  mark the group explored;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>O_EXPR</strong></p>
+<p>O_EXPR有两种目的，task上有flag(optimizing &#x2F; exploring)来区分二者。</p>
+<p>一个目的是优化mexpr，O_EXPR会将rule set中的所有rule都尝试触发，触发按照promise顺序来。transformation fule用于扩展express，生成新的logical expression，implementation rule用于生成相应的physical expression。</p>
+<p>另一个是探索mexpr来准备rule matching，这种情况下task仅针对logical expression进行扩展，也就是只使用transformation rule。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">// optimize或explore一个mexpr，触发所有合适的rule</span><br><span class="line">O_EXPR::perform(mexpr, context, exploring)</span><br><span class="line">&#123;</span><br><span class="line">  // 找到所有合法和promising的rule</span><br><span class="line">  for (each rule in the rule set)</span><br><span class="line">  &#123;</span><br><span class="line">    // 检查rule bit</span><br><span class="line">    if (rule has been fired for mexpr) &#123;</span><br><span class="line">      continue;</span><br><span class="line">    &#125;</span><br><span class="line">    // exploring情况下，只考虑transformation rule</span><br><span class="line">    if (exploring &amp;&amp; rule is implementation rule) &#123;</span><br><span class="line">      continue;</span><br><span class="line">    &#125;</span><br><span class="line">    // 根据top operator快速判断rule是否match，并检查promise</span><br><span class="line">    if (top_match(rule, mexpr) &amp;&amp; promise(rule, context) &gt; 0) &#123;</span><br><span class="line">      store the rule with the promise; // 临时记录下来</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 将临时记录下来的rule按promise值排序</span><br><span class="line">  sort the rules in order of promise;</span><br><span class="line"></span><br><span class="line">  // 按序触发每一个rule</span><br><span class="line">  for (each rule in order of promise)</span><br><span class="line">  &#123;</span><br><span class="line">    // apply该rule</span><br><span class="line">    PTasks.push(new APPLY_RULE(rule, mexpr, context, exploring));</span><br><span class="line"></span><br><span class="line">    // explore input group</span><br><span class="line">    for (each input of the rule pattern)</span><br><span class="line">    &#123;</span><br><span class="line">      if (arbity of input &gt; 0)</span><br><span class="line">      &#123;</span><br><span class="line">        PTasks.push(new E_GROUP(input group_no, context));</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>APPLY_RULE</strong></p>
+<p>该task用于将rule apply到logical mexpr，生成新的logical或者physical mexpr。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">// apply transformation rule或者implementation rule</span><br><span class="line">APPLY_RULE::perform(mexpr, rule, context, exploring)</span><br><span class="line">&#123;</span><br><span class="line">  if (rule has been fired for mexpr) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  for (each binding for the mexpr and rule) &#123;</span><br><span class="line">    before = binding-&gt;extract_expr();</span><br><span class="line">    if (rule-&gt;condition(before) not satified) &#123;</span><br><span class="line">      continue;</span><br><span class="line">    &#125;</span><br><span class="line">    after = rule-&gt;next_subtitute(expr); // 获得rule的substitute</span><br><span class="line">    new_mexpr = Ssp-&gt;CopyIn(after); // 将substitute加入SSP</span><br><span class="line"></span><br><span class="line">    // 进一步进行transformation变换</span><br><span class="line">    if (new_mexpr is logical) &#123;</span><br><span class="line">      PTasks.push(new O_EXPR(new_mexpr, context, exploring));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 计算新的physical mexpr的代价</span><br><span class="line">    if (new_mexpr is physical) &#123;</span><br><span class="line">      PTasks.push(new O_INPUTS(new_mexpr, context));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  mexpr-&gt;set_rule_bit(rule); // 标记该mexpr上该rule已经fire过了。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>O_INPUTS</strong></p>
+<p>该task用于计算physical mexpr的代价。计算过程大致是先计算所有输入的mexpr的代价，然后累加到top operator的代价上。</p>
+<p>该task的执行过程伪代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">G:   待优化的group;</span><br><span class="line">IG:  G中expression的各个input group;</span><br><span class="line">GLB: input group的Group Lower Bounder，记录在group成员字段中;</span><br><span class="line">Full winner: 非空执行计划的winner;</span><br><span class="line">InputCost[]: G的各个输入的最低代价;</span><br><span class="line">LocalCost:   待优化的top operator的代价;</span><br><span class="line">CostSoFar:   LocalCost + sum(InputCost[])</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">几种剪枝策略配置：</span><br><span class="line">  Starburst = !Pruning &amp;&amp; !CuCardPruning = 不剪枝，要求穷尽扩展所有的expression</span><br><span class="line">  Simple Pruning = Pruning &amp;&amp; !CuCardPruning = 通过随时检查数量上限来限制group expansion数量</span><br><span class="line">  Lower Bound Pruning = CuCardPruning = 尽量减少group expansion</span><br><span class="line">  Global Epsilon Pruning = GlobepsPruning = 如果找到一个代价低于预设值的plan，就认为足够好了，结束搜索。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">//////// 初始化InputCost[]</span><br><span class="line">for each input group IG</span><br><span class="line">  if (Starburst Case) // 配置</span><br><span class="line">    InputCost = 0;</span><br><span class="line">  Determine property required of search in IG;</span><br><span class="line">  if (no such property)</span><br><span class="line">    terminate this task;</span><br><span class="line">  Get winner for IG with that propery;</span><br><span class="line">  if (the winner from IG is a full winner)</span><br><span class="line">    InputCost[IG] = cost of that winner;</span><br><span class="line">  else if (!CuCardPruning) // Simple Pruning: InputCostp[]只存放winner costs</span><br><span class="line">    InputCost[IG] = 0;</span><br><span class="line">  else if (no winner) // Lower Bound Pruning: 如果无winner，填GLB</span><br><span class="line">    InputCost[IG] = GLB;</span><br><span class="line">  else</span><br><span class="line">    InputCost[IG] = max(cost of winner, IG Lower Bound);</span><br><span class="line"></span><br><span class="line">//////// 执行代码</span><br><span class="line">if (Pruning &amp;&amp; CostSoFar &gt;= upper bound)</span><br><span class="line">  terminate this task; // group pruning applied</span><br><span class="line"></span><br><span class="line">// 计算剩余input的cost</span><br><span class="line">for each remaining (from InputNo to arity) input group IG</span><br><span class="line">  Probe IG to see if there is a winner;</span><br><span class="line">	if (ther eis a full winner in IG)</span><br><span class="line">    store its cost in InputCost;</span><br><span class="line">    if (Pruning &amp;&amp; CostSoFar exceeds G&#x27;s context&#x27;s upper bound)</span><br><span class="line">      terminate this task;</span><br><span class="line">  else if (we did not just return from O_GROUP on IG)</span><br><span class="line">    // 优化该input group，找到该input group的winner</span><br><span class="line">    push this task;</span><br><span class="line">    push O_GROUP for IG;</span><br><span class="line">    return;</span><br><span class="line">  else // 已经从O_GROUP返回，无有效plan</span><br><span class="line">    if (there is a winner in IG with a null plan)</span><br><span class="line">      update null-plan winner in IG;</span><br><span class="line">      terminate this task;</span><br><span class="line">    else // there is no winner in IG</span><br><span class="line">      create a new null-plan winner in IG;</span><br><span class="line">      terminate this task;</span><br><span class="line"></span><br><span class="line">// 到这里，所有输入已经优化过了</span><br><span class="line">if (arity == 0 &amp;&amp; and required property can not be satified)</span><br><span class="line">  terminate this task;</span><br><span class="line">if (CostSoFar &gt;= G&#x27;s context&#x27;s upper bound)</span><br><span class="line">  terminate this task;</span><br><span class="line"></span><br><span class="line">// 到这里，可知当前expression满足当前context</span><br><span class="line">if (GlobepsPruning &amp;&amp; CostSoFar &lt;= GLOBAL_EPS) // global epsilon pruning策略，找到一个小于GLOBAL_EPS即认为足够了。</span><br><span class="line">  make current expression a winner for G;</span><br><span class="line">  mark the current context as done;</span><br><span class="line">  terminate this task;</span><br><span class="line"></span><br><span class="line">if (either there is no winner in G or CostSoFar is cheaper than the cost of the winner in G)</span><br><span class="line">  // 该expression成为新的（更好的）winner</span><br><span class="line">  mark the expression be optimized a new winner;</span><br><span class="line">  update the upperbound of the current context;</span><br><span class="line">  return;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Pruning-Techniques"><a href="#Pruning-Techniques" class="headerlink" title="Pruning Techniques"></a>Pruning Techniques</h3><p>剪枝主要用在O_INPUTS task中。</p>
+<p>Columbia优化器介绍了两种剪枝技术：Lower Bound Group Pruning、Global Epsilon Pruning。这里用例子说明一下。</p>
+<p><strong>Lower Bound Group Pruning</strong></p>
+<p>比如现在优化器的输入是 (A⋈B)⋈C，优化器算出了其中一个plan的代价，比如 (A⋈LB)⋈LC代价是5秒，则继续搜索最优计划时，如果expand到group [AC]⋈L[B]，假设[AC]是要计算笛卡尔积，其代价超过5秒，那么[AC]的所有计划都不会再被生成了。</p>
+<p><strong>Global Epsilon Pruning</strong></p>
+<p>它的含义是，有时候我们不是一定要找到最优的plan，而是找到一个满意的plan就可以。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/volcano-optimizer/">
+        <span class="nav-arrow">← </span>
+        
+          The Volcano Optimizer Generator
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/orca-optimizer/">
+        
+          Orca优化器
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Motivation"><span class="toc-nav-text">Motivation</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Terminology"><span class="toc-nav-text">Terminology</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Query-Processing%E5%A4%A7%E8%87%B4%E8%BF%87%E7%A8%8B"><span class="toc-nav-text">Query Processing大致过程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Groups"><span class="toc-nav-text">Groups</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Search-Space"><span class="toc-nav-text">Search Space</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Rule"><span class="toc-nav-text">Rule</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Related-Work"><span class="toc-nav-text">Related Work</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#System-R-and-Starburst"><span class="toc-nav-text">System R and Starburst</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Exodus-and-Volcano"><span class="toc-nav-text">Exodus and Volcano</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Cascades"><span class="toc-nav-text">Cascades</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Structure-of-the-Columbia-Optimizer"><span class="toc-nav-text">Structure of the Columbia Optimizer</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Overview-of-Columbia-Optimizer"><span class="toc-nav-text">Overview of Columbia Optimizer</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Search-Space-1"><span class="toc-nav-text">Search Space</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Expression"><span class="toc-nav-text">Expression</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Rules-BINDERY"><span class="toc-nav-text">Rules &amp; BINDERY</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Task"><span class="toc-nav-text">Task</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Pruning-Techniques"><span class="toc-nav-text">Pruning Techniques</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/columbia-optimizer/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

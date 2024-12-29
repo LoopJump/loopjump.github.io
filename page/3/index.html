@@ -195,6 +195,113 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/rocksdb-evolution/">RocksDB演进</a>
+      </h2>
+      <p class="article-date">February 12, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Evolution of Development Priorities in Key-value Stores ServingLarge-scale Applications: The RocksDB Experience》FAST’20
+这篇文章是讲述Facebook大规模部署Rocks ...
+        
+      </div>
+      <a class="more" href="/rocksdb-evolution/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
+      </h2>
+      <p class="article-date">October 20, 2021</p>
+      
+        
+  <a href="/tags#RSM" >
+    <span class="tag-code">RSM</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Scaling Replicated State Machines with Compartmentalization，VLDB 21’
+本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是compartmentalization，这个词本意是分离，在这里作为一种 ...
+        
+      </div>
+      <a class="more" href="/rsm-compartmentalization/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/myrocks-in-fb/">MyRocks in Facebook UDB</a>
+      </h2>
+      <p class="article-date">September 29, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          MyRocks Paper《MyRocks: LSM-Tree Database Storage Engine Serving Facebook’s Social Graph》
+这篇文章介绍了Facebook为了解决UDB数据库成本迁移MyRocks的挑战和解决方案。
+Introductio ...
+        
+      </div>
+      <a class="more" href="/myrocks-in-fb/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
+      </h2>
+      <p class="article-date">June 10, 2020</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          原文：https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html
+ ...
+        
+      </div>
+      <a class="more" href="/intel-microarch-analysis-method/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
+      </h2>
+      <p class="article-date">May 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《LB+Trees: Optimizing Persistent Index Performance on 3DXPoint Memory》（VLDB20’）
+这是个设计非常巧妙的数据结构，这里简单描述下核心内容，读者可以直接读原文，行文非常清晰。
+Abstract3DXPoint的有些硬件 ...
+        
+      </div>
+      <a class="more" href="/lb-tree/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/hekaton-memory-engine/">Hekaton内存引擎</a>
       </h2>
       <p class="article-date">April 21, 2020</p>
@@ -301,113 +408,6 @@ This paper aims to serve as a guide to the state of the art in LSM-based storage
         
       </div>
       <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calvin-intro/">Calvin简介</a>
-      </h2>
-      <p class="article-date">April 2, 2020</p>
-      
-      <div class="article-summary">
-        
-          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
-Calvi ...
-        
-      </div>
-      <a class="more" href="/calvin-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/in-memory-database-cc-eval/">In-Memory DB的并发控制算法评估</a>
-      </h2>
-      <p class="article-date">March 29, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          An Empirical Evaluation of In-Memory Multi-Version Concurrency Control (VLDB17’)
-这篇工作梳理了MVCC的四个要点：
-
-并发控制协议
-多版本存储
-垃圾回收
-索引管理
-
-还介绍了MVCC的多种变体原理，实现了这些变 ...
-        
-      </div>
-      <a class="more" href="/in-memory-database-cc-eval/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calcite-intro/">Calcite简介</a>
-      </h2>
-      <p class="article-date">November 1, 2019</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Calcite是Apache旗下开源的、支持多种数据源、提供查询处理&#x2F;查询优化&#x2F;查询语言的基础软件框架。
-Calcite的三个特点：
-
-标准SQL: 工业级的SQL parser, validator, JDBC Driver
-查询优化器：将查询表达为关系代数，计划生成， ...
-        
-      </div>
-      <a class="more" href="/calcite-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/bitcask-intro/">bitcask简介</a>
-      </h2>
-      <p class="article-date">October 29, 2019</p>
-      
-      <div class="article-summary">
-        
-          Bitcask是由Basho公司搞的一个产品。
-技术设计数据顺序追加到磁盘上的active data file，并在内存中建立hash索引。
-active data file文件长到一定程度就切成old data file，新的数据写入新的active data file。
-old data ...
-        
-      </div>
-      <a class="more" href="/bitcask-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/ddia-quick-note/">DDIA Quick Note</a>
-      </h2>
-      <p class="article-date">August 10, 2019</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          说明《Designing Data-Intensive Applications》从数据系统角度介绍了方方面面的技术点。
-内容上，基本都是一个分布式数据库存储引擎所需要的技术能力，而且很多技术点讲的很详细，不过计算引擎基本上没涉及。
-另外书里面也介绍了一些其他的数据系统，也都比较有价值。
-P ...
-        
-      </div>
-      <a class="more" href="/ddia-quick-note/">Read more</a>
     </article>
   
 

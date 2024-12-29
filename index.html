@@ -209,6 +209,27 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/memsql-optimizer/">MemSQL优化器</a>
+      </h2>
+      <p class="article-date">October 29, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《The MemSQL Query Optimizer: A modern optimizer for real-time analystic in a distributed database》VLDB2016
+MemSQL是面向内存优化的数据库，本身是shared-nothing架构。M ...
+        
+      </div>
+      <a class="more" href="/memsql-optimizer/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/data-storage-in-cloud/">Data Storage Management in Cloud Environment</a>
       </h2>
       <p class="article-date">September 29, 2022</p>
@@ -231,6 +252,97 @@ Data-intensive Applic ...
         
       </div>
       <a class="more" href="/data-storage-in-cloud/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/rdbms-optimizer/">关系数据库优化器概述</a>
+      </h2>
+      <p class="article-date">June 30, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《An Overview of Query Optimization in Relational Systems》PODS 1998, Microsoft Research
+优化器的输入是用户查询，负责生成一个高效的执行计划，优化过程是一个比较复杂的过程。
+优化器主要包含三个部分：
+
+Sea ...
+        
+      </div>
+      <a class="more" href="/rdbms-optimizer/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/orca-optimizer/">Orca优化器</a>
+      </h2>
+      <p class="article-date">June 29, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Orca: A Modular Query Optimizer Architecture for Big Data》 SIGMOD 2014
+Orca是Pivotal数据管理系列产品（包括 Pivotal Greenplum Database和Pivotal HAWQ）共用的优化器模块，面 ...
+        
+      </div>
+      <a class="more" href="/orca-optimizer/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/columbia-optimizer/">The Columbia Optimizer</a>
+      </h2>
+      <p class="article-date">June 28, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《EFFICIENCY IN THE COLUMBIA DATABASE QUERY OPTIMIZER》 1998
+这是Portland State University的硕士论文，作者是YONGWEN XU，相比Cascades论文的跳跃和晦涩，这篇可以说是很良心了。
+Motivatio ...
+        
+      </div>
+      <a class="more" href="/columbia-optimizer/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/volcano-optimizer/">The Volcano Optimizer Generator</a>
+      </h2>
+      <p class="article-date">June 26, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《The Volcano Optimizer Generator : Extensibility and Efficient Search》1993
+论文介绍了在EXODUS之后的一个新的优化器生成器Volcano。
+一个好的optimizer generator要满足如下条件：
+
+既能用到 ...
+        
+      </div>
+      <a class="more" href="/volcano-optimizer/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -296,114 +408,6 @@ UT_MUTEX_TYPE(TTASFutexMutex, GenericPolicy, FutexMutex); 这个宏定义展开�
         
       </div>
       <a class="more" href="/innodb-basic-struct/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/innodb-storage-hierarchy/">InnoDB源码解析-存储管理层次</a>
-      </h2>
-      <p class="article-date">June 3, 2022</p>
-      
-        
-  <a href="/tags#MySQL" >
-    <span class="tag-code">MySQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          InnoDB的存储层次总的数据粒度：Row - Page - Extent - Segment - Tablespace。
-!http://loopjump.com/wp-content/uploads/2020/06/image-20200623151536735-1024x756.png ...
-        
-      </div>
-      <a class="more" href="/innodb-storage-hierarchy/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/innodb-trx-sys/">InnoDB源码解析-事务系统</a>
-      </h2>
-      <p class="article-date">June 2, 2022</p>
-      
-        
-  <a href="/tags#MySQL" >
-    <span class="tag-code">MySQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          InnoDB事务系统负责InnoDB层事务管理，快照管理，MVCC等。
-事务对象InnoDB层事务对象为 struct trx_t 类型。
-12345678910111213141516// 部分字段struct trx_t&#123;    trx_id_t id; // 事务开启序    ...
-        
-      </div>
-      <a class="more" href="/innodb-trx-sys/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/innodb-log-sys/">InnoDB源码解析-日志系统</a>
-      </h2>
-      <p class="article-date">June 1, 2022</p>
-      
-        
-  <a href="/tags#MySQL" >
-    <span class="tag-code">MySQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          MySQL 5.7中 Log Sys锁冲突比较大，MySQL 8.0对InnoDB Log Sys进行了重构。
-我们先描述下5.7的 Log Sys看看锁冲突，然后再介绍8.0的方案以及部分代码实现细节。
-mtrmtr 表示 mini-transaction，表示操作的一个最小原子单元，比数 ...
-        
-      </div>
-      <a class="more" href="/innodb-log-sys/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/access-path-in-rdbms/">Access Path Selection in a RDBMS</a>
-      </h2>
-      <p class="article-date">April 29, 2022</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Access Path Selection in a Relational Database Management System》 1979
-SQL语句处理的四个阶段：Parsing, Optimization, Code Generation, Execution。
-query bloc ...
-        
-      </div>
-      <a class="more" href="/access-path-in-rdbms/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/grammer-like-func-rule/">Grammar-like Functional Rules - for Representing Query Optimization Alternatives</a>
-      </h2>
-      <p class="article-date">April 20, 2022</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Grammar-like Functional Rules - for Representing Query Optimization Alternatives》 SIGMOD 1988
-概述优化器如果要做到可扩展，则要求执行计划的变换策略需要作为数据而不是代码存在。本质上优化器就是一个专 ...
-        
-      </div>
-      <a class="more" href="/grammer-like-func-rule/">Read more</a>
     </article>
   
 

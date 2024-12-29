@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      The Volcano Optimizer Generator | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>The Volcano Optimizer Generator</h2>
+  <p class="post-date">2022-06-26</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《The Volcano Optimizer Generator : Extensibility and Efficient Search》1993</p>
+<p>论文介绍了在EXODUS之后的一个新的优化器生成器Volcano。</p>
+<p>一个好的optimizer generator要满足如下条件：</p>
+<ol>
+<li>既能用到Volcano Executor，也能用到已经存在的其他执行器</li>
+<li>优化的时间消耗和内存消耗都比较低</li>
+<li>能够高效、可扩展地支持物理属性（如sort order、compression）</li>
+<li>允许使用启发信息和数据模型语义来引导搜索和剪枝</li>
+<li>支持灵活的代价模型</li>
+</ol>
+<h3 id="Design-Principles"><a href="#Design-Principles" class="headerlink" title="Design Principles"></a>Design Principles</h3><p>5个design decision</p>
+<p>第一，关系系统上的查询处理是基于关系代数，其他如OO系统等的查询实际上也可以基于代数技术。通过定义代数算子、代数等价规则、实现算法等，可以使得非关系系统查询优化和执行采用关系代数类似的代数技术实现。</p>
+<p>第二，规则是关于匹配模式和转换公式的说明，匹配模式要精确、模块化。在Volcona中，每个规则都是独立的。</p>
+<p>第三，优化器在映射查询到执行计划的过程中所做的选择被表示为代数等价式。有一些系统会用到多种层次的中间表示，例如Grammar-like … 这篇论文提到的方法。但这种方法对于等价和转换的很多问题模糊掉了，例如优化器的输入、计划搜索方法、等价计划选择的次序等等。</p>
+<p>第四，关于规则的解释执行和编译执行。解释执行灵活，编译执行高效。Volcano使用编译执行的方式。为了保持可扩展性，规则本身可以进行参数化。</p>
+<p>第五，search engine基于动态规划。</p>
+<h3 id="Optimizer-Generator-Paradigm"><a href="#Optimizer-Generator-Paradigm" class="headerlink" title="Optimizer Generator Paradigm"></a>Optimizer Generator Paradigm</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/45fe954d-6c23-48d5-bf69-09aa8a8c098c/WX20220430-1931522x.png" alt="WX20220430-193152@2x.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png</a></p>
+<p>优化器的输入是Query，表示为logical operator的表达式（树），它来自parser的输出。优化器的输出是Plan，是physical operator表达式。</p>
+<p>优化器的实现者需要提供如下积累信息：</p>
+<p>第一，logical operator和physical operator。优化器就是将一个logical operator表达式映射为一个最优的等价的physical operator表达式，并选择算子具体的实现算法。</p>
+<p>第二，代数transformation rule。表达式的等价交换律和结合律用transformation rule表示。</p>
+<p>第三，algorithm和enforcer集合，algorithm指的是数据访问层的接口，等价于physical operator，enforcer类似于Starburst的glue。</p>
+<p>第四，implementation rule。从operator到algorithm用implementation rule表示。rule需要支持复杂的映射，例如join+projection可能就映射到一个实现了。</p>
+<p>第五，抽象数据类型cost，该类型支持互相比大小。这就是CBO优化器的代价类型。</p>
+<p>第六，抽象数据类型logical property。它是指表的模式、预期大小等等，主要还是关系代数中的关系属性。与之对应的是physical property，是指记录顺序、分区等属性。</p>
+<p>第七，抽象数据类型physical property vector，需要实现者定义，它是search engine搜索过程使用的类型，该类型支持比大小。</p>
+<p>第八，每个algorithm和enforcer的application function，判断是否可以应用规则。一些physical operator没有对应的logical operator，例如sort、decompress，这些operator被称为enforcer，类似于Starburst的glue。</p>
+<p>第九，每个algorithm和enforcer的代价函数。</p>
+<p>第十，每个logical operator、algorithm、enforcer的property function。计算得出property的函数，包括得出logical property和physical property。</p>
+<h3 id="The-Search-Engine"><a href="#The-Search-Engine" class="headerlink" title="The Search Engine"></a>The Search Engine</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">FindBestPlan (LogExpr,PhysProp, Limit)</span><br><span class="line">    if the pair LogExpr and PhysProp is in the look-up table</span><br><span class="line">        if the cost in the look-up table &lt; Limit</span><br><span class="line">            return Plan and Cost;</span><br><span class="line">        else</span><br><span class="line">            return failure;</span><br><span class="line"></span><br><span class="line">    /* else: optimization required */</span><br><span class="line">    create the set of possible &quot;moves&quot; from &#123;applicable transformations,</span><br><span class="line">                                             algorithms that give the required PhysProp,</span><br><span class="line">                                             enforcers for required PhysProp&#125;;</span><br><span class="line"></span><br><span class="line">    order the set of moves by promise;</span><br><span class="line"></span><br><span class="line">    for the most promising moves</span><br><span class="line">        if the move uses a transformation</span><br><span class="line">            apply the transformation;</span><br><span class="line">            creating NewLogExpr;</span><br><span class="line">            call FindBestPlan(NewLogExpr,PhysProp, Limit)</span><br><span class="line">        else if the move uses an algorithm</span><br><span class="line">            TotalCost := cost of the algorithm</span><br><span class="line">            for each input I while TotalCost &lt;= Limit</span><br><span class="line">                determine required physical properties PP for I</span><br><span class="line">                Cost = FindBestPlan(I, PP,Limit - TotalCost)</span><br><span class="line">                add Cost to TotalCost</span><br><span class="line">        else /* move uses an enforcer */</span><br><span class="line">            TotalCost := cost of the enforcer;</span><br><span class="line">            modify PhysProp for enforced property;</span><br><span class="line">            call FindBestPlan for LogExpr with newPhysProp</span><br><span class="line"></span><br><span class="line">    /* maintain the look-up table of explored facts */</span><br><span class="line">    if LogExpr is not in the look-up table</span><br><span class="line">        insert LogExpr into the look-up table;</span><br><span class="line"></span><br><span class="line">    insert PhysProp and best plan found into look-up table;</span><br><span class="line">    return best Plan and Cost;</span><br></pre></td></tr></table></figure>
+
+<p><strong>先检查结果缓存</strong></p>
+<p>FindBestPlan主要分为两部分，首先如果hashtable中已经有了一个满足输入表达式的physical property vector 和 cost的plan， 则直接返回，过程结束。如果不存在或者cost不满足要求，则开始执行优化过程。</p>
+<p><strong>搜索的Next Move</strong></p>
+<p>在某一时刻，输入的表达式有三种变化（move、搜索空间上的移动）：</p>
+<p>第一种是基于transformation rule；</p>
+<p>第二种是有一些algorithm可以将输入的逻辑表达式转换，并满足physical property，例如针对无序数据的hash join、针对join列有序的数据的merge-join；</p>
+<p>第三种是增加某些enforcer来支持其他操作，例如merge join可以通过sort enforcer在无序数据上做join。</p>
+<p>下一步就是针对这些move的每一个，或者启发式方法选出一部分，进行搜索。具体是搜索全部move还是一部分move可由实现者决定。论文给出的搜索框架是搜索全部move。</p>
+<p>第一种move（transformation rule）的处理：</p>
+<p>根据transformation rule生成新的表达式，然后递归执行FindBestPlan。考虑到有些rules可能是互逆的操作，所以需要标记表达式in progress，以避免搜索出现回路。</p>
+<p>第二种move（algorithm）的处理：</p>
+<p>即遇到algorithm的move，这个algorithm的applicability function确定了其输入的physical property vectors。这时需要针对该algorithm的每一个输入，执行FindBestPlan。</p>
+<p>例如，某个算法是sort-based intersection，它的两个输入是有序列表，总代价就是每一个输入的逻辑表达式的代价（递归FindBestPlan来求），再加上该algorithm本身的代价。</p>
+<p>这里还有一个值得注意的点，对于一些binary operator，两路输入属性的一致性很重要。比如刚才的求交集算法，只要两路有序输入是相同的顺序即可，即都是从小到大或者都是从大到小。再比如parallel join，两个输入都是分区表，只要分区规则相同或者兼容，就可以方便地应用该算法。像这种情况，search engine也需要考虑到。</p>
+<p>第三种move（enforcer）的处理：</p>
+<p>enforcer实际上会修改某个或某些physical property，其代价包含enforcer本身的代价，再加上根据logical expression获得新的physical property的代价（这一步也是递归FindBestPlan）。例如，用户查询是join后order by，则可以通过hash join后加一个sort enforcer实现，则总代价就是先获得hash join的开销，然后加上sort本身的代价。</p>
+<p><strong>缓存结果</strong></p>
+<p>搜索的部分中间结果缓存到hashtable，避免重复计算。例如某个join的两个输入表达式的优化结果可能在其他的join算法下被重复使用。</p>
+<p><strong>分支定界和剪枝</strong></p>
+<p>搜索过程中的cost limit用于分支定界 (branch-and-bound) 剪枝。一旦找到了一个可行的计划，其代价就作为初始的代价阈值。搜素过程中如果某个可能的计划的一部分代价都已经超过这个阈值则剪枝。因此尽早找到一个相对比较低代价的计划（也就是获得了一个比较紧的cost上界）对优化搜索过程很重要。</p>
+<p>从上述几个步骤可以看出，其搜索算法的主要框架还是比较经典的搜索+分支定界剪枝。当然应用到优化器这一场景下有很多概念需要抽象定义好。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/arch-query-compiler/">
+        <span class="nav-arrow">← </span>
+        
+          How to Architect a Query Compiler Revisited
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/columbia-optimizer/">
+        
+          The Columbia Optimizer
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Design-Principles"><span class="toc-nav-text">Design Principles</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Optimizer-Generator-Paradigm"><span class="toc-nav-text">Optimizer Generator Paradigm</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#The-Search-Engine"><span class="toc-nav-text">The Search Engine</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/volcano-optimizer/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

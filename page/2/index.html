@@ -195,6 +195,114 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/innodb-storage-hierarchy/">InnoDB源码解析-存储管理层次</a>
+      </h2>
+      <p class="article-date">June 3, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          InnoDB的存储层次总的数据粒度：Row - Page - Extent - Segment - Tablespace。
+!http://loopjump.com/wp-content/uploads/2020/06/image-20200623151536735-1024x756.png ...
+        
+      </div>
+      <a class="more" href="/innodb-storage-hierarchy/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-trx-sys/">InnoDB源码解析-事务系统</a>
+      </h2>
+      <p class="article-date">June 2, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          InnoDB事务系统负责InnoDB层事务管理，快照管理，MVCC等。
+事务对象InnoDB层事务对象为 struct trx_t 类型。
+12345678910111213141516// 部分字段struct trx_t&#123;    trx_id_t id; // 事务开启序    ...
+        
+      </div>
+      <a class="more" href="/innodb-trx-sys/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-log-sys/">InnoDB源码解析-日志系统</a>
+      </h2>
+      <p class="article-date">June 1, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          MySQL 5.7中 Log Sys锁冲突比较大，MySQL 8.0对InnoDB Log Sys进行了重构。
+我们先描述下5.7的 Log Sys看看锁冲突，然后再介绍8.0的方案以及部分代码实现细节。
+mtrmtr 表示 mini-transaction，表示操作的一个最小原子单元，比数 ...
+        
+      </div>
+      <a class="more" href="/innodb-log-sys/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/access-path-in-rdbms/">Access Path Selection in a RDBMS</a>
+      </h2>
+      <p class="article-date">April 29, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Access Path Selection in a Relational Database Management System》 1979
+SQL语句处理的四个阶段：Parsing, Optimization, Code Generation, Execution。
+query bloc ...
+        
+      </div>
+      <a class="more" href="/access-path-in-rdbms/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/grammer-like-func-rule/">Grammar-like Functional Rules - for Representing Query Optimization Alternatives</a>
+      </h2>
+      <p class="article-date">April 20, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Grammar-like Functional Rules - for Representing Query Optimization Alternatives》 SIGMOD 1988
+概述优化器如果要做到可扩展，则要求执行计划的变换策略需要作为数据而不是代码存在。本质上优化器就是一个专 ...
+        
+      </div>
+      <a class="more" href="/grammer-like-func-rule/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/compiler-pgo/">Helping compiler help you - Ispike, BOLT</a>
       </h2>
       <p class="article-date">April 15, 2022</p>
@@ -291,113 +399,6 @@ LSM-Tree引擎的scan操作是一个引擎固有的短板，其根源在于相�
         
       </div>
       <a class="more" href="/remix-efficient-range-query-for-lsm-tree/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/rocksdb-evolution/">RocksDB演进</a>
-      </h2>
-      <p class="article-date">February 12, 2022</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Evolution of Development Priorities in Key-value Stores ServingLarge-scale Applications: The RocksDB Experience》FAST’20
-这篇文章是讲述Facebook大规模部署Rocks ...
-        
-      </div>
-      <a class="more" href="/rocksdb-evolution/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
-      </h2>
-      <p class="article-date">October 20, 2021</p>
-      
-        
-  <a href="/tags#RSM" >
-    <span class="tag-code">RSM</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Scaling Replicated State Machines with Compartmentalization，VLDB 21’
-本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是compartmentalization，这个词本意是分离，在这里作为一种 ...
-        
-      </div>
-      <a class="more" href="/rsm-compartmentalization/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/myrocks-in-fb/">MyRocks in Facebook UDB</a>
-      </h2>
-      <p class="article-date">September 29, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          MyRocks Paper《MyRocks: LSM-Tree Database Storage Engine Serving Facebook’s Social Graph》
-这篇文章介绍了Facebook为了解决UDB数据库成本迁移MyRocks的挑战和解决方案。
-Introductio ...
-        
-      </div>
-      <a class="more" href="/myrocks-in-fb/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
-      </h2>
-      <p class="article-date">June 10, 2020</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          原文：https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html
- ...
-        
-      </div>
-      <a class="more" href="/intel-microarch-analysis-method/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
-      </h2>
-      <p class="article-date">May 1, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《LB+Trees: Optimizing Persistent Index Performance on 3DXPoint Memory》（VLDB20’）
-这是个设计非常巧妙的数据结构，这里简单描述下核心内容，读者可以直接读原文，行文非常清晰。
-Abstract3DXPoint的有些硬件 ...
-        
-      </div>
-      <a class="more" href="/lb-tree/">Read more</a>
     </article>
   
 

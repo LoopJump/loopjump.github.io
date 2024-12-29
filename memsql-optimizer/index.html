@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      MemSQL优化器 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>MemSQL优化器</h2>
+  <p class="post-date">2022-10-29</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《The MemSQL Query Optimizer: A modern optimizer for real-time analystic in a distributed database》VLDB2016</p>
+<p>MemSQL是面向内存优化的数据库，本身是shared-nothing架构。MemSQL后来改名叫SingleStoreDB（S2DB），详细的架构参考这里：<a target="_blank" rel="noopener" href="http://loopjump.com/singlestore-cloud-native-htap/">http://loopjump.com/singlestore-cloud-native-htap/</a></p>
+<p>MemSQL的优化器分为三步：Rewriter, Enumerator, Planner。</p>
+<p>因为MemSQL是shared-nothing的分布式架构，优化器的输出结果自然也是分布式执行计划（DQEP）。</p>
+<p>先初步看下一个优化的例子，这里选的是TPC-H Q17</p>
+<p>原始查询语句是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SELECT sum(l_extendedprice)/7.0 as avg_yearly</span><br><span class="line">FROM lineitem, part</span><br><span class="line">WHERE p_partkey = l_partkey</span><br><span class="line">  AND p_brand = &#x27;BRAND#43&#x27;</span><br><span class="line">  AND p_container = &#x27;LGPACK&#x27;</span><br><span class="line">  AND l_quantity &lt;</span><br><span class="line">     (SELECT 0.2*avg(l_quantity)</span><br><span class="line">      FROM lineitem</span><br><span class="line">      WHERE l_partkey = p_partkey);</span><br></pre></td></tr></table></figure>
+
+<p>Rewriter会将这里的标量子查询转为join。原子查询计算起来会非常麻烦，对于part的每一行都要进行分布式计算出子查询结果。Rewrite为join后可以有更灵活的join plan和DQEP。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">SELECT Sum(l_extendedprice)/7.0 AS avg_yearly</span><br><span class="line">FROM lineitem</span><br><span class="line">     (SELECT 0.2 * Avg(l_quantity) AS s_avg, l_partkey AS s_partkey</span><br><span class="line">      FROM lineitem, part</span><br><span class="line">      WHERE p_brand = &#x27;BRAND#43&#x27;</span><br><span class="line">        AND p_container = &#x27;LGPACK&#x27;</span><br><span class="line">        AND p_partkey = l_partkey</span><br><span class="line">        GROUP BY l_partkey  ) sub</span><br><span class="line">WHERE s_partkey = l_partkey</span><br><span class="line">  AND l_quantity &lt; s_avg;</span><br></pre></td></tr></table></figure>
+
+<p>Enumerator会尝试找代价低的计划。因为lineitem表很大，所以最好是广播part和sub两个较小的表。所以Enumerator的计划如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Project [s2/7.0 AS avg_yearly]</span><br><span class="line">Aggregate [SUM(1) AS s2]</span><br><span class="line">Gather partitions : all</span><br><span class="line">Aggregate [SUM(lineitem_1.l_extendedprice) AS s1]</span><br><span class="line">Filter [lineitem_1.l_quantity &lt; s_avg]</span><br><span class="line">NestedLoopJoin</span><br><span class="line">|---IndexRangeScan lineitem AS lineitem_1,</span><br><span class="line">|   KEY(l_partkey) scan: [l_partkey = p_partkey]</span><br><span class="line">Broadcast</span><br><span class="line">HashGroupBy [AVG(l_quantity)*0.2 AS s_avg]</span><br><span class="line">             groups:[l_partkey]</span><br><span class="line">NestedLoopJoin</span><br><span class="line">|---IndexRangeScan lineitem,</span><br><span class="line">|   KEY(l_partkey) scan: [l_partkey = p_partkey]</span><br><span class="line">Broadcast</span><br><span class="line">Filter [p_brand = &#x27;BRAND#43&#x27; AND</span><br><span class="line">        p_container = &#x27;LGPACK&#x27;]</span><br><span class="line">TableScan part, PRIMARY KEY(p_partkey)</span><br></pre></td></tr></table></figure>
+
+<p>Planner根据上面的计划生成DQEP，MemSQL引入了RemoteTable和ResultTable的概念来支持DQEP。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE RESULT TABLE r0 AS</span><br><span class="line">SELECT p_partkey</span><br><span class="line">FROM part</span><br><span class="line">WHERE p_brand = &#x27;BRAND#43&#x27;</span><br><span class="line">	AND p_container = &#x27;LGPACK&#x27;;</span><br><span class="line"></span><br><span class="line">CREATE RESULT TABLE r2 AS</span><br><span class="line">SELECT 0.2 * Avg(l_quantity) AS s_avg,</span><br><span class="line">       l_partkey as s_partkey</span><br><span class="line">FROM REMOTE(r0), lineitem</span><br><span class="line">WHERE p_partkey = l_partkey</span><br><span class="line">GROUP BY l_partkey;</span><br><span class="line"></span><br><span class="line">SELECT SUM(l_extendedprice)/7.0 AS avg_yearly</span><br><span class="line">FROM REMOTE(r1), lineitem</span><br><span class="line">WHERE p_partkey = s_partkey</span><br><span class="line">	AND l_quantity &lt; s_avg;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Rewriter"><a href="#Rewriter" class="headerlink" title="Rewriter"></a>Rewriter</h2><p>基于heuristic和cost-base的重写，将一个查询改写为另一个性能更好的等价的查询。</p>
+<p>一些典型的基于启发的重写规则：</p>
+<ul>
+<li>Column Elimination：消除没有实际用上的列</li>
+<li>Group-By Pushdown：将group by移动到join前执行</li>
+<li>Sub-Query Merging：子查询改为JOIN，这样从局部优化变成全局优化，可能有更大的优化空间</li>
+</ul>
+<p>重写规则很多，需要考虑这些规则的顺序，有时候可能需要交叉应用这些规则。</p>
+<p>Rewriter改写时需要注意要将数据分布存储考虑进来。例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE RESULT TABLE r0 AS</span><br><span class="line">SELECT p_partkey</span><br><span class="line">FROM part</span><br><span class="line">WHERE p_brand = &#x27;BRAND#43&#x27;</span><br><span class="line">	AND p_container = &#x27;LGPACK&#x27;;</span><br><span class="line"></span><br><span class="line">CREATE RESULT TABLE r2 AS</span><br><span class="line">SELECT 0.2 * Avg(l_quantity) AS s_avg,</span><br><span class="line">       l_partkey as s_partkey</span><br><span class="line">FROM REMOTE(r0), lineitem</span><br><span class="line">WHERE p_partkey = l_partkey</span><br><span class="line">GROUP BY l_partkey;</span><br><span class="line"></span><br><span class="line">SELECT SUM(l_extendedprice)/7.0 AS avg_yearly</span><br><span class="line">FROM REMOTE(r1), lineitem</span><br><span class="line">WHERE p_partkey = s_partkey</span><br><span class="line">	AND l_quantity &lt; s_avg;</span><br></pre></td></tr></table></figure>
+
+<p>假设T1有R1&#x3D;200000行，T2有R2&#x3D;50000行，T1执行完group后剩余有S_G &#x3D;1&#x2F;4比例，即S_G * R1 &#x3D; 50000行，执行完Join剩余S_J&#x3D;1&#x2F;10，即S_J * R1&#x3D;20000行，那么Group和Join执行完剩余R1 * S_G * S_J &#x3D; 5000行。</p>
+<p>假设T2.a索引单点查询代价为每行C_J&#x3D;1，Group By通过hashtable实现，代价为每行C_G&#x3D;1，那么：</p>
+<p>$$ Cost_{Q_1} &#x3D; R_1 C_J + R_1 S_J C_G &#x3D; 200000 * 1 + 200000<em>1&#x2F;10</em>1 &#x3D; 220000 \ Cost_{Q_2} &#x3D; R_1 C_G + R_1 S_G C_J &#x3D; 200000 * 1 + 200000<em>1&#x2F;4</em>1 &#x3D; 250000 $$</p>
+<p>如果根据这两个代价值对比，我们可能就选择Q1了。</p>
+<p>但是如果考虑数据是分布存储的呢？因为T2按T2.a分区，但T1没有按T1.a分区，所以join需要移动数据，要么T1按T1.a做reshuffle或者广播T2，如果T2比较大，那么可能要选择reshuffle T1。这种情况下Q1和Q2的代价情况可能就有所不同了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Q1:</span><br><span class="line">Gather partitions:all</span><br><span class="line">Project [r0.s]</span><br><span class="line">NestedLoopJoin</span><br><span class="line">|--- IndexSeek T2, UNIQUE KEY (a) scan:[a = r0.a]</span><br><span class="line">Repartition AS r0 shard_key:[a]</span><br><span class="line">HashGrouoBy [sum(T1.b) AS s] groups:[T1.a, T1.b]</span><br><span class="line">TableScan T1</span><br><span class="line"></span><br><span class="line">Q2:</span><br><span class="line">Gather partitions:all</span><br><span class="line">Project [r0.s]</span><br><span class="line">HashGroupBy [sum(r0.b) AS s] groups:[r0.a, r0.b]</span><br><span class="line">NestedLoopJoin</span><br><span class="line">|---IndexSeek T2, UNIQUE KEY (a) scan:[a=r0.a]</span><br><span class="line">Repartition AS r0 shard_key:[a]</span><br><span class="line">TableScan T1</span><br></pre></td></tr></table></figure>
+
+<p>假设reshutffle的代价为每行C_R&#x3D;3，则</p>
+<p>$$ Cost_{Q_1} &#x3D; R_1 C_R + R_1 C_J + R_1 S_J C_G &#x3D; 620000 \ Cost_{Q_2} &#x3D; R_1 C_G + R_1 S_G C_R + R_1 S_G C_J &#x3D; 400000 $$</p>
+<h2 id="BUSHY-JOINS"><a href="#BUSHY-JOINS" class="headerlink" title="BUSHY JOINS"></a>BUSHY JOINS</h2><p>搜索所有的join顺序来找到最优解是个NP问题。很多系统基本上值考虑left-deep或roght-deep join tree。但对于一些涉及到star和snowflake schema的查询，bushy Join可能会有非常大的性能优势。</p>
+<p>注意到，即使Enumerator只考虑left-deep join tree，生成bushy join也是一个自然的过程，因为join的右侧的derived table可以扩展开，每个subselect可以采用left-deep join，这样自然就生成了bushy join。</p>
+<p>我们以一个例子具体介绍这个算法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">TPC-DS Q25:</span><br><span class="line"></span><br><span class="line">SELECT ...</span><br><span class="line">FROM store_sales ss</span><br><span class="line">		 store_returns sr,</span><br><span class="line">		 catalog_sales cs,</span><br><span class="line">		 date_dim d1,</span><br><span class="line">		 date_dim d2,</span><br><span class="line">		 date_dim d3,</span><br><span class="line">		 store s,</span><br><span class="line">		 item i</span><br><span class="line">WHERE d1.d_moy = 4</span><br><span class="line">	AND d1.d_year = 2000</span><br><span class="line">	AND d1.d_date_sk = ss_sold_date_sk</span><br><span class="line">	AND i_item_sk = ss_item_sk</span><br><span class="line">	AND s_store_sk = ss_store_sk</span><br><span class="line">	AND ss_customer_sk = sr_customer_sk</span><br><span class="line">	AND ss_item_sk = sr_item_sk</span><br><span class="line">	AND ss_ticket_number = sr_ticket_number</span><br><span class="line">	AND sr_returned_date_sk = d2.d_date_sk</span><br><span class="line">	AND d2.d_moy BETWEEN 4 and 10</span><br><span class="line">	AND d2.d_year = 2000</span><br><span class="line">	AND sr_customer_sk = cs_bill_customer_sk</span><br><span class="line">	AND sr_item_sk = cs_item_sk</span><br><span class="line">	AND d3.d_moy BETWEEN 4 and 10</span><br><span class="line">	AND d3.d_year = 2000</span><br><span class="line">GROUP BY ...</span><br><span class="line">ORDER BY ...</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>按照join关系构造如下的图，其中节点是表，线是join关系</p>
+<p> !<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/image-20220928171737894-300x163.png">http://loopjump.com/wp-content/uploads/2022/10/image-20220928171737894-300x163.png</a></p>
+</li>
+<li><p>定义satellite表为至少有一个谓词的join表，且这些表只跟一张表有join。如图中的d1, d2, d3。</p>
+</li>
+<li><p>定义seed表为至少跟两个表有join，且其中至少一个是satellite表，如图中ss, sr, cs。</p>
+</li>
+<li><p>对于每一个seed表：</p>
+</li>
+</ol>
+<ul>
+<li>计算当前plan的代价C1。将这个seed表和它join的若干satellite表改为derived table写法。应用Predictate Pushdown规则，然后使用Column Elimination规则，使得外面的谓词转到内部并且外部不需要的列在内部也消除掉。计算新的代价C2。如果C1 &lt; C2，则放弃这个重写变换，否则继续下一个seed表。</li>
+</ul>
+<p>例如前面的查询改写后的结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">SELECT ...</span><br><span class="line">FROM store_sales,</span><br><span class="line">		 store_returns,</span><br><span class="line">		 date_dim d1,</span><br><span class="line">		 date_dim d2,</span><br><span class="line">		 store,</span><br><span class="line">		 item,</span><br><span class="line">		 (SELECT *</span><br><span class="line">      FROM catalog_sales,</span><br><span class="line">           date_dim d3</span><br><span class="line">      WHERE cs_sold_date_sk = d3.d_date_sk</span><br><span class="line">        AND d3.d_moy BETWEEN 4 AND 10</span><br><span class="line">        AND d3.d_year = 2000) sub</span><br><span class="line">WHERE d1.d_moy = 4 AND d1.d_year = 2000</span><br><span class="line">  AND d1.d_date_sk = ss_sold_date_sk</span><br><span class="line">  AND i_item_sk = ss_item_sk</span><br><span class="line">  AND s_store_sk = ss_store_sk</span><br><span class="line">  AND ss_customer_sk = sr_customer_sk</span><br><span class="line">  AND ss_item_sk = sr_item_sk</span><br><span class="line">  AND ss_ticket_number = sr_ticket_number</span><br><span class="line">  AND sr_returned_date_sk = d2.d_date_sk</span><br><span class="line">  AND d2.d_moy BETWEEN 4 AND 10</span><br><span class="line">  AND d2.d_year = 2000</span><br><span class="line">  AND sr_customer_sk = cs_bill_customer_sk</span><br><span class="line">  AND sr_item_sk = cs_item_sk</span><br></pre></td></tr></table></figure>
+
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/image-20220929103832599-300x174.png">http://loopjump.com/wp-content/uploads/2022/10/image-20220929103832599-300x174.png</a></p>
+<h2 id="Enumerator"><a href="#Enumerator" class="headerlink" title="Enumerator"></a>Enumerator</h2><p>Enumerator是Rewriter的下游，Rewriter主要是逻辑转换，Enumerator主要是物理转换。Enumerator要感知代价，而且单机上最佳的计划直接并行化并不一定是分布式下最好的计划。</p>
+<p>Enumerator只负责针对每一个select block做join优化，跨select block的move join靠前面Rewriter来实现。</p>
+<p>Enumerator通过bottom-up方式处理select block，最开始从优化最小的subselect开始，然后使用annotation information（类似于优化器hint）来激进优化更大的subselect，最后当最外面的select block处理完，整个查询的物理执行计划就确定了。</p>
+<p>尽管Enumerator使用的是bottom-up的方式，但换用top-down的方式也类似。为了限制组合数爆炸，其他系统System-R类似基于interesting order的的动态规划，Enumerator实现了基于interesting property of sharding distribution（如sharding列等）的方式，值得考虑的sharding key如equal join的predicate column、grouping columns。</p>
+<p><strong>分布式代价</strong></p>
+<p>分布式执行计划代价里面多了数据移动的开销。</p>
+<p>数据移动一般包含两类</p>
+<ul>
+<li>broadcast：数据从一个leaf node广播到所有其他leaf node，代价为R*D，其中R为待移动数据量，D为平均move一行的代价</li>
+<li>partition(reshuffle)：数据从一个leaf node到某个特定的leaf node，代价为1&#x2F;N*(R<em>D + R</em>H)，其中N为节点总数，H为计算hash的平均代价</li>
+</ul>
+<p><strong>Fast Enumerator</strong></p>
+<p>详见另一篇论文《Query optimization time: The new bottleneck in real-time analystics》2015</p>
+<h2 id="Planner"><a href="#Planner" class="headerlink" title="Planner"></a>Planner</h2><p>Planner负责生成物理执行计划 - 一组DQEP Steps，DQEP Step是类SQL的step，可以以文本发送到其他节点，叶子step可以同时执行，一个Step可以在partition上并行执行。</p>
+<p>MemSQL中节点间交互发送的是SQL语句，这可以透明支持node-level optimization。</p>
+<p><strong>Remote Table</strong></p>
+<p>MemSQL扩展了Remote Table功能，允许任何一个leaf node像aggregator一样来执行所有partition上的查询。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT facts.id, facts.value</span><br><span class="line">FROM REMOTE(facts) as facts</span><br><span class="line">WHERE facts.value &gt; 4;</span><br></pre></td></tr></table></figure>
+
+<p>REMOTE关键字意味着facts这张表分布在多个节点上，查询要在每个节点的partition上执行，而不是只计算本地的partition。</p>
+<p><strong>Result Table</strong></p>
+<p>Result Table是查询在local partition上的一个中间结果，如果其他partition要多次查询该结果，则可以只执行一次。</p>
+<p>例如，针对上面的查询，Planner会针对每个partition生成一个查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE RESULT TABLE facts_filtered</span><br><span class="line">AS SELECT facts.id, facts.value</span><br><span class="line">FROM facts</span><br><span class="line">WHERE facts.value &gt; 4;</span><br></pre></td></tr></table></figure>
+
+<p>这样，remote table查询的时候，可以直接查这个结果。</p>
+<p><strong>在DQEP中使用Remote&#x2F;Result Table</strong></p>
+<p>DQEP里面包含一组数据移动step和计算step，中间通过Result Table衔接。Result Table并不一定要物化，可以只作为一层抽象流式提供数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM x JOIN y</span><br><span class="line">WHERE x.a = y.a</span><br><span class="line">	AND x.b &lt; 2</span><br><span class="line">	AND y.c &gt; 5;</span><br></pre></td></tr></table></figure>
+
+<p>其中x在x.a上shard，y没有在a上shard。根据过滤后数据量的大小，最佳计划可能是broadcast x或者reshuffle y。</p>
+<p>假设filter后x数据量很小，则选择broadcast x。这种情况下可能生成如下的DQEP:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. CREATE RESULT TABLE r1 AS SELECT * FROM x WHERE x.b &lt; 2 (on every partition);</span><br><span class="line">2. CREATE RESULT TABLE r2 AS SELECT * FROM REMOTE(x) (on every node); // 每个节点都计算r2，相当于广播r2。</span><br><span class="line">3. SELECT * FROM r2 JOIN y WHERE y.c &gt; 5 AND r2.a = y.a (on every partition);</span><br></pre></td></tr></table></figure>
+
+<p>Remote Table和Result Table抽象非常灵活，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. CREATE RESULT TABLE r1 AS SELECT * FROM x WHERE x.b &lt; 2 (on every partition)</span><br><span class="line">2. CREATE RESULT TABLE r2 AS SELECT * FROM REMOTE(r1) (on a single node)</span><br><span class="line">3. CREATE RESULT TABLE r3 AS SELECT * FROM REMOTE(r2) (on every node)</span><br><span class="line">4. SELECT * FROM r3 JOIN y WHERE y.c &gt; 5 AND r3.a = y.a (on every partition)</span><br></pre></td></tr></table></figure>
+
+<p>Result Table在创建的时候支持通过指定partition key的方式实现reshuffle。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. CREATE RESULT TABLE r1 PARTITION BY (y.a) AS SELECT * FROM y WHERE y.c &gt; 5 (on every partition)</span><br><span class="line">2. SELECT * FROM x JOIN REMOTE(r1(p)) WHERE x.b &lt; 2 AND x.a = y.a (on every partition)</span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/data-storage-in-cloud/">
+        <span class="nav-arrow">← </span>
+        
+          Data Storage Management in Cloud Environment
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/hello-world/">
+        
+          Hello World
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Rewriter"><span class="toc-nav-text">Rewriter</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#BUSHY-JOINS"><span class="toc-nav-text">BUSHY JOINS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Enumerator"><span class="toc-nav-text">Enumerator</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Planner"><span class="toc-nav-text">Planner</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/memsql-optimizer/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -195,6 +195,134 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/flp-proof-note/">FLP impossibility证明阅读笔记</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          分布式系统一致性协议里面有一个FLP impossibility的结论，这个结论是说，在分布式系统中，异步网络（消息延迟可能任意大或丢失，消息可能乱序），只要有一个进程失效（进程死亡或者足够长时间不响应），就不可能设计出一个确定性的一致性协议。
+该结论由Fisher、Lynch、Paters ...
+        
+      </div>
+      <a class="more" href="/flp-proof-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          不知怎么地，前一阵子知乎上对Raft的乱序的问题的讨论就变多了。我觉得其实这个问题可讨论的东西并不多。
+Raft作者觉得Multi Paxos太复杂，所以搞了一个Raft。Raft加了很多约束，其中可能最重要的一条就是只能顺序commit。
+所以，顺序commit的锅，Raft是得好好背着， ...
+        
+      </div>
+      <a class="more" href="/out-of-order-commit-apply-in-raft/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/dynamo-paper-note/">Dynamo论文阅读笔记</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Dynamo: Amazon’s Highly Available Key-value Store
+Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
+Dynamo系统 ...
+        
+      </div>
+      <a class="more" href="/dynamo-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
+        
+      </div>
+      <a class="more" href="/flexible-paxos-quorum-revisited/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/gdb-tips/">gdb调试技巧</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。
+使用gdb前，代码要用gcc -g选项编译以带上符号表。
+调试C++程序的基本环境设置1234567set print pretty onset print  ...
+        
+      </div>
+      <a class="more" href="/gdb-tips/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/newsql/">What's Really New with NewSQL</a>
+      </h2>
+      <p class="article-date">February 9, 2017</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这篇文章介绍的面很广，提到了诸多系统，不过每个点都不太细。另外虽然是16年的文章，但不知道为啥还是感觉有点陈旧了。。。简单来说，当个手册看吧，遇到具体细节问题，可以找文中提到的具体系统参考下。这里捡我感兴趣的点罗列了一下，详细内容读者可以看原文。
+DBMS简史1968年第一个DBMS上线，I ...
+        
+      </div>
+      <a class="more" href="/newsql/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/nosql-survey-note/">NoSQL数据库综述和选型阅读笔记</a>
       </h2>
       <p class="article-date">February 8, 2017</p>
@@ -276,134 +404,6 @@ Coherence这个单词只在Cache Coherence场景下出现过，它 ...
         
       </div>
       <a class="more" href="/distributed-consistency-model/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/raft-paper-note/">Raft论文解读</a>
-      </h2>
-      <p class="article-date">October 23, 2016</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Raft论文解读
-摘要Raft是针对复制日志的一致性协议。效果上，Raft等价于multi-paxos协议；效率上和Paxos一样。但是Raft协议的整体结构与Paxos差别比较大，Raft协议更加容易理解，也更加适合工程实现。Raft为了使协议更加容易理解，将一致性协议拆分为独立的几个要素 ...
-        
-      </div>
-      <a class="more" href="/raft-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/clean-code-note/">代码整洁之道 读书笔记</a>
-      </h2>
-      <p class="article-date">October 11, 2016</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Chapter 1 整洁代码Lebanc’s Law: later equals never.
-Chapter 2 有意义的命名Chapter 3 函数每个函数一个抽象层级
-Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误处理Chap ...
-        
-      </div>
-      <a class="more" href="/clean-code-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/basic-paxos-proof/">Basic Paxos证明</a>
-      </h2>
-      <p class="article-date">October 10, 2016</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/basic-paxos-proof/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/blue-eye-puzzle-from-tao/">蓝眼睛谜题</a>
-      </h2>
-      <p class="article-date">October 10, 2016</p>
-      
-        
-  <a href="/tags#Puzzle" >
-    <span class="tag-code">Puzzle</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          陶哲轩的博客上的一个puzzle。
-地址在这里：https://terrytao.wordpress.com/2008/02/05/the-blue-eyed-islanders-puzzle/ 。你可以直接跳过去读原文。
-这是发生在一个在虚构的岛上的故事，不过因为这里面的逻辑本身就非常微妙 ...
-        
-      </div>
-      <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/rsm-questions/">漫谈复制状态机的几个有趣的问题</a>
-      </h2>
-      <p class="article-date">October 2, 2016</p>
-      
-        
-  <a href="/tags#RSM" >
-    <span class="tag-code">RSM</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          读过Paxos等论文的读者，应该对复制状态机（Replicated State Machine）的概念并不陌生。复制状态机在分布式系统中是一个很简单却很强大的模型，也是一种很有价值的思想。
-模型一句话描述就是：多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。
-
-!h ...
-        
-      </div>
-      <a class="more" href="/rsm-questions/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/google-spanner/">Spanner(OSDI'12)论文阅读笔记</a>
-      </h2>
-      <p class="article-date">September 21, 2016</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
-        
-      </div>
-      <a class="more" href="/google-spanner/">Read more</a>
     </article>
   
 

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Orca优化器 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Orca优化器</h2>
+  <p class="post-date">2022-06-29</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Orca: A Modular Query Optimizer Architecture for Big Data》 SIGMOD 2014</p>
+<p>Orca是Pivotal数据管理系列产品（包括 Pivotal Greenplum Database和Pivotal HAWQ）共用的优化器模块，面向AP负载，整合了当时最新的技术。</p>
+<p>Orca的主要特点：</p>
+<ol>
+<li><strong>Modularity</strong> 对元数据和系统描述进行抽象，因此可移植</li>
+<li><strong>Extensibility</strong> 将所有的查询元素和优化操作当做first class citizen，避免多阶段优化</li>
+<li><strong>Multi-core Ready</strong> 优化过程的subtask可以调度到多核上并行执行</li>
+<li><strong>Verifiability</strong> 可验证性</li>
+<li><strong>Performance</strong> 高性能</li>
+</ol>
+<h2 id="Orca架构"><a href="#Orca架构" class="headerlink" title="Orca架构"></a>Orca架构</h2><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/1.png">http://loopjump.com/wp-content/uploads/2020/06/1.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/60fbb038-de8c-4f9e-85f3-9fed0fb258ec/1.png" alt="1.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/1.png">http://loopjump.com/wp-content/uploads/2020/06/1.png</a></p>
+<p>上图为Orca的架构，包含DXL，Memo，Search和 Job Scheduler，Transformation，Property Enforcement，Metadata Cache，GPOS。我们分别看一下。</p>
+<p><strong>DXL</strong></p>
+<p>Orca为了做到模块化可移植，解耦了优化器在数据库中上下游接口，采用了新的交互数据语言DXL（Data eXchange Language）。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png">http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png">http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/7784af3e-9eee-4cd2-9634-a30c45280a09/2.png" alt="2.png"></p>
+<p>以查询 *SELECT T1.a FROM T1, T2 WHERE T1.a &#x3D; T2.b ORER BY T1.a;*为例，DXL Query为（Mdid为metadata id）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF -8&quot;?&gt;</span><br><span class="line">&lt;dxl:DXLMessage xmlns:dxl=&quot;http://greenplum.com/dxl/v1&quot;&gt;</span><br><span class="line">    &lt;dxl:Query&gt;</span><br><span class="line">        &lt;dxl:OutputColumns&gt;</span><br><span class="line">            &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">        &lt;/dxl:OutputColumns&gt;</span><br><span class="line">        &lt;dxl:SortingColumnList&gt;</span><br><span class="line">            &lt;dxl:SortingColumn ColId=&quot;0&quot; OpMdid=&quot;0.97.1.0&quot;&gt;</span><br><span class="line">        &lt;/dxl:SortingColumnList&gt;</span><br><span class="line">        &lt;dxl:Distribution Type=&quot;Singleton&quot; /&gt;</span><br><span class="line">        &lt;dxl:LogicalJoin JoinType=&quot;Inner&quot;&gt;</span><br><span class="line">            &lt;dxl:LogicalGet&gt;</span><br><span class="line">                &lt;dxl:TableDescriptor Mdid=&quot;0.1639448.1.1&quot; Name=&quot;T1&quot;&gt;</span><br><span class="line">                    &lt;dxl:Columns&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;1&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                    &lt;/dxl:Columns&gt;</span><br><span class="line">                &lt;/dxl:TableDescriptor&gt;</span><br><span class="line">            &lt;/dxl:LogicalGet&gt;</span><br><span class="line">            &lt;dxl:LogicalGet&gt;</span><br><span class="line">                &lt;dxl:TableDescriptor Mdid=&quot;0.2868145.1.1&quot; Name=&quot;T2&quot;&gt;</span><br><span class="line">                    &lt;dxl:Columns&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;2&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;3&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                    &lt;/dxl:Columns&gt;</span><br><span class="line">                &lt;/dxl:TableDescriptor&gt;</span><br><span class="line">            &lt;/dxl:LogicalGet&gt;</span><br><span class="line">            &lt;dxl:Comparison Operator=&quot;=&quot; Mdid=&quot;0.96.1.0&quot;&gt;</span><br><span class="line">                &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                &lt;dxl:Ident ColId=&quot;3&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">            &lt;/dxl:Comparison&gt;</span><br><span class="line">        &lt;/dxl:LogicalJoin&gt;</span><br><span class="line">    &lt;/dxl:Query&gt;</span><br><span class="line">&lt;/dxl:DXLMessage&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Memo</strong></p>
+<p>就是指Cascades里面的Memo，也就是Columbia里面的Search Space。</p>
+<p>Memo以Group为元素组织起来，每个group包含一组等价的表达式（包含逻辑表达式和物理表达式）。一些Group以其他Group为输入。</p>
+<p><strong>Search and Job Scheduler</strong></p>
+<p>类似于Columbia的Task，不同Task可以是生成新的等价表达式，或是转为物理表达式，或是计算代价。</p>
+<p><strong>Transformations &amp; Property Enforcement</strong></p>
+<p>与Columbia类似的概念。</p>
+<p>这里的enforcement除了sort order外，还包括数据分布相关的属性，因为GPDB是MPP架构。</p>
+<p><strong>GPOS</strong></p>
+<p>为了与不同的底层OS交互，Orca对OS也做了抽象层。GPOS包括内存管理、并发控制原语、异常处理、文件IO和同步数据结构。</p>
+<h2 id="查询优化"><a href="#查询优化" class="headerlink" title="查询优化"></a>查询优化</h2><h3 id="查询优化过程"><a href="#查询优化过程" class="headerlink" title="查询优化过程"></a>查询优化过程</h3><p>还是前面这个查询，假设T1表按Hashed(T1.a)分区分布，T2按Hashed(T2.a)分区分布。</p>
+<p>Orca的输入是前述的DXL文件，然后解析成逻辑表达式树，拷贝到Memo中，如下图。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png">http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/69019d47-9527-4abd-9d4f-d1eade4fce09/3.png" alt="3.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png">http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png</a></p>
+<p>然后优化执行如下的一些步骤：</p>
+<p><strong>Exploration</strong></p>
+<p>应用transformation rule来生成等价的逻辑表达式，如JOIN交换律，生成的结果加到已有的group，也可能生成新的group（比如Join结合律[AB][C]&#x3D;[A][BC] 会新生成[BC]）。 Memo支持去重，去重方式是一句表达式拓扑。</p>
+<p><strong>Statistics Derivation</strong></p>
+<p>Exploration完了之火，Memo包含了所有的等价的逻辑表达式。这一步用于生成每个group的结果的统计信息，一般就是一组列的直方图。</p>
+<p>对于一个给定的group，估计其统计信息的时候，优先选择group中简单的表达式，因为越简单对统计信息的估计越准确。因为group以其他group为输入，所以在估计其统计信息的时候会递归先对其input group进行估计，然后在合并估计当前group的统计信息。从对象管理角度，统计信息挂在group上，而且可以增量式更新（比如新增一个列的统计信息）。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png">http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/73259713-7fd3-49d6-adbe-966abb5d5675/4.png" alt="4.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png">http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png</a></p>
+<p><strong>Implemetation</strong></p>
+<p>到这一步，开始根据implementation rule将逻辑表达式转换成物理表达式，例如 Get2Scan rule可以将逻辑Get转换为物理Scan，InnerJoin转为InnerJoin2HashJoin或者InnerJoin2NLJoin。</p>
+<p><strong>optimization</strong></p>
+<p>这一步开始进行property enforce和代价估计。</p>
+<p>实现上，定义向group发出optimization request，其含义是 在group中生成满足request条件的最小代价的计划。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png">http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e88e7ddb-d60c-4782-bef8-82dc4dddec68/5.png" alt="5.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png">http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png</a></p>
+<p>初始请求为 <strong>req#1 : {singleton, &lt;T1.a&gt;}</strong> 含义为：查询结果需要汇总到master节点（GPDB里的master节点类似于proxy，计算层前面的一层），且要按T1.a排序。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png">http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a9ced215-3530-4c92-91eb-4b74769055d1/6-1.png" alt="6-1.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png">http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png</a></p>
+<p>上图显示了req #1 的优化过程。对于req#1，其中一个可选的计划是按照join条件进行对齐分布然后做hash join。所以在(a)中向group 1发送了<strong>req#7 : {Hashed(T1.a), Any}</strong> 请求（any表示结果的order可任意），向group 2发送了 **req#10 : {Hashed(T2.B), Any}**。因为T1本来就是按T1.a分区的，所以直接使用Scan，T2需要redistribute。最后在group 1上添加enforcer。最终的计划从root group开始自上而下提取。</p>
+<h3 id="并行查询优化"><a href="#并行查询优化" class="headerlink" title="并行查询优化"></a>并行查询优化</h3><p>这里是指优化过程本身的并行化。</p>
+<p>优化过程拆成多个小的task，主要有如下几类：</p>
+<ul>
+<li>Exp(g)：生成group g中每一个表达式的等价的逻辑表达式</li>
+<li>Exp(gexpr)：gexpr指group的最佳expr，也就是Columbia的winner。这个任务是生成gexpr的等价的逻辑表达式</li>
+<li>Imp(g)：生成group g的所有表达式的物理表达式</li>
+<li>Imp(gexpr)：生成gexpr的等价的物理表达式</li>
+<li>Opt(g, req)：返回group g满足request req的最佳plan</li>
+<li>Opt(gexpr, req)：返回gexpr的满足request req的最佳plan</li>
+<li>Xform(gexpr, t)：应用规则t到gexpr</li>
+</ul>
+<p>一个SQL语句的优化过程可能产生数百个task，某些task之间可能会有依赖，不能并行。比如parent task和child tasks之间，但几个child tasks可以并行。</p>
+<h2 id="MetaData-Exchange"><a href="#MetaData-Exchange" class="headerlink" title="MetaData Exchange"></a>MetaData Exchange</h2><p>Orca与MetaData之间的数据交互。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png">http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png">http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/fedf5171-0f9c-4aeb-91c1-d935018d2bdd/7-1.png" alt="7-1.png"></p>
+<h2 id="Verifiability"><a href="#Verifiability" class="headerlink" title="Verifiability"></a>Verifiability</h2><p>Orca开发时就考虑到了测试问题，尤其是确保不要回退。</p>
+<p>两个工具：AMPERe、TAQO。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/columbia-optimizer/">
+        <span class="nav-arrow">← </span>
+        
+          The Columbia Optimizer
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/rdbms-optimizer/">
+        
+          关系数据库优化器概述
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Orca%E6%9E%B6%E6%9E%84"><span class="toc-nav-text">Orca架构</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="toc-nav-text">查询优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="toc-nav-text">查询优化过程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B9%B6%E8%A1%8C%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="toc-nav-text">并行查询优化</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MetaData-Exchange"><span class="toc-nav-text">MetaData Exchange</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Verifiability"><span class="toc-nav-text">Verifiability</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/orca-optimizer/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
