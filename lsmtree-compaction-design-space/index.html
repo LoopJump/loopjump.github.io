@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      构建分析LSM Compaction Design Space | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>构建分析LSM Compaction Design Space</h2>
+  <p class="post-date">2022-02-19</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Constructing and Analyzing the LSM Compaction Design Space》 VLDB’21</p>
+<h3 id="四个原语"><a href="#四个原语" class="headerlink" title="四个原语"></a>四个原语</h3><p>Compaction是LSM-Tree引擎中最重要的环节之一，一方面它主导了LSM-Tree的形状进而影响了LSM-Tree的包括性能、空间占用等对外表现，另一方面它本身要消耗相当的计算和IO资源，容易造成抖动等问题。</p>
+<p>但目前业界针对compaction较少有系统的探索，很多系统的compaction策略依赖工程师的个人经验，大量可能的策略未被分析测试。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227110057804.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227110057804.png</a></p>
+<p>这篇论文旨在构造和分析compaction的design space，力求有一个较为系统的分析。</p>
+<p>论文首先识别出了四个原语（primitive），然后据此构建了design space：</p>
+<ul>
+<li>Compaction trigger：什么时候触发</li>
+<li>Data layout：数据的物理存放方式是怎样的</li>
+<li>Compaction granularity：每次移动多少数据量</li>
+<li>Data movement policy：具体移动哪些data block</li>
+</ul>
+<p>四个维度下的各自具体例子：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227110741910.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227110741910.png</a></p>
+<p>详细一点地说，</p>
+<p><strong>Compaction trigger</strong></p>
+<ul>
+<li>Level saturation ：level size超过阈值</li>
+<li>#Sorted runs ：level内的sort run数量超过阈值</li>
+<li>File staleness ：level内文件存在时间超过阈值</li>
+<li>Space amplification (SA) ： 写放大超过阈值</li>
+<li>Tombstone-TTL ：文件内含有过期的TTL</li>
+</ul>
+<p><strong>Data layout</strong></p>
+<ul>
+<li>Leveling ：每个level只有一个sort run</li>
+<li>Tiering：每个level有多个sort run</li>
+<li>1-leveling：L1是tiering，其他level是leveling</li>
+<li>L-leveling：last level是leveling，其他是tiering</li>
+<li>Hybrid：每层都可能是tiering或者leveling</li>
+</ul>
+<p><strong>Compaction granularity</strong></p>
+<ul>
+<li>level：相邻两层的所有数据</li>
+<li>sorted runs ：level内的所有sort run</li>
+<li>sorted file : 每次compact一个sort run</li>
+<li>serveral sorted files：每次若干个sorted files</li>
+</ul>
+<p><strong>Data movement policy (aka file picking policy)</strong></p>
+<ul>
+<li>Round-robin</li>
+<li>Least overlapping parent</li>
+<li>Least overlapping grandparent</li>
+<li>Coldest</li>
+<li>Oldest</li>
+<li>Tombstone density</li>
+<li>Tombstone TTL</li>
+</ul>
+<p>Design Space</p>
+<p>估算下来，space的cardinality有10^4之多。一些典型的例子如图。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227113828587-1024x1007.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227113828587-1024x1007.png</a></p>
+<h3 id="测试和分析"><a href="#测试和分析" class="headerlink" title="测试和分析"></a>测试和分析</h3><p><strong>关注的性能指标</strong></p>
+<ul>
+<li>Compaction latency</li>
+<li>Write Amplification</li>
+<li>Write Latency</li>
+<li>Read Amplification</li>
+<li>Point lookup latency</li>
+<li>Range Lookup Latency</li>
+<li>Space Amplification</li>
+<li>Delete Performance</li>
+</ul>
+<p><strong>实验目标</strong></p>
+<ul>
+<li>compaction对性能的影响</li>
+<li>workload对compaction的影响</li>
+<li>compaction和tuning的互相影响</li>
+</ul>
+<p><strong>测试分析结果</strong></p>
+<p><em>O for observation, TA for key takeaway.</em></p>
+<p>Data Loading测试：</p>
+<p>O1 ：compaction带来大量的data move。</p>
+<p>O2 ：partial compaction降低了data move但带来了更多的compaction count。</p>
+<p>TA I : compaction的粒度越大，则compaction次数越少，但总的data move量越大。</p>
+<p>O3 ：full compaction的平均compaction延迟最高，tiering的长尾延迟最高。</p>
+<p>TA II ：tiering可能导致比较长的write stall。</p>
+<p>Querying the data</p>
+<p>O4：point lookup在tiering下延迟最高，full level下最低。</p>
+<p>TA III ：point lookup延迟很大程度上不收data movement policy影响。</p>
+<p>O5 ：read amplification受Block Cache和文件结构影响比较大，tiering下最高。</p>
+<p>O6: 混合负载有更高的长尾延迟</p>
+<p>在compaction过程中同时施加point query，写的长尾延迟会变大，论文给出的原因一是点查需要访问磁盘IO读取index block造成IO写饱和，二是查找过程中会memtable的flush会延迟[?]</p>
+<p>但在compcation过程中触发查找有助于warmup block cache。</p>
+<p>TA IV: Compactions help lookups by warming up the caches. ?</p>
+<p>O7: Insert Distribution Influences Point Queries.</p>
+<p>TA V:For skewed ingestion&#x2F;lookups, all compaction strategies be-have similarly in terms of lookup performance.</p>
+<p>O8: For Higher Update Ratio Compaction Latency for Tier-ing Drops;LO+2Dominates the Leveling Strategies.</p>
+<p>TA VI:Tiering dominates the performance for update-intensiveworkloads.</p>
+<p>O9: Optimizing for Deletes Comes at a (Write) Cost.</p>
+<p>O10:TierScales Poorly Compared to Leveled and HybridStrategies.</p>
+<p>O11: For Smaller Entry Size, Leveling Compactions are MoreExpensive.</p>
+<p>O12: Compactions with Tiering Scale Better with Buffer Size.</p>
+<h3 id="论文给出的一些compaction建议"><a href="#论文给出的一些compaction建议" class="headerlink" title="论文给出的一些compaction建议"></a>论文给出的一些compaction建议</h3><ol>
+<li>熟悉你的系统的lsm compaction，不要当成黑盒，要有所作为</li>
+<li>避免worst choice</li>
+<li>最好能够适应workload</li>
+<li>探索新的compaction策略</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>首先，论文所做的测试结果和分析的价值</p>
+<p>测试结果可能并不能真正反映compaction策略对整体性能的差异。</p>
+<ol>
+<li>测试环境测试case等都很难做到非常全面，比如BlockCache大小等等各种参数设置</li>
+<li>就某个测试结果来说，具体分析compaction是如何影响整体性能，找到根因也并不简单，可能会产生一些不见得正确的结论。</li>
+<li>就某个compaction策略来说，方案设计和具体代码实现甚至可能是两码事。</li>
+</ol>
+<p>其次，compaction本身及compaction的影响，除了上述四个原语包含的维度，可能还有数据复用程度等方面可以深入考察。</p>
+<p>最后，尽管论文并没有很好地解决compaction的问题（事实上这个问题应该也很难解决好），但论文解决黑盒的、策略性的问题的思路是非常值得学习并应用的。</p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/remix-efficient-range-query-for-lsm-tree/">
+        <span class="nav-arrow">← </span>
+        
+          REMIX - Efficient Range Query for LSM-trees
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/content-aware-lock-scheduling/">
+        
+          Content-Aware Lock Scheduling
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9B%9B%E4%B8%AA%E5%8E%9F%E8%AF%AD"><span class="toc-nav-text">四个原语</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%B5%8B%E8%AF%95%E5%92%8C%E5%88%86%E6%9E%90"><span class="toc-nav-text">测试和分析</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%AE%BA%E6%96%87%E7%BB%99%E5%87%BA%E7%9A%84%E4%B8%80%E4%BA%9Bcompaction%E5%BB%BA%E8%AE%AE"><span class="toc-nav-text">论文给出的一些compaction建议</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/lsmtree-compaction-design-space/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

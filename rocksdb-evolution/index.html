@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      RocksDB演进 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>RocksDB演进</h2>
+  <p class="post-date">2022-02-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Evolution of Development Priorities in Key-value Stores ServingLarge-scale Applications: The RocksDB Experience》FAST’20</p>
+<p>这篇文章是讲述Facebook大规模部署RocksDB的经验，主要是RocksDB优化目标的演变。</p>
+<p>RocksDB应用比较广，除了作为KV产品服务业务，也在很多其他系统中作为存储组件。</p>
+<ul>
+<li>Streaming Processing: Flink, Kafaka Stream, Samba, Facebook’s Stylus.</li>
+<li>Logging&#x2F;Queuing Service: Facebook’s LogDevicem, Uber’s Cherami, Iron.io</li>
+<li>Index Service: Facebook’s Dragon, Rocket</li>
+<li>Caching On SSD: Netflix’s EVCache, Pika</li>
+</ul>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220226191433740.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220226191433740.png</a></p>
+<h3 id="优化目标的演变"><a href="#优化目标的演变" class="headerlink" title="优化目标的演变"></a>优化目标的演变</h3><p><strong>Write Amplification</strong></p>
+<p>主要是针对SSD擦写寿命问题，InnoDB的写方法比较严重。</p>
+<p><strong>Space Amplification</strong></p>
+<p>相比InnoDB，RocksDB空间节省效果比较明显。</p>
+<p><strong>CPU utilization</strong></p>
+<p><strong>Adapting to newer technologies</strong></p>
+<p><strong>Main Data Structure Revisited</strong></p>
+<h3 id="Lessons-on-serving-large-scale-systems"><a href="#Lessons-on-serving-large-scale-systems" class="headerlink" title="Lessons on serving large-scale systems"></a>Lessons on serving large-scale systems</h3><p><strong>resource management</strong></p>
+<p>per-instance，per-host资源限制，inter-instance资源倾斜</p>
+<p>论文中没有提到的是，资源管理困难之一是资源调度均衡问题本身确实很难做到比较好的适应性策略，但另一方面也应看到，大规模独立部署实例遇到的资源管理问题，实际上是share-nothing架构下的子问题，且该场景下无内置统一的资源管理服务，这也会增加问题的解决难度。</p>
+<p><strong>WAL treatment</strong></p>
+<p>RocksDB如果作为其他系统内嵌的存储组件，如果有其他paxos log等组件，那么RocksDB的WAL的意义可能就不大了。WAL可配置化是比较重要的，比如sync policy、buffer IO、disable wal。</p>
+<p><strong>Rate-limited file deletion</strong></p>
+<p>文件删除TRIM可能涉及burst IO，因此要做限速。</p>
+<p><strong>Data format compatibility</strong></p>
+<p><strong>Managing configurations</strong></p>
+<p>选项的校对等问题，还有涉及兼容性的参数。</p>
+<p><strong>Replication and backup support</strong></p>
+<h3 id="Lessons-on-failure-handing"><a href="#Lessons-on-failure-handing" class="headerlink" title="Lessons on failure handing"></a>Lessons on failure handing</h3><p>略</p>
+<h3 id="Lessons-on-the-key-value-interface"><a href="#Lessons-on-the-key-value-interface" class="headerlink" title="Lessons on the key-value interface"></a>Lessons on the key-value interface</h3><p>略</p>
+<h3 id="RocksDB-Feature-Timeline"><a href="#RocksDB-Feature-Timeline" class="headerlink" title="RocksDB Feature Timeline"></a>RocksDB Feature Timeline</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220226200930700-776x1024.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220226200930700-776x1024.png</a></p>
+<p>由图可知，过程是业务问题驱动式，缺那么一点顶层设计。</p>
+<h3 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h3><p>文章略水。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/rsm-compartmentalization/">
+        <span class="nav-arrow">← </span>
+        
+          使用Compartmentalization扩展复制状态机
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/remix-efficient-range-query-for-lsm-tree/">
+        
+          REMIX - Efficient Range Query for LSM-trees
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E7%9A%84%E6%BC%94%E5%8F%98"><span class="toc-nav-text">优化目标的演变</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lessons-on-serving-large-scale-systems"><span class="toc-nav-text">Lessons on serving large-scale systems</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lessons-on-failure-handing"><span class="toc-nav-text">Lessons on failure handing</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lessons-on-the-key-value-interface"><span class="toc-nav-text">Lessons on the key-value interface</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#RocksDB-Feature-Timeline"><span class="toc-nav-text">RocksDB Feature Timeline</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/rocksdb-evolution/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

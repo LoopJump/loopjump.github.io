@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      REMIX - Efficient Range Query for LSM-trees | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>REMIX - Efficient Range Query for LSM-trees</h2>
+  <p class="post-date">2022-02-18</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《REMIX: Efficient Range Query for LSM-trees》FAST’20</p>
+<p>LSM-Tree引擎的scan操作是一个引擎固有的短板，其根源在于相比基于B+Tree的引擎如InnoDB的数据全局有序，LSM-Tree的数据有序性差，它由多个sort run组成，因此scan的时候需要对多个sort run进行merge。</p>
+<p>考虑如下的情况，比如做一次全表扫描，扫描过程中对若干sort run进行了merge。但再有一次全表扫描时，还是需要进行一次merge。两次merge进行的操作是完全一样的，因为这些sort run都是静态数据。</p>
+<h3 id="REMIX-sorted-view"><a href="#REMIX-sorted-view" class="headerlink" title="REMIX sorted view"></a>REMIX sorted view</h3><p>那么如何降低scan的开销呢？</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220226161125019.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220226161125019.png</a></p>
+<p>将若干sort run的sorted view用图示的方式持久化下来，用于这些run上的高效查找和scan。</p>
+<p>具体地，有序key列表分成若干segment，每个segment记录segment内最小key作为anchor key，同时记录cursor offsets 和 run selectors，cursor offsets记录每个run在该segment内的第一个key在run内的offset，run selectors用于记录segment内的runs merging输出次序。</p>
+<p>有了这样一个数据结构，如图在这三个run上从target_key&#x3D;17开始查找并继续迭代的话，成本就很低了。</p>
+<p>首先seek 17时，在anchor keys上用二分查找最后一个小于17的segment，得到Segment 2 (11所在segment），然后在segment内用二分查找17（后详）。</p>
+<p>然后iterator next时，只需要基于cursor offsets和run selector顺序返回即可，无需再做key compare。</p>
+<p>那么segment内如何二分查找呢？考虑以下的情况。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220226164527824-300x111.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220226164527824-300x111.png</a></p>
+<p>首先，run selectors是已有的信息，假设另外存在occurrences信息，occurrences[i]的含义为segment内第i-th个key在其所在run内是第几个。例如sorted view中第6个key&#x3D;41，那么occurrences[7]表示key&#x3D;41是所在run&#x3D;run_selectors[7]&#x3D;R3的第2个（0起）。因此找key&#x3D;41则在R3上迭代2次。</p>
+<p>注意到occurrences包含的信息量完全包含在run selectors中，并且可以通过SIMD高效地临时计算出来。</p>
+<h3 id="sorted-view空间开销"><a href="#sorted-view空间开销" class="headerlink" title="sorted view空间开销"></a>sorted view空间开销</h3><p>设segment里面有D条key，每个cursor占S字节，H表示run数目，则每个key平均多占用的空间为</p>
+<p>$$(L + SH)&#x2F;D + (log2H)&#x2F;8$$ 字节。</p>
+<p>从实测的数据看，空间占用还是完全可以接受的。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220226181223226-300x219.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220226181223226-300x219.png</a></p>
+<h3 id="重建sorted-view"><a href="#重建sorted-view" class="headerlink" title="重建sorted view"></a>重建sorted view</h3><p>LSM-Tree会将MemTable数据刷到磁盘，所以sorted view数据要像compaction一样后台重建。</p>
+<p>注意到，一个sorted view作为一个run，整体和一个新刷下来的sstable文件做一二路归并就可以创建新的sorted view。</p>
+<h3 id="RemixDB"><a href="#RemixDB" class="headerlink" title="RemixDB"></a>RemixDB</h3><p>基于上述索引方式，加上宏观上partition的结构，构造的一个DB。</p>
+<p>没有新东西，略。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>论文提出了一种物化扫描操作中多路run merge的工作以加速整体DB表现的思路，数据结构比较精巧，适用范围也会比较广。除了论文中应用到sstable file格式中外，单纯地复用run merge工作的思路应该也可以部分地应用到DB中。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/rocksdb-evolution/">
+        <span class="nav-arrow">← </span>
+        
+          RocksDB演进
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/lsmtree-compaction-design-space/">
+        
+          构建分析LSM Compaction Design Space
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#REMIX-sorted-view"><span class="toc-nav-text">REMIX sorted view</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#sorted-view%E7%A9%BA%E9%97%B4%E5%BC%80%E9%94%80"><span class="toc-nav-text">sorted view空间开销</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%87%8D%E5%BB%BAsorted-view"><span class="toc-nav-text">重建sorted view</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#RemixDB"><span class="toc-nav-text">RemixDB</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/remix-efficient-range-query-for-lsm-tree/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

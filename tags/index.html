@@ -198,42 +198,57 @@
 <main class="app-body">
   <div id="tag-cloud">
     
-      <a class="tag2" data-name="tag-SQL">SQL</a>
+      <a class="tag1" data-name="tag-Cloud">Cloud</a>
     
-      <a class="tag2" data-name="tag-Cloud">Cloud</a>
+      <a class="tag1" data-name="tag-SQL">SQL</a>
+    
+      <a class="tag3" data-name="tag-Paxos">Paxos</a>
     
       <a class="tag1" data-name="tag-Database">Database</a>
     
-      <a class="tag2" data-name="tag-Paxos">Paxos</a>
-    
       <a class="tag2" data-name="tag-Puzzle">Puzzle</a>
     
-      <a class="tag0" data-name="tag-DistributedSystem">DistributedSystem</a>
+      <a class="tag2" data-name="tag-DistributedSystem">DistributedSystem</a>
     
       <a class="tag2" data-name="tag-Programming">Programming</a>
     
-      <a class="tag1" data-name="tag-Storage">Storage</a>
+      <a class="tag1" data-name="tag-MySQL">MySQL</a>
     
-      <a class="tag3" data-name="tag-MySQL">MySQL</a>
-    
-      <a class="tag0" data-name="tag-RSM">RSM</a>
+      <a class="tag1" data-name="tag-RSM">RSM</a>
     
       <a class="tag2" data-name="tag-Misc">Misc</a>
     
   </div>
   
     <div class="tag-list">
-      <h3 class="tag-name" id="tag-SQL">SQL</h3>
+      <h3 class="tag-name" id="tag-Cloud">Cloud</h3>
       
         <ul class="tag-preview">
           <li>
-            <a href="/arch-query-compiler/">How to Architect a Query Compiler Revisited</a>
+            <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
           </li>
         </ul>
         
         <ul class="tag-preview">
           <li>
+            <a href="/data-storage-in-cloud/">Data Storage Management in Cloud Environment</a>
+          </li>
+        </ul>
+        
+    </div>
+    
+    <div class="tag-list">
+      <h3 class="tag-name" id="tag-SQL">SQL</h3>
+      
+        <ul class="tag-preview">
+          <li>
             <a href="/access-path-in-rdbms/">Access Path Selection in a RDBMS</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/arch-query-compiler/">How to Architect a Query Compiler Revisited</a>
           </li>
         </ul>
         
@@ -258,17 +273,59 @@
     </div>
     
     <div class="tag-list">
-      <h3 class="tag-name" id="tag-Cloud">Cloud</h3>
+      <h3 class="tag-name" id="tag-Paxos">Paxos</h3>
       
         <ul class="tag-preview">
           <li>
-            <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
+            <a href="/basic-paxos-proof/">Basic Paxos证明</a>
           </li>
         </ul>
         
         <ul class="tag-preview">
           <li>
-            <a href="/data-storage-in-cloud/">Data Storage Management in Cloud Environment</a>
+            <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/epaxos-paper-note/">EPaxos协议解读</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/raft-one-server-reconfiguration/">Raft One-Server成员变更</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/raft-paper-note/">Raft论文解读</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/sdpaxos-paper/">SDPaxos:在strong leader与leaderless之间折中</a>
           </li>
         </ul>
         
@@ -339,6 +396,12 @@
         
         <ul class="tag-preview">
           <li>
+            <a href="/google-spanner/">Spanner(OSDI'12)论文阅读笔记</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
             <a href="/hekaton-high-perf-cc/">Hekaton的高性能并发控制算法</a>
           </li>
         </ul>
@@ -375,7 +438,31 @@
         
         <ul class="tag-preview">
           <li>
+            <a href="/myrocks-in-fb/">MyRocks in Facebook UDB</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
             <a href="/newsql/">What's Really New with NewSQL</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/nosql-survey-note/">NoSQL数据库综述和选型阅读笔记</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/percolator-paper-note/">Percolator论文阅读笔记</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/rocksdb-evolution/">RocksDB演进</a>
           </li>
         </ul>
         
@@ -391,62 +478,15 @@
           </li>
         </ul>
         
-    </div>
-    
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-Paxos">Paxos</h3>
-      
         <ul class="tag-preview">
           <li>
-            <a href="/basic-paxos-proof/">Basic Paxos证明</a>
+            <a href="/xengine/">阿里LSMTree存储引擎X-Engine</a>
           </li>
         </ul>
         
         <ul class="tag-preview">
           <li>
-            <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/epaxos-paper-note/">EPaxos协议解读</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/raft-one-server-reconfiguration/">Raft One-Server成员变更</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/raft-paper-note/">Raft论文解读</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/sdpaxos-paper/">SDPaxos:在strong leader与leaderless之间折中</a>
+            <a href="/remix-efficient-range-query-for-lsm-tree/">REMIX - Efficient Range Query for LSM-trees</a>
           </li>
         </ul>
         
@@ -545,13 +585,13 @@
         
         <ul class="tag-preview">
           <li>
-            <a href="/cwinux-source-4/">Cwinux源码解析4</a>
+            <a href="/cwinux-source-3/">Cwinux源码解析3</a>
           </li>
         </ul>
         
         <ul class="tag-preview">
           <li>
-            <a href="/cwinux-source-3/">Cwinux源码解析3</a>
+            <a href="/cwinux-source-4/">Cwinux源码解析4</a>
           </li>
         </ul>
         
@@ -599,12 +639,6 @@
         
         <ul class="tag-preview">
           <li>
-            <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
             <a href="/lockfree-reclaim-perf-note/">LockFree数据结构的内存回收性能测试</a>
           </li>
         </ul>
@@ -612,6 +646,12 @@
         <ul class="tag-preview">
           <li>
             <a href="/manmonth-note/">人月神话 读书笔记</a>
+          </li>
+        </ul>
+        
+        <ul class="tag-preview">
+          <li>
+            <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
           </li>
         </ul>
         
@@ -630,29 +670,6 @@
         <ul class="tag-preview">
           <li>
             <a href="/whyfp-note/">Why Functional Programming Matters 阅读笔记</a>
-          </li>
-        </ul>
-        
-    </div>
-    
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-Storage">Storage</h3>
-      
-        <ul class="tag-preview">
-          <li>
-            <a href="/google-spanner/">Spanner(OSDI'12)论文阅读笔记</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/nosql-survey-note/">NoSQL数据库综述和选型阅读笔记</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/percolator-paper-note/">Percolator论文阅读笔记</a>
           </li>
         </ul>
         
@@ -692,13 +709,13 @@
       
         <ul class="tag-preview">
           <li>
-            <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
+            <a href="/rsm-questions/">漫谈复制状态机的几个有趣的问题</a>
           </li>
         </ul>
         
         <ul class="tag-preview">
           <li>
-            <a href="/rsm-questions/">漫谈复制状态机的几个有趣的问题</a>
+            <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
           </li>
         </ul>
         

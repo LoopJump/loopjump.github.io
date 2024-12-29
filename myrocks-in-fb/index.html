@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      MyRocks in Facebook UDB | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>MyRocks in Facebook UDB</h2>
+  <p class="post-date">2020-09-29</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>MyRocks Paper《MyRocks: LSM-Tree Database Storage Engine Serving Facebook’s Social Graph》</p>
+<p>这篇文章介绍了Facebook为了解决UDB数据库成本迁移MyRocks的挑战和解决方案。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><h3 id="迁至MyRocks所遇到的挑战"><a href="#迁至MyRocks所遇到的挑战" class="headerlink" title="迁至MyRocks所遇到的挑战"></a>迁至MyRocks所遇到的挑战</h3><ol>
+<li>在Facebook UDB场景下，MyRocks将存储空间压缩了一半，因此实例数目减半，也意味着UDB集群的CPU和IO硬件资源减半。</li>
+<li>Range Scan的Forward和Backward性能不一样，这个主要是底层数据编码格式导致。</li>
+<li>Key Comparison次数变多，原因是LSMTree数据全局有序性较低。</li>
+<li>Range Scan比InnoDB慢。</li>
+<li>BloomFilter对内存的占用：BloomFilter对点查询性能比较重要，但BloomFilter要占用一部分内存。</li>
+<li>标记删除（tombstone）带来的查询性能下降。</li>
+<li>Compaction带来的突发影响，Compation通常会带来突发的IO&#x2F;CPU资源消耗，可能会导致性能stall。</li>
+</ol>
+<h3 id="MyRocks的创新点"><a href="#MyRocks的创新点" class="headerlink" title="MyRocks的创新点"></a>MyRocks的创新点</h3><ol>
+<li>Prefix Bloom Filter：提升scan性能</li>
+<li>Key比较时候用memcmp</li>
+<li>新的tomestone类型用来高效处理二级索引</li>
+<li>bulk load模式</li>
+<li>混合compression：高level用性能优先的压缩算法，最底层用压缩率优先的压缩算法，这样memtable flush更及时，compaction速度也会更高一点。</li>
+</ol>
+<h3 id="迁移工具"><a href="#迁移工具" class="headerlink" title="迁移工具"></a>迁移工具</h3><ul>
+<li>MyShadow：将用户query复制一份到测试库。</li>
+<li>正确性校验：全索引数据对比</li>
+<li>依赖副本的迁移：增加一个MyRocks的备库即可。</li>
+</ul>
+<h3 id="迁移效果"><a href="#迁移效果" class="headerlink" title="迁移效果"></a>迁移效果</h3><ul>
+<li>存储空间节省62%</li>
+<li>写Flash数据量减少75%</li>
+<li>性能与InnoDB持平</li>
+<li>机器数目减半</li>
+</ul>
+<h2 id="Background-And-Motivation"><a href="#Background-And-Motivation" class="headerlink" title="Background And Motivation"></a>Background And Motivation</h2><h3 id="UDB架构"><a href="#UDB架构" class="headerlink" title="UDB架构"></a>UDB架构</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/09/image-20200916211824537.png">http://loopjump.com/wp-content/uploads/2020/09/image-20200916211824537.png</a></p>
+<p>其中， LBU&#x3D;Log Backup Unit，可以接收并保存最近一段时间的binlog；Wormhole是基于binlog的pub-sub服务，例如通知异地cache系统失效旧数据。</p>
+<p>每个region只有一个全数据副本，其中全副本的Primary-Replica用异步复制。</p>
+<p>每个region内有三个实例（1个Replica + 2个LBU），用Semi-sync复制。</p>
+<p>这样的部署方式，兼顾了数据可靠性和请求响应延迟。</p>
+<p>在Facebook，UDB和应用之间还有一层TAO，TAO是一个cache（write through）。</p>
+<p>TAO作用，一是提供读Cache，二是TAO仅提供有限的API，迫使应用不会触发bad query。</p>
+<h3 id="UDB存储"><a href="#UDB存储" class="headerlink" title="UDB存储"></a>UDB存储</h3><p>2013年，UDB全部署SSD后，存储成本高，开始探索低成本方案。</p>
+<p>InnoDB页面浪费比较多，有压缩空间降低成本。InnoDB浪费主要来自B+Tree索引，每个页面可能浪费25%~30%。但启用defragmentation会导致性能下降，同时减短了Flash写寿命。另外InnoDB压缩效果不理想，InnoDB是按页面压缩，压缩后还是要占用某种尺寸的页面大小（比如16K页面压缩成5K，但还是要占一个8K的页面空间）。</p>
+<p>InnoDB的另一个问题是写放大，一个页面修改少量字节变成脏页，但在将来刷脏页时，就得一整个页面刷下去。再加上InnoDB的double write机制，写放大会更严重。</p>
+<h3 id="RocksDB-Optimized-for-Flash"><a href="#RocksDB-Optimized-for-Flash" class="headerlink" title="RocksDB: Optimized for Flash"></a>RocksDB: Optimized for Flash</h3><p>RocksDB的存储空间优势的原因：</p>
+<ol>
+<li>InnoDB有B+Tree页面浪费（25%~30），RocksDB没有，RocksDB的旧版本数据可以通过调节compaction来控制占比不超过10%。</li>
+<li>InnoDB压缩页必须对其到4K&#x2F;8K&#x2F;16K，RocksDB不需要对齐。</li>
+<li>InnoDB的每行的元数据包括6字节事务id和7字节roll pointer，RocksDB只有Sequence，而且最底一层Sequence可以设为0，仅占一些flag位。</li>
+</ol>
+<h2 id="MyRocks-Development"><a href="#MyRocks-Development" class="headerlink" title="MyRocks Development"></a>MyRocks Development</h2><h3 id="迁移目标"><a href="#迁移目标" class="headerlink" title="迁移目标"></a>迁移目标</h3><p>迁移工程：提升利用率优先级比较高，但是可靠性、隐私、安全性、简单性都不能回退。</p>
+<p>迁移适用范围：读密集的应用不适合迁移。</p>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h3 id="CPU消耗"><a href="#CPU消耗" class="headerlink" title="CPU消耗"></a>CPU消耗</h3><p><strong>Mem-comparable Keys</strong></p>
+<p>LSMTree在range scan时，会产生比B+Tree多的多的key compare操作。首先，初始化scan iterator的初始值时，B+Tree只需要在全局有序的页面中定位一次，LSMTree需要在多个sorted run上都查一次。其次，iterator推进时，B+Tree不需要触发key compare比较，LSMTree需要在多个sorted run上执行归并比较。</p>
+<p>考虑到不同的collation，MyRocks存储的key都是经过转化，可以直接bytewise-comparable的。</p>
+<p><strong>Reverse Key Comparator</strong></p>
+<p>RocksDB中Forward Iterator比Backward Iterator快。原因有几个，一是block内key存放时使用前缀压缩，相邻key可能只存放差异部分，这种方式对Backward Iterator实现层面不友好；二是多路sorted run归并时，可能出现同一个key的不同版本，这些不同版本是按新版本存放在前的顺序存放，这就导致backward时，需要读到下一个不同的key时，才能知道读到了当前key的最新版；三是memtable底层索引结构是skiplist，它只有前向指针，所以backward时，还要多一次二分查找。</p>
+<p>对于使用backward更多的场景，可以直接把key compare逻辑取反，这个方法称为Reverse Key Compare，但是同样地，这种情况下，forward就慢的多。</p>
+<p><strong>Faster Approximate Size to Scan Calculation</strong></p>
+<p>Scan代价估计优化的两个优化思路。一是如果指定了force index，就不触发代价估计。二是如果粗略计算查询区间内所有的完整sst文件的数据量，哪些只有部分数据在查询区间的sst文件，可以简单地认为影响不大。</p>
+<h3 id="降低延迟、提升范围查询性能"><a href="#降低延迟、提升范围查询性能" class="headerlink" title="降低延迟、提升范围查询性能"></a>降低延迟、提升范围查询性能</h3><p><strong>Prefix Bloom Filter</strong></p>
+<p>跟Surf目标类似。用于Facebook社交网络存储场景，该场景下range查询范围前缀往往是uid之类的。</p>
+<p><strong>减少delete和update带来的Tombstone</strong></p>
+<p>UDB的应用里面有频繁的二级索引的索隐裂更新的情况，这意味着会有二级索引表的旧主键的delete。Delete标记要到compaction到最后一层时才会真正消除，比如一个key的修改历史是：v0&#x3D;0, v1&#x3D;1, v2&#x3D;2, v3&#x3D;DELETE。为了尽快消除这一行记录，MyRocks引入了一个特殊的删除类型 SingleDelete，如果用户可以确认本次删除key前，这个key只有一个版本，那么compaction时，就可以直接删除，不需要等compaction到最底层。于是二级索引key的修改就变成了 SingleDelete(old_sk) + Put(new_sk)。</p>
+<p><strong>基于Tombstone触发Compaction</strong></p>
+<p>如果某些sst文件里面的tombstone太多，RocksDB就会触发compaction，称之为Deletion Triggered Compaction（DTC）。</p>
+<h3 id="空间和Compaction的挑战"><a href="#空间和Compaction的挑战" class="headerlink" title="空间和Compaction的挑战"></a>空间和Compaction的挑战</h3><p><strong>内存占用</strong></p>
+<p>Bloom Filter配置为每个key 10个bit，总的内存占用会比较大。这里允许RocksDB最后一层不创建bloom filter，层间乘数是10的话，那么bloom filter就可以减少90%的内存占用。当然这会导致最后一层检测唯一键不存在的情况成本变高。</p>
+<p><strong>SSD Slowness Because of Compaction</strong></p>
+<p>SSD trim指令是通过标记元数据删除来实现删除效果，实际数据并不需要删除。RocksDB的compaction触发大量删除时，可能导致trim指令卡顿。解决方法是删除文件时限速。同时Compaction限速也会控制后台compaction对前台用户IO的影响。</p>
+<p><strong>Physically Removing Stale Data</strong></p>
+<p>为了真正物理删除一行数据，而不是仅仅将delete标记compaction到L1L2，引入了Periodic Compaction，在发现有数据存在时间超过阈值时，触发compaction到最底层。</p>
+<p><strong>Bulk Loading</strong></p>
+<p>使用RocksDB的 File Ingestion API直接创建Lmax的sst文件，但前提是导入的数据本身是有序的。</p>
+<h3 id="使用MyRocks的其他收益"><a href="#使用MyRocks的其他收益" class="headerlink" title="使用MyRocks的其他收益"></a>使用MyRocks的其他收益</h3><p><strong>Online Backup and Restore Performance</strong></p>
+<ol>
+<li>MyRocks的long running快照成本更低，InnoDB得构建很长的undo log。</li>
+<li>MyRocks从逻辑备份中恢复更快，因为可以使用bulk loading。</li>
+<li>物理备份：checkpoint会硬链接sst和wal，然后追日志，追日志的过程可能很长，这时可以re-checkpoint，然后只发送新硬链接的sst文件。</li>
+</ol>
+<p><strong>Scales Better with Many Secondary Indexes</strong></p>
+<p>MyRocks操作二级索引时，不需要发起随机读。</p>
+<p>二级索引插入&#x3D;&gt;Put；二级索引列修改&#x3D;&gt;SingleDelete&amp;Put；二级索引删除&#x3D;&gt;SingleDelete。</p>
+<p><strong>Replace and Insert Without Reads</strong></p>
+<p>SQL的REPLACE语法含义是如果存在则删除旧值插入新值，否则直接插入新值。MyRocks的盲写跟这个语义是一样的，所以可以直接用RocksdDB的Put接口，省掉了一次随机读的开销。</p>
+<p>对于INSERT语句，MyRocks也提供了选项跳过唯一性检查，但是用户要自己承担数据不一致的风险。</p>
+<p><strong>More Compression Opportunities</strong></p>
+<p>RocksDB支持每个level使用不同的压缩算法，Lmax使用压缩率高的算法，其他层使用性能好的压缩算法或者不压缩。</p>
+<h2 id="产品迁移"><a href="#产品迁移" class="headerlink" title="产品迁移"></a>产品迁移</h2><h3 id="MyShadow-Shadow-Query-Testing"><a href="#MyShadow-Shadow-Query-Testing" class="headerlink" title="MyShadow - Shadow Query Testing"></a>MyShadow - Shadow Query Testing</h3><p>Capture and replay.</p>
+<h3 id="Data-Correctness-Checks"><a href="#Data-Correctness-Checks" class="headerlink" title="Data Correctness Checks"></a>Data Correctness Checks</h3><p>三种模式：Single、Pair、Select。</p>
+<p><strong>Single模式</strong>：验证主键和二级索引的一致性。</p>
+<p><strong>Pair模式</strong>：InnoDB和MyRocks实例取相同的快照（基于同一个GTID点），然后检查行数以及主键的checksum。</p>
+<p><strong>Select模式</strong>：类似于Pair模式，使用MyShadow捕获的查询来验证两个实例。</p>
+<h3 id="修复不兼容的Query"><a href="#修复不兼容的Query" class="headerlink" title="修复不兼容的Query"></a>修复不兼容的Query</h3><p>InnoDB和MyRocks的隔离级别实现有差异。InnoDB默认用的是Repeatable Read，换成MyRocks之后，业务产生了更多的错误。最后是通过和业务开发沟通，让业务改用Read Committed。</p>
+<h3 id="真正迁移"><a href="#真正迁移" class="headerlink" title="真正迁移"></a>真正迁移</h3><p>切成master还比较难，需要一些信念 It required a leap of faith that。</p>
+<h2 id="迁移效果-1"><a href="#迁移效果-1" class="headerlink" title="迁移效果"></a>迁移效果</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/09/image-20200918094611693.png">http://loopjump.com/wp-content/uploads/2020/09/image-20200918094611693.png</a></p>
+<p>MyRocks空间占用是InnoDB空间占用的37.7%（2187.4 vs 824.4），其中InnoDB使用了压缩格式。最初压缩率大概是50%，后来将压缩算法从Zlib改成Zstandard并且加了PeriodicCompaction，进一步降低了空间占用。</p>
+<p>如果不提供读服务，仅作为备库接收复制输入，MyRocks的CPU效率比InnoDB高40%（0.89 vs 0.55）。</p>
+<p>有读流量时，MyRocks花费的CPU略低于InnoDB（1.83 vs 1.65，1.65指用了1.65个CPU）。</p>
+<p><strong>HBase迁到MyRocks</strong></p>
+<p>参见Facebook工程团队写的文章：<a target="_blank" rel="noopener" href="https://engineering.fb.com/core-data/migrating-messenger-storage-to-optimize-performance/">Migrating Messenger storage to optimize performance</a>。</p>
+<h2 id="Lessons-Learned"><a href="#Lessons-Learned" class="headerlink" title="Lessons Learned"></a>Lessons Learned</h2><h3 id="迁移工程"><a href="#迁移工程" class="headerlink" title="迁移工程"></a>迁移工程</h3><p>Production Engineers迁移经验丰富，他们应该在早期参与进来。</p>
+<p>做存储引擎的工程师需要对存储组件、Linux内核的相关背景知识比较熟悉，当成黑盒可能会让我们错失一些优化手段和调试手段。</p>
+<p>异常点不应该被忽视。</p>
+<p>SQL兼容对于迁移引擎能成功是非常重要的。</p>
+<p>RocksDB有相当多可调参数，通常跟workload紧密相关，很难调好。</p>
+<h3 id="Memory-Stall-and-Efficiency"><a href="#Memory-Stall-and-Efficiency" class="headerlink" title="Memory Stall and Efficiency"></a>Memory Stall and Efficiency</h3><p>RocksDB对内存分配器更敏感，MyRocks使用了jemalloc，这一点很重要。</p>
+<p>RocksDB之前用Buffered IO加fadvise hint，依赖Linux的page cache。这可能导致两个问题：事务提交时因为page cache分配内存导致stall，Linux内核内存可能触发Swapping。Linux内核最好升级到4.6版本。</p>
+<p>MyRocks后面增加了DIO功能，减少对Linux内核的依赖。还有一个问题是要避免混用Buffered IO和DIO。</p>
+<h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>从零开发一款存储引擎需要相当大的资源支持和足够的耐心，这对商业公司来讲是个不小的挑战。</p>
+<p>RocksDB作为一个KV存储，应用已经相当广泛。Facebook在MyRocks上的工作，对于RocksDB在TP领域的应用是有质的推进的。</p>
+<p>这篇文章是一篇非常好的MyRocks介绍文章，从现存业务问题出发，到引擎选型，到工程落地经验，这个工作思路非常值得学习。</p>
+<p>值得关注到的是，RocksDB上线牵扯了多个部门，众多工程师的参与。整个过程中有很多case by case的推进方式，这对于公司内部业务来说，评估投入产出比容易很多，毕竟节省多少硬件资源比较容易估算，也因此更容易获得业务的支持。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/intel-microarch-analysis-method/">
+        <span class="nav-arrow">← </span>
+        
+          Intel CPU 自上而下的微架构性能分析方法
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/rsm-compartmentalization/">
+        
+          使用Compartmentalization扩展复制状态机
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-text">Introduction</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%81%E8%87%B3MyRocks%E6%89%80%E9%81%87%E5%88%B0%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-nav-text">迁至MyRocks所遇到的挑战</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#MyRocks%E7%9A%84%E5%88%9B%E6%96%B0%E7%82%B9"><span class="toc-nav-text">MyRocks的创新点</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7"><span class="toc-nav-text">迁移工具</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%81%E7%A7%BB%E6%95%88%E6%9E%9C"><span class="toc-nav-text">迁移效果</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Background-And-Motivation"><span class="toc-nav-text">Background And Motivation</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#UDB%E6%9E%B6%E6%9E%84"><span class="toc-nav-text">UDB架构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#UDB%E5%AD%98%E5%82%A8"><span class="toc-nav-text">UDB存储</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#RocksDB-Optimized-for-Flash"><span class="toc-nav-text">RocksDB: Optimized for Flash</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MyRocks-Development"><span class="toc-nav-text">MyRocks Development</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%81%E7%A7%BB%E7%9B%AE%E6%A0%87"><span class="toc-nav-text">迁移目标</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-nav-text">性能优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CPU%E6%B6%88%E8%80%97"><span class="toc-nav-text">CPU消耗</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%99%8D%E4%BD%8E%E5%BB%B6%E8%BF%9F%E3%80%81%E6%8F%90%E5%8D%87%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD"><span class="toc-nav-text">降低延迟、提升范围查询性能</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%A9%BA%E9%97%B4%E5%92%8CCompaction%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-nav-text">空间和Compaction的挑战</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8MyRocks%E7%9A%84%E5%85%B6%E4%BB%96%E6%94%B6%E7%9B%8A"><span class="toc-nav-text">使用MyRocks的其他收益</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BA%A7%E5%93%81%E8%BF%81%E7%A7%BB"><span class="toc-nav-text">产品迁移</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#MyShadow-Shadow-Query-Testing"><span class="toc-nav-text">MyShadow - Shadow Query Testing</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Correctness-Checks"><span class="toc-nav-text">Data Correctness Checks</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BF%AE%E5%A4%8D%E4%B8%8D%E5%85%BC%E5%AE%B9%E7%9A%84Query"><span class="toc-nav-text">修复不兼容的Query</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%9C%9F%E6%AD%A3%E8%BF%81%E7%A7%BB"><span class="toc-nav-text">真正迁移</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%BF%81%E7%A7%BB%E6%95%88%E6%9E%9C-1"><span class="toc-nav-text">迁移效果</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Lessons-Learned"><span class="toc-nav-text">Lessons Learned</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%81%E7%A7%BB%E5%B7%A5%E7%A8%8B"><span class="toc-nav-text">迁移工程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Memory-Stall-and-Efficiency"><span class="toc-nav-text">Memory Stall and Efficiency</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/myrocks-in-fb/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
