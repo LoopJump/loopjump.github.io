@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Helping compiler help you - Ispike, BOLT | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Helping compiler help you - Ispike, BOLT</h2>
+  <p class="post-date">2022-04-15</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《BOLT: A Practical Binary Optimizer for Data Centers and Beyond》 CGO 2019</p>
+<p>《Ispike: A Post-link Optimizer for the IntelR ItaniumR Architectur》 CGO 2004</p>
+<h2 id="Helping-compiler-help-you"><a href="#Helping-compiler-help-you" class="headerlink" title="Helping compiler help you"></a>Helping compiler help you</h2><p>现在数据中心跑的程序二进制文件普遍都比较大而且代码逻辑比较复杂，因此编译过程的优化在很多情况下能够显著提升性能。编译优化是一种 helping compiler help you的方式。</p>
+<p>编译优化常见的几种优化技术，如LTO (Link Time Optimization), FDO (Feedback-Driven Optimizations)。LTO是指在link阶段可以获得之前的编译阶段看不到的全局信息，有机会进行一些inline、死代码删除等等优化。FDO (Feedback-Driven Optimizations)，也叫 PGO (Profile-Guarded Optimizations) 是指将获取二进制运行时的profile信息并作为反馈对编译过程进行优化。</p>
+<p>本文介绍两个具体的案例，Ispike和BOLT。</p>
+<h2 id="Ispike"><a href="#Ispike" class="headerlink" title="Ispike"></a>Ispike</h2><p>《Ispike: a post-link optimizer for the Intel Itanium archi-tecture》 CGO 2004</p>
+<p>Profile数据获取有两种方式：一种是通过插装(instrumentation)的方式，这种方式会对运行性能有比较大的影响，而且消耗比较多的内存；另一种方式是基于采样，利用CPU内置的performance counter等信息。</p>
+<p>例如Ispike就是一种基于采样的FDO优化工具。</p>
+<p>Ispike针对Intel Itanium架构的CPU (IPF, Itanium Processor Family)。IPF支持workload characterization profiling和instruction-level profiling，前者包括多达100个event及其cycle信息，后者包括分支预测、i&#x2F;d cache&#x2F;TLB mis等信息。</p>
+<p>Ispike的主要目标是优化内存延迟，包括指令和数据两方面的内存延迟，主要优化手段是加强局部化和prefetch。</p>
+<p><strong>第一个优化手段：Code Layout优化</strong>：通过提高局部性、提升cache line利用率、消除cache冲突来提高I-Cache性能；降低控制流变化；减少活跃代码页帧数量以提交iTLB命中率。几种优化算法如图示。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220415-214922@2x-1024x358.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220415-214922@2x-1024x358.png</a></p>
+<p><strong>第二个优化手段：Instruction Prefetching</strong>：软件可控的指令预取包括两种方式streaming prefetching 和 hint prefetching。前者指通过IPF的br many 指令预取连续若干cache line，后者是通过brp.few target_add或者brp.many获取一个或两个cache line。</p>
+<p><strong>第三个优化手段：Data Layout</strong>：普通data很难重新排布，这里仅针对statically allocated数据（例如全局变量、常量、switch语句target addr、函数地址等）进行重排布。根据数据访问频率或者访问相关性进行排布。</p>
+<p><strong>第四个优化手段：Data Prefetching</strong>：采用stride-based prefetching。基于IPF的Data Event Address Register (D-EAR) 采样miss处信息，例如&lt;pc, daddr, lat&gt; 即PC指针值、数据地址、延迟。为了降低采样开销，这里采用两阶段方式，skipping阶段每隔100miss进行一次采样，inspection阶段每1miss进行一次采样。两阶段的效果控制了采样频率。然后分析一组daddr的间隔，取最小公约数作为stride大小。之后再对load指令进行 d*stride adead的地址预取。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220415-222259@2x-1024x1015.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220415-222259@2x-1024x1015.png</a></p>
+<p><strong>其他优化</strong>：包括inline、死代码删除、branch forwarding、load&#x2F;store forward、GTO-acess优化。其中GOT-access优化是指：访问全局变量时需要先访问Global Offset Table和保留寄存器gp然后拿到全局变量地址才能访问，优化为gp+常量方式，前提是GOT的入口不变。</p>
+<h2 id="BOLT"><a href="#BOLT" class="headerlink" title="BOLT"></a>BOLT</h2><p>《BOLT: A Practical Binary Optimizer for Data Centers and Beyond》 CGO 2019</p>
+<p>如前文所述，FDO是将运行时的profile信息对进行编译优化。</p>
+<p>一般而言，对于编译过程链来讲，越早使用profile信息，优化收益越大，因为更多的编译阶段可以依据该信息进行优化。也正因此，Post-link阶段优化关注的人较少。但实际上越早用profile虽然更多阶段可以使用，但越晚用对代码排布的优化越精确。</p>
+<p>BOLT是一个直接修改二进制文件来优化的解决方案，采用的也是基于采样的方式。</p>
+<h3 id="BOLT的几个技术要点"><a href="#BOLT的几个技术要点" class="headerlink" title="BOLT的几个技术要点"></a>BOLT的几个技术要点</h3><p><strong>A. 工具渐进式开发</strong></p>
+<p>一开始只支持少量类型的函数优化，也只支持x86-64 Linux ELF，然后慢慢扩展优化范围。</p>
+<p><strong>B. 重新定位模式</strong></p>
+<p>BOLT希望最终能够重排所有函数。一种支持重排所有函数的方法是借助relocation records信息（很多链接器可以通过选项支持），但像PIC (position independent code)、有单个文件内部课件的局部函数等等还不行。所以还是需要反汇编。</p>
+<p><strong>C. Rewriting Pipeline</strong></p>
+<p>BOLT通过符号表和ABI function frame information来识别函数入口和范围，然后读取debug info 反汇编代码，继而构建每个函数的CFG (control flow graph) 表示（LLVM MCInst对象可以支持生成CFG），借助profile信息进行优化，最后生成新的二进制文件。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220416-142938@2x-1024x128.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220416-142938@2x-1024x128.png</a></p>
+<p><strong>D. C++ Exceptions and Debug Information</strong></p>
+<p>BOLT能够读取DWARF信息。</p>
+<h3 id="BOLT优化"><a href="#BOLT优化" class="headerlink" title="BOLT优化"></a>BOLT优化</h3><p>BOLT的优化包含很多轮，有些优化手段可以再次应用，如图。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220416-143925@2x-1024x880.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220416-143925@2x-1024x880.png</a></p>
+<p>Pass 1 指移除NOP、repz retq的repz。</p>
+<p>Pass 2&#x2F;6 指相同代码折叠，如果有两处代码完全一样，则只需要一份代码即可。</p>
+<p>Pass 3 指针对类似C++虚函数调用的类似场景，优化为比较指令+条件分支+最热分支的直接调用和inline。</p>
+<p>Pass 4&#x2F;9 指针对小范围局部代码进行优化，包括删除冗余load&#x2F;store、常量折叠、强度削弱（如*2换成左移）、优化为特殊指令等等。</p>
+<p>Pass 5 simplify-ro-loads是指读取RO section的变量时，可以把load指令优化为立即数load指令。但这样虽然可以提高d-cache效率但可能会影响i-cache，具体是否执行该优化还要看指令是否变大了。</p>
+<p>Pass 7 移除PLT(Procedure Link Table)间接调用。</p>
+<p>Pass 8 指按照代码热度，调整代码排布，达到热路径执行完全fall-through的效果。</p>
+<p>Pass 10 删除不可达代码（死代码）。</p>
+<p>Pass 11 修复基本快结束指令，主要是适配CFG和代码重排。</p>
+<p>Pass 12 函数位置重排优化 (HFSort技术)，有助于提升i-tlb的效率。</p>
+<p>Pass 13 条件尾调用优化。</p>
+<p>Pass 14&#x2F;15 优化寄存器溢出。</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>LBR很重要。</p>
+<p>测试结果的一个直观例子，从图中可以直观看到代码调整的效果。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220416-174728@2x-1024x317.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220416-174728@2x-1024x317.png</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/rbo-in-starburst/">
+        <span class="nav-arrow">← </span>
+        
+          Extensible/Rule Based Query Rewrite Optimization in Starburst
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/grammer-like-func-rule/">
+        
+          Grammar-like Functional Rules - for Representing Query Optimization Alternatives
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Helping-compiler-help-you"><span class="toc-nav-text">Helping compiler help you</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Ispike"><span class="toc-nav-text">Ispike</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#BOLT"><span class="toc-nav-text">BOLT</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#BOLT%E7%9A%84%E5%87%A0%E4%B8%AA%E6%8A%80%E6%9C%AF%E8%A6%81%E7%82%B9"><span class="toc-nav-text">BOLT的几个技术要点</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#BOLT%E4%BC%98%E5%8C%96"><span class="toc-nav-text">BOLT优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-nav-text">其他</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/compiler-pgo/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Hekaton的高性能并发控制算法 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Hekaton的高性能并发控制算法</h2>
+  <p class="post-date">2020-04-13</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>High-Performance Concurrency Control Mechanisms for Main-Memory Databases (VLDB12’)</p>
+<p>这篇文章是微软Hekaton上的in-memory storage engine的高性能控制算法。</p>
+<h2 id="MV-Storage-Engine"><a href="#MV-Storage-Engine" class="headerlink" title="MV Storage Engine"></a>MV Storage Engine</h2><h3 id="关于事务可串行化的一个洞察和论述"><a href="#关于事务可串行化的一个洞察和论述" class="headerlink" title="关于事务可串行化的一个洞察和论述"></a>关于事务可串行化的一个洞察和论述</h3><p>如果事务的读和写逻辑上发生在同一时刻，则事务就是可串行化的。SI隔离级别并不满足这个情况，SI的读实际上是发生在事务开启时（事务开启时取快照，快照一旦确定了，即使读请求是过一段时间之后才发起的，仍然等价于是去快照后立刻执行的），写实际上发生在事务提交时（事务提交前，所有写操作都不生效）。</p>
+<p>如果在事务结束时我们能够确认该事务之前发起的读操作，再次发起时返回相同的结果，那么等价于读操作和写操作是同时发生在事务结束这个时间点上，因此事务就是可串行化的。</p>
+<p>基于上述观察，如果要事务可串行化，则如下两个条件都要满足：</p>
+<ul>
+<li>Read Stability：如果T读取行的某个版本V1，那么V1直到事务结束都应该继续有效而不是被V2更新了。我们可以加读锁或者在事务结束前做validation来实现这一效果（分别对应悲观&#x2F;乐观）。</li>
+<li>Phantom Avoidance：事务的scan不会返回额外的新版本。我们可以通过加范围锁或者validation来实现（同样对应悲观&#x2F;乐观）。</li>
+</ul>
+<p>如果要实现更低的隔离级别，就容易的多：</p>
+<ul>
+<li>Repeatable Read：只需要保证Read Stability（RR不解决幻读问题）。</li>
+<li>Read Committed：不需要加锁，也不需要valdation。</li>
+<li>SI：不需要加锁，也不需要validation，总是使用事务开启时的快照。</li>
+</ul>
+<h3 id="Main-Memory-Storage-Engine的原型"><a href="#Main-Memory-Storage-Engine的原型" class="headerlink" title="Main Memory Storage Engine的原型"></a>Main Memory Storage Engine的原型</h3><p>论文实现了一个Main Memory Storage Engine的原型。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200404100533596-300x284.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200404100533596-300x284.png</a></p>
+<p>行格式如图示。begin字段可以是时间戳也可以是该活跃事务号，如果是事务号，表示该行可能尚未提交。</p>
+<p>存储和索引：原型用的是hash索引，同一个hash桶上的记录无序。</p>
+<p>读操作核心逻辑：读请求会分配一个时间戳snapshot作为读快照，查找满足begin &lt; snapshot &lt; end的版本读取。</p>
+<p>写操作核心逻辑：创建一个新版本插入hash，beigin字段先用本事务号填充，上一个版本的end上也填充该事务号。</p>
+<p>一个事务的生命周期：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200404101148422-300x71.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200404101148422-300x71.png</a></p>
+<ul>
+<li>事务启动：分配begin timestamp，状态设为Active。</li>
+<li>事务执行：执行读写，如前述。</li>
+<li>事务prepare：事务准备提交的时候，先申请一个end timestamp，状态设为Preparing。如果可以提交，则将修改持久化，然后切换到Committed状态。</li>
+<li>尾阶段：将本事务修改的那些行的end字段中的事务号回填成end-timestamp。</li>
+<li>事务结束：旧版本会被注册到GC模块，等待不再需要时被回收。</li>
+</ul>
+<h3 id="版本可见性"><a href="#版本可见性" class="headerlink" title="版本可见性"></a>版本可见性</h3><p>除了前面所描述的查找满足 begin &lt; RT &lt; end 的版本外，因为begin和end可以填充事务id，所以这里分几种情况描述完整的可见性判断逻辑。注：这里先忽略边界情况(&lt; or &lt;&#x3D;)。</p>
+<p><strong>begin字段和end字段都是时间戳</strong></p>
+<p>满足 begin &lt; RT &lt; end 即可见，否则不可见。</p>
+<p><strong>begin字段是事务id</strong></p>
+<p>读事务T遇到一个记录版本V，设V的begin字段是事务id&#x3D;TB，那么可见性取决于TB的事务状态和TB的end-timestamp，因为TB可能处在已提交但是还没有回填end-timestamp的时刻。</p>
+<p>具体的几种情况枚举：</p>
+<ul>
+<li>情况1：TB.state &#x3D; Active &amp; TB.end_ts &#x3D; NOT_SET，判定：TB&#x3D;T且end&#x3D;INF时可见。</li>
+<li>情况2：TB.state &#x3D; Preparing &amp; TB.end_ts &#x3D; TS，判定：TB将来的end是TS，V的begin将来会是TS，可以允许speculatively读。</li>
+<li>情况3：TB.state &#x3D; Committed &amp; TB.end_ts &#x3D; TS，判定：V的begin将来会是TS，可以用TS作判定。</li>
+<li>情况4：TB.state &#x3D; Aborted，判定：不可见。</li>
+<li>情况5：TB找不到，判定：重读V的begin字段（读完begin的tid到根据tid查找TB上下文的时间间隔内，TB回填并结束了）。</li>
+</ul>
+<p><strong>end字段有事务id</strong></p>
+<p>读事务T使用读快照RT读到了版本V，V上end字段是事务号TE，则表明版本V正在被修改为新版本。</p>
+<p>具体几种情况枚举：</p>
+<ul>
+<li>情况1：TE.state &#x3D; Active &amp; TE.end_ts &#x3D; NOT_SET，判定：TE&#x3D;T且end&#x3D;INF时可见。</li>
+<li>情况2：TE.state &#x3D; Preparing &amp; TE.end_ts &#x3D; TS，判定：如果TS &gt; RT，事务将来提交则本版本可见，事务将来回滚，更新的是写事务会使用一个比TS还大的end-timestamp，所以本版本仍然可见；如果TS &lt; RT则本可以speculative ignore版本V。</li>
+<li>情况3：TE.state &#x3D; Committed &amp; TE.end_ts &#x3D; TS，判定：用TS和RT比较判定。</li>
+<li>情况4：TE.state &#x3D; Aborted，判定：V可见。</li>
+<li>情况5：TE找不到，判定：重读V的end字段（读完end的tid到根据tid查找TE上下文的时间间隔内，TE回填并结束了）。</li>
+</ul>
+<p><strong>commit dependency</strong>：</p>
+<p>两种speculatively读情况要建提交依赖关系，序列化次序上要保持正确的提交顺序，如果被依赖事务回滚，可能要级联回滚。</p>
+<h3 id="Updating-Version"><a href="#Updating-Version" class="headerlink" title="Updating Version"></a>Updating Version</h3><p>更新V时，首先V必须是updatable的：即V必须满足end&#x3D;INF，是最后一个版本。</p>
+<p>如果有并发写事务更新同一行，遵循first-writer-win的策略，具体实现如下：事务T修改V时，先将V的end字段从INF原子地更新为T的事务id。如果原子更新失败表示有其他writer并发且抢先了，本事务回滚，如果原子更新失败，则将新版本插入索引结构，本事务持有新旧版本的内存指针，用于在Postprecessing阶段回填。</p>
+<h3 id="Commit-Dependency"><a href="#Commit-Dependency" class="headerlink" title="Commit Dependency"></a>Commit Dependency</h3><p>前面已经提到了，speculative执行可能会导致提交依赖，被依赖事务回滚时会导致级联回滚。</p>
+<p>具体用到的数据结构很直观，略。</p>
+<p>提交时等待可能引入死锁，解决方式是wait-for graph里面只允许end-timestamp小的事务等待大的事务。</p>
+<h2 id="Optimistic-Transaction"><a href="#Optimistic-Transaction" class="headerlink" title="Optimistic Transaction"></a>Optimistic Transaction</h2><p>首先讨论的是可串行化乐观事务。</p>
+<p>乐观并发控制的validation阶段有两种做法：backward validation 和 forward validation。</p>
+<p>论文使用的是 backward validation，但不是拿本事务的ReadSet去检测其他事务的WriteSet，而是检查本事务已经读过的版本是否在本事务结束时刻仍然可见。这一点在一开始就论述过了。还有一点就是跟普通OCC不一样的是，论文描述的方式是一开始就写入索引的，不需要OCC的第三步Write Phase，只需要改下事务状态就行。</p>
+<p>具体地，一个可串行化的事务追踪了三个集合：</p>
+<ul>
+<li>ReadSet：包含了所读到每个版本的内存指针（注：这是一个内存数据库）。</li>
+<li>ScanSet：存储了每个scan要发起重复读的必要信息。</li>
+<li>WriteSet：包含了每次修改产生的新版本和老版本。</li>
+</ul>
+<h3 id="执行阶段"><a href="#执行阶段" class="headerlink" title="执行阶段"></a>执行阶段</h3><p>略，根据前面的说法推理一下就行。</p>
+<h3 id="Prepare阶段"><a href="#Prepare阶段" class="headerlink" title="Prepare阶段"></a>Prepare阶段</h3><p>Prepare阶段要做的三个操作：read valiation、wait for commit dependency、logging。也就是说prepare要完成所有预防未来不能提交的操作。</p>
+<p>validation包含两步：validate已经读取过的行、validate幻读。</p>
+<h3 id="Postprocessing阶段"><a href="#Postprocessing阶段" class="headerlink" title="Postprocessing阶段"></a>Postprocessing阶段</h3><p>略，根据前面的说法推理一下就行。</p>
+<h3 id="更低的隔离级别实现"><a href="#更低的隔离级别实现" class="headerlink" title="更低的隔离级别实现"></a>更低的隔离级别实现</h3><ul>
+<li>RR：要求Read Stability但不要求解决幻读。只需要validate ReadSet就可以了，ScanSet不需要validate。</li>
+<li>RC：使用当前时间戳作为读快照，ReadSet和ScanSet都不需要验证。</li>
+<li>SI：使用事务开始的时间戳作为读快照，ReadSet和ScanSet都不需要验证。</li>
+</ul>
+<p>只读事务：用SI和RC的隔离级别就行（要一致性快照就SI，否则RC）。</p>
+<h2 id="Pessimistic-Transaction"><a href="#Pessimistic-Transaction" class="headerlink" title="Pessimistic Transaction"></a>Pessimistic Transaction</h2><p>可串行化的悲观事务需要维护如下的集合：</p>
+<ul>
+<li>ReadSet：指向事务加读锁的行指针</li>
+<li>BucketLockSet：事务访问hash桶</li>
+<li>WriteSet：指向修改的行的新旧版本。</li>
+</ul>
+<h3 id="Lock-Types"><a href="#Lock-Types" class="headerlink" title="Lock Types"></a>Lock Types</h3><p>两种锁：</p>
+<ul>
+<li>record lock：保证read stability</li>
+<li>bucket lock：避免幻读</li>
+</ul>
+<p><strong>Record Lock</strong></p>
+<p>Record lock是是一个多读一写的读写锁，锁本身利用行记录的end字段即可。</p>
+<p>详细的字段编码如下：</p>
+<p>ContentType(1bit)： 0表示后面63bit是时间戳，1表示后面63是RecordLock。</p>
+<p>RecordLock(63bit)：</p>
+<ul>
+<li>NoMoreReadLocks(1bit)：置1表示不再允许新加读锁，目的是解决starvation</li>
+<li>ReadLockCount(8bit)：读锁计数，最多允许255个并发读。</li>
+<li>WriteLock(54bit)：事务ID或者INF。</li>
+</ul>
+<p><strong>Bucket Lock</strong></p>
+<p>Bucket lock包含如下字段：</p>
+<ul>
+<li>LockCount：该桶上的锁的数目</li>
+<li>LockList：持有该桶锁事务列表</li>
+</ul>
+<p>实现上，LockCount放在同上，LockList放在一个单独的hash上。</p>
+<ul>
+<li>加锁：递增LockCount，找到桶锁的LockList，将自己加进去</li>
+<li>放锁：从LockList移除，递减LockCount</li>
+</ul>
+<p>类似的锁结构可以实现range lock，前提是索引结构是ordered index，比如B+Tree、skiplist等。</p>
+<h3 id="Eager-Update、Wait-For-Dependency"><a href="#Eager-Update、Wait-For-Dependency" class="headerlink" title="Eager Update、Wait-For Dependency"></a>Eager Update、Wait-For Dependency</h3><p>当一个事务尝试加锁失败时，要发生线程上下文切换。上下文切换涉及OS线程调度，要花费几千条CPU指令。少量的线程切换就会对内存数据库事务性能有显著的影响。</p>
+<p>为了减少锁blocking，论文采用了eager update方式：即使行被加了读锁，仍然可以被写修改，反过来，即使加了写锁，仍然允许读。这里要保持事务顺序，eager update的事务不能在读锁释放完成前commit。但这个违背读写锁语义的情况跟speculative exection不一样，这里并不会引发级联回滚。还有一点就是record lock和bucket lock都可以按这个思路优化。</p>
+<p>每个事务维护如下的信息：</p>
+<p>incoming wait-for dependency:</p>
+<ul>
+<li>WaitForCounter：本事务等待多少依赖（我要等几个依赖，这里本事务可能依赖另外一个事务多次）</li>
+<li>NoMoreWaitFors：防starvation（我不相等了）</li>
+</ul>
+<p>outgoing wait-for dependency:</p>
+<ul>
+<li>WaitingTxnList：等待本事务结束的事务列表（谁在等我）</li>
+</ul>
+<p><strong>Read Lock Dependency</strong></p>
+<p>更新事务TU更新V时，加write lock，如果此时ReadLockCount&gt;0，则递增TU.WaitForCounter。</p>
+<p>反过来，如果此时另一个事务TR读取V，则TR先申请读锁（若因NoMore标记或者ReadLockCount满导致不满足则abort）。如果发现TU持有write lock，且TR是第一个读事务，则TR加读锁并递增TU.WaitForCounter（建立依赖: TU等待TR）。</p>
+<p>TR释放读锁时，如果有写锁被持有，那么看TR是不是最后一个读者。如果不是，TR只需要简单地释放读锁即可，如果是最后一个读者，则要负责删除依赖，具体删除依赖的实现方法是：原子地将ReadLockCounter设为0且V.NoMoreReadLocks&#x3D;true，如果原子更新成功则找到TU并递减TU.WaitForCounter。如果TU.WaitForCounter被减到0，则表示TU可以提交，那么TU此时被允许申请end-timestamp然后进行提交。</p>
+<p><strong>Bucket Lock Dependency</strong></p>
+<p>桶锁的核心目的是<em>解决幻读</em>。</p>
+<p>桶锁跟普通锁有点不一样，一个读事务TS加桶锁的目的并不是阻止新版本写入，而是阻止新版本对TS可见。更新事务TU可以创建新版本并加入到桶中，但TU得等到TS释放了桶锁后才能进行提交，这个等待是通过让TU wait-for TS实现。</p>
+<p>wait-for依赖的加入：</p>
+<p>在这个系统中，wait-for依赖关系可能有两种方式被加进来。</p>
+<ul>
+<li>场景1 - TU自己加&lt;TU依赖TS&gt;： 如果TU发现桶B上有桶锁，则TU要等待B桶锁上所有的其他事务，即将自己加到B.LockList里面的每一个事务TS的WaitForList且递增TU.WaitForCounter。</li>
+<li>场景2 - TU被TS代加&lt;TU依赖TS&gt;： 如果一个可串行化的事务TS扫描B，且发现了一个满足扫描谓词的版本V，但V还没提交，对TS不可见。如果V提交早于TS提交，则TS就会出现幻读。这里的处理方式是TS代替TU给TU加一个wait-for依赖，即将TU加入TS.WaitingTxnList并递增TU.WaitForCounter。</li>
+</ul>
+<p>释放wait-for依赖：</p>
+<p>当一个可串行化事务已经申请完end-timestamp后，就可以释放outgoing wait-for dependency，扫描WaitingTxnList中每一个事务，递减其WaitForCounter。</p>
+<h3 id="Processing-Phases"><a href="#Processing-Phases" class="headerlink" title="Processing Phases"></a>Processing Phases</h3><p><strong>Normal Processing Phase</strong></p>
+<ul>
+<li>Strat Scan: 可串行化事务会加桶锁来避免幻读；其他隔离级别不加桶锁。</li>
+<li>Check Predicate：同Optimistic Transaction。</li>
+<li>Check Visibility：基本同Optimistic Transaction；如果是可串行化事务，需要增加wait-for dependency避免幻读，参考<em>Bucket Lock Dependency</em>一节。</li>
+<li>Read Version：如果是serializable或者RR事务且V是最新版本，则要加读锁，其他情况不加读锁。</li>
+<li>Check Updatability：同Optimistic Transaction。</li>
+<li>Update Version：创建新版本N，加写锁，如果已经有读锁在那么要加wait-for dependency(参考<em>Read Lock Dependency</em>)，将新版本N插入索引，如果插入过程碰到桶锁，按基于桶锁避免幻读的方式加wait-for依赖。</li>
+<li>Delete Version：类似于Update Version，只是没有新版本产生。</li>
+</ul>
+<p>事务执行阶段结束后，释放record lock和bucket lock，如果自己需要等别人（TU.WaitForCounter&gt;0）则等待，等地啊结束则申请end-timestamp并将state设为Validating。</p>
+<p><strong>Prepareing Phase</strong></p>
+<p>Pessimistic transaction不需要validation，但是可能仍然有待解决的（speculative执行引入的）commit dependency，等依赖都解决了，则写wal log并提交。</p>
+<p><strong>Postprocessing Phase</strong></p>
+<p>这个阶段同Optimistic Transaction。</p>
+<h3 id="DeadLock-Detection"><a href="#DeadLock-Detection" class="headerlink" title="DeadLock Detection"></a>DeadLock Detection</h3><p><strong>什么依赖会引入死锁？</strong></p>
+<p>系统中有两类依赖关系，一个是speculative执行引入的commit dependency，另一个是wait-for dependency。</p>
+<ul>
+<li>commit dependency：前面描述过，两种speculatively读情况要建依赖关系，序列化次序上要保持正确的提交顺序，所以不会导致循环等待，因为不会导致死锁。</li>
+<li>wait-for dependency：没有处理循环等待，可能导致死锁。</li>
+</ul>
+<p><strong>死锁解决方式</strong></p>
+<p>解决死锁的方式是构建wait-for graph：分析所有事务间的wait-for dependency，然后应用已有的成熟算法（例如Tarjan算法）来找依赖环路。</p>
+<p><strong>Wait-for graph</strong></p>
+<p>有向图，其中节点是事务、边是事务间依赖。</p>
+<p>构建过程：</p>
+<ul>
+<li>创建节点：如果事务T卡在等wait-for依赖而不能提交，则给该事务创建一个节点N(T)。</li>
+<li>显式依赖：bucket lock引入的依赖叫显式依赖，因为里面有WaitingTxnList，根据这个list构建边。</li>
+<li>隐式依赖：record lock引入的依赖叫隐式依赖，因为没有单独维护具体是哪个事务依赖关系，只知道写锁上有些写事务id但不知道是哪个读事务在等待，这时就要扫描全部事务的每个ReadSet逐个找。</li>
+</ul>
+<p>因为构建过程中，并发事务不断进行，所以graph并不精确，不过没关系，如果真的有死锁，死锁相关的节点和边就一定存在于graph中。对于小概率false deadlock，可以recheck一下。</p>
+<h3 id="乐观事务与悲观事务并存"><a href="#乐观事务与悲观事务并存" class="headerlink" title="乐观事务与悲观事务并存"></a>乐观事务与悲观事务并存</h3><p>本系统的乐观事务与悲观事务可以并存，但是要乐观事务T要感知并使用锁，三个具体的修改：</p>
+<ul>
+<li>T的tid只能是54bit</li>
+<li>T更新一个持读锁的记录时，要增加wait-for dependency</li>
+<li>T插入桶B时，要增加wait-for dependency</li>
+</ul>
+<h2 id="实验测试结果"><a href="#实验测试结果" class="headerlink" title="实验测试结果"></a>实验测试结果</h2><p>实验环境：2-socket CPU，共12核24超线程，NUMA架构，remote socket比local memory慢30%。</p>
+<p>事务异步IO刷盘，这里注意事务不等待IO结束，内存数据库不像磁盘数据库那样需要更多并发线程进来以overprovision（填充事务都在等磁盘IO而带来的CPU空闲），因此测试最多测24线程。</p>
+<p>另外作为基线对比，实现了single-version的基于锁的并发控制算法，该算法标记为”1V”，乐观标记为”MV&#x2F;O”，悲观标记为”MV&#x2F;L”。</p>
+<h3 id="同构workload"><a href="#同构workload" class="headerlink" title="同构workload"></a>同构workload</h3><p><strong>Scalability (Read Committed)</strong></p>
+<ul>
+<li>1V在需要超线程出现拐点（NUMA remote开销），拐点前后基本是线性扩展的。</li>
+<li>两个MV都比1V性能差，主要是多版本创建、GC等开销。</li>
+<li>MV&#x2F;L比MV&#x2F;O差30%，主要是追踪依赖关系和锁两者带来的访存开销，其中30%&#x3D;20%的执行指令本身开销大（CPI变差了） + 10% MV&#x2F;L额外的per-trans指令数目。</li>
+</ul>
+<p><strong>Scaling under Contention (Read Committed)</strong></p>
+<p>热点行问题对所有并发控制算法(CC)都是不好处理的。悲观CC会产生大量的锁等待和死锁，乐观CC会导致大量的validation失败和写写冲突，导致高回滚率。从硬件指令层面看，热点行场景下，有一些热点数据结构会带来产生大量的跨核访问。</p>
+<p>测试结果：MV&#x2F;O稍好点。1V仍在需要超线程出现拐点（NUMA remote开销）。</p>
+<p>从RC到RR&#x2F;Serializable：</p>
+<p>MV&#x2F;O的开销增幅最大，因为要做repeat valdiation。</p>
+<h3 id="异构workload"><a href="#异构workload" class="headerlink" title="异构workload"></a>异构workload</h3><p><strong>Impact of Short Read Transactions</strong></p>
+<p>低冲突：只读事务比例接近100%时，MV比1V好，因为只需要读一致性快照即可，省了锁和validation开销；写事务少，因此多版本、GC开销比例也很低。</p>
+<p>高冲突：MV比1V好，读和写被多版本隔离。</p>
+<p><strong>Impact of Long Read Transactions</strong></p>
+<p>测试中，workload有部分长只读事务。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200405121527988.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200405121527988.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200405121538230.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200405121538230.png</a></p>
+<p>测试结果看，有长只读事务就会导致1V骤跌。</p>
+<p>注意到前面同构workload几个测试中，1V往往都比MV表现好。这说明1V的workload适应性不好。</p>
+<h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>这篇论文是微软Hekaton系统上的CC算法的介绍，虽然索引结构只是简单的hash表而不是ordered index（BwTree之类），但论文对CC讲的非常到位，如何设计锁，如何做validation，如何避免幻读等等，而且对于操作次序有明确的说明。</p>
+<p>炉温同时也充分测试了多种场景下的性能。访存频率&#x2F;Cache跨核对内存数据库CC性能有直接影响。</p>
+<p>另外，1V虽然在一些场景比MV强（因为1V不需要多版本维护开销），但多场景适应性很差，因此基本上商用数据库都是支持MV的。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/calvin-intro/">
+        <span class="nav-arrow">← </span>
+        
+          Calvin简介
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/hekaton-memory-engine/">
+        
+          Hekaton内存引擎
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MV-Storage-Engine"><span class="toc-nav-text">MV Storage Engine</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BA%8B%E5%8A%A1%E5%8F%AF%E4%B8%B2%E8%A1%8C%E5%8C%96%E7%9A%84%E4%B8%80%E4%B8%AA%E6%B4%9E%E5%AF%9F%E5%92%8C%E8%AE%BA%E8%BF%B0"><span class="toc-nav-text">关于事务可串行化的一个洞察和论述</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Main-Memory-Storage-Engine%E7%9A%84%E5%8E%9F%E5%9E%8B"><span class="toc-nav-text">Main Memory Storage Engine的原型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%89%88%E6%9C%AC%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-nav-text">版本可见性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Updating-Version"><span class="toc-nav-text">Updating Version</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Commit-Dependency"><span class="toc-nav-text">Commit Dependency</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Optimistic-Transaction"><span class="toc-nav-text">Optimistic Transaction</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%89%A7%E8%A1%8C%E9%98%B6%E6%AE%B5"><span class="toc-nav-text">执行阶段</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Prepare%E9%98%B6%E6%AE%B5"><span class="toc-nav-text">Prepare阶段</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Postprocessing%E9%98%B6%E6%AE%B5"><span class="toc-nav-text">Postprocessing阶段</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%9B%B4%E4%BD%8E%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%AE%9E%E7%8E%B0"><span class="toc-nav-text">更低的隔离级别实现</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Pessimistic-Transaction"><span class="toc-nav-text">Pessimistic Transaction</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lock-Types"><span class="toc-nav-text">Lock Types</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Eager-Update%E3%80%81Wait-For-Dependency"><span class="toc-nav-text">Eager Update、Wait-For Dependency</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Processing-Phases"><span class="toc-nav-text">Processing Phases</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#DeadLock-Detection"><span class="toc-nav-text">DeadLock Detection</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B9%90%E8%A7%82%E4%BA%8B%E5%8A%A1%E4%B8%8E%E6%82%B2%E8%A7%82%E4%BA%8B%E5%8A%A1%E5%B9%B6%E5%AD%98"><span class="toc-nav-text">乐观事务与悲观事务并存</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="toc-nav-text">实验测试结果</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%90%8C%E6%9E%84workload"><span class="toc-nav-text">同构workload</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%BC%82%E6%9E%84workload"><span class="toc-nav-text">异构workload</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/hekaton-high-perf-cc/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

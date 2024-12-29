@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      InnoDB源码解析-事务系统 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>InnoDB源码解析-事务系统</h2>
+  <p class="post-date">2022-06-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>InnoDB事务系统负责InnoDB层事务管理，快照管理，MVCC等。</p>
+<h3 id="事务对象"><a href="#事务对象" class="headerlink" title="事务对象"></a>事务对象</h3><p>InnoDB层事务对象为 struct trx_t 类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 部分字段</span><br><span class="line">struct trx_t</span><br><span class="line">&#123;</span><br><span class="line">    trx_id_t id; // 事务开启序</span><br><span class="line">    trx_id_t no; // 事务提交序</span><br><span class="line">    trx_state_t state; // 事务状态</span><br><span class="line">    ReadView *read_view; // 快照</span><br><span class="line">    trx_lock_t lock; // 事务持有的锁</span><br><span class="line">    lsn_t commit_lsn; // commit写redo时的lsn</span><br><span class="line">    THD *mysql_thd; // 对应的THD</span><br><span class="line">    UT_LIST_NODE_T(trx_t) mysql_trx_list; // 所有事务链表节点对象</span><br><span class="line">    undo_no_t undo_no;</span><br><span class="line">    bool read_only;</span><br><span class="line">    XID *xid; // XA XID</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>InnoDB的事务开启序，每个读写事务启动时获取一个id，事务结束时获取no作为提交序。</p>
+<p>事务状态包含：</p>
+<ul>
+<li>TRX_STATE_NOT_STARTED</li>
+<li>TRX_STATE_FORCED_ROLLBACK</li>
+<li>TRX_STATE_ACTIVE</li>
+<li>TRX_STATE_PREPARED</li>
+<li>TRX_STATE_COMMITTED_IN_MEMORY(COMMITTED)</li>
+</ul>
+<p>常规的事务状态变换：NOT_STARTED -&gt; ACTIVE -&gt; COMMITTED -&gt; NOT_STARTED。</p>
+<p>TRX_STATE_PREPARED是针对XA事务的prepare状态。</p>
+<p>所有的事务都会存放在mysql_trx_list链表中，这是一个双向链表，本身不支持并发，需要trx_sys-&gt;mutex保护。</p>
+<p>read_view是该事务的快照，我们后面会详细描述这块。</p>
+<p>commit_lsn跟redo提交有关，我们在InnoDB log sys中介绍。</p>
+<h3 id="事务对象管理"><a href="#事务对象管理" class="headerlink" title="事务对象管理"></a>事务对象管理</h3><p>事务对象管理分为两块，一块是活跃的读写事务集合，一块是所有活跃事务集合（包括读写事务和只读事务）。</p>
+<p>所有活跃事务集合以链表形式存储，也就是mysql_trx_list。</p>
+<p>活跃的读写事务集合非常重要，存放在trx_sys-&gt;rw_trx_ids，它跟快照关系密切，实际上也只是为了快照才维护了这个数据结构。</p>
+<h3 id="快照"><a href="#快照" class="headerlink" title="快照"></a>快照</h3><p>如前所说，InnoDB是开启序，写事务开启后申请到一个id，事务修改了某一行，会在行头写入对应的事务id，以后该行可能被其他并发事务读取，至于能不能看到该行的这个新版本，取决于读事务的快照是否认为写事务已经提交。可能存在id小的写事务一直没提交，但id大的事务先提交了，所以对快照来说，创建快照时刻的活跃事务列表就成了数据版本可见性的依据，也就是快照的一部分。</p>
+<p>快照的定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct ReadView</span><br><span class="line">&#123;</span><br><span class="line">    // 超过该值的tid对应事务在本快照中认为还没开始</span><br><span class="line">    trx_id_t m_low_limit_id;</span><br><span class="line"></span><br><span class="line">    // 小于该值的tid对应事务在本快照中认为已经结束</span><br><span class="line">    trx_id_t m_up_limit_id;  // 小于该值的tid对应事务在本快照中认为已经结束</span><br><span class="line"></span><br><span class="line">    // 当前事务自己，事务可以看到自己写的数据</span><br><span class="line">    trx_id_t m_creator_trx_id;</span><br><span class="line"></span><br><span class="line">    // 介于m_up_limit_id和m_low_limit_id之间的事务，</span><br><span class="line">    // 如果在m_ids中，则本快照认为该事务是活跃，否则认为是已经提交</span><br><span class="line">    ids_t m_ids;</span><br><span class="line"></span><br><span class="line">    // 本快照能看到的最老的提交序，低于该值的版本本快照不再需要</span><br><span class="line">    trx_id_t m_low_limit_no;</span><br><span class="line"></span><br><span class="line">    // 将所有快照串成链的node对象</span><br><span class="line">    UT_LIST_NODE_T(ReadView) m_view_list;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>申请一个快照的过程：</p>
+<ul>
+<li>获取一个view对象，可以从free view list拿一个复用，或者分配一个新的</li>
+<li>将活跃读写事务列表复制到view-&gt;m_ids</li>
+<li>m_low_limit_id为当前已经分配出去的最大trx id</li>
+<li>m_low_limit_no为已经分配了提交序no的事务中最小的（遍历serialisation_list列表），如果列表为空，则与m_low_limit_id相等。</li>
+<li>m_up_limit_id为view-&gt;m_ids中最小值，如果view-&gt;m_ids为空，m_up_limit_id也等于m_low_limit_id</li>
+</ul>
+<p>上述过程在trx_sys-&gt;mutex保护下进行。</p>
+<h3 id="快照对象的管理"><a href="#快照对象的管理" class="headerlink" title="快照对象的管理"></a>快照对象的管理</h3><p>所有已经open的快照都在 MVCC::m_views列表中保存，该列表也由trx_sys-&gt;mutex保护。</p>
+<p>为了避免反复分配释放快照对象，如果快照对象close时，先还到MVCC::m_free这个free list中。</p>
+<p>purge等地方需要用到当前系统中最老的快照。获取最老快照实现方式 MVCC::get_oldest_view 是在MVCC::m_views中找第一个已经open的快照，这个过程也是在trx_sys-&gt;mutex保护进行。</p>
+<p>之所以可以直接取列表第一个open的read view，是因为在trx_sys-&gt;mutex锁的同步下，快照的创建完全是串行化的，时间上越早创建的快照越在MVCC::m_views前面。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/innodb-log-sys/">
+        <span class="nav-arrow">← </span>
+        
+          InnoDB源码解析-日志系统
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/innodb-storage-hierarchy/">
+        
+          InnoDB源码解析-存储管理层次
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%AF%B9%E8%B1%A1"><span class="toc-nav-text">事务对象</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%AF%B9%E8%B1%A1%E7%AE%A1%E7%90%86"><span class="toc-nav-text">事务对象管理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%BF%AB%E7%85%A7"><span class="toc-nav-text">快照</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%BF%AB%E7%85%A7%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-nav-text">快照对象的管理</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/innodb-trx-sys/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

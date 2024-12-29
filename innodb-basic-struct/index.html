@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      InnoDB源码解析-基础数据结构 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>InnoDB源码解析-基础数据结构</h2>
+  <p class="post-date">2022-06-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h3 id="互斥锁-ib-mutex-t"><a href="#互斥锁-ib-mutex-t" class="headerlink" title="互斥锁 ib_mutex_t"></a>互斥锁 ib_mutex_t</h3><p>typedef FutexMutex ib_mutex_t;</p>
+<p>UT_MUTEX_TYPE(TTASFutexMutex, GenericPolicy, FutexMutex); 这个宏定义展开是 typedef PolicyMutex&lt;TTASFutexMutex<GenericPolicy>&gt; FutexMutex;</p>
+<p>PolicyMutex是个mutex框架，具体实现依赖模板参数MutexImpl。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">template&lt;typename MutexImpl&gt;</span><br><span class="line">struct PolicyMutex</span><br><span class="line">&#123;</span><br><span class="line">  typedef MutexImpl MutexType;</span><br><span class="line">  typedef typename MutexImpl::MutexPolicy Policy;</span><br><span class="line">  MutexImpl m_impl;</span><br><span class="line"></span><br><span class="line">  // 申请互斥锁</span><br><span class="line">  void enter(uint32_t n_spins, uint32_t n_delay, const char *name, uint32_t line)</span><br><span class="line">  |-- policy().enter(m_impl, name, line);</span><br><span class="line">  |-- m_impl.entry(n_spins, n_delay, name, line);</span><br><span class="line">  |-- policy().locked(m_impl, name, line);</span><br><span class="line"></span><br><span class="line">  void exit()</span><br><span class="line"> |-- policy().release(m_impl);</span><br><span class="line"> |-- m_impl.exit();</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>TTASFutexMutex 有一个字段代表锁状态，用CAS指令实现spinlock，如果spin次数超过阈值，使用SYS_futex。</p>
+<p>typedef int lock_word_t; lock_word_t TTASFutexMutex::m_lock_word;</p>
+<h3 id="双向链表-ut-list"><a href="#双向链表-ut-list" class="headerlink" title="双向链表 ut_list"></a>双向链表 ut_list</h3><p>源码位置：include&#x2F;ut0lst.h</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// list node 类型</span><br><span class="line">// 这里Type是业务类型，比如 buf_page_t。</span><br><span class="line">template&lt;typename Type&gt;</span><br><span class="line">struct ut_list_node</span><br><span class="line">&#123;</span><br><span class="line">  Type *prev;</span><br><span class="line">  Type *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// list 类型</span><br><span class="line">template&lt;typename Type, typename NodePtr&gt;</span><br><span class="line">struct ut_list_base</span><br><span class="line">&#123;</span><br><span class="line">  typedef Type elem_type;</span><br><span class="line">  typedef NodePtr node_ptr;</span><br><span class="line"></span><br><span class="line">  ulint count;</span><br><span class="line">  elem_type *start;</span><br><span class="line">  elem_type *end;</span><br><span class="line">  // 内嵌到业务数据结构（如buf_page_t）里面的node对象（buf_page_t::list字段）的对象内偏移量。</span><br><span class="line">  node_ptr node;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>用于声明一个列表的宏 #define UT_LIST_BASE_NODE_T(t) ut_list_base&lt;t, ut_list_node<t> t::*&gt;</p>
+<p>比如 UT_LIST_BASE_NODE_T(buf_page_t) flush_list;  展开后为</p>
+<p>ut_list_base&lt;buf_page_t, ut_list_node<ut_list_node> buf_page_t::*&gt; 。其中，ut_list_node<ut_list_node> buf_page_t::*是buf_page_t的成员变量指针的类型，即buf_page_t内成员偏移量的变量类型。</p>
+<p>node字段的初始化在UT_LIST_INIT宏中，例如 UT_LIST_INIT(buf_pool-&gt;flush_list, &amp;buf_page_t::list)中将node初始化为buf_page_t的list字段（即ut_list_node类型字段）的对象内偏移量</p>
+<p><strong>基本操作接口：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">UT_LIST_ADD_FIRST(LIST, ELEM);</span><br><span class="line">UT_LIST_ADD_LAST(LIST, ELEM);</span><br><span class="line">UT_LIST_INSERT_AFTER(LIST, ELEM1, ELEM2);</span><br><span class="line">UT_LIST_REMOVE(LIST, ELEM);</span><br><span class="line"></span><br><span class="line">UT_LIST_GET_NEXT(NAME, N); // 返回双向链表NAME的N节点的后继</span><br><span class="line">UT_LIST_GET_PREV(NAME, N); // 返回双向链表NAME的N节点的前驱</span><br><span class="line"></span><br><span class="line">UT_LIST_REVERSE(LIST);  // 逆序</span><br><span class="line">UT_LIST_MOVE_TO_FRONT(LIST);</span><br><span class="line"></span><br><span class="line">ut_list_map(const List&amp; list, Fucntor &amp;functor); // 遍历，functor(elem_type)</span><br><span class="line">ut_list_exist(List &amp;list, typename List::elem_type *elem);</span><br></pre></td></tr></table></figure>
+
+<h3 id="向量-ib-vector-t"><a href="#向量-ib-vector-t" class="headerlink" title="向量 ib_vector_t"></a>向量 ib_vector_t</h3><p>ib_vector_t自带了一个内存分配器，默认是heap_allocator。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct ib_vector_t</span><br><span class="line">&#123;</span><br><span class="line">  ib_alloc_t *allocator; // 分配器</span><br><span class="line">  void *data;  // elemtns</span><br><span class="line">  ulint used;  //</span><br><span class="line">  ulint total; //</span><br><span class="line">  ulint sizeof_value;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>ib_alloc_t</code>是内存分配器的抽象接口，里面定义了 申请、释放、resize三个函数指针。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct ib_alloc_t &#123;</span><br><span class="line">  ib_mem_alloc_t mem_malloc;</span><br><span class="line">  ib_mem_free_t  mem_release;</span><br><span class="line">  ib_mem_resize_t mem_resize;</span><br><span class="line">  void *arg;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>具体的子类有heap_alloc&#x2F;sync_heap&#x2F;self_heap等等。</p>
+<p>以heap_alloc为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">heap_alloc-&gt;arg = heap; // mem_heap_t*</span><br><span class="line">heap_alloc-&gt;mem_malloc = ib_heap_malloc;</span><br><span class="line">heap_alloc-&gt;mem_release = ib_heap_free;</span><br><span class="line">heap_alloc-&gt;mem_resize = ib_heap_resize;</span><br><span class="line"></span><br><span class="line">其中, mem_heap_t 定义：</span><br><span class="line">typedef mem_block_t mem_heap_t;</span><br><span class="line">typedef struct mem_block_info_t mem_block_t;</span><br><span class="line"></span><br><span class="line">void* ib_heap_malloc(ib_alloc_t *allocator /* 底层分配器*/, ulint size)</span><br><span class="line">&#123;</span><br><span class="line">  mem_heap_t *heap = (mem_heap_t*) allocator-&gt;arg;</span><br><span class="line">  return mem_heap_alloc(heap, size); // 略</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回到ib_vector_t的相关函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ib_vector* ib_vector_create(ib_alloc_t *allocator, ulint sizeof_value, ulint size)</span><br><span class="line">|-- ib_vector_t *vec;</span><br><span class="line">|-- vec = (ib_vector_t*)allocator-&gt;mem_alloc(allocator, sizeof(*vec));</span><br><span class="line">|-- vec-&gt;used = 0;</span><br><span class="line">|-- vec-&gt;total = size;</span><br><span class="line">|-- vec-&gt;data = (void*)allocator-&gt;mem_alloc(allocator, sizeof_value * size);</span><br><span class="line"></span><br><span class="line">ib_vector_push(ib_vector_t *vec, const void* elem)</span><br><span class="line">|-- if (vec-&gt;used &gt;= vec-&gt;total)</span><br><span class="line">|---|-- ib_vector_resize(vec);</span><br><span class="line">|---|---|-- new_total = vec-&gt;total * 2;</span><br><span class="line">|---|---|-- vec-&gt;data = vec-&gt;allocator-&gt;mem_resize(vec-&gt;allocator, vec-&gt;data, old_size, new_size);</span><br><span class="line">|-- last = vec-&gt;data + IB_VEC_OFFSET(vec, vec-&gt;used);</span><br><span class="line">|-- memcpy(last, elem, vec-&gt;sizeof_value);</span><br><span class="line">|-- vec-&gt;used++;</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作队列-ib-wqueue-t"><a href="#工作队列-ib-wqueue-t" class="headerlink" title="工作队列 ib_wqueue_t"></a>工作队列 ib_wqueue_t</h3><p>ib_wqueue_t 是一个支持并发访问的阻塞队列。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct ib_wqueue_t</span><br><span class="line">&#123;</span><br><span class="line">  ib_mutex_t mutex; // 线程安全</span><br><span class="line">  ib_list_t *items; // 链表</span><br><span class="line">  os_event_t event; // 条件变量</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="哈希表-hash-table-t"><a href="#哈希表-hash-table-t" class="headerlink" title="哈希表 hash_table_t"></a>哈希表 hash_table_t</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedef struct hash_table_struct &#123;</span><br><span class="line">	ib_ulint_t n_cells;</span><br><span class="line">  hash_cell_t *array;</span><br><span class="line">&#125; hash_table_t;</span><br></pre></td></tr></table></figure>
+
+<p><code>hash_table_t</code> 哈希表，冲突串链，<code>hash_cell_t</code> 即桶对象。</p>
+<p>操作接口：HASH_INSERT &#x2F; HASH_DELETE &#x2F; HASH_SEARCH &#x2F; HASH_SEARCH_ALL &#x2F; HASH_DELETE_AND_COMPACT &#x2F; HASH_MIGRATE 。</p>
+<p>以<code>HASH_INSERT(TYPE, NAME, TABLE, FOLD, DATA)</code> 的一个具体操作例子，<code>HASH_INSERT(buf_page_t, hash, buf_pool-&gt;page_hash, b-&gt;id.fold(), b);</code> 参数各字段含义是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TYPE = buf_pool_t</span><br><span class="line">NAME = hash                     即buf_pool_t::hash字段，是用于hash冲突串链的next字段。</span><br><span class="line">TABLE = buf_pool-&gt;page_hash     hashtable对象本身。</span><br><span class="line">FOLD = b-&gt;id.fold()             计算hash值</span><br><span class="line">DATA = b                        要插入的对象</span><br></pre></td></tr></table></figure>
+
+<p>注：看实现代码，HASH_SEARCH是先根据哈希值找到桶，然后在桶内查找。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/innodb-storage-hierarchy/">
+        <span class="nav-arrow">← </span>
+        
+          InnoDB源码解析-存储管理层次
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/databricks-intro/">
+        
+          Databricks Lakehouse
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BA%92%E6%96%A5%E9%94%81-ib-mutex-t"><span class="toc-nav-text">互斥锁 ib_mutex_t</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-ut-list"><span class="toc-nav-text">双向链表 ut_list</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%90%91%E9%87%8F-ib-vector-t"><span class="toc-nav-text">向量 ib_vector_t</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97-ib-wqueue-t"><span class="toc-nav-text">工作队列 ib_wqueue_t</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8-hash-table-t"><span class="toc-nav-text">哈希表 hash_table_t</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/innodb-basic-struct/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

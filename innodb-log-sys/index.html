@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      InnoDB源码解析-日志系统 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>InnoDB源码解析-日志系统</h2>
+  <p class="post-date">2022-06-01</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>MySQL 5.7中 Log Sys锁冲突比较大，MySQL 8.0对InnoDB Log Sys进行了重构。</p>
+<p>我们先描述下5.7的 Log Sys看看锁冲突，然后再介绍8.0的方案以及部分代码实现细节。</p>
+<h3 id="mtr"><a href="#mtr" class="headerlink" title="mtr"></a>mtr</h3><p>mtr 表示 mini-transaction，表示操作的一个最小原子单元，比数据库事务概念要更小。比如一个事务可能插入两行数据，但每插入一行都可能触发B-Tree的叶子分裂，页面的分裂操作涉及多个页面，这些页面的修改必须保持原子（不能发生分裂的第一个页面生效但第二个页面没生效的情况）。这种原子性就是靠mtr来实现的。</p>
+<p>mtr做一次修改，通常涉及两个主要的步骤，即对修改页面加锁，产生修改变更数据。mtr在提交的时候，需要相应地进行两个操作，一个是将页面挂在flush list上，一个是将变更写入redo log中。刷脏逻辑会从flush list上按从老到新进行刷脏，已经刷脏完成的页面对应的redo就可以不需要了（日志内容可以回收或者循环覆盖使用，重启不需要回放这部分内容）。</p>
+<h3 id="MySQL-5-7-Log-Sys并发冲突"><a href="#MySQL-5-7-Log-Sys并发冲突" class="headerlink" title="MySQL 5.7 Log Sys并发冲突"></a>MySQL 5.7 Log Sys并发冲突</h3><p>基于此，5.7中保证了flush list在前的页面对应的变更修改在redo log中也在前面。具体保证方式是，采用两把锁“接力”，log_sys_t::mutex和log_sys_t::flush_order_mutex，线程首先拿到log_sys_t::mutex，，然后挂flush list，之后拿到log_sys_t::flush_order_mutex后释放log_sys_t::mutex，然后将变更写入redo log buffer。如参考链接中的图示。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-1-300x201.png">http://loopjump.com/wp-content/uploads/2022/06/1-1-300x201.png</a></p>
+<p>显然，这会带来严重的并发冲突，因此8.0重构了这一块内容。</p>
+<h3 id="MySQL-8-0-Scalable-Log-Sys-介绍"><a href="#MySQL-8-0-Scalable-Log-Sys-介绍" class="headerlink" title="MySQL 8.0 Scalable Log Sys 介绍"></a>MySQL 8.0 Scalable Log Sys 介绍</h3><p>首先看下8.0中做到了什么效果呢？</p>
+<ul>
+<li>不同线程可以并发写redo log buffer</li>
+<li>挂flush list也不必完全按照redo log buffer的顺序来，而是一定程度内允许乱序</li>
+<li>redo log的writer和flusher采用独立线程</li>
+</ul>
+<p>第一条其实有篇类似的论文可以参考<em>Aether: A Scalable Approach to Logging</em>。</p>
+<p>不同线程在将线程本地事务的修改数据写到全局的redo log buffer的时候，将自己的数据字节数目原子地加到当前redo log的offset（offset为原子变量），这样相当于每个线程先抢占了redo log buffer中自己的数据对应的一段，然后这些线程就可以并发地向各自的buffer段进行copy。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-1.png">http://loopjump.com/wp-content/uploads/2022/06/2-1.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-1.png">http://loopjump.com/wp-content/uploads/2022/06/3-1.png</a></p>
+<p>但真正将redo log buffer写入文件的时候，只能写到连续已copy的位置，不能包含空洞。所以每个线程在copy完之后，要向一个全局数据结构Finished Writes通知自己的这段已经完成。独立的log writer线程负责检查连续已完成copy的位置，将这部分连续的buffer写入文件。另外一个独立线程log flusher执行真正的flush操作（fsync）。</p>
+<p>另外一块是 flush_list 的问题。</p>
+<p>redo log buffer并发copy，对应的flush list的顺序怎么保证呢？不太准确地说，答案是不保证。</p>
+<p>注意到，一个脏页被刷盘后，如果重启，redo log中这个脏页上的哪些日志需要回放哪些不需要回放实际上是比较容易判断的，因为页面头上会记录这个页面最后一次修改对应的redo log的lsn（offset的等价概念，除去了file header等等）。小于这个lsn的redo log record都不需要回放，大于的都需要回放。那读者可能会疑问，这样的话，5.7为什么要通过两把接力锁呢？实际上5.7也不需要，但它就实现成那个样子了。</p>
+<p>不过，如果允许完全乱序挂flush list，那么重启的时候，怎么获得重启回放位点呢？8.0的方法是不完全乱序，只允许一定范围内的乱序，即最老未写redo log buffer的位置 + L之后的flush list都等待。这样重启回退L作为重启回放位点就可以了。</p>
+<p>因为log_writer和log_flusher是独立线程，所以一个mtr提交的时候，要等log_writer&#x2F;log_flusher完成对应commit lsn的写盘&#x2F;flush操作，所以mtr提交的时候会检查当前已完成写盘&#x2F;flush的位置和自己的commit lsn的大小，这中间会涉及等待和条件变量等，8.0里面还增加了独立的唤醒线程log_write_notifier和log_flush_notifier。</p>
+<h3 id="MySQL-8-0-Scalable-Log-Sys-代码实现"><a href="#MySQL-8-0-Scalable-Log-Sys-代码实现" class="headerlink" title="MySQL 8.0 Scalable Log Sys 代码实现"></a>MySQL 8.0 Scalable Log Sys 代码实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">struct log_t</span><br><span class="line">&#123;</span><br><span class="line">    // 当前已经分配出去的lsn(sn和lsn有固定的换算关系，)</span><br><span class="line">    atomic_sn_t sn;</span><br><span class="line"></span><br><span class="line">    // 即前述finsihed write，标记已完成copy的位置</span><br><span class="line">    Link_buf&lt;lsn_t&gt; recent_written;</span><br><span class="line"></span><br><span class="line">    // 当前已经连续完成挂flush list的lsn，乱序窗口即recent_closed.capacity</span><br><span class="line">    Link_buf&lt;lsn_t&gt; recent_closed;</span><br><span class="line"></span><br><span class="line">    // log writer已经完成写盘的lsn位置</span><br><span class="line">    atomic_lsn_t write_lsn;</span><br><span class="line"></span><br><span class="line">    // log flusher已经完成flush（fsync）的lsn位置</span><br><span class="line">    atomic_lsn_t flushed_to_disk_lsn;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">void log_writer()</span><br><span class="line">&#123;</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        // 即取 log.recent_written.tail()</span><br><span class="line">        ready_lsn = log_buffer_ready_for_write_lsn(log);</span><br><span class="line"></span><br><span class="line">        if (log.write_lsn.load() &lt; ready_lsn) &#123;</span><br><span class="line">            // 这里面会设置log.write_lsn.store(new_write_lsn);</span><br><span class="line">            log_writer_write_buffer(log, ready_lsn);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/access-path-in-rdbms/">
+        <span class="nav-arrow">← </span>
+        
+          Access Path Selection in a RDBMS
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/innodb-trx-sys/">
+        
+          InnoDB源码解析-事务系统
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#mtr"><span class="toc-nav-text">mtr</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#MySQL-5-7-Log-Sys%E5%B9%B6%E5%8F%91%E5%86%B2%E7%AA%81"><span class="toc-nav-text">MySQL 5.7 Log Sys并发冲突</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#MySQL-8-0-Scalable-Log-Sys-%E4%BB%8B%E7%BB%8D"><span class="toc-nav-text">MySQL 8.0 Scalable Log Sys 介绍</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#MySQL-8-0-Scalable-Log-Sys-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-nav-text">MySQL 8.0 Scalable Log Sys 代码实现</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/innodb-log-sys/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

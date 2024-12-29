@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Hekaton内存引擎 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Hekaton内存引擎</h2>
+  <p class="post-date">2020-04-21</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>Hekaton: SQL Server’s Memory-Optimized OLTP Engine（SIGMOD13’）</p>
+<p>Hekaton是SQL Server的一个纯内存数据引擎，用户可以声明一张表存放在Hekaton上，这张表完全支持原SQL Server所有操作，包括T-SQL。同时如果T-SQL只涉及Hekaton表，T-SQL还可以进一步编译执行，性能更高。</p>
+<h2 id="为什么要重新设计Hekaton引擎？"><a href="#为什么要重新设计Hekaton引擎？" class="headerlink" title="为什么要重新设计Hekaton引擎？"></a>为什么要重新设计Hekaton引擎？</h2><p>单纯优化现有的SQL Server还能不能有10-100倍吞吐提升？</p>
+<p>说到底吞吐提升的三条路：提升scalability、提升CPI、减少单个请求执行的指令数目。</p>
+<p>关于提升scalability：SQL Server的scalability已经有1.89（直到增至256核，core数目加倍，能获得性能1.89倍）。</p>
+<p>关于提升CPI：SQL Server跑常规的OLTP benchmark的CPI小于1.6，即使提升到CPI&#x3D;0.8，也只能获得一倍提升。</p>
+<p>最优情况下，提升scalability 且 提升CPI 可以获得的性能也就3到4倍。</p>
+<p>所以只剩一条路：减少单个请求执行的指令数目，10倍性能要减少90%的指令，100倍要减少99%的指令，只优化现存的引擎是做不到的。</p>
+<h2 id="Design-Considerations"><a href="#Design-Considerations" class="headerlink" title="Design Considerations"></a>Design Considerations</h2><h3 id="Architectual-Principles"><a href="#Architectual-Principles" class="headerlink" title="Architectual Principles"></a>Architectual Principles</h3><p><strong>Optimize indexes for main memory</strong></p>
+<p>基于磁盘页面的引擎，通常要维护复杂的buffer pool，page要被latch保护，即使page全在内存，一个简单的B-Tree查找也要消耗几千条指令。所以Hekaton重新设计实现了驻内存数据的索引。当然wal和checkpoint仍然存在。</p>
+<p><strong>Eliminate lathes and locks</strong></p>
+<p>百核心的CPU逐渐流行，因此scalability非常关键。如果系统中存在一些内存地址被高频修改，例如latch、spinlock、LockManager、wal log tail、last page of B-Tree等等，就会严重影响scalability。</p>
+<p>Hekaton的所有关键数据结构，包括内存分配器、hash&#x2F;range索引、trans-map等完全都是lock-free的。关键路径上没有任何spinlock&#x2F;latch。Hekaton的OCC算法也是完全lock-free的。</p>
+<p><strong>Compile request to native code</strong></p>
+<p>解释执行是RDBMS的标准且通用的做法，解释执行的优点是灵活，缺点是执行慢。一个简单的查询语句，如果是使用解释执行的话，大概要执行10万条量级的指令。</p>
+<p>Hekaton解决方法是，对于T-SQL编写的语句和存储过程，Hekaton会将其编译成高度优化的机器码，编译会花一些时间，但执行期间效率很高。</p>
+<h3 id="No-Partitioning"><a href="#No-Partitioning" class="headerlink" title="No Partitioning"></a>No Partitioning</h3><p>HyPer&#x2F;Dora&#x2F;HStore&#x2F;VoltDB这类内存数据库会将数据partition到per-core。但是Hekaton搞了个partition的prototype探索之后，并没有采用这个设计。原因在于workload本身能够partition的时候，数据分区的设计效果很好，否则请求做分区导致多个执行线程间协调同步会导致性能下降严重（比如按非分区键搜索）。</p>
+<h2 id="High-Level-Architecture"><a href="#High-Level-Architecture" class="headerlink" title="High-Level Architecture"></a>High-Level Architecture</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407111229350-300x247.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407111229350-300x247.png</a></p>
+<p>大部分都比较容易理解，这里挑几个介绍。</p>
+<p>Hekaton runtime：一个小的模块，与SQL Server的资源结合，作为编译执行时所依赖功能的库。</p>
+<p>Query Interop：解释执行时存储引擎提供的操作接口。</p>
+<h2 id="Storage-and-Indexing"><a href="#Storage-and-Indexing" class="headerlink" title="Storage and Indexing"></a>Storage and Indexing</h2><p>参见之前的文章<a target="_blank" rel="noopener" href="http://loopjump.com/pr-haketon-high-perf-concurrency-control/">《论文阅读 - Haketon的高性能并发控制算法》</a>。</p>
+<p>区别在这里除了hash index还有个btree index。Hekaton用的是一个lockfree的BTree，叫Bw-Tree。</p>
+<h2 id="Programmability-and-Query-Processing"><a href="#Programmability-and-Query-Processing" class="headerlink" title="Programmability and Query Processing"></a>Programmability and Query Processing</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407124146314-654x1024.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407124146314-654x1024.png</a></p>
+<p>面向compile-once-execute-many-times的workload，编译执行对用户透明。C代码到机器码复用Microsoft的Visual C&#x2F;C++编译器。</p>
+<h3 id="Schema-Compilation"><a href="#Schema-Compilation" class="headerlink" title="Schema Compilation"></a>Schema Compilation</h3><p>Hekaton存储引擎将record内容视为黑盒，并不了解record内部格式。对record的操作编译成机器码之后，需要调用一些回调函数来操作record内容，这些回调函数需要感知record格式，因此涉及schema相关的信息也要编译成机器码。</p>
+<h3 id="Compiled-Storage-Procedures"><a href="#Compiled-Storage-Procedures" class="headerlink" title="Compiled Storage Procedures"></a>Compiled Storage Procedures</h3><p>举例说明将T-SQL转成C语言的一些困难：</p>
+<ul>
+<li>二者type system差别很大，T-SQL有date&#x2F;time、各种精度数值类型。</li>
+<li>T-SQL支持NULL，C没有这个语义对应的类型。</li>
+<li>T-SQL在出现算术错误（除零等）时报错，但C语言会直接抛给OS。</li>
+</ul>
+<p>因为复杂性，Hekaton不是直接将MAT转成C，而是先转成PIT再转成C。</p>
+<p>有些编译执行的方式是， 每个operator通常都有自己的一组接口，每个接口都表现为一个C语言函数，operator间通过接口调用。这种基于函数的方式，会有函数调用和函数传参的开销。</p>
+<p>Hekaton为了提升极致性能，采用的方式并不一样。Hekaton将每一个存储过程直接编译成单独的一个函数，跨operator的调用使用的是label和goto。一个带filter的scan的执行计划，编译完可能就是如图示的样子，空心圈表示一个label，箭头表示goto，filter根据谓词可能有命中&#x2F;未命中两个逻辑。</p>
+<p>注：有些像sort&#x2F;数学函数之类的可以直接使用库函数，没必要编译到一个函数里面。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407154950504-300x152.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407154950504-300x152.png</a></p>
+<h3 id="Restriction"><a href="#Restriction" class="headerlink" title="Restriction"></a>Restriction</h3><p>为了极限性能，带来的一些限制：</p>
+<ul>
+<li>option功能只支持编译时确定的情况</li>
+<li>为了做权限检查，要求存储过程必须在预先定义好的security context中执行</li>
+<li>schema bound</li>
+<li>存储过程必须在某单个事务的上下文中执行</li>
+</ul>
+<h2 id="Transaction-Management"><a href="#Transaction-Management" class="headerlink" title="Transaction Management"></a>Transaction Management</h2><p>参见之前的文章<a target="_blank" rel="noopener" href="http://loopjump.com/pr-haketon-high-perf-concurrency-control/">《论文阅读 - Haketon的高性能并发控制算法》</a>。</p>
+<h2 id="Transaction-Durability"><a href="#Transaction-Durability" class="headerlink" title="Transaction Durability"></a>Transaction Durability</h2><p>logging、checkpointing和recovery组件的设计原则：</p>
+<ul>
+<li>顺序访问IO，这样客户就不需要单独为了买高性能的随机读写存储花钱了。</li>
+<li>主流程尽量减少操作，能移到Recovery阶段的操作都移过去。</li>
+<li>消除扩展性瓶颈</li>
+<li>在Recovery阶段要做IO和CPU的并发。</li>
+</ul>
+<p>磁盘数据有两类：Log Stream、Checkpoint Stream。</p>
+<h3 id="Transaction-Log"><a href="#Transaction-Log" class="headerlink" title="Transaction Log"></a>Transaction Log</h3><p>逻辑REDO日志，事务提交阶段写。</p>
+<p>因为log tail竞争多，所以减少日志量、支持多个日志流（事务顺序不依赖LSN）都可以优化性能。此外经典的GroupCommit方式也能大幅优化性能。</p>
+<h3 id="CheckPoints"><a href="#CheckPoints" class="headerlink" title="CheckPoints"></a>CheckPoints</h3><p>Checkpoints的设计主要围绕两个需求：</p>
+<ul>
+<li>Continuous Checkpointing：要避免突发的checkpoint</li>
+<li>Streaming IO：依赖顺序流式IO</li>
+</ul>
+<p><strong>Checkpoint Files</strong></p>
+<p>Checkpoint文件包括：</p>
+<ul>
+<li>data file：只包含某段时间（事务begin-timestamp）区间的插入的版本（insert&#x2F;update），Append-Only。</li>
+<li>delta file：跟data file一一对应，记录被删除的版本，Append-Only。Recovery的时候用于过滤对应data file的新增version。</li>
+<li>checkpoint file inventory：checkpoint相关的文件清单</li>
+</ul>
+<p><strong>Checkpoint Progress</strong></p>
+<p>将新的transaction log转为data file和delta file，更新inventory。</p>
+<p>持续一段时间之后，checkpoint文件就会逐渐变多，导致recovery时间变长。解决方法是merge以消除delete操作带来的空间浪费（物理删除delete项）。</p>
+<h3 id="Recovery"><a href="#Recovery" class="headerlink" title="Recovery"></a>Recovery</h3><p>可以按data&#x2F;delta file pair粒度并行恢复，one thread per core充分并行。</p>
+<p>恢复完checkpoint之后，再恢复transaction log。</p>
+<h2 id="Garbage-Collection-Details"><a href="#Garbage-Collection-Details" class="headerlink" title="Garbage Collection Details"></a>Garbage Collection Details</h2><p><strong>GC Correctness</strong></p>
+<p>Delelte&#x2F;Update会产生旧版本，这些版本在未来不会被任何事务再访问时需要被回收。另外就是事务回滚也要回收该事务产生的版本。</p>
+<p>GC线程周期地扫描全局活跃事务map，得到最老的活跃事务的begin-timestamp作为gc-timestamp。end-timestamp小于gc-timestamp的事务产生的旧版本都可以回收。</p>
+<p><strong>Garbage Removal</strong></p>
+<p>GC包括两个部分，一是服务请求的工作线程间协作，二是并发后台回收。</p>
+<p>工作线程碰到需要回收的版本可以自己做回收，好处一是 这个过程是并发的，二是后面其他scan不会因为这个旧版本变慢。</p>
+<p>仅靠工作线程做回收，就会出现索引的热点区域的回收比较及时，但冷区就不及时，虽然冷区不会拖慢整体扫描性能，但是还是会浪费内存，因此启动一个后台线程做回收，反正冷区不影响性能，后台线程回收不那么及时也没问题。</p>
+<p>这样设计的主要原因是：<strong>及时</strong> 和 <strong>可扩展</strong>。</p>
+<p><strong>Scalability</strong></p>
+<p>如果是使用一组单独的线程并发做回收，可能出现在大负载压力下回收线层无法及时做回收的情况。所以Hekaton采用了上述让工作线程附带做回收的设计。当然单独的回收线程仍然需要，因为要定期计算gc-timestamp等工作。</p>
+<p>单独的回收线程计算完gc-timestamp，会将待回收的事务集合划分成子任务，分派到CPU-local的工作队列里面，每个工作线程处理完一个事务后就去工作队列里面拿出来一个任务处理。这个设计对scalability非常友好：一是自然地在CPU核间并发了，而是系统自调节的（不会出现忙于处理事务请求而无法及时回收旧版本的情况）。</p>
+<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p><strong>CPU Efficiency</strong></p>
+<p>Lookup测试结果：（Hekaton表 + 编译执行）相比（SQLServer常规表 + 解释执行）10~20倍加速。</p>
+<p>Update测试结果：同上的对比测试，20~30倍加速。</p>
+<p><strong>Scalability</strong></p>
+<p>从2核扩展到12核（6倍）的情况下，考察几种情况的tps提升倍数：</p>
+<p>编译执行：提升36375&#x2F;7078&#x3D;5.1倍，</p>
+<p>原SQLServer提升2312&#x2F;984&#x3D;2.3倍，</p>
+<p>将原SQLServer测试改成完全无冲突的情况，提升也就5.1倍。</p>
+<h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>Hekaton是镶嵌在SQLServer上的内存数据库引擎，使用了各种方式做到了极致的性能优化。这篇论文所有的设计分析和测试分析都十分硬实，读下来十分舒服。</p>
+<p>内存数据库如何实现10倍性能提升？Hekaton指明了一条路：减少执行的指令数目。</p>
+<p>尤其是在目前多核服务器架构下，核间通信带来的开销已经有了显著的影响。如何尽可能地优化CPI，提升scalability也是设计实现上的一个重要的原则。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/hekaton-high-perf-cc/">
+        <span class="nav-arrow">← </span>
+        
+          Hekaton的高性能并发控制算法
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/rsm-compartmentalization/">
+        
+          使用Compartmentalization扩展复制状态机
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%87%8D%E6%96%B0%E8%AE%BE%E8%AE%A1Hekaton%E5%BC%95%E6%93%8E%EF%BC%9F"><span class="toc-nav-text">为什么要重新设计Hekaton引擎？</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Design-Considerations"><span class="toc-nav-text">Design Considerations</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Architectual-Principles"><span class="toc-nav-text">Architectual Principles</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#No-Partitioning"><span class="toc-nav-text">No Partitioning</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#High-Level-Architecture"><span class="toc-nav-text">High-Level Architecture</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Storage-and-Indexing"><span class="toc-nav-text">Storage and Indexing</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Programmability-and-Query-Processing"><span class="toc-nav-text">Programmability and Query Processing</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Schema-Compilation"><span class="toc-nav-text">Schema Compilation</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Compiled-Storage-Procedures"><span class="toc-nav-text">Compiled Storage Procedures</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Restriction"><span class="toc-nav-text">Restriction</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Transaction-Management"><span class="toc-nav-text">Transaction Management</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Transaction-Durability"><span class="toc-nav-text">Transaction Durability</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Transaction-Log"><span class="toc-nav-text">Transaction Log</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CheckPoints"><span class="toc-nav-text">CheckPoints</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Recovery"><span class="toc-nav-text">Recovery</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Garbage-Collection-Details"><span class="toc-nav-text">Garbage Collection Details</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experimental-Results"><span class="toc-nav-text">Experimental Results</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/hekaton-memory-engine/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -235,6 +235,28 @@ Data-intensive Applic ...
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/arch-query-compiler/">How to Architect a Query Compiler Revisited</a>
+      </h2>
+      <p class="article-date">June 12, 2022</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《How to Architect a Query Compiler, Revisited》 SIGMOD’16
+数据库执行一个查询的流程包括前端语法解析、优化器以及后端解释执行。语言编译器的流程与之类似，除了最后一步会编译成机器码执行，DBMS一般还是解析执行的。
+在相当长一段时间内，硬盘 ...
+        
+      </div>
+      <a class="more" href="/arch-query-compiler/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/databricks-intro/">Databricks Lakehouse</a>
       </h2>
       <p class="article-date">June 10, 2022</p>
@@ -253,6 +275,92 @@ Introduction第一代数仓：结构化数据，用于决 ...
         
       </div>
       <a class="more" href="/databricks-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-basic-struct/">InnoDB源码解析-基础数据结构</a>
+      </h2>
+      <p class="article-date">June 4, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          互斥锁 ib_mutex_ttypedef FutexMutex ib_mutex_t;
+UT_MUTEX_TYPE(TTASFutexMutex, GenericPolicy, FutexMutex); 这个宏定义展开是 typedef PolicyMutex&lt;TTASFutexMu ...
+        
+      </div>
+      <a class="more" href="/innodb-basic-struct/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-storage-hierarchy/">InnoDB源码解析-存储管理层次</a>
+      </h2>
+      <p class="article-date">June 3, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          InnoDB的存储层次总的数据粒度：Row - Page - Extent - Segment - Tablespace。
+!http://loopjump.com/wp-content/uploads/2020/06/image-20200623151536735-1024x756.png ...
+        
+      </div>
+      <a class="more" href="/innodb-storage-hierarchy/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-trx-sys/">InnoDB源码解析-事务系统</a>
+      </h2>
+      <p class="article-date">June 2, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          InnoDB事务系统负责InnoDB层事务管理，快照管理，MVCC等。
+事务对象InnoDB层事务对象为 struct trx_t 类型。
+12345678910111213141516// 部分字段struct trx_t&#123;    trx_id_t id; // 事务开启序    ...
+        
+      </div>
+      <a class="more" href="/innodb-trx-sys/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-log-sys/">InnoDB源码解析-日志系统</a>
+      </h2>
+      <p class="article-date">June 1, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          MySQL 5.7中 Log Sys锁冲突比较大，MySQL 8.0对InnoDB Log Sys进行了重构。
+我们先描述下5.7的 Log Sys看看锁冲突，然后再介绍8.0的方案以及部分代码实现细节。
+mtrmtr 表示 mini-transaction，表示操作的一个最小原子单元，比数 ...
+        
+      </div>
+      <a class="more" href="/innodb-log-sys/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -296,109 +404,6 @@ query bloc ...
         
       </div>
       <a class="more" href="/grammer-like-func-rule/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/rbo-in-starburst/">Extensible/Rule Based Query Rewrite Optimization in Starburst</a>
-      </h2>
-      <p class="article-date">April 10, 2022</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Extensible&#x2F;Rule Based Query Rewrite Optimization in Starburst》SIGMOD 1992
-这篇文章是介绍Starburst的基于规则的优化器实现框架。
-背景很多业务的SQL语句或类SQL语句，尤其是中间件软件自动生成的SQ ...
-        
-      </div>
-      <a class="more" href="/rbo-in-starburst/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/content-aware-lock-scheduling/">Content-Aware Lock Scheduling</a>
-      </h2>
-      <p class="article-date">March 20, 2022</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          VLDB 18’  Content-Aware Lock Scheduling for Transactional Database
-相关的证明在 Contention-aware lock scheduling for transactionaldatabases.Technical Re ...
-        
-      </div>
-      <a class="more" href="/content-aware-lock-scheduling/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
-      </h2>
-      <p class="article-date">October 20, 2021</p>
-      
-        
-  <a href="/tags#RSM" >
-    <span class="tag-code">RSM</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Scaling Replicated State Machines with Compartmentalization，VLDB 21’
-本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是compartmentalization，这个词本意是分离，在这里作为一种 ...
-        
-      </div>
-      <a class="more" href="/rsm-compartmentalization/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calvin-intro/">Calvin简介</a>
-      </h2>
-      <p class="article-date">April 2, 2020</p>
-      
-      <div class="article-summary">
-        
-          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
-Calvi ...
-        
-      </div>
-      <a class="more" href="/calvin-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calcite-intro/">Calcite简介</a>
-      </h2>
-      <p class="article-date">November 1, 2019</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Calcite是Apache旗下开源的、支持多种数据源、提供查询处理&#x2F;查询优化&#x2F;查询语言的基础软件框架。
-Calcite的三个特点：
-
-标准SQL: 工业级的SQL parser, validator, JDBC Driver
-查询优化器：将查询表达为关系代数，计划生成， ...
-        
-      </div>
-      <a class="more" href="/calcite-intro/">Read more</a>
     </article>
   
 

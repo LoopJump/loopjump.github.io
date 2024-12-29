@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      How to Architect a Query Compiler Revisited | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>How to Architect a Query Compiler Revisited</h2>
+  <p class="post-date">2022-06-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《How to Architect a Query Compiler, Revisited》 SIGMOD’16</p>
+<p>数据库执行一个查询的流程包括前端语法解析、优化器以及后端解释执行。语言编译器的流程与之类似，除了最后一步会编译成机器码执行，DBMS一般还是解析执行的。</p>
+<p>在相当长一段时间内，硬盘IO是主要的性能瓶颈，计划的解释执行有利于移植，因此将解释执行替换成编译执行没有太大必要。但NVM硬件发展和业务对AP型查询需求增多，使得很多时候查询是CPU Bound的，因此将QEP(query execution plan)编译成本地机器码的必要性增加。</p>
+<p>学术界对如何架构一个查询编译器有不少争论，有文章认为这个事情很复杂。作者认为编译器圈的人应该负点责任，因为他们没把领域内的一些关键想法、原则和结论解释清楚。课堂上大家只是学习到了各种文法解析的变体、寄存器分配算法，并没有真正实操写过一个编译器，因此没有传达出高效编译器其实很简单这个事实。</p>
+<p>对于数据库开发者来讲，肯定没有必要实现一个自己的编译器后端（寄存器分配这些步骤），而是应该生成C代码或者LLVM代码，以此作为接入点对接编译器的后端。因此核心问题是如何从执行计划到中间（C&#x2F;LLVM）代码。</p>
+<p>这篇论文表明，低级代码和编译器多轮编译都不是必须的，提出了一种新的原则指导的方法，并实现了一个原型系统LB2。</p>
+<h2 id="Futamura-Projections"><a href="#Futamura-Projections" class="headerlink" title="Futamura Projections"></a>Futamura Projections</h2><p>1970年，Codd在CACM上发表了关系模型数据处理，那时候还是层次模型和网络模型流行的时代。1971年Yoshihiko Futamura发表了论文 Partial Evaluation of Computation Process - An approach to a Compiler-Compiler。前者的洞察是数据可以表达为高级的关系表而不需要涉及任何的存储模型和数据访问策略；后者的基本洞察是编译器和解释器并没有基础性的不同，编译完全可以视作解释器的特化（compilation can be profitably understood as specialization of an interpreter），而且这种特化不需要涉及到任何硬件平台和代码生成策略。</p>
+<p><strong>specialization</strong></p>
+<p>怎么理解这个洞察呢？</p>
+<p>specialization一般是指通用函数在部分特定参数下的调用和简化，也叫做partial evaluation。例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def power(x:Int, n:Int): Int =</span><br><span class="line">    if (n == 0) 1 else x * power(x, n - 1)</span><br><span class="line"></span><br><span class="line">def power4(x:Int): Int = x * x * x * x</span><br></pre></td></tr></table></figure>
+
+<p>Futamura的核心想法时将specialization应用到interpreter。一个Interpreter的输入包含要解释的代码和该代码对应的输入数据。这个思路在数据库方面的表现如图。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png">http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png">http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png</a></p>
+<p>图(a)中是目前解释执行方式，source是指sql语句，不包含参数，类似于prepare statement，input类似于prepare statement的参数。</p>
+<p>图(b)是以Futamura思路设计的执行模式，此处mix即specialization或partial evaluation（叫mix是历史原因），这样给定input，就可以直接用mix + data方式计算了，这样性能就会高很多，因为抹掉了 interpretive overhead。图(b)表达的含义换句话说，partially evaluating一个查询的解析器，事实上生成了该查询的编译版本，这就是<em>the first Futamura projection</em>。（This key result–partially evaluating an interpreter with respect to a source program produces a compiled version of that programis known as the first Futamura projection）</p>
+<p><strong>Programmatic Specialization</strong></p>
+<p>图(b)描述的思路在实践中并不容易实现，需要进一步分析研究更容易实现的思路。</p>
+<p>考虑如下的代码，我们假设x是MyInt类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">def power(x:MyInt, n:Int): MyInt =</span><br><span class="line">   if (n == 0) 1 else x * power(x, n - 1)</span><br><span class="line"></span><br><span class="line">// symbolic integer type</span><br><span class="line">class MyInt(ref: String) &#123;</span><br><span class="line">  def *(y: MyInt) = &#123;</span><br><span class="line">    val id = freshName();</span><br><span class="line">    println(s&quot;int $id = $ref * $&#123;y.ref&#125;;&quot;);</span><br><span class="line">    new MyInt(id)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// implicit conversion Int -&gt; MyInt</span><br><span class="line">implicit def constInt(x: Int) = new MyInt(x.toString)</span><br></pre></td></tr></table></figure>
+
+<p>在某个应用中，计算power的时候，传入符号值”in”，则解释执行的最终过程如下（中间步骤参见原文附录B1）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">power(new MyInt(&quot;in&quot;),4)</span><br><span class="line"></span><br><span class="line">int x0 = in * 1;</span><br><span class="line">int x1 = in * x0;</span><br><span class="line">int x2 = in * x1;</span><br><span class="line">int x3 = in * x2; // = in * in * in * in</span><br></pre></td></tr></table></figure>
+
+<p>到这里，读者可能已经看懂了这篇论文的核心想法，也即图(c)无mix的版本的思路。图(c)中的staged interpreter实际上就是source中input符号化后的解释执行过程。</p>
+<p>非常妙的洞察。</p>
+<h2 id="Structuring-Query-Evaluators"><a href="#Structuring-Query-Evaluators" class="headerlink" title="Structuring Query Evaluators"></a>Structuring Query Evaluators</h2><p>the first Futamura projection本身只是提供了这样一个洞察，但不涉及代码分析和优化。因此后面的问题就是生成优化过的代码。</p>
+<p>按照前一章节的思想，specializaion生成的代码和对应的interpreter的代码形状上是一样的。也就是说，如果我们在实现interpreter的时候按照某种特定方式来实现，那么compiled code也就是类似的样子。</p>
+<p>接下来论文分析了几种常见的执行模型。</p>
+<h3 id="现有的执行模型"><a href="#现有的执行模型" class="headerlink" title="现有的执行模型"></a>现有的执行模型</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/12531486-4e92-42b6-9a23-fcae02737d99/2-2.png" alt="2-2.png"></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/18bc5d41-0bb3-49bb-8c69-c5ea9aa3ffc0/3-2.png" alt="3-2.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-2-300x173.png">http://loopjump.com/wp-content/uploads/2022/06/3-2-300x173.png</a></p>
+<p><strong>迭代器模型（Volcano模型）</strong></p>
+<p>每个算子统一有open&#x2F;next&#x2F;close三个接口。执行时从root operator开始调用它的next接口，这会调用后继的operator的next，如此驱动直到底层的操作operator提供一条记录，这条记录返回给调用者，然后operator对这条记录执行自身的code。这种方式称作pull-based。</p>
+<p>迭代器模型优点是符合直觉，可以在operator之间进行pipeline。迭代器的缺点是函数调用开销比较大（虚函数多）。</p>
+<p>如4(b)表示的 <em>select * from Dep where rank &lt; 10</em> 这条查询的Volcano执行的specialization，可以看到每个operator都会做null check，因为每一个operator本身操作的是动态数据（dynamic data），但实际上只有最底层的operator（Scan operator）才真正需要。</p>
+<p><strong>Data-Centric模型</strong></p>
+<p>HyPer引入，更适应查询编译，大部分查询编译器都采用了这个模型，如LegoBase、DBLAB、Spark SQL。</p>
+<p>Data-Centric模型中控制流是相反的：数据被push到 operator。push模型对数据和代码的局部性更有利。如图3(e)，operator包含produce和consume两个主要接口，producer负责获取一条记录，consumer负责执行计算tuple上的计算。这套produce&#x2F;consume接口实际上比较反直觉，回后面会具体解释其运行过程。</p>
+<p>为什么Data-Centric模型更适应查询编译？从Futamura projection的视角看，data-centric模型中，operator内部的控制流并不依赖动态数据(dynamic data)，如4(c)，每个operator只消费valid的记录，不必重复null check。</p>
+<h3 id="Data-Centric-Evaluation-with-Callbacks"><a href="#Data-Centric-Evaluation-with-Callbacks" class="headerlink" title="Data-Centric Evaluation with Callbacks"></a>Data-Centric Evaluation with Callbacks</h3><p>Data-Centric模型相比迭代器模型不太直观，因此需要考虑使用另外一套API来达成与Data-Centric相同的编译效果。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png">http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/20a8f205-2e4b-4f20-98b4-515fc476d076/4-2.png" alt="4-2.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png">http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png</a></p>
+<p>前面提到produce&#x2F;consume运行比较反直觉，这里解释下。如图5(a) 就是push模型，采用了produce&#x2F;consume的方式。HashJoin包含两个子op，即left和right，HashJoin执行时首先执行HashJoin.produce，这里会先执行left.produce，直到碰到scan或者一个pipeline breaker（需要物化的operator，比如sort或者join），然后此时转而调用其parent的comsume，最后会向上调用到这个HashJoin的consume，这里会将left的所有record都放到hashmap中，完成后，执行流程回到left.produce的结束点，接下来执行HashJoin::produce的下一行代码，即isLeft&#x3D;false; right.produce，然后又执行到scan，再执行回HashJoin::consume，具体执行图中else分支。由此可以看到，produce&#x2F;consume运行过程比较复杂，consume实际上是在produce中触发调用的（碰到breaker等情况）。</p>
+<p>这种情况生成的代码也会跟breaker有关，如图。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png">http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/7f922e10-1170-4011-a1c8-5af659f7a4e3/5-2.png" alt="5-2.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png">http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png</a></p>
+<p>push模型可以看做DFS访问执行计划树，第一次访问调用produce触发准备数据，第二次回来的时候调用consume触发消费数据。</p>
+<p>论文这里为了解决这个问题，提出了一个新的push模型：data-centric with callback。如图5(b)，exec函数是将produce和consume融合后的函数，其中传入一个回调cb。语义上说，*op.exec(cb)*可以解读为 operator op执行生成结果的逻辑，针对每一行结果，执行cb回调函数。</p>
+<h2 id="Building-Optimized-Query-Compiler"><a href="#Building-Optimized-Query-Compiler" class="headerlink" title="Building Optimized Query Compiler"></a>Building Optimized Query Compiler</h2><p>前面从原理上讲述了生成代码的原理，接下来看如何j具体地生成高效的代码。首先就是要回答 “ 代码生成逻辑应该放置在哪里？ ” 这个问题。</p>
+<p><strong>Pure Template Expansion</strong></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png">http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png">http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bd4194b6-a325-46be-baae-727ef5427b7d/6-1.png" alt="6-1.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png">http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png">http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a54e16ad-44b5-4fc3-b1cf-13edb42360fc/7-1.png" alt="7-1.png"></p>
+<p>这个方法的思路就是，直接在op.exec函数中填写对应的代码，如图，代码直接作为字符串。</p>
+<p>这方法的缺点：一是代码是自己手写进去的，可能不够优化；二是跨operator的优化做不了；三是把代码以字符串的形式写出来涉及到各种转义等等细节问题。</p>
+<p><strong>Programmatic Specialization</strong></p>
+<p>相比pure template expansion，将代码生成逻辑下沉到operator的内部成员的数据结构上。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png">http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/cf506823-7b97-4ce8-9e8d-1246e663d2f2/8-1.png" alt="8-1.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png">http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png</a></p>
+<p>注意到，这里的HashMap还是简单版本的hashmap，我们更想用glibc的成熟的hashmap。</p>
+<p><strong>Optimized Programmatic Specialization</strong></p>
+<p>代码生成逻辑继续下沉到操作原语层次上。</p>
+<p><strong>Lightweight Modular Staging (LMS)</strong></p>
+<p>论文提出的LB2执行引擎用的是LMS这套框架…… LMS类似于LLVM。</p>
+<p>后面介绍了row&#x2F;column存储布局、数据结构、数据分区和索引等方面的具体怎么优化成单个代码生成，而且是one pass的。这部分内容比较琐碎。</p>
+<p>后面章节给了一张查询编译的演化图：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png">http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png">http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4f731561-2cb4-43d0-9f2e-549a585bad7f/9-1.png" alt="9-1.png"></p>
+<p>其他略。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>SIGMOD’16 有篇论文名叫<em>How to Architect a Query Compiler</em>，强调了查询编译的困难，本文名叫<em>How to Architect a Query Compiler, Revisited</em>，靶向明显，针对性很强，用非常妙的洞察降维打击，顺便还怼了一把编译器圈子影响力不给力。</p>
+<p>论文基于the first Futamura projection对数据库查询编译的产生了新的理解和洞察，这个理解和洞察对于编译器圈子的人或许很容易，但是对于数据库圈的人可能就不太容易想到。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/databricks-intro/">
+        <span class="nav-arrow">← </span>
+        
+          Databricks Lakehouse
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/data-storage-in-cloud/">
+        
+          Data Storage Management in Cloud Environment
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Futamura-Projections"><span class="toc-nav-text">Futamura Projections</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Structuring-Query-Evaluators"><span class="toc-nav-text">Structuring Query Evaluators</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%8E%B0%E6%9C%89%E7%9A%84%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9E%8B"><span class="toc-nav-text">现有的执行模型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Centric-Evaluation-with-Callbacks"><span class="toc-nav-text">Data-Centric Evaluation with Callbacks</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Building-Optimized-Query-Compiler"><span class="toc-nav-text">Building Optimized Query Compiler</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/arch-query-compiler/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

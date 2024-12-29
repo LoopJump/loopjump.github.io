@@ -195,9 +195,9 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/data-model-history/">以史为鉴：数据模型变迁史</a>
+        <a href="/ddia-quick-note/">DDIA Quick Note</a>
       </h2>
-      <p class="article-date">February 10, 2018</p>
+      <p class="article-date">August 10, 2019</p>
       
         
   <a href="/tags#Database" >
@@ -207,11 +207,189 @@
       
       <div class="article-summary">
         
-          这两天看了篇数据模型的论文，What Goes Around Comes Around。这篇论文是2005年Stonebraker和Hellerstein两位泰斗写的，讲的是数据库的数据模型35年的变迁历史，另外论文还总结了一些经验。
-这是一个非常有趣的话题，能够让我们更多地去从市场和产品角 ...
+          说明《Designing Data-Intensive Applications》从数据系统角度介绍了方方面面的技术点。
+内容上，基本都是一个分布式数据库存储引擎所需要的技术能力，而且很多技术点讲的很详细，不过计算引擎基本上没涉及。
+另外书里面也介绍了一些其他的数据系统，也都比较有价值。
+P ...
         
       </div>
-      <a class="more" href="/data-model-history/">Read more</a>
+      <a class="more" href="/ddia-quick-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
+      </h2>
+      <p class="article-date">April 10, 2019</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Distributed consensus revised》 Heidi Howard
+整篇论文151页，粗略通读了一遍，主要是了解各个变体的基本思路和正确性直觉的理解，更形式化的证明基本上都跳过了。
+这里假设读者对Basic Paxos有了一定了解，看过Lamport的那篇原始论文。另外 ...
+        
+      </div>
+      <a class="more" href="/consensus-revised-paper/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
+      </h2>
+      <p class="article-date">March 10, 2019</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Designing Access Methods: The RUM Conjecture》
+这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
+就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
+        
+      </div>
+      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/debug-linux-kernel/">搭建Linux内核调试环境</a>
+      </h2>
+      <p class="article-date">February 10, 2019</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这篇文章介绍下在MacOSX如何用gdb + vmware的方式调试Linux内核。
+一：安装Vmware Fusion二：安装gdb注意这里需要安装高版本的gdb，这里安装的是8.2版本
+123456wget http://ftp.gnu.org/gnu/gdb/gdb-8.2.tar.g ...
+        
+      </div>
+      <a class="more" href="/debug-linux-kernel/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
+      </h2>
+      <p class="article-date">January 10, 2019</p>
+      
+        
+  <a href="/tags#Cloud" >
+    <span class="tag-code">Cloud</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          来源：AWS re: invent 2018
+Pattern 1: checksum all of the thingsPattern 2: Cryptgraphic AuthenticationEncrypt and authenticate everything.
+Control Pla ...
+        
+      </div>
+      <a class="more" href="/10-patterns-for-controlling-the-cloud-in-aws/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lattice-in-anna/">Anna KVS中的Lattice是什么</a>
+      </h2>
+      <p class="article-date">December 9, 2018</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          &#x2F;&#x2F; 一篇闲扯的博文
+Anna KVS官网对Anna的特性总结得非常到位：1. Crazy Fast, 2. Super-Scalable, 3. Flexibly Consistent。
+这里只关注Flexibly Consistent这一项，讲讲Anna是实现灵活的c ...
+        
+      </div>
+      <a class="more" href="/lattice-in-anna/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/quorum-sys-failure-probability/">Quorum System的故障概率和负载</a>
+      </h2>
+      <p class="article-date">November 10, 2018</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近读到一个有趣的话题：Quorum System的故障概率和负载。
+首先是一些概念：
+节点集合 (V&#x3D;{v_1, v_2, .., v_n})
+Quorum  (Q\subseteq V)
+Quorum System (\mathcal{S} \subseteq 2^V)，且(Q ...
+        
+      </div>
+      <a class="more" href="/quorum-sys-failure-probability/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/spanner-sql-engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
+      </h2>
+      <p class="article-date">November 10, 2018</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          继2012年在OSDI年发表了Spanner论文《Spanner: Google’s Globally-Distributed Database》之后，Google在SIGMODE’17上发表了第二篇关于Spanner的论文《Spanner: Becoming a SQL System》。从 ...
+        
+      </div>
+      <a class="more" href="/spanner-sql-engine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/sdpaxos-paper/">SDPaxos:在strong leader与leaderless之间折中</a>
+      </h2>
+      <p class="article-date">October 2, 2018</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          &#x2F;&#x2F; 大半夜on-call没事干，写点东西。
+《SDPaxos: Building Efficient Semi-Decentralized Geo-replicated State Machines》(SOCC18’)
+有幸跟作者赵汉宇博士做了一次交流，我也仔细读了一遍 ...
+        
+      </div>
+      <a class="more" href="/sdpaxos-paper/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -235,177 +413,6 @@
         
       </div>
       <a class="more" href="/dbms-arch/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/deep-class/">Deep Class</a>
-      </h2>
-      <p class="article-date">February 10, 2018</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          最近看了个有趣的talk：”A Philosophy of Software Design” by John Ousterhout。
-地址：https://www.youtube.com/watch?v=bmSAYlu0NcY
-https://www.youtube.com/watch?v= ...
-        
-      </div>
-      <a class="more" href="/deep-class/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/raft-one-server-reconfiguration/">Raft One-Server成员变更</a>
-      </h2>
-      <p class="article-date">May 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          前面介绍了Paxos成员组变更，现在根据Raft博士论文介绍一下Raft是怎么做成员组变更的。前者更多描述几个核心的思想，而后者更加实用，介绍了实践过程中遇到的一些实际问题。
-Raft博士论文描述了两种变更方案：
-
-One-Server变更：一阶段变更，要求每次成员组从G1变成G2时，G2相 ...
-        
-      </div>
-      <a class="more" href="/raft-one-server-reconfiguration/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
-      </h2>
-      <p class="article-date">April 3, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Reconfiguring a State Machine这篇论文主要讲解成员组reconfigure，即成员变更。发表时间还是2010年，相比Paxos原始论文的发表时间已经过去20年了。本博文先解读这篇论文，Raft做成员变更的方案后面另文阐述。
-Reconfiguration是指在分布 ...
-        
-      </div>
-      <a class="more" href="/reconfig-state-machine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/epaxos-paper-note/">EPaxos协议解读</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          引言这是2013年SOSP的会议论文，讲述了一个leaderless的一致性协议EPaxos。不得不说的是，这篇论文写的实在是难读，一方面协议确实比Multi Paxos协议复杂很多，另一方面是行文上有些地方不通顺。我看的资料是会议论文和两个版本的EPaxos证明的技术报告。会议论文简洁但是 ...
-        
-      </div>
-      <a class="more" href="/epaxos-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/flp-proof-note/">FLP impossibility证明阅读笔记</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          分布式系统一致性协议里面有一个FLP impossibility的结论，这个结论是说，在分布式系统中，异步网络（消息延迟可能任意大或丢失，消息可能乱序），只要有一个进程失效（进程死亡或者足够长时间不响应），就不可能设计出一个确定性的一致性协议。
-该结论由Fisher、Lynch、Paters ...
-        
-      </div>
-      <a class="more" href="/flp-proof-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
-      </h2>
-      <p class="article-date">March 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          不知怎么地，前一阵子知乎上对Raft的乱序的问题的讨论就变多了。我觉得其实这个问题可讨论的东西并不多。
-Raft作者觉得Multi Paxos太复杂，所以搞了一个Raft。Raft加了很多约束，其中可能最重要的一条就是只能顺序commit。
-所以，顺序commit的锅，Raft是得好好背着， ...
-        
-      </div>
-      <a class="more" href="/out-of-order-commit-apply-in-raft/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/dynamo-paper-note/">Dynamo论文阅读笔记</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Dynamo: Amazon’s Highly Available Key-value Store
-Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
-Dynamo系统 ...
-        
-      </div>
-      <a class="more" href="/dynamo-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
-        
-      </div>
-      <a class="more" href="/flexible-paxos-quorum-revisited/">Read more</a>
     </article>
   
 

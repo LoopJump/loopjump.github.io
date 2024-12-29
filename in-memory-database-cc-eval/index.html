@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      In-Memory DB的并发控制算法评估 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>In-Memory DB的并发控制算法评估</h2>
+  <p class="post-date">2020-03-29</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><strong>An Empirical Evaluation of In-Memory Multi-Version Concurrency Control (VLDB17’)</strong></p>
+<p>这篇工作梳理了MVCC的四个要点：</p>
+<ul>
+<li>并发控制协议</li>
+<li>多版本存储</li>
+<li>垃圾回收</li>
+<li>索引管理</li>
+</ul>
+<p>还介绍了MVCC的多种变体原理，实现了这些变体，然后在OLTP workload上测试评估各个变体的效果。</p>
+<h2 id="MVCC基础"><a href="#MVCC基础" class="headerlink" title="MVCC基础"></a>MVCC基础</h2><p><strong>MVCC介绍</strong></p>
+<p>MVCC是一种并发控制算法，一个数据库对象可能会被并发操作，算法维护同一个对象的多个版本来提高并发度，例如只读事务可以访问旧版本数据从而避免阻塞写。基于版本号也容易实现系统快照和time-travel。</p>
+<p>多版本粒度可大可小，不过一般选择行记录粒度来实现多版本，因为粒度太细则多版本的维护开销就太大。</p>
+<p><strong>MVCC历史</strong></p>
+<p>1970年理论提出，1981年 InterBase DBMS(now FireBird)首次实现。</p>
+<p>主流的DBMS都实现了MVCC（Oracle 1984, Postgres 1985 MySQL InnoDB 2001)。目前MVCC基本上是DBMS的标配了。</p>
+<p><strong>MVCC基本概念</strong></p>
+<p>行格式</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4a5564ab-5603-45ab-9676-13bdd195dfc8/image-20200331114924638.png" alt="image-20200331114924638.png"></p>
+<ul>
+<li>txn-id：一般同时用作行latch，设定为64比特以支持CAS原子操作</li>
+<li>begin-ts ~ end-ts：行的生存周期，如果被delete，可以设置begin-ts&#x3D;INF</li>
+<li>pointer：指向下个版本</li>
+</ul>
+<h2 id="Concurrency-Control-Protocol"><a href="#Concurrency-Control-Protocol" class="headerlink" title="Concurrency Control Protocol"></a>Concurrency Control Protocol</h2><p>这节介绍四种并发控制协议：MVTO、MVOCC、MV2PL、Serialization Certifier。</p>
+<h3 id="Timestamp-Ordering-MVTO"><a href="#Timestamp-Ordering-MVTO" class="headerlink" title="Timestamp Ordering (MVTO)"></a>Timestamp Ordering (MVTO)</h3><p>最原始的MVCC实现算法，行格式在原有格式基础上再加上read-ts列。</p>
+<p>读请求：Tid作为快照点读取对应版本</p>
+<ul>
+<li>事务T读行A时，首先找到满足begin-ts &lt; Tid &lt; end-ts 的版本行Ax；</li>
+<li>然后检测Ax的write-lock（即txn-id列）是否被活跃事务持有，如果被持有，说明是正在更新的行，不可读；</li>
+<li>如果可读，读前先将Ax的read-ts推大到Tid。</li>
+</ul>
+<p>写请求：写请求总是更新最新版本的行</p>
+<ul>
+<li>如果满足条件 （没有活跃事务持有Bx的write-lock） &amp;&amp; （Tid大于Bx的read-ts），则事务T创建新版本Bx+1，设置Bx+1的txn-id为Tid。</li>
+<li>事务T提交时，设置Bx+1的begin-ts&#x3D;Tid, end-ts&#x3D;INF, Bx的end-ts&#x3D;Tid。</li>
+<li>这个算法是将事务严格按照Tid排序的；写请求不满足条件时，要被abort。</li>
+</ul>
+<h3 id="Optimistic-Concurrency-Control-MVOCC"><a href="#Optimistic-Concurrency-Control-MVOCC" class="headerlink" title="Optimistic Concurrency Control (MVOCC)"></a>Optimistic Concurrency Control (MVOCC)</h3><p>乐观的并发控制，这里假设了冲突并不多，并不需要预先申请锁再执行修改。</p>
+<p>MVOCC将事务分成三个阶段：read phase、validation phase、write phase。</p>
+<ul>
+<li>read phase：执行阶段，类似于MVTO，读请求根据begin-ts和end-ts区间查找可读的Ax；写请求如果发现没有write-lock，则可产生Bx+1新版本，并且Bx+1的txn-id设为写事务Tid。写操作仍然只能更新最新版本（防止lost-update）。</li>
+<li>validation phase：给事务分配一个提交时间戳Tcommit作为序列化次序，如果事务的读集合没有被其他事务提交更新，则可以提交。</li>
+<li>write phase：DBMS将新版本写入系统，设定begin-ts&#x3D;Tcommit, end-ts&#x3D;INF。</li>
+</ul>
+<h3 id="Two-Phase-Locking-MV2PL"><a href="#Two-Phase-Locking-MV2PL" class="headerlink" title="Two-Phase Locking (MV2PL)"></a>Two-Phase Locking (MV2PL)</h3><p>这个算法使用2PL来保证事务可串行化隔离级别。</p>
+<p>事务执行读&#x2F;写操作前需要先申请读&#x2F;写锁。In-memory DBMS中，锁借助行格式里面的txn-id作为写锁，新增一个read-count作为读锁（也可以将二者编码成64bit方便操作）。</p>
+<ul>
+<li>读操作要先确认没有其他事务持有写锁，然后找到合适区间的版本后，要给这一行加读锁，即read-count递增1。</li>
+<li>写操作要确认没有事务持有读锁或写锁，然后创建新版本。</li>
+<li>提交时，分配Tcommit时间戳，类似于MVOCC的write phase。</li>
+</ul>
+<p>如何处理死锁是2PL的主要差异，研究表明 no-wait策略是最scalable的deadlock prevention方法。</p>
+<h3 id="Serialization-Certifier"><a href="#Serialization-Certifier" class="headerlink" title="Serialization Certifier"></a>Serialization Certifier</h3><p>serialization certifier维护一个serialization graph，检测和移除”dangerous structure”，进而提高隔离级别。</p>
+<p>serialization certifier是一套机制，最早实现这套方案的是Postgres的SSI(Serializable Snapshot Isoation)。</p>
+<p>相比Serializable，SI隔离级别不能避免A5B Write Skew。所以通过维护anti-dependency来避免A5B，就可以提升隔离级别。</p>
+<p>具体我们另文描述（Serialization Certifier，SSI，SSN）。</p>
+<h3 id="几种MVCC机制讨论"><a href="#几种MVCC机制讨论" class="headerlink" title="几种MVCC机制讨论"></a>几种MVCC机制讨论</h3><p>MV2PL每次读都要更新read-lock，MVTO每次读都要更新read-ts，这两者性质其实差不多。MVOCC读的时候不需要更新什么字段，可以减少修改操作，但在validation阶段需要验证整个read-set。Certifier算法可以降低abort rate，因为它不验证读，但是anti-dependency的检查需要额外的开销。</p>
+<p>speculatively read优化：允许事务读未提交数据，但要等被依赖的若干事务提交后才能提交本事务，有cascade abort的风险。</p>
+<p>eagerly update优化：要维护中心化的数据结构来记录依赖关系，同样也有有cascade abort的风险。</p>
+<h2 id="Version-Storage"><a href="#Version-Storage" class="headerlink" title="Version Storage"></a>Version Storage</h2><p>这节介绍多版本存储的几种方法。In-Memory DB中，通过指针将多版本数据串起来。</p>
+<h3 id="Append-only-Storage"><a href="#Append-only-Storage" class="headerlink" title="Append-only Storage"></a>Append-only Storage</h3><p>将多版本存放到相同的存储空间，例如Postgres&#x2F;Hekaton&#x2F;NuoDB&#x2F;MemSQL等。更新时，先分配一个槽位，然后拷贝旧值，再做修改。</p>
+<p>因为数据结构层面实现一个latch free的双向链表非常难，所以多版本链用的是latch free单链表。这样就有两中串链的方式：</p>
+<p>Oldest-to-Newest(O2N) 链表头是最老版本</p>
+<ul>
+<li>优势：新增版本时，不要更新索引结构，因为索引结构指向的是最老版本（间接指向最新版本）</li>
+<li>劣势：访问最新版本时需要遍历链表，遍历链表很容易污染CPU Cache，所以需要及时prune旧版本数据</li>
+</ul>
+<p>Newest-to-Oldest(N2O)：链表头是最新版本</p>
+<ul>
+<li>优势：访问最新版本不需要遍历链表</li>
+<li>劣势：新增版本时，需要更新索引结构（6.1节讲了一个优化）</li>
+</ul>
+<p>Append-only Storage方案需要处理BLOB的问题，如果BLOB列本身没有更新，可优化为多个列BLOB引用同一个物理BLOB。</p>
+<h3 id="Time-Travel-Storage"><a href="#Time-Travel-Storage" class="headerlink" title="Time-Travel Storage"></a>Time-Travel Storage</h3><p>跟Append-only Storage方案类似，不过在主表里面维护一个master version（一般是最新版本，也可以是最老版本），其他版本单独存放到另一张表(time-travel table)。</p>
+<h3 id="Delta-Storage"><a href="#Delta-Storage" class="headerlink" title="Delta Storage"></a>Delta Storage</h3><p>跟Time-Travel Storage类似，只是除了主表空间维护的master version，其他版本只维护delta部分（存储在delta storage），类似于MySQL&#x2F;Oracle的回滚段。这个方式在比较大的行只修改其中少量列的情况下，可以节省很多空间。</p>
+<h2 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h2><p>当一个旧版本数据不再对活跃事务可见，那么这个旧版本就可以回收了。</p>
+<p>最简单的方式就是维护一个活跃事务列表，找到列表中最小的Tid，比Tid还小的，就都不可见了。这个方式的主要问题是这个活跃事务列表是个中心化的数据结构，在多核情况下，会成为扩展性瓶颈。</p>
+<p>另外一个方式是epoch-based回收机制，这个跟lock-free中的EBR是一样的原理，略。</p>
+<p>两种GC粒度的模式：tuple-level 和 transaction-level。</p>
+<h3 id="Tuple-level-GC"><a href="#Tuple-level-GC" class="headerlink" title="Tuple-level GC"></a>Tuple-level GC</h3><p><strong>Background Vacuuming (VAC)</strong></p>
+<p>后台线程周期地扫描过期版本，这个方法扩展性不好，数据量大的场景下扫描效率会非常低。</p>
+<p>为了解决该扩展性问题，可以在事务失效一个旧版本时，将该旧版本放到特定的高效数据结构里面。</p>
+<p>或者可以优化为，将数据按区域划分多个区间，并且使用位图标记，只扫描那些可能需要回收的区间。</p>
+<h3 id="Transaction-level-GC"><a href="#Transaction-level-GC" class="headerlink" title="Transaction-level GC"></a><strong>Transaction-level GC</strong></h3><p>用epoch管理transaction，transaction过期的时候，删除该事务产生的老版本。</p>
+<h2 id="Index-Management"><a href="#Index-Management" class="headerlink" title="Index Management"></a>Index Management</h2><p>索引结构里面通常只索引一个版本，然后从这个版本开始访问版本链，进而找到可见的版本。</p>
+<p>数据库索引通常有主键索引和二级索引（这个划分来自存储引擎簇集索引方式）。主键索引总是指向最新的版本，至于写请求是否需要涉及修改索引，具体情况具体分析，N2O这种需要总是更新。主键的更新会被DBMS换成DELETE &amp; INSERT组合。</p>
+<p>二级索引复杂一些，通常有如下两种方式：logical pointer 和 physical pointer。</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/ce4ec9f7-5863-4b6d-9f85-2889b9c62bde/image-20200401164921066.png" alt="image-20200401164921066.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png</a></p>
+<ul>
+<li>Logical Pointer：索引指向的是一个间接的map，这个map是固定区域。</li>
+<li>Physical Pointer：指向版本链表。</li>
+</ul>
+<p>索引管理跟其他模块关联比较多，除了索引结构本身外，单独讨论索引管理的接口似乎没什么抽象地可讨论的。</p>
+<h2 id="Experiment-Analysis"><a href="#Experiment-Analysis" class="headerlink" title="Experiment Analysis"></a>Experiment Analysis</h2><h3 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h3><p>在CMU数据库团队的Peloton上尽最大努力实现了这几项算法。Peloton是行存，数据存放到内存堆表，内部用cuckoo hash索引，BwTree作为数据库索引，然后给Peloton搞了一些latch free的优化。实验是在Serializable隔离级别下测试的。EBR用的是40ms参数。Benchmark：YCSB(modified on oltp workload), TPCC，两个经典的benchmark。</p>
+<p>这里有两个问题：第一个是隔离级别太高，通常互联网业务很少用Serializable隔离级别；第二个是硬件配置低，跟目前主流的服务器配置差的有点远（10核20线程）。我觉得这两个问题对可参考性影响比较大。</p>
+<p>后面是具体的测试，我们不再逐个看了，有需要关注特定点的同学可以自行参考。</p>
+<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><ol>
+<li>version storage是扩展性里面最重要的组件，以前的研究认为是并发控制协议。append-only和time-travel两种方式下，底层的内存分配对性能影响很大，将内存划分到per-core方式可以解决这个问题。Delta Storage方式可以在不需要对内存分配做优化的情况下仍然保持相当的性能，但是这种方式scan性能不行。</li>
+<li>选择一个适应workload的并发控制协议可以提升性能。MVTO在很多场景下表现不错。但是论文列出来的一些业界流行的数据库产品并没有使用这个算法。</li>
+<li>MVCC性能跟GC关系很大，二者耦合很紧。实验发现按照事务粒度回收旧版本效果好一些，可能是因为这个方法减少了线程同步开销。GC进程可能会导致tps不稳定。</li>
+<li>Index management也会影响二级索引的性能。</li>
+</ol>
+<h2 id="我的一点总结"><a href="#我的一点总结" class="headerlink" title="我的一点总结"></a>我的一点总结</h2><p>论文总结了MVCC的四个技术点，分析了几种MVCC算法，并作了一些测试。</p>
+<p>但是我觉得这个工作有几个比较大的问题：</p>
+<ol>
+<li>硬件配置跟目前主流服务器差距比较大（64核、DB几百线程这样的配置在17年也不少见）</li>
+<li>仅测试了serializable隔离级别，但是互联网业务大部分都是RC或者RR，不同隔离级别对这个工作的影响应该是很大的。</li>
+<li>仅测了In-Memory DB的情况，相对还是比较窄</li>
+<li>并发控制算法效果很依赖代码实现</li>
+<li>个别比较奇怪测试结果没有解释原因</li>
+</ol>
+<p>这几个因素让这个测试结果的参考价值打了折扣。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/calcite-intro/">
+        <span class="nav-arrow">← </span>
+        
+          Calcite简介
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/calvin-intro/">
+        
+          Calvin简介
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MVCC%E5%9F%BA%E7%A1%80"><span class="toc-nav-text">MVCC基础</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Concurrency-Control-Protocol"><span class="toc-nav-text">Concurrency Control Protocol</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Timestamp-Ordering-MVTO"><span class="toc-nav-text">Timestamp Ordering (MVTO)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Optimistic-Concurrency-Control-MVOCC"><span class="toc-nav-text">Optimistic Concurrency Control (MVOCC)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Two-Phase-Locking-MV2PL"><span class="toc-nav-text">Two-Phase Locking (MV2PL)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Serialization-Certifier"><span class="toc-nav-text">Serialization Certifier</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%87%A0%E7%A7%8DMVCC%E6%9C%BA%E5%88%B6%E8%AE%A8%E8%AE%BA"><span class="toc-nav-text">几种MVCC机制讨论</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Version-Storage"><span class="toc-nav-text">Version Storage</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Append-only-Storage"><span class="toc-nav-text">Append-only Storage</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Time-Travel-Storage"><span class="toc-nav-text">Time-Travel Storage</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Delta-Storage"><span class="toc-nav-text">Delta Storage</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Garbage-Collection"><span class="toc-nav-text">Garbage Collection</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Tuple-level-GC"><span class="toc-nav-text">Tuple-level GC</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Transaction-level-GC"><span class="toc-nav-text">Transaction-level GC</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Index-Management"><span class="toc-nav-text">Index Management</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Experiment-Analysis"><span class="toc-nav-text">Experiment Analysis</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-nav-text">实验环境</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Discussion"><span class="toc-nav-text">Discussion</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%88%91%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">我的一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/in-memory-database-cc-eval/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
