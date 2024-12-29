@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Grammar-like Functional Rules - for Representing Query Optimization Alternatives | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Grammar-like Functional Rules - for Representing Query Optimization Alternatives</h2>
+  <p class="post-date">2022-04-20</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Grammar-like Functional Rules - for Representing Query Optimization Alternatives》 SIGMOD 1988</p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>优化器如果要做到可扩展，则要求执行计划的变换策略需要作为数据而不是代码存在。本质上优化器就是一个专家系统，使用strategy rules将一个查询计划变成另一个等价的更好的计划。这种灵活可扩展带来一个问题是 不够高效：在任意一步，都需要检查很多转换规则的使用条件，而且可能有多个规则可以应用。</p>
+<p>这篇论文提出了一种新的组织和应用rule的思路，其本质是construct一个计划，而不是alter或match一个计划。</p>
+<p>核心的想法是使用一种类似于文法的方法，以DB操作接口（如TableAccess）作为终结符，以优化等价变换规则作为文法的推导。Token本身还需要实现参数化，以支持丰富的关系操作语义。</p>
+<h3 id="Foundamental-Observations"><a href="#Foundamental-Observations" class="headerlink" title="Foundamental Observations"></a>Foundamental Observations</h3><ol>
+<li>所有的算子都以表对象作为输入和输出。</li>
+<li>优化器构造的计划最终是一串算子，该串算子可被执行器执行，也就是说合法的执行计划可被定义为某个文法的language。</li>
+<li>转换规则的应用之间存在一些依赖，例如join order规则应该在table access之前。</li>
+<li>一些等价的计划会存在一部分相同的计划片段。</li>
+<li>指定规则应用条件比指定规则转换难。</li>
+</ol>
+<h3 id="Plan"><a href="#Plan" class="headerlink" title="Plan"></a>Plan</h3><p>文法的终结符是一些基本操作，文中称为LOLEPOP (LOw-LEvel Plan OPerator)，例如JOIN、UNION、SHIP、ACCESS、SORT等等。一个执行计划 Plan或者叫QEP(query evaluation plan)是LOLEPOP的有向无环图。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4524b748-65cc-4e29-9498-81535e986c24/image-20220426095737882.png" alt="image-20220426095737882.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png</a></p>
+<h3 id="Rules"><a href="#Rules" class="headerlink" title="Rules"></a>Rules</h3><p>规则 STAR (STrategy Alternative Rules) 是一个命名的参数对象，包含一个或多个转换的定义。一个转换的定义包括应用条件，一个计划或者其他STAR。从这里可以看出，STAR实际上就是映射到文法中的非终结符。</p>
+<p>例如，可以定义OrderedStream1和OrderedStream2：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/57915fc5-ce50-4940-b461-a51faae94dbf/image-20220426102330915.png" alt="image-20220426102330915.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png</a></p>
+<p>或者定义有两个转换的OrderedStream：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2b0083b0-fff6-41a0-bb0d-3fbb0b144fee/image-20220426102346075.png" alt="image-20220426102346075.png"></p>
+<p>类似于文法的初始状态，这里也有一个root STAR。从root STAR开始，以一种top-down的方式进行，每个推导的fanout一般不多，而且多个推导之间可以并行进行。</p>
+<h3 id="Property"><a href="#Property" class="headerlink" title="Property"></a>Property</h3><p>每张表都有一组属性，分为三类：relational（例如projection&#x2F;join）, physical（例如tuple order）, estimated（基于前两者的代价模型）。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/3ad92185-d848-400d-8589-0d7075704a72/image-20220426104512607.png" alt="image-20220426104512607.png"></p>
+<h3 id="Glue"><a href="#Glue" class="headerlink" title="Glue"></a>Glue</h3><p>Glue机制是实现某些属性的粘合剂。例如下图中的SHIP（修改site属性，即执行的机器节点）、SORT（修改order属性）等。</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0e21e71e-7b04-45bf-9dc9-76b6a9dc22e6/image-20220426104812197.png" alt="image-20220426104812197.png"></p>
+<h3 id="JOIN-START的例子"><a href="#JOIN-START的例子" class="headerlink" title="JOIN START的例子"></a>JOIN START的例子</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png">http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png">http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6e95af53-bb04-4b8c-be0d-acd69875d6b8/1.png" alt="1.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/2.png">http://loopjump.com/wp-content/uploads/2022/04/2.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/2.png">http://loopjump.com/wp-content/uploads/2022/04/2.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/53984809-5fd1-4560-8076-137c6030c0e5/2.png" alt="2.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/3.png">http://loopjump.com/wp-content/uploads/2022/04/3.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/24a0fd75-07ac-4769-9129-6d6d6875b83d/3.png" alt="3.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/3.png">http://loopjump.com/wp-content/uploads/2022/04/3.png</a></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/4.png">http://loopjump.com/wp-content/uploads/2022/04/4.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/4.png">http://loopjump.com/wp-content/uploads/2022/04/4.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d6c803e9-069c-4adf-98af-8d39da5bb913/4.png" alt="4.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/6.png">http://loopjump.com/wp-content/uploads/2022/04/6.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/737cd2b1-50f3-4b3d-9491-0e8cd8d74977/6.png" alt="6.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/6.png">http://loopjump.com/wp-content/uploads/2022/04/6.png</a></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/7.png">http://loopjump.com/wp-content/uploads/2022/04/7.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9ac7c409-3bb4-422e-b39c-3df05cf6e899/7.png" alt="7.png"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/7.png">http://loopjump.com/wp-content/uploads/2022/04/7.png</a></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/8.png">http://loopjump.com/wp-content/uploads/2022/04/8.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/8.png">http://loopjump.com/wp-content/uploads/2022/04/8.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/5325b598-a77a-45ae-a14d-cab2000582b7/8.png" alt="8.png"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/9.png">http://loopjump.com/wp-content/uploads/2022/04/9.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/9.png">http://loopjump.com/wp-content/uploads/2022/04/9.png</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a5f9be43-2e53-4680-a77a-52c67d492a75/9.png" alt="9.png"></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Optimizer" >
+    <span class="tag-code">Optimizer</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/rbo-in-starburst/">
+        <span class="nav-arrow">← </span>
+        
+          Extensible/Rule Based Query Rewrite Optimization in Starburst
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/access-path-in-rdbms/">
+        
+          Access Path Selection in a RDBMS
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/grammer-like-func-rule/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

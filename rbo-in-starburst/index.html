@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Extensible/Rule Based Query Rewrite Optimization in Starburst | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Extensible/Rule Based Query Rewrite Optimization in Starburst</h2>
+  <p class="post-date">2022-04-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Extensible&#x2F;Rule Based Query Rewrite Optimization in Starburst》SIGMOD 1992</p>
+<p>这篇文章是介绍Starburst的基于规则的优化器实现框架。</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>很多业务的SQL语句或类SQL语句，尤其是中间件软件自动生成的SQL语句，主要面向业务模型，如果不做query rewrite，可能执行非常慢。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DISTINCT P</span><br><span class="line">FROM Patient p IN Patient_Set</span><br><span class="line">WHERE p.sex == &#x27;male&#x27; AND</span><br><span class="line">      EXISTS (SELECT r</span><br><span class="line">              FROM Medical_recrod r IN p.get_medical_record()</span><br><span class="line">              WHERE r.get_date() &lt; &#x27;10/10/89&#x27; AND</span><br><span class="line">                    (r.get_diagnosis() == &#x27;Malaria&#x27; OR</span><br><span class="line">                     r.get_diagnosis() == &#x27;Smallpox&#x27;));</span><br></pre></td></tr></table></figure>
+
+<p>这条类SQL语句（某些OO中间件生成的）查询了所有在10&#x2F;10&#x2F;89之前被诊断为Malaria和Smallpox的男性病人。</p>
+<p>如果按照SQL语句直观的查询计划，需要先遍历每一个男性病人，然后对每一个病人查阅其诊断记录。但实际上，男性病人中得Malaria和Smallpox的是少数，如果可以先查阅得此病的人，再过滤男性，执行效率更高。这就是Query Rewrite的价值。</p>
+<h3 id="Query-Graph-Model"><a href="#Query-Graph-Model" class="headerlink" title="Query Graph Model"></a>Query Graph Model</h3><p>Query在内部用Query Graph Model (QGM) 来表示，QGM表达能力很强，支持任意的表操作，它的输入和输出都是表。</p>
+<p>例如如下的查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT q1.partno, q1.descr, q2.suppno</span><br><span class="line">FROM inventory q1, quotations q2</span><br><span class="line">WHERE q1.partno = q2.partno AND q1.descr = &#x27;engine&#x27;</span><br><span class="line">      AND q2.price &lt;= ALL (SELECT q3.price FROM quotations q3 WHERE q2.partno = q3.partno);</span><br></pre></td></tr></table></figure>
+
+<p>对应的QGM图为</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649496507207-1024x996.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649496507207-1024x996.jpg</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b278798f-2146-4825-847e-c04ddb8e888b/1649496507207.jpg" alt="1649496507207.jpg"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649496507207-1024x996.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649496507207-1024x996.jpg</a></p>
+<p>Box1和Box2是对应q1和q2，Box3对应主查询，Box4对应嵌套查询。</p>
+<p>以Box3为例，head表示该box的输出表，并且有一个属性head.distinct。body表示生成输出表的过程，黑色圆点表示quantifier (quantified tuple variable)，它的含义类似于参与计算的操作数的<strong>输入源</strong>，例如q1(F)表示类型为F（来自FROM）、关联到Box1输出的quantifier。q4(A)表示类型为ALL、关联到Box4的quantifier。q1和q2之间的方形代表join predicate。q1左侧圈代表在q1上的local predicate。body也有一个distinct属性，取值ENFORCE &#x2F; PRESERVE &#x2F; PERMIT，含义分别是 必须去重 &#x2F; 保留含重复的数量 &#x2F; 允许重复，该值和head.distinct直接关联。</p>
+<h3 id="Rewrite-Rules"><a href="#Rewrite-Rules" class="headerlink" title="Rewrite Rules"></a>Rewrite Rules</h3><p>设计rewrite engine和rule的核心 <strong>Rewrite Philosophy : Whenever possible, a query should be converted to a single SELECT operator。</strong>其原因是单个SELECT操作简单，容易得出最优路径。</p>
+<p>Starburst支持的rules</p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6ca661c3-b290-438a-a606-014093fe1364/1649505294859.jpg" alt="1649505294859.jpg"></p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649505294859.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649505294859.jpg</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649505294859.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649505294859.jpg</a></p>
+<p>其中箭头表示一个rule应用完成后可能使得另一个rule满足条件。</p>
+<p>因为Rewrite Philosophy，所以有很多最终的箭头指向SELMERGE。</p>
+<h3 id="Rule-1-SELECT-Merge-SELMERGE"><a href="#Rule-1-SELECT-Merge-SELMERGE" class="headerlink" title="Rule 1. SELECT Merge (SELMERGE)"></a>Rule 1. SELECT Merge (SELMERGE)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">if ( in a SELECT box(upper box)</span><br><span class="line">        a quantifier has a type F</span><br><span class="line">     AND ranges over a SELECT box(lower box)</span><br><span class="line">     AND no other quantifier ranges over lower box</span><br><span class="line">     AND</span><br><span class="line">    	  (upper.head.distinct = TRUE</span><br><span class="line">           OR</span><br><span class="line">           upper.body.distinct = PERMIT</span><br><span class="line">           OR</span><br><span class="line">           lower.body.distinct != ENFORCE</span><br><span class="line">          )</span><br><span class="line">   )</span><br><span class="line">&#123;</span><br><span class="line">     merge the lower box into upper box;</span><br><span class="line">     if（lower.body.distinct = ENFORCE</span><br><span class="line">         AND upper.body.distinct != PERMIT)</span><br><span class="line">     &#123;</span><br><span class="line">         upper.body.distinct = ENFORCE;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE VIEW itpv AS</span><br><span class="line"> (SELECT DISTINCT itp.itemn, pur.vendn</span><br><span class="line">  FROM itp, pur</span><br><span class="line">  WHERE itp.ponum = pur.ponum AND pur.odate &gt; &#x27;85&#x27;);</span><br><span class="line"></span><br><span class="line">SELECT itm.itmn, itpv.vendn FROM itm, itpv</span><br><span class="line">WHERE itm.itemn = itpv.itemn</span><br><span class="line">      AND itm.itemn &gt;= &#x27;01&#x27; AND itm.itemn &lt; &#x27;20&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>Rewrite后的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT itm.itmn, pur.vendn</span><br><span class="line">FROM itm, itp, pur</span><br><span class="line">WHERE itp.ponum = pur.ponum AND itm.itemn = itp.itemn</span><br><span class="line">      AND pur.odate &gt; &#x27;85&#x27;</span><br><span class="line">      AND itm.itemn &gt;= &#x27;01&#x27; AND itm.itemn &lt; &#x27;20&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这样，查询优化器就可以从新的查询将view的内部查询考虑进去进行优化。</p>
+<h3 id="Rule-2-Distinct-Pullup-DISTPU"><a href="#Rule-2-Distinct-Pullup-DISTPU" class="headerlink" title="Rule 2. Distinct Pullup (DISTPU)"></a>Rule 2. Distinct Pullup (DISTPU)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if (in a SELECT box</span><br><span class="line">    either quantifier-nodup-condition</span><br><span class="line">    or one-tuple-condition</span><br><span class="line">    holds for all F quantifier)</span><br><span class="line">&#123;</span><br><span class="line">    head.distinct = TRUE;</span><br><span class="line">    body.distinct = PERSERVE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>one-tuple-condition</code> 指的是只会吐出一条满足条件的结果，<code>quantifier-nodup-condition</code> 指的是可能吐出多条记录，但记录包含候选码（候选码唯一，例如输出列含主键），也就是说，这两个条件自动保证了输出无重复。这种情况下，box的head&#x2F;body的distinct可以提前明确到代价低的情况（比如不需要再进行额外的去重）。</p>
+<h3 id="Rule-3-Distinct-Pushdown-From-To-DISTPDFR-DISTPDTO"><a href="#Rule-3-Distinct-Pushdown-From-To-DISTPDFR-DISTPDTO" class="headerlink" title="Rule 3. Distinct Pushdown From&#x2F;To (DISTPDFR&#x2F;DISTPDTO)"></a>Rule 3. Distinct Pushdown From&#x2F;To (DISTPDFR&#x2F;DISTPDTO)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/* DISTPDFR */</span><br><span class="line">if (in a box with type SELECT, UNION, INTERSECT or EXCEPT,</span><br><span class="line">       body.distinct = PERMIT or ENFORCE)</span><br><span class="line">&#123;</span><br><span class="line">    for (each F quantifier in the body)</span><br><span class="line">        quantifier.distinct = PERMIT;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* DISTPDTO */</span><br><span class="line">if (in a box with type SELECT, UNION, INTERSECT or EXCEPT,</span><br><span class="line">       all quantifiers ranging over the box have quantifier.distinct = PERMIT)</span><br><span class="line">&#123;</span><br><span class="line">    body.distinct = PERMIT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这条rule也比较简单，如果查询允许重复，那么例如子查询等quantifier也不必去重。</p>
+<h3 id="Rule-4-E-or-A-Distinct-Pushdown-From-EorAPDFR"><a href="#Rule-4-E-or-A-Distinct-Pushdown-From-EorAPDFR" class="headerlink" title="Rule 4. E or A Distinct Pushdown From (EorAPDFR)"></a>Rule 4. E or A Distinct Pushdown From (EorAPDFR)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (in a SELECT box</span><br><span class="line">       a quantifier has type = E or A)</span><br><span class="line">&#123;</span><br><span class="line">    quantifier.distinct = PERMIT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>意指quantifier如果是E或者A量词，则quantifier本身可以不去重。</p>
+<h3 id="Rule-5-Common-Subexpression-Replication-BOXCOPY"><a href="#Rule-5-Common-Subexpression-Replication-BOXCOPY" class="headerlink" title="Rule 5. Common Subexpression Replication (BOXCOPY)"></a>Rule 5. Common Subexpression Replication (BOXCOPY)</h3><p>公共子表达式复制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if (in a SELECT box</span><br><span class="line">       more than one quantifier</span><br><span class="line">       range over the box)</span><br><span class="line">&#123;</span><br><span class="line">    make a copy of the quantifiers ranging over the original box</span><br><span class="line">    and change it to range over the new copy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Rule-6-Add-keys-ADDKEYS"><a href="#Rule-6-Add-keys-ADDKEYS" class="headerlink" title="Rule 6. Add keys (ADDKEYS)"></a>Rule 6. Add keys (ADDKEYS)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">if (in a SELECT box</span><br><span class="line">       head.distinct = FALSE)</span><br><span class="line">&#123;</span><br><span class="line">    for (each F quantifier)</span><br><span class="line">        if (the key of the F quantifier does not appear in the output)</span><br><span class="line">        &#123;</span><br><span class="line">            Add the key to the head;</span><br><span class="line">            head.distinct = TURE;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果原SELECT输出非distinct，则可以在quantifier多输出唯一性的列用到外层SELECT。</p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE VIEW itemprice AS</span><br><span class="line">(</span><br><span class="line">    SELECT DISTINCT itp.itemno, itp.NegotiatedPrice</span><br><span class="line">    FROM itp</span><br><span class="line">    WHERE NegotiatedPrice &gt; 1000;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">SELECT itemprice.NegotiatedPrice, itm.type</span><br><span class="line">FROM itemprice, itm</span><br><span class="line">WHERE itemprice.itemno = itm.itemno;</span><br></pre></td></tr></table></figure>
+
+<p>Rewrite后的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT itp.NegotiatedPrice, itm.type, itm.itemno</span><br><span class="line">FROM itp, itm</span><br><span class="line">WHERE itp.NegotiatedPrice &gt; 1000 AND itp.itemno = itm.itemno;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Rule-7-E-to-F-Quantifier-Conversion-EtoF"><a href="#Rule-7-E-to-F-Quantifier-Conversion-EtoF" class="headerlink" title="Rule 7. E to F Quantifier Conversion (EtoF)"></a>Rule 7. E to F Quantifier Conversion (EtoF)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">if (in a SELECT box</span><br><span class="line">        there is a quantifier of type E</span><br><span class="line">        forming a Boolean factor</span><br><span class="line">    AND</span><br><span class="line">    (</span><br><span class="line">        head.distinct = TRUE</span><br><span class="line">      OR</span><br><span class="line">        body.distinct = PERMIT</span><br><span class="line">      OR</span><br><span class="line">        one-tuple-condition</span><br><span class="line">    )</span><br><span class="line">   )</span><br><span class="line">&#123;</span><br><span class="line">    set quantifier type to F;</span><br><span class="line">    if (one-tuple-condiftion is FALSE</span><br><span class="line">        AND head.distinct = TRUE)</span><br><span class="line">    &#123;</span><br><span class="line">        body.distinct = ENFORCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM itp</span><br><span class="line">WHERE itp.itemn IN</span><br><span class="line">    ( SELECT itl.itemn FRO itl</span><br><span class="line">      WHERE itl.wkcen = &#x27;WK468&#x27; AND itl.locatio = &#x27;LOCA000IN&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>Rewrite后的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT itp.* FROM itp, itl</span><br><span class="line">WHERE itp.itemn = itl.itemn</span><br><span class="line">      AND itl.wkcen = &#x27;WK468&#x27; AND itl.locatio = &#x27;LOCA000IN&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Rule-8-INTERSECT-to-Exists-INT2EXIST"><a href="#Rule-8-INTERSECT-to-Exists-INT2EXIST" class="headerlink" title="Rule 8. INTERSECT to Exists (INT2EXIST)"></a>Rule 8. INTERSECT to Exists (INT2EXIST)</h3><p>将INTERSECT查询改写为EXISTS子查询，进而通过EtoF改写为SELMERGE。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">if ( in an INTERSECT box</span><br><span class="line">        body.distinct != PRESERVE)</span><br><span class="line">&#123;</span><br><span class="line">    set the box to be of type SELECT;</span><br><span class="line">    choose an arbitrary quantifier Q1;</span><br><span class="line">    /* Q1 will keep tyoe F */</span><br><span class="line">    for ( each quantifier Q != Q1 in the box)</span><br><span class="line">    &#123;</span><br><span class="line">        Q.type = E;</span><br><span class="line">        add the predicate</span><br><span class="line">        EXISTS ( SELECT * FROM Q</span><br><span class="line">                 WHERE Q1.c1 = Q.c1 AND</span><br><span class="line">                       Q1.c2 = Q.c2 AND</span><br><span class="line">                       ...</span><br><span class="line">                       Q1.cn = Q.cn</span><br><span class="line">               );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Rule-Engine"><a href="#Rule-Engine" class="headerlink" title="Rule Engine"></a>Rule Engine</h3><p>Starburst的Rule Engine的特点：</p>
+<h3 id="1-支持任意复杂度的规则"><a href="#1-支持任意复杂度的规则" class="headerlink" title="1. 支持任意复杂度的规则"></a><strong>1. 支持任意复杂度的规则</strong></h3><p>规则定义为两个(C语言)函数，一个是condition函数，返回true&#x2F;false表示是否满足该规则应用条件，一个是action函数，在满足条件时被调用，可以执行任意操作。</p>
+<h3 id="2-上下文"><a href="#2-上下文" class="headerlink" title="2. 上下文"></a><strong>2. 上下文</strong></h3><p>规则引擎执行操作时，带有上下文参数，该参数包含指向用户查询信息的指针。</p>
+<h3 id="3-规则分类和扩展的冲突解决"><a href="#3-规则分类和扩展的冲突解决" class="headerlink" title="3. 规则分类和扩展的冲突解决"></a><strong>3. 规则分类和扩展的冲突解决</strong></h3><p>规则分类的好处：有利于对规则的理解；有利于规则condition&#x2F;action函数的模块化和可理解性；不同的规则类的冲突解决方式不一样。</p>
+<p><strong>规则冲突及解决</strong>：规则冲突是指当前存在规则可以应用。解决的两种模式：sequential（对所有规则按某个顺序一轮轮地尝试） 和 priority（总是应用满足条件的优先级最高的规则）。</p>
+<h3 id="4-保证终止"><a href="#4-保证终止" class="headerlink" title="4. 保证终止"></a><strong>4. 保证终止</strong></h3><h3 id="5-规则控制"><a href="#5-规则控制" class="headerlink" title="5. 规则控制"></a><strong>5. 规则控制</strong></h3><p>支持在线enable&#x2F;disable某些rule。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Optimizer" >
+    <span class="tag-code">Optimizer</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/content-aware-lock-scheduling/">
+        <span class="nav-arrow">← </span>
+        
+          Content-Aware Lock Scheduling
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/grammer-like-func-rule/">
+        
+          Grammar-like Functional Rules - for Representing Query Optimization Alternatives
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/rbo-in-starburst/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

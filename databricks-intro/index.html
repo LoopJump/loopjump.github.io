@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Databricks Lakehouse | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Databricks Lakehouse</h2>
+  <p class="post-date">2022-06-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics》 CIDR21’</p>
+<p>整片文章讲的比较宽泛。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>第一代数仓：结构化数据，用于决策支持和BI。</p>
+<p>第二代数仓：解决存储和计算资源耦合、无弹性、非结构化数据激增等问题，采用了data lakes方案，采用开放格式，数据存储到分布式文件系统，主要代表是Hadoop运动。</p>
+<p>第三代数仓，2015年之后，云数仓架构，如S3替代了Hadoop，代表为Redshift和Snowflake。</p>
+<p>第三代数仓的主要问题：</p>
+<ol>
+<li>reliability：为了支持data lake和warehouse一致性，需要持续地在二者之间进行ETL，整个链路变复杂，更容易引发质量和性能问题。</li>
+<li>data staleness：warehouse中的数据一般比data lake陈旧，因为新数据可能要花费几天才能完成数据导入或加载。据报道，86%的分析数据是陈旧的，62%的报告经常要等待资源。</li>
+<li>limited support for advanced analystics：用户可能会问一些预测型的问题，比如应该给哪些用户打折？现在机器学习的系统如TensorFlow、PyTorch、XGBoost都不能在数仓上运行良好。这类系统通常不是SQL接口，走JDBC&#x2F;ODBC接口会很低效，但现在数仓系统也没有直接访问底层数据的能力，只能再加一步ETL。</li>
+<li>total cost of ownership：持续ETL的成本、数据冗余成本、商业数仓数据迁出成本等。</li>
+</ol>
+<p>Lakehouse可以解决如下的问题：</p>
+<ol>
+<li>data lake上可靠数据管理：支持原始数据存储，这一点和data lake相同；同时也支持warehouse的ETL&#x2F;ELT过程来提高数据质量；数据管理支持事务、回滚、零拷贝克隆等。</li>
+<li>支持机器学习和数据科学类应用：机器学习系统可以直接读取文件，这一点比较适宜lakehouse，另外有些机器学习系统采用了DataFrame抽象层并使用声明式API，这类系统可以从lakehouse的优化器收益。</li>
+<li>超高的SQL性能：数仓往往在数据格式等方面有很大的自由度，但lakehouse要在大规模的Parquet&#x2F;ORC数据集上提供足够高的SQL性能，即便如此lakehouse仍然有优化空间，比如增加辅助数据、有限度地调整数据排布。</li>
+</ol>
+<p><strong>Motivation</strong></p>
+<ol>
+<li>首要问题是企业数据用户对数据质量和可靠性要求比较高，湖仓分离的两层架构以来各种数据流水线容易带来问题。</li>
+<li>商业应用要求更加实时的数据，但ETL等方式往往耗时比较长。</li>
+<li>现在大量数据都是非结构化的，如图片、视频等，数仓的SQL API对其支持有限。</li>
+<li>很多用户要部署机器学习和数据科学应用，数仓对这类应用支持很少。</li>
+</ol>
+<h2 id="Lakehouse-Architecture"><a href="#Lakehouse-Architecture" class="headerlink" title="Lakehouse Architecture"></a>Lakehouse Architecture</h2><p>lakehouse的定义特征：低成本；直接存取存储；支持传统分析型DBMS特点，如ACID、数据多版本、审计、索引、缓存、查询优化。</p>
+<p>lakehouse集合了数据湖data lake的低成本和开放存储优点，以及数据仓库warehouse的强大管理能力和优化能力的优点。难点也在于此：如何高效结合二者的优点。</p>
+<h3 id="Implementint-a-lakehouse-system"><a href="#Implementint-a-lakehouse-system" class="headerlink" title="Implementint a lakehouse system"></a>Implementint a lakehouse system</h3><p>首先，数据存储在低成本对象存储上，采用标准开放格式（如Apache Parquet）；其上实现一个事务型元数据层，用于定义对象和表的关系。这样可以兼得数据存储的低成本和数据的事务级管理。</p>
+<p>其次，lakehouse不能修改文件格式，但可以在保持数据文件不修改的前提下，实现cache、辅助数据结构如索引统计、数据排布优化等。</p>
+<p>最后，lakehouse既可以加速复杂的AP查询，也可以借助declarative DataFrame API来实现更宽泛的数据管理能力。例如TensorFlow和Spark MLlib可以读取data lake的一些文件格式。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-3-286x300.png">http://loopjump.com/wp-content/uploads/2022/06/2-3-286x300.png</a></p>
+<h3 id="Metadata-Layer"><a href="#Metadata-Layer" class="headerlink" title="Metadata Layer"></a>Metadata Layer</h3><p>元数据层是将S3上的对象存储文件抽象成ACID事务可操作的表对象重要一步。Databricks的Delta Lake、Apache Iceberg、Apache Hudi都是类似功能的组件。</p>
+<p>这类组件在实现事务、零拷贝、time travel等管理功能的同时，达到的性能与直接操作原始Parquet等数据的性能相近甚至超越。</p>
+<p>元数据层很适合做data quanlity enforcement。比如Delta Lake可以对数据上传到表时做schema检查等。</p>
+<p>元数据层很适合做governance。</p>
+<p><strong>遗留问题</strong>：Delta Lake使用的transaction log（将数据改为支持事务的机制）和数据本身存在同一个存储单元上，好处是二者集中管理，坏处是存储访问延迟高导致TPS低。还有不支持跨表事务。</p>
+<h3 id="Lakehouse中的SQL性能"><a href="#Lakehouse中的SQL性能" class="headerlink" title="Lakehouse中的SQL性能"></a>Lakehouse中的SQL性能</h3><p>提升性能的几个方法：Caching、Auxiliary Data、Data Layout。</p>
+<p><strong>Caching</strong>：缓存到计算节点的SSD和RAM中。</p>
+<p><strong>Auxiliary Data</strong>：文件内部的column min-max统计信息以支持data skipping、Bloom Filter。</p>
+<p><strong>Data Layout</strong>：改善数据布局对性能提升很明显。Z-order、Hilbert curves。</p>
+<p><strong>遗留问题</strong>：定义新的格式、更好的缓存策略、更好的辅助数据结果、更好的数据布局；serverless。</p>
+<h3 id="Efficient-Access-for-Advanced-Analytics"><a href="#Efficient-Access-for-Advanced-Analytics" class="headerlink" title="Efficient Access for Advanced Analytics"></a>Efficient Access for Advanced Analytics</h3><p>高级分析查询通常用命令式语言编写成库，不能用SQL接口执行。Databricks采用了DataFrame API，兼容Pandas库，适配Apache Spark生态（MLlib、GraphFrames、SparkR）。</p>
+<p>遗留问题：较新的”factorized ML” framework将ML逻辑嵌入到SQL join中，这里有一些事情可以做。</p>
+<h2 id="Research-Questions-and-Implications"><a href="#Research-Questions-and-Implications" class="headerlink" title="Research Questions and Implications"></a>Research Questions and Implications</h2><p>Are there other ways to achieve the Lakehouse goals?</p>
+<p>What are the right storage formats and access APIs?</p>
+<p>How does the Lakehouse affect other data management research and trends?</p>
+<p>略。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/access-path-in-rdbms/">
+        <span class="nav-arrow">← </span>
+        
+          Access Path Selection in a RDBMS
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/data-storage-in-cloud/">
+        
+          Data Storage Management in Cloud Environment
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/databricks-intro/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

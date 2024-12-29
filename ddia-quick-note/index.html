@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      DDIA Quick Note | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>DDIA Quick Note</h2>
+  <p class="post-date">2019-08-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>《Designing Data-Intensive Applications》从数据系统角度介绍了方方面面的技术点。</p>
+<p>内容上，基本都是一个分布式数据库存储引擎所需要的技术能力，而且很多技术点讲的很详细，不过计算引擎基本上没涉及。</p>
+<p>另外书里面也介绍了一些其他的数据系统，也都比较有价值。</p>
+<h1 id="Part-1-Foundations-of-Data-Systems"><a href="#Part-1-Foundations-of-Data-Systems" class="headerlink" title="Part 1 Foundations of Data Systems"></a>Part 1 Foundations of Data Systems</h1><hr>
+<h2 id="Chapter-1-Reliable-Scalable-and-Maintainable-Applications"><a href="#Chapter-1-Reliable-Scalable-and-Maintainable-Applications" class="headerlink" title="Chapter 1 Reliable, Scalable, and Maintainable Applications"></a>Chapter 1 Reliable, Scalable, and Maintainable Applications</h2><h3 id="Thinking-About-Data-Systems"><a href="#Thinking-About-Data-Systems" class="headerlink" title="Thinking About Data Systems"></a>Thinking About Data Systems</h3><p>数据库、消息队列MQ、Cache等等为什么都被归为data system？</p>
+<p>第一，数据处理系统往往根据场景做定制，但不同类型的系统界限会变模糊：比如Redis可以当成MQ、Kafka也可以当成数据持久存储系统。</p>
+<p>第二，应用的需求比较多，需要多个系统共同组合成一套系统服务应用。</p>
+<p>例如这样一个系统：</p>
+<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/08/ds-1024x818.jpg">http://loopjump.com/wp-content/uploads/2019/08/ds-1024x818.jpg</a></p>
+<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bd5923e3-3970-4aed-b59f-e8770164f392/ds.jpg" alt="ds.jpg"></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/08/ds-1024x818.jpg">http://loopjump.com/wp-content/uploads/2019/08/ds-1024x818.jpg</a></p>
+<p>应用开发者要自己对各个子系统做黏合，就是图中的箭头部分，似乎也挺麻烦的，因为要对外(虚线外部)要隐藏整个数据系统被拆解成多个子系统这个事实，就要保持系统间的多个角度下的一致性。</p>
+<h3 id="Reliability"><a href="#Reliability" class="headerlink" title="Reliability"></a>Reliability</h3><p>fault-tolerant, resilient</p>
+<p>硬件故障、软件故障、人为错误。</p>
+<p>因为人工配置等原因导致的问题可能比硬件故障导致的问题还多。</p>
+<h3 id="Scalability"><a href="#Scalability" class="headerlink" title="Scalability"></a>Scalability</h3><p>可扩展性</p>
+<h3 id="Maintainability"><a href="#Maintainability" class="headerlink" title="Maintainability"></a>Maintainability</h3><p><strong>Operability: Making Life Easy for Operations</strong></p>
+<p>运维做什么：</p>
+<ul>
+<li>监控系统运行情况，出问题时恢复服务</li>
+<li>跟踪问题原因</li>
+<li>更新软件或者平台，类似于安全补丁</li>
+<li>系统之间的互相作用</li>
+<li>预测未来的问题(容量规划等)</li>
+<li>部署配置管理等良好实践，编写相应工具</li>
+<li>复杂的维护任务(应用换平台)</li>
+<li>定义工作流程，运维操作可预测</li>
+<li>维持团队对系统的了解</li>
+</ul>
+<p>好的可操作性：</p>
+<ul>
+<li>良好的监控，提供对系统内部状态和运行时状态的可见性</li>
+<li>自动化，系统与标准工具进行集成</li>
+<li>不依赖单台机器</li>
+<li>提供良好的文档和易于理解的操作模型 (If I do X, Y will happen)</li>
+<li>提供良好的默认行文，但需要管理员自由覆盖默认值</li>
+<li>进行自我修复，但允许管理员有能力手动控制系统状态</li>
+<li>行为可预测，最大新都减少意外</li>
+</ul>
+<p><strong>Simplicity: Managing Complexity</strong></p>
+<p>项目变大后，delightfully simple and expressive code就是很困难的事情。</p>
+<p>复杂度complexity的各种症状：状态空间爆炸，模块紧耦合，依赖纠缠，不一致的命名和术语，为了性能加入的一些hack代码，为了解决一些特殊case的work around代码。</p>
+<p>工程上控制复杂度是个难题。这个应该怎么做呢？</p>
+<p>Moseley和Marks定义的额外复杂度：由具体实现涌现，而非问题本身固有的复杂度。但是问题本身的复杂度又该怎么定义和衡量呢？</p>
+<p>消除额外复杂度的经典工具之一：抽象。</p>
+<p><strong>complexity refs:</strong></p>
+<ul>
+<li>Frederick P Brooks: “No Silver Bullet – Essence and Accident in Software Engineering,” in The Mythical Man-Month, Anniversary edition, Addison-Wesley, 1995. ISBN: 978-0-201-83595-3</li>
+<li>Ben Moseley and Peter Marks: “Out of the Tar Pit,” at BCS Software Practice Advancement (SPA), 2006.</li>
+<li>Rich Hickey: “Simple Made Easy,” at Strange Loop, September 2011.</li>
+</ul>
+<p><strong>Evolvability: Making Change Easy</strong></p>
+<p>在组织流程方面，敏捷开发可能会更适应不断变化的环境。</p>
+<p>TDD(测试驱动开发)、重构。</p>
+<h2 id="Chapter-2-数据模型与查询语言"><a href="#Chapter-2-数据模型与查询语言" class="headerlink" title="Chapter 2 数据模型与查询语言"></a>Chapter 2 数据模型与查询语言</h2><p>语言的边界就是思想的边界。 — 维特根斯坦 1992</p>
+<h2 id="Chapter-3-存储与检索"><a href="#Chapter-3-存储与检索" class="headerlink" title="Chapter 3 存储与检索"></a>Chapter 3 存储与检索</h2><h3 id="Hash-Index"><a href="#Hash-Index" class="headerlink" title="Hash Index"></a>Hash Index</h3><h3 id="LSM-Tree"><a href="#LSM-Tree" class="headerlink" title="LSM Tree"></a>LSM Tree</h3><h3 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B Tree"></a>B Tree</h3><p>B Tree的一些优化：</p>
+<ul>
+<li>Copy-on-write方式：LMDB(2014)数据库使用COW方案，页面被修改时，不是原地覆盖，而是写到新位置，实际上也产生了页面的多版本。</li>
+<li>页面上不必存储完整的key：类似于前缀之类信息可以省略等思路。</li>
+<li>控制页面的物理布局：比如叶子节点在物理上尽量放一块，这个对B树来讲比较难。</li>
+<li>页面增加额外的指针：例如指向兄弟节点。</li>
+<li>分形树变体：一些基于LSM思想的变体</li>
+</ul>
+<h3 id="其他索引"><a href="#其他索引" class="headerlink" title="其他索引"></a>其他索引</h3><p><strong>全文索引和模糊索引</strong></p>
+<p>Lucene</p>
+<p><strong>数据全放内存</strong></p>
+<p>VoltDB, MemSQL, Timesten, RAMCloud, Redis</p>
+<p>反直觉的是，内存数据库性能优势并非来自磁盘IO，而是磁盘数据与内存数据的编解码。</p>
+<p>NVM</p>
+<h3 id="数据仓库"><a href="#数据仓库" class="headerlink" title="数据仓库"></a>数据仓库</h3><p>星型模式：以fact表为中心。</p>
+<h3 id="列存"><a href="#列存" class="headerlink" title="列存"></a>列存</h3><p><strong>列压缩</strong></p>
+<p><strong>内存带宽和向量处理</strong></p>
+<p><strong>列存储中的排序顺序</strong></p>
+<p><strong>写入列存储</strong>：B树并不合适，LSM树更适合。内存中是行存还是列存都可以，LSM树将数据写入磁盘，与磁盘数据合并的时候，批量写入列存新文件。参考Vertica。</p>
+<p><strong>聚合：数据立方体和物化视图</strong></p>
+<h2 id="Chapter-4-编码与演化"><a href="#Chapter-4-编码与演化" class="headerlink" title="Chapter 4 编码与演化"></a>Chapter 4 编码与演化</h2><h3 id="编码数据的格式"><a href="#编码数据的格式" class="headerlink" title="编码数据的格式"></a>编码数据的格式</h3><p>序列化、反序列化</p>
+<h3 id="JSON-XML-二进制变体"><a href="#JSON-XML-二进制变体" class="headerlink" title="JSON, XML, 二进制变体"></a>JSON, XML, 二进制变体</h3><p>JSON比较简单轻量、浏览器支持好。但JSON&#x2F;XML对二进制支持不好，往往通过Base64转成文本。</p>
+<h3 id="Thrift-ProtocolBuffer-Avro"><a href="#Thrift-ProtocolBuffer-Avro" class="headerlink" title="Thrift, ProtocolBuffer, Avro"></a>Thrift, ProtocolBuffer, Avro</h3><p>基于模式的二进制编码比JSON&#x2F;XML的优势：</p>
+<ul>
+<li>更加紧凑</li>
+<li>工程过程中容易保证是最新的模式</li>
+<li>兼容性好</li>
+<li>静态语言下，可以进类型检查</li>
+</ul>
+<h3 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h3><p><strong>数据库的数据流</strong></p>
+<p><strong>服务中的数据流：REST与RPC</strong></p>
+<p>SOA面向服务的体系结构 &#x2F; 微服务架构</p>
+<p><strong>消息传递中的数据流</strong></p>
+<p><strong>Message Broker</strong></p>
+<p>RabiitMQ, ActiveMQ, HornetQ, NATS, Kafka</p>
+<p><strong>分布式的Actor框架</strong></p>
+<p>集成Message Broker和Actor编程模型。</p>
+<h1 id="Part-II-Distributed-Data"><a href="#Part-II-Distributed-Data" class="headerlink" title="Part II Distributed Data"></a>Part II Distributed Data</h1><hr>
+<h2 id="Chapter-5-复制"><a href="#Chapter-5-复制" class="headerlink" title="Chapter 5 复制"></a>Chapter 5 复制</h2><h3 id="选主"><a href="#选主" class="headerlink" title="选主"></a>选主</h3><h3 id="同步复制与异步复制"><a href="#同步复制与异步复制" class="headerlink" title="同步复制与异步复制"></a>同步复制与异步复制</h3><h3 id="多主复制、无主复制"><a href="#多主复制、无主复制" class="headerlink" title="多主复制、无主复制"></a>多主复制、无主复制</h3><h3 id="冲突解决"><a href="#冲突解决" class="headerlink" title="冲突解决"></a>冲突解决</h3><p>可以在系统内部设定一个应用无关的冲突解决策略，但这种也一定要看应用能不能接受，而且策略本身也往往因为分布式环境的异步网络模型而导致结果也不一定符合应用预期。Dynamo这种可能需要引入上层应用的逻辑来修复数据冲突。分布式环境下追踪数据版本就是很麻烦，毕竟序问题是分布式的根本问题之一。</p>
+<h2 id="Chapter-6-分区"><a href="#Chapter-6-分区" class="headerlink" title="Chapter 6 分区"></a>Chapter 6 分区</h2><h3 id="KV数据的分区"><a href="#KV数据的分区" class="headerlink" title="KV数据的分区"></a>KV数据的分区</h3><p>常见问题：数据倾斜(skew), 热点(hot spot)</p>
+<p>分区方式：range分区，hash分区(一致性哈希)</p>
+<h3 id="Reblance"><a href="#Reblance" class="headerlink" title="Reblance"></a>Reblance</h3><h3 id="请求路由"><a href="#请求路由" class="headerlink" title="请求路由"></a>请求路由</h3><p>服务发现</p>
+<h3 id="并行查询"><a href="#并行查询" class="headerlink" title="并行查询"></a>并行查询</h3><p>MPP</p>
+<h2 id="Chapter-7-事务"><a href="#Chapter-7-事务" class="headerlink" title="Chapter 7 事务"></a>Chapter 7 事务</h2><p>ACID, 2PL, 2PC, GC, MVCC</p>
+<h2 id="Chapter-8-分布式系统的麻烦"><a href="#Chapter-8-分布式系统的麻烦" class="headerlink" title="Chapter 8 分布式系统的麻烦"></a>Chapter 8 分布式系统的麻烦</h2><h3 id="故障与部分失效"><a href="#故障与部分失效" class="headerlink" title="故障与部分失效"></a>故障与部分失效</h3><h3 id="不可靠的网络"><a href="#不可靠的网络" class="headerlink" title="不可靠的网络"></a>不可靠的网络</h3><h3 id="不可靠的时钟"><a href="#不可靠的时钟" class="headerlink" title="不可靠的时钟"></a>不可靠的时钟</h3><h3 id="拜占庭故障"><a href="#拜占庭故障" class="headerlink" title="拜占庭故障"></a>拜占庭故障</h3><h2 id="Chapter-9-Consistency-and-Consensus"><a href="#Chapter-9-Consistency-and-Consensus" class="headerlink" title="Chapter 9 Consistency and Consensus"></a>Chapter 9 Consistency and Consensus</h2><p>AB&#x3D;Consensus。</p>
+<h1 id="Part-III-Derived-Data"><a href="#Part-III-Derived-Data" class="headerlink" title="Part III Derived Data"></a>Part III Derived Data</h1><hr>
+<p>记录系统(system of record, source of truth)，缓存这种是衍生数据系统(derived data system)。</p>
+<h2 id="Chapter-10-批处理"><a href="#Chapter-10-批处理" class="headerlink" title="Chapter 10 批处理"></a>Chapter 10 批处理</h2><h3 id="MapReduce与DFS"><a href="#MapReduce与DFS" class="headerlink" title="MapReduce与DFS"></a>MapReduce与DFS</h3><h3 id="Graphs-and-Iterative-Processing"><a href="#Graphs-and-Iterative-Processing" class="headerlink" title="Graphs and Iterative Processing"></a>Graphs and Iterative Processing</h3><p>Pregel处理模型（批量同步并行BSP）</p>
+<h2 id="Chapter-11-流处理"><a href="#Chapter-11-流处理" class="headerlink" title="Chapter 11 流处理"></a>Chapter 11 流处理</h2><p>有意思</p>
+<h2 id="Chapter-12-数据系统的未来"><a href="#Chapter-12-数据系统的未来" class="headerlink" title="Chapter 12 数据系统的未来"></a>Chapter 12 数据系统的未来</h2><p>这一章还是值得好好看看。</p>
+<h3 id="数据集成"><a href="#数据集成" class="headerlink" title="数据集成"></a>数据集成</h3><p><strong>组合使用衍生数据的工具</strong></p>
+<p><strong>理解数据流</strong></p>
+<p>哪些该先写入，哪些是衍生的，衍生自哪里等等问题。</p>
+<p><strong>衍生数据与分布式事务</strong></p>
+<p><strong>全局有序的限制、排序时间以捕捉因果序</strong></p>
+<p>大型系统维护全局序成本会比较高。</p>
+<p><strong>批处理与流处理</strong></p>
+<p><strong>Lambda架构</strong></p>
+<p><strong>统一批处理和流处理</strong></p>
+<h3 id="分拆数据库"><a href="#分拆数据库" class="headerlink" title="分拆数据库"></a>分拆数据库</h3><p><strong>组合使用数据存储技术</strong></p>
+<p><strong>围绕数据流设计应用</strong></p>
+<p><strong>关注衍生状态</strong></p>
+<h3 id="面向正确性的设计"><a href="#面向正确性的设计" class="headerlink" title="面向正确性的设计"></a>面向正确性的设计</h3><p><strong>数据库的端到端设计</strong></p>
+<p><strong>正好执行一次操作</strong></p>
+<p><strong>抑制重复</strong></p>
+<p><strong>操作标识符</strong></p>
+<p><strong>在数据系统中应用端到端思考</strong></p>
+<p><strong>强制约束</strong></p>
+<p><strong>唯一性约束需要达成共识</strong></p>
+<p><strong>基于日志消息传递中的唯一性</strong></p>
+<p><strong>多分区请求处理</strong></p>
+<p><strong>及时性与完整性</strong></p>
+<p><strong>信任但验证</strong></p>
+<h3 id="做正确的事情"><a href="#做正确的事情" class="headerlink" title="做正确的事情"></a>做正确的事情</h3><p><strong>预测性分析</strong></p>
+<p><strong>隐私和追踪</strong></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/consensus-revised-paper/">
+        <span class="nav-arrow">← </span>
+        
+          Jeff Dean点赞的Consensus Revised论文在说啥？
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/bitcask-intro/">
+        
+          bitcask简介
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/ddia-quick-note/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
