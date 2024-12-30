@@ -195,6 +195,138 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
+      </h2>
+      <p class="article-date">May 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《LB+Trees: Optimizing Persistent Index Performance on 3DXPoint Memory》（VLDB20’）
+这是个设计非常巧妙的数据结构，这里简单描述下核心内容，读者可以直接读原文，行文非常清晰。
+Abstract3DXPoint的有些硬件 ...
+        
+      </div>
+      <a class="more" href="/lb-tree/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/hekaton-memory-engine/">Hekaton内存引擎</a>
+      </h2>
+      <p class="article-date">April 21, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Hekaton: SQL Server’s Memory-Optimized OLTP Engine（SIGMOD13’）
+Hekaton是SQL Server的一个纯内存数据引擎，用户可以声明一张表存放在Hekaton上，这张表完全支持原SQL Server所有操作，包括T-SQL。同时如 ...
+        
+      </div>
+      <a class="more" href="/hekaton-memory-engine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/xengine/">阿里LSMTree存储引擎X-Engine</a>
+      </h2>
+      <p class="article-date">April 20, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          X-Engine是阿里云研发的LSM-Tree结构的存储引擎，主打低存储成本带来的性价比。
+问题
+the tsunami problem 海啸问题：122倍突发流量
+the flood discharge problem 泄洪问题：将内存数据快速转到持久化存储组件
+the fast-movi ...
+        
+      </div>
+      <a class="more" href="/xengine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/hekaton-high-perf-cc/">Hekaton的高性能并发控制算法</a>
+      </h2>
+      <p class="article-date">April 13, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          High-Performance Concurrency Control Mechanisms for Main-Memory Databases (VLDB12’)
+这篇文章是微软Hekaton上的in-memory storage engine的高性能控制算法。
+MV Storage E ...
+        
+      </div>
+      <a class="more" href="/hekaton-high-perf-cc/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lsmtree-survey/">LSM-Tree综述</a>
+      </h2>
+      <p class="article-date">April 12, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          LSM-based storage techniques: a survey （VLDBJ 2020）
+This paper aims to serve as a guide to the state of the art in LSM-based storage techniques fo ...
+        
+      </div>
+      <a class="more" href="/lsmtree-survey/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lsmtree-adaptive-mem/">LSM Tree 自适应内存管理</a>
+      </h2>
+      <p class="article-date">April 3, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          LSMTree自适应内存管理Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）
+内存管理整体架构比较清晰，如图，无需赘言。
+!http://loopjump.c ...
+        
+      </div>
+      <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/calvin-intro/">Calvin简介</a>
       </h2>
       <p class="article-date">April 2, 2020</p>
@@ -273,134 +405,6 @@ Calcite的三个特点：
         
       </div>
       <a class="more" href="/calcite-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/bitcask-intro/">bitcask简介</a>
-      </h2>
-      <p class="article-date">October 29, 2019</p>
-      
-      <div class="article-summary">
-        
-          Bitcask是由Basho公司搞的一个产品。
-技术设计数据顺序追加到磁盘上的active data file，并在内存中建立hash索引。
-active data file文件长到一定程度就切成old data file，新的数据写入新的active data file。
-old data ...
-        
-      </div>
-      <a class="more" href="/bitcask-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/ddia-quick-note/">DDIA Quick Note</a>
-      </h2>
-      <p class="article-date">August 10, 2019</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          说明《Designing Data-Intensive Applications》从数据系统角度介绍了方方面面的技术点。
-内容上，基本都是一个分布式数据库存储引擎所需要的技术能力，而且很多技术点讲的很详细，不过计算引擎基本上没涉及。
-另外书里面也介绍了一些其他的数据系统，也都比较有价值。
-P ...
-        
-      </div>
-      <a class="more" href="/ddia-quick-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/consensus-revised-paper/">Jeff Dean点赞的Consensus Revised论文在说啥？</a>
-      </h2>
-      <p class="article-date">April 10, 2019</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Distributed consensus revised》 Heidi Howard
-整篇论文151页，粗略通读了一遍，主要是了解各个变体的基本思路和正确性直觉的理解，更形式化的证明基本上都跳过了。
-这里假设读者对Basic Paxos有了一定了解，看过Lamport的那篇原始论文。另外 ...
-        
-      </div>
-      <a class="more" href="/consensus-revised-paper/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
-      </h2>
-      <p class="article-date">March 10, 2019</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Designing Access Methods: The RUM Conjecture》
-这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
-就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
-        
-      </div>
-      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/debug-linux-kernel/">搭建Linux内核调试环境</a>
-      </h2>
-      <p class="article-date">February 10, 2019</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          这篇文章介绍下在MacOSX如何用gdb + vmware的方式调试Linux内核。
-一：安装Vmware Fusion二：安装gdb注意这里需要安装高版本的gdb，这里安装的是8.2版本
-123456wget http://ftp.gnu.org/gnu/gdb/gdb-8.2.tar.g ...
-        
-      </div>
-      <a class="more" href="/debug-linux-kernel/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
-      </h2>
-      <p class="article-date">January 10, 2019</p>
-      
-        
-  <a href="/tags#Cloud" >
-    <span class="tag-code">Cloud</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          来源：AWS re: invent 2018
-Pattern 1: checksum all of the thingsPattern 2: Cryptgraphic AuthenticationEncrypt and authenticate everything.
-Control Pla ...
-        
-      </div>
-      <a class="more" href="/10-patterns-for-controlling-the-cloud-in-aws/">Read more</a>
     </article>
   
 

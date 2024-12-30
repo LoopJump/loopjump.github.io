@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      SingleStore - 云原生HTAP | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>SingleStore - 云原生HTAP</h2>
+  <p class="post-date">2022-10-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="S2DB简介"><a href="#S2DB简介" class="headerlink" title="S2DB简介"></a>S2DB简介</h2><p>以前的MemSQL，shared-nothing架构的DBMS，分区混部，多副本HA，支持RO副本，支持code generation，支持跨域异步复制副本。另外也支持基于对象存储存放冷数据。</p>
+<p>S2DB还可以做到交互式实时洞察和决策、高吞吐低延迟写入和在变动的数据上执行复杂低延迟查询，这在多个专用系统缝合的方案中很难做到。</p>
+<p>S2DB的两个设计要点：</p>
+<ol>
+<li>存储计算分离 Separation of Storage and Compute</li>
+<li>统一表存储 Unified Table Storage</li>
+</ol>
+<h2 id="存储计算分离"><a href="#存储计算分离" class="headerlink" title="存储计算分离"></a>存储计算分离</h2><p>S2DB是一个shared-nohting架构的分布式数据库，但同时也可以访问分离的对象存储。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/11-300x149.png">http://loopjump.com/wp-content/uploads/2022/10/11-300x149.png</a></p>
+<p>使用对象存储的时候，S2DB的架构跟其他存算分离的系统有一些差异，S2DB并不是把所有数据都存到对象存储系统中，而是会利用好本地存储存放新写入的数据，之后再异步将数据移动到对象存储。这个思路既可以做到冷数据存对象存储，又可以做到事务提交延迟不受对象存储访问延迟拖累。事务的持久化靠多S2DB自身的多副本实现。</p>
+<p>Staging Data From Local To Remote Storage S2DB更好地利用了数据冷热和云存储层次（本地内存-本地磁盘-对象存储）。 像Snowflake、Redshift等似乎都没有利用好这种存储层次，它们可能会把数据直接写到对象存储中。 S2DB在这块的一些设计：</p>
+<ul>
+<li>S2DB会将新提交的数据写在本地盘，然后异步推送到对象存储。提交延迟主要是本地盘开销和副本复制开销。</li>
+<li>新生成的列存data file会异步尽快上传到对象存储，热数据会被缓存到本地盘，冷数据在上传完之后可以删除。</li>
+<li>WAL也会上传到对象存储，但只会上传到已经复制完成的位点。</li>
+<li>行存做snapshot（即checkpoint）由master partition负责，并且直接写到对象存储。</li>
+<li>在对象存储中存放历史版本数据，支持PIT恢复，不需要显式执行备份操作。</li>
+<li>可以从对象存储中构建只读副本作为计算节点，获取snapshot和wal，然后开始从master partition复制后续的wal。这提升了读能力，而且只读副本本身与其他副本有较强的隔离性。</li>
+</ul>
+<p>这种充分利用本地盘的思路对写性能提升是非常显著的，但缺点也很明显：</p>
+<ul>
+<li>高性能的本地持久化和数据复制流程比较复杂，工程实现上实际上跟一个纯shared-nothing架构的产品在这块的差异不大。</li>
+<li>弹性不足，新增或删除节点需要复制本地存储中还没同步到对象存储中的那部分数据。</li>
+<li>在关联失效的情况，可能丢数据（比如本地盘和该partition的其他副本所在盘同时失效）。</li>
+</ul>
+<p>Capabilities Enabled by Sepearted Storage 独立的存储带来的能力：</p>
+<ul>
+<li>在对象存储上保留历史数据，实现PITR。</li>
+<li>创建RO副本很容易，而且RO副本不影响事务提交（不参与日志持久化投票、资源隔离好）。</li>
+</ul>
+<p>主要还是存储空间和成本相比本地存储得到很大解放，整体因独立存储带来了一定程度的弹性。</p>
+<h2 id="统一表存储-Unified-Table-Storage"><a href="#统一表存储-Unified-Table-Storage" class="headerlink" title="统一表存储 Unified Table Storage"></a>统一表存储 Unified Table Storage</h2><p>统一表存储的好处是节省了用户操心表存储方式的问题。</p>
+<p>表存储格式 统一存储格式为：内存行存+硬盘列存。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/13-300x94.png">http://loopjump.com/wp-content/uploads/2022/10/13-300x94.png</a></p>
+<p><strong>内存行存</strong></p>
+<ul>
+<li>数据结构：lock free skiplist；skiplist的node作为一条记录；该记录的多版本挂链存放；行锁放到node中；记录按定长处理，变长的字段用指针指出去。</li>
+<li>写流程：数据写skiplist，并写wal，wal是per-partition，后台定时checkpoint in-memory skiplist并维护对应的log位置。</li>
+</ul>
+<p><strong>硬盘列存</strong></p>
+<p>数据划分为segment，segment内每一列都按相同的row order存放，并各自压缩存储。压缩支持Bit-Packing、字典编码、RLE编码以及LZ4压缩。segment的元数据（文件位置、编码方式、每列最值、删除标记vector）放在行存表中，并加载到内存。 S2DB表存储方面的一些设计点：</p>
+<ul>
+<li>列存支持直接根据offset读取一行，而不必解码该segment的所有行，适合TP中常见的点读。</li>
+<li>segment上支持创建sort key，即二级索引。每个segment有自己的局部的二级索引，全局的二级索引采用类似于LSM Tree的方式，新导入数据产生的segment逐渐按层次往下合并，最终保持大约 sort run count &#x3D; log (segment count) 。</li>
+<li>对于每个列存表，S2DB都会创建一个写优化的行存表来保存小数据量的写入数据。这部分类似于RocksDB的MemTable，后台会定期将这部分数据转为列存segment。</li>
+<li>删除是通过在segment meta中标记delete-vector来实现，更新操作也是通过删除旧数据+插入新数据实现。这样可以避免做行数据的合并。</li>
+</ul>
+<p><strong>二级索引</strong></p>
+<p>二级索引主要是针对TP负载的优化。 一些系统采用的经典方法有：</p>
+<ul>
+<li>Per-segment filtering structure: 每个segment增加局部的bloom filter或者inverted index，如RocksDB、Procella(in youtube)</li>
+<li>external index structure: 外部整体再配个lsm tree索引，将二级索引列映射到主键索引列，如Spanner。</li>
+</ul>
+<p>S2DB的二层索引结构 S2DB的二级索引不太一样，它采用的是二层结构加LSM Tree存储的方式。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/12-300x163.png">http://loopjump.com/wp-content/uploads/2022/10/12-300x163.png</a></p>
+<p>首先是segment内部的局部索引，即图中 inverted index。它记录了index column值和该值在segment中的offset list。因为segment是不可变的，所以这个索引只需要生成一次。 然后还有一个全局的索引，它记录的是index column值到各个segment的inverted index的索引。当前S2DB的全局索引仅支持无序的二级索引，也就是hashtable。当新的segment生成的时候，就生成LSM Tree里面的一层，逻辑上就是一层hashtable，层数多了也会触发compaction合并hashtable。论文中声称未来会支持有序索引，感觉这个就比较麻烦了。</p>
+<p>多列二级索引 S2DB会分别单列建索引加多列索引，这样可以兼容index columns subset的过滤，多列索引同时还要支持unique check。S2DB的这块实现看起来也没有什么亮点。</p>
+<p><strong>行锁</strong></p>
+<p>略</p>
+<h2 id="Adaptive-Query-Execution"><a href="#Adaptive-Query-Execution" class="headerlink" title="Adaptive Query Execution"></a>Adaptive Query Execution</h2><p>HTAP模糊了负载的差异，因此查询引擎更要准确地对存储层接口调用进行合适的排序调度，比如查询的某个filter使用二级索引，另一个filter使用编码执行(encoded execution)，这两个filter的顺序取决于selectivity和执行代价。优化器生成的静态计划可能不是最优的，因此S2DB采用了adaptive query execution的方式动态决定数据访问方式。</p>
+<p>S2DB中数据访问大致上分三层：</p>
+<ol>
+<li>找到要读的segment列表</li>
+<li>在每个segment上执行filter，读取所需的row</li>
+<li>解码和输出row</li>
+</ol>
+<p>Segment Skipping：</p>
+<p>依赖全局索引或者segment meta的min&#x2F;max值过滤掉整个segment。</p>
+<p>Filtering：</p>
+<ul>
+<li>regular filter 先decode再过滤</li>
+<li>encoded filter 比如字典编码，可以直接在编码后的数据上执行</li>
+<li>group filter 解码所有过滤列再执行过滤</li>
+<li>secondary index filter</li>
+</ul>
+<h2 id="测试数据"><a href="#测试数据" class="headerlink" title="测试数据"></a>测试数据</h2><p>TPCC测试结果看，性能与一般云TP数据库性能接近。</p>
+<p>TPCH测试结果看，成本与其他云数仓差不多，性能还好一些?</p>
+<h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>S2DB最早是从MemSQL演化过来，一个shared-nothing架构的系统支持了对象存储，从而增强了弹性。S2DB将wal的尾部数据的持久化交给了本地盘，这个设计对TP性能至关重要，尤其是TP事务延迟，但同时也带来了尾部数据可靠性和可用性的其他问题。不过对于S2DB来说这不是一个问题，因为它原来就是shared-nothing架构的，这些问题应该在之前的版本已经解决过了。另外一点是这个设计使得S2DB的弹性不如Snowflake等，S2DB的计算节点并不是完全无状态的，而是有少量的一点状态。我个人认为这个弹性损失没有那么大。</p>
+<p>S2DB使用同一个存储支持HTAP负载，存储使用硬盘列存+内存行存的方式，大思路上跟其他类似系统并没有太多差异。但S2DB对TP的各种优化点比较多，对TP的支持比较给力。从测试数据上看，效果很好，不知道用户实测效果怎么样。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/data-storage-in-cloud/">
+        <span class="nav-arrow">← </span>
+        
+          Data Storage Management in Cloud Environment
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/memsql-optimizer/">
+        
+          MemSQL优化器
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#S2DB%E7%AE%80%E4%BB%8B"><span class="toc-nav-text">S2DB简介</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AD%98%E5%82%A8%E8%AE%A1%E7%AE%97%E5%88%86%E7%A6%BB"><span class="toc-nav-text">存储计算分离</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BB%9F%E4%B8%80%E8%A1%A8%E5%AD%98%E5%82%A8-Unified-Table-Storage"><span class="toc-nav-text">统一表存储 Unified Table Storage</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Adaptive-Query-Execution"><span class="toc-nav-text">Adaptive Query Execution</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="toc-nav-text">测试数据</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/singlestore-cloud-htap/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

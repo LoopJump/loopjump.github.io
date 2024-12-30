@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Rethink the Scan in MVCC Databases | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Rethink the Scan in MVCC Databases</h2>
+  <p class="post-date">2022-02-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>这是SIGMOD’21 上的论文《Rethink the Scan in MVCC Databases》，论文针对像HTAP等场景下可能出现大量versioned data中执行scan慢的问题提出了一种比较有效的方案。</p>
+<h2 id="Scan性能问题"><a href="#Scan性能问题" class="headerlink" title="Scan性能问题"></a>Scan性能问题</h2><p>首先，论文看到了这种场景下scan慢的一个重要原因：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219161029102.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219161029102.png</a></p>
+<p>Scan的时候，每一个key都要分别从自己的多个版本里面做一次线性查找，找到当前读快照可见的版本。</p>
+<p>这个过程中假如有一种ridgy pointer，用于从key A的可见版本数据直接跳转到下一个key的可见版本数据（或者临近版本），则scan操作性能就会大幅提升。</p>
+<p>为此，论文要解决两个问题：</p>
+<p>第一个问题是，per-chain内加速搜索（例如上图右侧key A从A最新版本跳过次新版本）。</p>
+<p>第二个问题是，相邻key的per-chain之间建立k_ridgy pointer。</p>
+<h2 id="两个优化问题"><a href="#两个优化问题" class="headerlink" title="两个优化问题"></a>两个优化问题</h2><h3 id="per-chain内加速搜索"><a href="#per-chain内加速搜索" class="headerlink" title="per-chain内加速搜索"></a><strong>per-chain内加速搜索</strong></h3><p>首先第一个问题本质上是线性有序链表加速查找的过程，论文提出了一种新的跳表 frugal skip list。</p>
+<p>frugal skip list也是一个概率查找数据结构，查找性能与普通skip list一样，都是O(logN)的。但如其名所描述，比普通skip list要节省很多指针空间。</p>
+<p>frugal skip list加速查找示意图如下</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219163415596.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219163415596.png</a></p>
+<p>关键还是新增的v_ridgy指针（v指version，per-chain内节点加速）。</p>
+<p>v_ridgy指针插入的流程如下</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219163540596.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219163540596.png</a></p>
+<p>首先新节点以50%的概率成为一个新的最底层节点，50%的概率成为一个有序链表中其后继节点所在version stack的head。不管是底层还是head，设置其ridgy pointer时，要求都是一样的：新节点N的ridgy pointer指向的节点是N向前（这里向前是指per-chain的old version方向，也就是原始version chain的单链表指针方向）找最近的一个version stack，这个version stack满足stack top的节点的level比N高。</p>
+<p>在这个规则下，ridgy skip list实际上类似于普通skip list的level pointer，注意到version stack达到高度h的概率是1&#x2F;2^h，所以沿着ridgy pointer走实际上达到跳过了指数数量node效果。所以frugal skip list的查找过程也就容易映射到普通skip list了。</p>
+<h3 id="相邻key的per-chain之间建立k-ridgy-pointer"><a href="#相邻key的per-chain之间建立k-ridgy-pointer" class="headerlink" title="相邻key的per-chain之间建立k_ridgy pointer"></a>相邻key的per-chain之间建立k_ridgy pointer</h3><p>第二个问题相邻key的per-chain之间建立k_ridgy pointer。</p>
+<p>这里的核心诉求是保证两个不变式：key-free 和 version-free。</p>
+<p>两个不变式的概念很容易理解，来自最开始的那个洞察。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219193939547.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219193939547.png</a></p>
+<p>如图，既然ra80有一个k_ridgy pointer指向 rb82，就要求ra和rb之前不存在其他record，否则scan就会丢数据，这就是key-free。另外一点就是某个读快照如果可以看到ra80，则上述k_ridgy pointer必须保证该快照可以看到的rb版本不会比rb82新，也就是rb82往新的方向没有该快照可见的version，这就是version-free。</p>
+<p>这种k_ridgy pointer的实现实际上也不复杂。如果数据结构本身是lock free的话，可能需要小心，在某些情况下，数据结构新增ridgy pointer应该也有机会做成lock free而不引入lock阻塞。</p>
+<h2 id="应用到实际系统的坑"><a href="#应用到实际系统的坑" class="headerlink" title="应用到实际系统的坑"></a>应用到实际系统的坑</h2><p>这个思路应用到具体实际系统中，还有一些坑需要趟平。</p>
+<p>论文给出了几个坑，并给出的解决方案。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219195636323.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219195636323.png</a></p>
+<h3 id="adjacency-rule"><a href="#adjacency-rule" class="headerlink" title="adjacency rule"></a><strong>adjacency rule</strong></h3><p>也就是说有些数据结构不容易确定相邻key，比如in-memory hash结构。像MySQL InnoDB属于磁盘B+Tree，是可以很简单确定next record的。</p>
+<p>ERMIA就有这个坑。ERMIA主体结构是一个masstree，但叶子上记录的不是raw record address，在叶子和raw record之间多一层indirecton arrary。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219200647920.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219200647920.png</a></p>
+<p>解决方法是在提交时保留待提交record在之前执行期间搜索的信息，把这个信息带到提交阶段即可。如果没有这个信息，就只能重新搜索了。</p>
+<h3 id="version-ordering"><a href="#version-ordering" class="headerlink" title="version ordering"></a><strong>version ordering</strong></h3><p>version chain的方向是new2old（N2O），还是old2new（O2N）。</p>
+<p>如果是O2N，就比较麻烦，一是要修改old version的ridgy pointer，这可能会引发IO，二是还要额外维护N2O的frugal skip list。</p>
+<p>解决方法就是……重构这个索引系统，把它从O2N改为N2O，粗暴且彻底。</p>
+<h3 id="version-relocation"><a href="#version-relocation" class="headerlink" title="version relocation"></a><strong>version relocation</strong></h3><p>像MySQL InnoDB，最新版本的数据在做一次修改后，就会被复制到undo space作为前镜像，原位置覆盖写入新值。但是旧版本一旦到了undo space，就不再relocate了，所以解决方法就是只在undo space内做ridgy pointer，然后新增backlink指向原页面记录。purge逻辑也要跟着调整。</p>
+<h3 id="verison-timestamp"><a href="#verison-timestamp" class="headerlink" title="verison timestamp"></a><strong>verison timestamp</strong></h3><p>就是开启序和提交序的差异。开启序就麻烦很多，执行阶段就产生新版本，提交阶段设置k_ridgy的话，还要写redo（更新了undo page）。解决方法也是新增backlink，但解决起来也比较麻烦。详看论文。</p>
+<h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>总之，论文提出了一个新的skip list，性能比肩原skip list但空间占用更省，然后针对versioned data上的scan，根据snapshot的洞察引入跨key的捷径k_ridgy pointer加速scan，同时将方法应用到实际系统，并克服了多个困难。</p>
+<p>另外值得注意的是，该洞察也比较适合应用到In-Memory OLTP引擎、LSM Tree引擎中（即使具体到k_ridgy pointer不好应用）。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/rsm-compartmentalization/">
+        <span class="nav-arrow">← </span>
+        
+          使用Compartmentalization扩展复制状态机
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/rocksdb-evolution/">
+        
+          RocksDB演进
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Scan%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-nav-text">Scan性能问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%A4%E4%B8%AA%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-nav-text">两个优化问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#per-chain%E5%86%85%E5%8A%A0%E9%80%9F%E6%90%9C%E7%B4%A2"><span class="toc-nav-text">per-chain内加速搜索</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%9B%B8%E9%82%BBkey%E7%9A%84per-chain%E4%B9%8B%E9%97%B4%E5%BB%BA%E7%AB%8Bk-ridgy-pointer"><span class="toc-nav-text">相邻key的per-chain之间建立k_ridgy pointer</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BA%94%E7%94%A8%E5%88%B0%E5%AE%9E%E9%99%85%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9D%91"><span class="toc-nav-text">应用到实际系统的坑</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#adjacency-rule"><span class="toc-nav-text">adjacency rule</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#version-ordering"><span class="toc-nav-text">version ordering</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#version-relocation"><span class="toc-nav-text">version relocation</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#verison-timestamp"><span class="toc-nav-text">verison timestamp</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%80%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-nav-text">一点总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/rethink-scan-in-mvcc/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

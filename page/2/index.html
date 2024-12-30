@@ -195,6 +195,70 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/brief-to-performance-analysis/">浅析性能优化</a>
+      </h2>
+      <p class="article-date">June 12, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          性能分析和优化是一个要求比较全面的工作，通常既要了解所分析的目标系统本身的设计和实现，也要对操作系统等底层基础设施有一定了解，同时需要掌握一些方法论以指导性能分析和优化工作。
+本文尝试根据个人这几年做过的几次数据库性能优化的一点经验做一些总结。如前所说，性能分析和优化覆盖面比较广，这里只能抛 ...
+        
+      </div>
+      <a class="more" href="/brief-to-performance-analysis/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/databricks-intro/">Databricks Lakehouse</a>
+      </h2>
+      <p class="article-date">June 10, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics》 CIDR21’
+整片文章讲的比较宽泛。
+Introduction第一代数仓：结构化数据，用于决 ...
+        
+      </div>
+      <a class="more" href="/databricks-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/innodb-basic-struct/">InnoDB源码解析-基础数据结构</a>
+      </h2>
+      <p class="article-date">June 4, 2022</p>
+      
+        
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          互斥锁 ib_mutex_ttypedef FutexMutex ib_mutex_t;
+UT_MUTEX_TYPE(TTASFutexMutex, GenericPolicy, FutexMutex); 这个宏定义展开是 typedef PolicyMutex&lt;TTASFutexMu ...
+        
+      </div>
+      <a class="more" href="/innodb-basic-struct/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/innodb-storage-hierarchy/">InnoDB源码解析-存储管理层次</a>
       </h2>
       <p class="article-date">June 3, 2022</p>
@@ -342,63 +406,6 @@ query bloc ...
         
       </div>
       <a class="more" href="/rbo-in-starburst/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/content-aware-lock-scheduling/">Content-Aware Lock Scheduling</a>
-      </h2>
-      <p class="article-date">March 20, 2022</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          VLDB 18’  Content-Aware Lock Scheduling for Transactional Database
-相关的证明在 Contention-aware lock scheduling for transactionaldatabases.Technical Re ...
-        
-      </div>
-      <a class="more" href="/content-aware-lock-scheduling/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lsmtree-compaction-design-space/">构建分析LSM Compaction Design Space</a>
-      </h2>
-      <p class="article-date">February 19, 2022</p>
-      
-      <div class="article-summary">
-        
-          《Constructing and Analyzing the LSM Compaction Design Space》 VLDB’21
-四个原语Compaction是LSM-Tree引擎中最重要的环节之一，一方面它主导了LSM-Tree的形状进而影响了LSM-Tree的包括性能、空间占用等 ...
-        
-      </div>
-      <a class="more" href="/lsmtree-compaction-design-space/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/remix-efficient-range-query-for-lsm-tree/">REMIX - Efficient Range Query for LSM-trees</a>
-      </h2>
-      <p class="article-date">February 18, 2022</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《REMIX: Efficient Range Query for LSM-trees》FAST’20
-LSM-Tree引擎的scan操作是一个引擎固有的短板，其根源在于相比基于B+Tree的引擎如InnoDB的数据全局有序，LSM-Tree的数据有序性差，它由多个sort run组成，因此 ...
-        
-      </div>
-      <a class="more" href="/remix-efficient-range-query-for-lsm-tree/">Read more</a>
     </article>
   
 

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Snowflake Elastic Data Warehouse | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Snowflake Elastic Data Warehouse</h2>
+  <p class="post-date">2022-06-24</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《The Snowflake Elastic Data Warehouse》 SIGMOD 16’</p>
+<p>Snowflake具备如下的特点：</p>
+<ol>
+<li>纯粹的SaaS体验：用户将数据放到云上，然后可以通过snowflake对他们的数据进行查询。</li>
+<li>关系型：支持SQL和ACID</li>
+<li>办结构化：内置函数和SQL扩展来支持对半结构化数据的访问，自动schema discovery和列式存储</li>
+<li>弹性：存储和计算资源可以独立无缝弹性，不影响数据可用性和当前查询性能</li>
+<li>高可用：容忍node、cluster和data cent宕机，软硬件升级无downtime</li>
+<li>持久性：通过clone、undrop、跨region备份保证数据持久性</li>
+<li>经济成本：数据压缩，计算高效，按需付费</li>
+<li>安全：所有数据包括临时文件和网络都是端到端加密，基于角色的访问权限控制机制可以精细到SQL粒度</li>
+</ol>
+<h2 id="Storage-Versus-Compute"><a href="#Storage-Versus-Compute" class="headerlink" title="Storage Versus Compute"></a>Storage Versus Compute</h2><p>shared-nothing架构在曾在数仓领域占据主导地位，主要因为可扩展性和基于普通商用硬件。</p>
+<p>但是shared-nothing架构的主要问题是以单个机器节点为粒度，计算资源和存储资源紧耦合，这会带来一些麻烦：</p>
+<ol>
+<li>异构负载：硬件是同构的，但负载不是。批量加载的场景和复杂计算的场景对资源的要求差异巨大。</li>
+<li>成员变更：数据需要大规模reshuffle数据。</li>
+<li>在线升级：升级影响服务，实际上是有能力做到升级完全无感知。</li>
+</ol>
+<p>云计算时代，背景有些变化：云服务商提供了多种规格的计算资源，可以物尽其用；机器节点失效不再是异常，而是预期内的常态；升级无感知和弹性也是强需求。</p>
+<h2 id="Snowflake架构"><a href="#Snowflake架构" class="headerlink" title="Snowflake架构"></a>Snowflake架构</h2><p>Snowflake是service-oriented架构，由多个容错和独立扩展的服务组成，服务之间用RESTful接口交互。整体分为三层：</p>
+<ol>
+<li>Data Storage：使用AWS S3存储数据表和查询结果</li>
+<li>Virtual Warehouses：系统的肌肉部件，负责处理查询执行和资源弹性</li>
+<li>Cloud Services：系统的大脑部件</li>
+</ol>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-3-300x245.png">http://loopjump.com/wp-content/uploads/2022/06/1-3-300x245.png</a></p>
+<h3 id="Data-Storage"><a href="#Data-Storage" class="headerlink" title="Data Storage"></a>Data Storage</h3><p>存储层选择S3的原因：</p>
+<ol>
+<li>S3在云厂商中比较成熟</li>
+<li>AWS客户本身也多，这样可以为snowflake提供潜在客户</li>
+<li>S3在易用性、高可用、高持久性保证方面都很出色，性能在一些方面也很好</li>
+</ol>
+<p>因此，与其自研一个类似的S3&#x2F;HDF存储系统，不如在S3基础上搞，再将精力投入到local cache、skew resilient进行性能加强。</p>
+<p>但真选择了这条路的话，也要面对S3的各种问题：</p>
+<ol>
+<li>S3的读写延迟很高，如果用HTTPS接口访问，CPU消耗也很高。</li>
+<li>S3是blob存储，仅支持简单的基于HTTPS的简单的PUT&#x2F;GET&#x2F;DELETE接口，文件要整体覆盖写，甚至不支持追加写，但S3支持读取部分内容。</li>
+</ol>
+<p>这对Snowflake的存储格式设计影响比较大。Snowflake中表水平分区，每个分区对应的文件都比较大，分区文件不可变，文件采用自解释的高压缩列式存储格式，查询读取时只读取所需要的部分内容。</p>
+<p>临时表先存到本地存储，如果满了也会再外溢到S3存储上。</p>
+<h3 id="Virtual-Warehouses"><a href="#Virtual-Warehouses" class="headerlink" title="Virtual Warehouses"></a>Virtual Warehouses</h3><p>Virtual Warehouses层包含了EC2实例集群，整体对外表现为一个VW(virtual warehouse)，其中每个EC2叫做worker node。VW规格相对固定，只有X-Small 、XX-Large等规格，客户对具体内部EC2不感知。</p>
+<p>这种靠近用户的抽象有利于封装IaaS层细节，有利于系统演化。</p>
+<h3 id="弹性和隔离"><a href="#弹性和隔离" class="headerlink" title="弹性和隔离"></a>弹性和隔离</h3><p>VM是纯计算资源，无状态，因此很容易创建、销毁，实现弹性。查询不会跨多个VW，这样可以实现强性能隔离，不过如果允许worker node在VW之间共享，则可以进一步提高利用率。查询发送到VW后，VW内的每个worker node上都会创建一个进程服务该查询，进程生命周期与该查询生命周期一致。各个进程不会影响S3上的原始数据，因为这些数据是immutable的。</p>
+<p>Snowflake现在还不支持failure retry，未来会支持。</p>
+<p>用户可以有多个VW，每个VM都可以运行多个查询，数据是共享的，不需要物理拷贝。共享的无限存储意味着可以共享和集成所有的数据，这也是数据仓库的核心原则之一。</p>
+<p>弹性的另外一个点是同样的价格成本可以带来完全不同的性能体验。比如某个data load工作，如果用4个node需要15小时，改用32个node后需要2小时，总体价格成本差不多，但是用户体验好了很多。也就是说，“一个人怀胎十月可以生小孩，十个人怀胎一月不能生小孩” 类型的问题在这里不存在。</p>
+<p>弹性是Snowflake架构最大的优势和代差。</p>
+<h3 id="本地缓存和File-Stealing"><a href="#本地缓存和File-Stealing" class="headerlink" title="本地缓存和File Stealing"></a>本地缓存和File Stealing</h3><p>本地缓存使用的是本地存储，缓存了该node上查询所读取过来的S3的数据。这些缓存在该node的多个进程上共享。</p>
+<p>优化器一定程度上感知VW内各node的本地缓存这一事实。优化器在生成计划时，会对分布式查询进行分发到各node，这个过程中会按对表名进行一致性哈希分发，这样不同查询的访问相同数据的查询片段就会落在同一个node上，该node的本地缓存效果就会好一些。</p>
+<p>另外一个问题是数据倾斜。Snowflake采用了一种称作 file stealing的方法。当一个node完成了该node上的查询片段的scan之后，会去其他执行慢或者负担重的node上偷一个文件查询任务。以此来进行负载均衡。</p>
+<h3 id="执行引擎"><a href="#执行引擎" class="headerlink" title="执行引擎"></a>执行引擎</h3><p>分布式执行固然可以提高性能上限，但单机性能对系统效能（price&#x2F;performance）影响非常大。</p>
+<p>Snowflake的查询引擎的特点：</p>
+<ol>
+<li>列式存储：列存更适合AP负载，可以显著降低IO开销，并充分利用SIMD指令。</li>
+<li>向量化：pipeline风格，批量处理。</li>
+<li>Push模型：与volcano模型pull相反，采用了push模型；push模型cache友好，而且可以支持处理DAG形状的计划（对比tree形状的计划）。</li>
+</ol>
+<h3 id="Cloud-Service"><a href="#Cloud-Service" class="headerlink" title="Cloud Service"></a>Cloud Service</h3><p>VM是短暂的资源组概念，相对而言，Cloud Service是比较重的组件，其中的访问控制、查询优化器、事务管理等都是长生命周期的，而且很多都是在多个用户间共享的。多租户提高了资源利用率，降低了管理开销。google.co</p>
+<h3 id="查询管理和优化"><a href="#查询管理和优化" class="headerlink" title="查询管理和优化"></a>查询管理和优化</h3><p>所有的查询都先经过Cloud Service，查询的前几个阶段parser, resolver，access control和optimizer都在这里处理。</p>
+<p>Snowflake的优化器是Cascades-style，top-down的CBO。统计信息在数据加载和更新的时候自动维护。因为Snowflake不适用索引，所以优化搜索空间小很多。还有一些如join的数据分布类型要到执行时才会确定。因此snowflake的优化器出错的情况比较少。</p>
+<p>优化器生成执行计划后，将计划各片段发送到所有的worker node，Cloud Service负责监控这个计划的执行情况，包括性能数据和node failure监测，搜集的信息也会保存下来用于审计。Snowflake提供了GUI界面可以查看监控和分析。</p>
+<h3 id="Concurrency-Control"><a href="#Concurrency-Control" class="headerlink" title="Concurrency Control"></a>Concurrency Control</h3><p>并发控制过程完全在Cloud Service层处理。</p>
+<p>Snowflake面向AP，主要处理大量读，批量插入&#x2F;更新。Snowflake提供了ACID支持，隔离级别采用SI。</p>
+<p>Snowflake中，更新要通过替换原文件来生效。</p>
+<h3 id="Pruning"><a href="#Pruning" class="headerlink" title="Pruning"></a>Pruning</h3><p>剪枝是减少数据访问的方法之一。很多系统依赖索引，但索引在Snowflake中不合适，原因如下：</p>
+<ol>
+<li>索引底层依赖随机读，但Snowflake的存储介质S3和数据压缩对随机读都不利</li>
+<li>索引维护本身会带来存储空间开销和数据加载耗时</li>
+<li>用户需要显式维护索引，增加了用户心智负担</li>
+</ol>
+<p>索引的替代方案是　min-max based pruning，也叫 small materialized aggrgate, zone maps, data skipping。每个data chunk维护其分布信息，尤其是min-max。</p>
+<p>这个方法非常适合Snowflake：不依赖用户输入；scale很好；容易维护。</p>
+<h2 id="FEATURE-HIGHLIGHTS"><a href="#FEATURE-HIGHLIGHTS" class="headerlink" title="FEATURE HIGHLIGHTS"></a>FEATURE HIGHLIGHTS</h2><h3 id="纯Software-as-a-Service体验"><a href="#纯Software-as-a-Service体验" class="headerlink" title="纯Software-as-a-Service体验"></a>纯Software-as-a-Service体验</h3><p>Snowflake支持标准的JDBC&#x2F;ODBC&#x2F;Python PEP-0249各种接入标准，可以与大量的第三方工具集成如Tableau&#x2F;Informatica&#x2F;Looker，也支持直接通过Web操作。Web UI看似简单，实则很有用（应该是承担了很多管控的角色）。</p>
+<p>此外，ease-on-use和服务体验一直是Snowflake的追求，隐藏节点失效、更少的调控参数、更少的物理设计、没有storage gromming tasks，所有的一切都仅仅紧扣数据和查询两个概念。</p>
+<h3 id="Continuous-Availability"><a href="#Continuous-Availability" class="headerlink" title="Continuous Availability"></a>Continuous Availability</h3><p>略</p>
+<h3 id="Semi-Structured-and-Schema-less-Data"><a href="#Semi-Structured-and-Schema-less-Data" class="headerlink" title="Semi-Structured and Schema-less Data"></a>Semi-Structured and Schema-less Data</h3><p>Snowflake扩展了SQL类型，新增三种　VARIANT、ARRAY、OBJECT。</p>
+<p>VARIANT可以存储任意的标准SQL类型，也可以存变长的ARRAY和OBJECT，其中OBJECT和MongoDB的document是类似的。ETL的时候，用户可以将JSON、XML等load到VARIANT类型的列中。</p>
+<p>Snowflake的ETL的优势：</p>
+<ol>
+<li>支持schema later</li>
+<li>需要transformation的时候，可以直接用snowflake的资源和SQL能力来做</li>
+</ol>
+<p>Snowflake使用列存存放半结构化数据。</p>
+<h3 id="Time-Travel-和-Clone"><a href="#Time-Travel-和-Clone" class="headerlink" title="Time Travel 和 Clone"></a>Time Travel 和 Clone</h3><p>更新数据后，旧版本文件保留一段时间如90天，Snowflake支持Time Travel功能：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM my_table</span><br><span class="line">  AT (TIMESTAMP =&gt; &#x27;Mon, 01 May 2015 16:20:00 -0700&#x27;::timestamp);</span><br><span class="line"></span><br><span class="line">SELECT * FROM my_table</span><br><span class="line">  AT(OFFSET =&gt; -60*5); -- 5 min ago</span><br><span class="line"></span><br><span class="line">SELECT * FROM my_table</span><br><span class="line">  BEFORE (STATEMENT =&gt; &#x27;8e5d0ca9-005e-44e6-b858-a8f5b37c5726&#x27;);</span><br><span class="line"></span><br><span class="line">  SELECT new.key, new.value, old.value</span><br><span class="line">    FROM my_table new JOIN my_table AT(OFFSET =&gt; -86400) old -- 1 day ago</span><br><span class="line">    ON new.key = old.key WHERE new.value &lt;&gt; old.value;</span><br></pre></td></tr></table></figure>
+
+<p>undrop功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DROP DATABASE important_db; -- whoops!</span><br><span class="line">UNDROP DATABASE important_db;</span><br></pre></td></tr></table></figure>
+
+<p>clone：软引用，不会copy物理数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE recovered_db CLONE important_db</span><br><span class="line">    BEFORE( STATEMENT =&gt; &#x27;8e5d0ca9-005e-44e6-b858-a8f5b37c5726&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><p>Key Hierarchy</p>
+<p>Key Life Cycle</p>
+<p>End-to-End Security</p>
+<h2 id="Lesson-Learned"><a href="#Lesson-Learned" class="headerlink" title="Lesson Learned"></a>Lesson Learned</h2><ol>
+<li>2012年Snowflake启动的时候，当时还有大量的SQL on Hadoop系统，做一个这样的AP有点冒险，但回看，Hadoop并没有取代RDBMS。</li>
+<li>面向云的架构。</li>
+<li>针对半结构化数据的工作现在看来是很有价值的。</li>
+<li>研发Snowflake对团队来说难度并不太大，研发团队累计100年研发经历了，因此避免了很多重大弯路。</li>
+<li>虽然无需调节就已经性能不错了，但有待进一步提升性能。</li>
+<li>最大的技术挑战是SaaS和多租户方面。</li>
+<li>演化过程有很多新问题。</li>
+<li>未来最大的挑战是转为一个full self-service model。</li>
+</ol>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/arch-query-compiler/">
+        <span class="nav-arrow">← </span>
+        
+          How to Architect a Query Compiler Revisited
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/volcano-optimizer/">
+        
+          The Volcano Optimizer Generator
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Storage-Versus-Compute"><span class="toc-nav-text">Storage Versus Compute</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Snowflake%E6%9E%B6%E6%9E%84"><span class="toc-nav-text">Snowflake架构</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Storage"><span class="toc-nav-text">Data Storage</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Virtual-Warehouses"><span class="toc-nav-text">Virtual Warehouses</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%BC%B9%E6%80%A7%E5%92%8C%E9%9A%94%E7%A6%BB"><span class="toc-nav-text">弹性和隔离</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8CFile-Stealing"><span class="toc-nav-text">本地缓存和File Stealing</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E"><span class="toc-nav-text">执行引擎</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Cloud-Service"><span class="toc-nav-text">Cloud Service</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%AE%A1%E7%90%86%E5%92%8C%E4%BC%98%E5%8C%96"><span class="toc-nav-text">查询管理和优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Concurrency-Control"><span class="toc-nav-text">Concurrency Control</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Pruning"><span class="toc-nav-text">Pruning</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#FEATURE-HIGHLIGHTS"><span class="toc-nav-text">FEATURE HIGHLIGHTS</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%BA%AFSoftware-as-a-Service%E4%BD%93%E9%AA%8C"><span class="toc-nav-text">纯Software-as-a-Service体验</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Continuous-Availability"><span class="toc-nav-text">Continuous Availability</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Semi-Structured-and-Schema-less-Data"><span class="toc-nav-text">Semi-Structured and Schema-less Data</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Time-Travel-%E5%92%8C-Clone"><span class="toc-nav-text">Time Travel 和 Clone</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E5%85%A8"><span class="toc-nav-text">安全</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Lesson-Learned"><span class="toc-nav-text">Lesson Learned</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/snowflake-paper/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -195,6 +195,136 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/data-model-history/">以史为鉴：数据模型变迁史</a>
+      </h2>
+      <p class="article-date">February 10, 2018</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这两天看了篇数据模型的论文，What Goes Around Comes Around。这篇论文是2005年Stonebraker和Hellerstein两位泰斗写的，讲的是数据库的数据模型35年的变迁历史，另外论文还总结了一些经验。
+这是一个非常有趣的话题，能够让我们更多地去从市场和产品角 ...
+        
+      </div>
+      <a class="more" href="/data-model-history/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/dbms-arch/">数据库系统组件</a>
+      </h2>
+      <p class="article-date">February 10, 2018</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          读了Architecture of a Database System这篇经典论文，挑了些不太熟悉的内容做了笔记。
+论文内容基本上谈不上是在讲架构吧，基本上就是罗列了下有哪些组件，而且内容基本上针对原来传统数据库的。
+
+!http://loopjump.com/wp-content/uplo ...
+        
+      </div>
+      <a class="more" href="/dbms-arch/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/deep-class/">Deep Class</a>
+      </h2>
+      <p class="article-date">February 10, 2018</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近看了个有趣的talk：”A Philosophy of Software Design” by John Ousterhout。
+地址：https://www.youtube.com/watch?v=bmSAYlu0NcY
+https://www.youtube.com/watch?v= ...
+        
+      </div>
+      <a class="more" href="/deep-class/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/raft-one-server-reconfiguration/">Raft One-Server成员变更</a>
+      </h2>
+      <p class="article-date">May 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          前面介绍了Paxos成员组变更，现在根据Raft博士论文介绍一下Raft是怎么做成员组变更的。前者更多描述几个核心的思想，而后者更加实用，介绍了实践过程中遇到的一些实际问题。
+Raft博士论文描述了两种变更方案：
+
+One-Server变更：一阶段变更，要求每次成员组从G1变成G2时，G2相 ...
+        
+      </div>
+      <a class="more" href="/raft-one-server-reconfiguration/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
+      </h2>
+      <p class="article-date">April 3, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Reconfiguring a State Machine这篇论文主要讲解成员组reconfigure，即成员变更。发表时间还是2010年，相比Paxos原始论文的发表时间已经过去20年了。本博文先解读这篇论文，Raft做成员变更的方案后面另文阐述。
+Reconfiguration是指在分布 ...
+        
+      </div>
+      <a class="more" href="/reconfig-state-machine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/epaxos-paper-note/">EPaxos协议解读</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          引言这是2013年SOSP的会议论文，讲述了一个leaderless的一致性协议EPaxos。不得不说的是，这篇论文写的实在是难读，一方面协议确实比Multi Paxos协议复杂很多，另一方面是行文上有些地方不通顺。我看的资料是会议论文和两个版本的EPaxos证明的技术报告。会议论文简洁但是 ...
+        
+      </div>
+      <a class="more" href="/epaxos-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/flp-proof-note/">FLP impossibility证明阅读笔记</a>
       </h2>
       <p class="article-date">March 10, 2017</p>
@@ -276,134 +406,6 @@ Dynamo系统 ...
         
       </div>
       <a class="more" href="/flexible-paxos-quorum-revisited/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/gdb-tips/">gdb调试技巧</a>
-      </h2>
-      <p class="article-date">February 10, 2017</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Gdb是linux下C&#x2F;C++代码调试神器，本文综合了一些比较好的国内外博客，加上我自己的一些使用经验，希望能对读者有用。
-使用gdb前，代码要用gcc -g选项编译以带上符号表。
-调试C++程序的基本环境设置1234567set print pretty onset print  ...
-        
-      </div>
-      <a class="more" href="/gdb-tips/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/newsql/">What's Really New with NewSQL</a>
-      </h2>
-      <p class="article-date">February 9, 2017</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          这篇文章介绍的面很广，提到了诸多系统，不过每个点都不太细。另外虽然是16年的文章，但不知道为啥还是感觉有点陈旧了。。。简单来说，当个手册看吧，遇到具体细节问题，可以找文中提到的具体系统参考下。这里捡我感兴趣的点罗列了一下，详细内容读者可以看原文。
-DBMS简史1968年第一个DBMS上线，I ...
-        
-      </div>
-      <a class="more" href="/newsql/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/nosql-survey-note/">NoSQL数据库综述和选型阅读笔记</a>
-      </h2>
-      <p class="article-date">February 8, 2017</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          前一阵子看到的一篇比较详细的NoSQL数据库的综述 NoSQL Database Systems: A Survey and Decision Guidance，归类梳理了NoSQL数据库，并提供了选型决策树，非常有价值。仔细阅读了下，发现好多NoSQL系统连名字都没听过，汗。文中图片点击可 ...
-        
-      </div>
-      <a class="more" href="/nosql-survey-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/cap-theory/">浅析CAP理论</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          CAP理论是Eric Brewer在2000年前后提出的一个设计上的折中原则，大意是说，一个系统在Consistency、Availability、Partition Tolerance三者之间无法兼顾，必须舍弃一个。
-Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（ ...
-        
-      </div>
-      <a class="more" href="/cap-theory/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/split-order-hash/">Split-Order Hash基本原理</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          之前阅读论文并实现了一个可扩展的哈希表，已经在生产环境使用。这里简单描述一下思路，详细的实现可以参见论文。
-哈希的常规实现方式是开辟一个长度为N的大数组，新插入一个元素时，先根据元素hash值模除N，将元素节点插入这个桶，桶上有元素，一般可以拉链解决冲突。当元素越来越多，每个桶上链表就会比较 ...
-        
-      </div>
-      <a class="more" href="/split-order-hash/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/distributed-consistency-model/">浅析分布式一致性模型</a>
-      </h2>
-      <p class="article-date">November 10, 2016</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一致性术语的理解一致性这个中文术语在计算机的不同领域有不同的含义，对应的英文术语也是不一样的：Consistency, Consensus, Coherence等等。
-就这三个术语而言，其区别可以简单的如下理解：
-
-Coherence这个单词只在Cache Coherence场景下出现过，它 ...
-        
-      </div>
-      <a class="more" href="/distributed-consistency-model/">Read more</a>
     </article>
   
 

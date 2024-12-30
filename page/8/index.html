@@ -195,6 +195,138 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/rsm-questions/">漫谈复制状态机的几个有趣的问题</a>
+      </h2>
+      <p class="article-date">October 2, 2016</p>
+      
+        
+  <a href="/tags#RSM" >
+    <span class="tag-code">RSM</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          读过Paxos等论文的读者，应该对复制状态机（Replicated State Machine）的概念并不陌生。复制状态机在分布式系统中是一个很简单却很强大的模型，也是一种很有价值的思想。
+模型一句话描述就是：多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。
+
+!h ...
+        
+      </div>
+      <a class="more" href="/rsm-questions/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/google-spanner/">Spanner(OSDI'12)论文阅读笔记</a>
+      </h2>
+      <p class="article-date">September 21, 2016</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Spanner是Google搞的一个scalable, multi-version, globally distributed, synchronously-replicated dataase。它的最大特点就是数据分布在全球范围内，支持外部一致性的分布式事务。在2012年Spanner论文 ...
+        
+      </div>
+      <a class="more" href="/google-spanner/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/time-clock-order/">分布式系统的时间、时钟和事件序</a>
+      </h2>
+      <p class="article-date">September 10, 2016</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Time, Clocks, and the Ordering of Events in a Distributed System这篇论文Lamport发表于1978年，讨论的是分布式系统下的时钟和事件序问题。
+
+!http://loopjump.com/wp-content/uploads/ ...
+        
+      </div>
+      <a class="more" href="/time-clock-order/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/manmonth-note/">人月神话 读书笔记</a>
+      </h2>
+      <p class="article-date">August 18, 2016</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近听到一个度量软件复杂度的概念，叫decoupling level，想起来以前买过一本《人月神话》，这两天把它从书堆里面翻出来了。虽然书有300多页，不过里面大部分观点，我想从业者应该都认可，因此书里的新东西并不多。
+Chapter 1： 焦油坑职业的乐趣：工作的创造性；产品有价值；零件正 ...
+        
+      </div>
+      <a class="more" href="/manmonth-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/cpp-typename-usage/">C++ typename用法</a>
+      </h2>
+      <p class="article-date">July 10, 2016</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          C++中typename关键字的使用方法
+1.用在模板定义里，标明其后的模板参数是类型参数。例如
+12345678910template&lt;typename T, typename Y&gt;T foo(const T&amp; t, const Y&amp; y) &#123; /*. ...
+        
+      </div>
+      <a class="more" href="/cpp-typename-usage/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lockfree-reclaim-perf-note/">LockFree数据结构的内存回收性能测试</a>
+      </h2>
+      <p class="article-date">March 12, 2016</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          最近在搞性能优化，读了一篇挺有意思的相关论文。
+Performance of memory reclamation for lockless synchronization
+几种Memory Reclaimation Scheme评测了几种回收机制的性能：
+
+QSBR  quiescent- ...
+        
+      </div>
+      <a class="more" href="/lockfree-reclaim-perf-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/transaction-thoughts/">关于事务的一点琐碎思考</a>
       </h2>
       <p class="article-date">March 2, 2016</p>
@@ -278,127 +410,6 @@ $\mathcal{abcde ...
         
       </div>
       <a class="more" href="/db-isolation-level/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/percolator-paper-note/">Percolator论文阅读笔记</a>
-      </h2>
-      <p class="article-date">June 10, 2015</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Percolator是Google在2011年发的论文，用于替换MapReduce做索引。核心是分布式事务和观察者通知机制。
-概述Google搜索引擎建立网页索引：通过处理网页库，会建好一个索引库。之后爬虫会新抓下来少量页面（相比于原始网页库的数量）。对于新抓来的页面，如何处理？有两种方式。 ...
-        
-      </div>
-      <a class="more" href="/percolator-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/bigtable-paper-note/">再读Bigtable论文</a>
-      </h2>
-      <p class="article-date">June 2, 2015</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          本文是Bigtable论文的阅读笔记，比较简略。
-1 基本概念介绍Bigtable本质上是GFS之上对GFS文件数据的一层索引。
-1.1 Bigtable的数据模型一个稀疏的分布式的持久化的多维度的排序的map。所谓map，就是key-value对。
-!http://loopjump.com ...
-        
-      </div>
-      <a class="more" href="/bigtable-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/gfs-paper-note/">再读GFS论文</a>
-      </h2>
-      <p class="article-date">June 1, 2015</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          之前上学的时候读过Google三架马车的论文，后续再读时，发现有些地方以前理解还是不够深刻。本文是重新学习GFS论文时记录的阅读笔记，行文比较散，主要是记录一下自己比较感兴趣的点，有需要的同学还是请直接参考原始论文。
-1 背景用大量普通机器搭建集群，因此节点失效成为集群中常态的问题，GFS必 ...
-        
-      </div>
-      <a class="more" href="/gfs-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/whyfp-note/">Why Functional Programming Matters 阅读笔记</a>
-      </h2>
-      <p class="article-date">August 10, 2014</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          本文是 Why Functional Programming Matters的阅读笔记，用相对通俗的语言解读了这篇论文，并对我觉得重要的一些点做了一些解释，欢迎在读这篇论文的朋友留言交流。不得不说的是，这篇论文大量涉及到SICP这本书中的知识，所以如果能看过SICP再看这篇论文，相信应该会轻 ...
-        
-      </div>
-      <a class="more" href="/whyfp-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note-of-programming-contest-challenge-book-6/">《挑战程序设计竞赛》读书笔记6-线段树和RMQ</a>
-      </h2>
-      <p class="article-date">February 7, 2014</p>
-      
-      <div class="article-summary">
-        
-          线段树：
-线段树适合于处理区间。如图组织管理区间。
-
-节点可以存放不同的数据，在书中实现了RMQ（Range Minimum Query）操作的数据结构。
-RMQ是指给定若干个数据a[]，找出a[i…j]的最小值，同时允许更新a[k]。
-针对RMQ，线段树的每个节点维护对应区间的最小值。如图 ...
-        
-      </div>
-      <a class="more" href="/note-of-programming-contest-challenge-book-6/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/note-of-programming-contest-challenge-book-5/">《挑战程序设计竞赛》读书笔记5-尺取法</a>
-      </h2>
-      <p class="article-date">February 5, 2014</p>
-      
-      <div class="article-summary">
-        
-          3.2节讲了一个很通用的方法，叫尺取法。
-尺取法通常设定前后两个指针，不断地按照某种策略移动前后指针，考察前后指针所限定的区间。
-
-例如例题3.2.1：给定长度为n的整数序列，求出总和不小于S的连续子序列的长度的最小值。按照尺取法，设定前后指针s&#x3D;0,t&#x3D;0,然后将s向前 ...
-        
-      </div>
-      <a class="more" href="/note-of-programming-contest-challenge-book-5/">Read more</a>
     </article>
   
 

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      浅谈Aurora Quorum | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>浅谈Aurora Quorum</h2>
+  <p class="post-date">2022-03-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>Aurora在SIGMOD18’的论文《Amazon Aurora: On Avoiding Distributed Consensus for I&#x2F;Os, Commits, and Membership Changes》中描述了Aurora关于共识方案的选择和Quorum方案的详细内容，本文这里做一些简单的分析。</p>
+<h3 id="Aurora架构背景"><a href="#Aurora架构背景" class="headerlink" title="Aurora架构背景"></a><strong>Aurora架构背景</strong></h3><p>在描述Aurora的Quorum方案前，先介绍下Aurora的系统架构。</p>
+<p>Aurora是share-storage、一写多读的架构，构建在MySQL(InnoDB)代码库上，当然后来增加了multi-master多写能力。</p>
+<p>数据库被解耦成两层：DB层跟单机MySQL差不多，负责了查询处理、事务、锁、BufferPool、undo管理几大块功能；存储层是一个可扩展的针对MySQL定制的存储服务，负责redo logging、页面持久化、垃圾回收、备份恢复等。</p>
+<p>存储层为了扩展性和快速恢复，将数据分为若干10GB的单元，叫segment。Segment里面包含若干page，同时也存储了跟这些page关联的redo records (redo log)，page和redo log二者是一体的，因为record可以apply到page上。这些segment分散到多个存储节点上，为了支持AZ+1的高可用，每个Segment存到3AZ共6副本，这6个副本合称为一个PG（Protection Group），Aurora使用改进的读3写4的Quorum协议实现多副本一致性。</p>
+<p>MySQL事务执行过程中，会产生wal，即innodb redo record，只有这些wal完成存储层持久化，才能响应客户端提交成功。DB层一个事务产生若干条redo record，这些record可能会被分发到各自对应的segment。Segment收到之后，完成本地持久化，回应DB层，DB层维护bookkeeping来追踪各个副本持久化的位点推进，后台异步检查连续性（需要维护segment粒度和page粒度的LSN链&#x2F;子序列），链中遗漏的靠gossip找其他副本补，视情况将redo record到segment的page上。</p>
+<h3 id="Aurora-Quorum"><a href="#Aurora-Quorum" class="headerlink" title="Aurora Quorum"></a><strong>Aurora Quorum</strong></h3><p>Focus到quorum上，Aurora Quorum实际上不是简单的quorum系统。</p>
+<p>我们可以对比一下Dynamo的quorum方案。Dynamo是Amazon开发的分布式KV存储，也是一个影响很大的系统。Dynamo使用的也是NWR Quorum协议，要求W+R&gt;N。写操作只要N个副本中W个返回成功即可，如果出现数据变更历史分叉，要读操作负责做数据版本的仲裁。举个数据版本仲裁的例子：某客户购物车里面一开始是空，从浏览器页面点击加入商品1，购物车从 ‘{}’ 变为 ‘{商品1}’ ，然后从另一页面点击加入商品2，购物车从 ‘{}’ 变为 ‘{商品2}’。下单时，购物车业务逻辑合并两个数据版本，认为购物车是 ‘{商品1、商品2}’，注意到这里是靠用户业务层逻辑解决弱一致异常。</p>
+<p>Aurora Quorum引入了epoch。Segment上有epoch值（实际上epoch是Aurora实例粒度的，假设只有一个PG），读写请求上也带上epoch值，Segment会拒绝掉stale epoch的读写请求。在writer recovery（正常重启或异常失效）时，新的writer会先明确当前已经确认的那些写入，再使用新的epoch提供读写服务。</p>
+<p>读者可能已经发现了，Aurora Quorum实际上跟Paxos（广义Paxos协议族）本质上是一样的。尤其是注意到，Aurora single-writer是唯一的record seq发生器，Aurora SIGMOD17’ 里面提到的 ‘the log is the database’ 也可以理解成是复制状态机的一种变相表述。如果再读读后面Aurora Quorum成员变更的方案，就会发现该方案跟Raft的joint-consensus方案在关键思路上也是一致的。</p>
+<p>Multi-Paxos和Aurora Quorum也有方案细节和实现上的多处差异，几个典型差异如下：</p>
+<ul>
+<li>差异一：标准Multi-Paxos的quorum system是简单多数派(Q&#x3D;N&#x2F;2+1)，Aurora Quorum配置的是NWR&#x3D;643。不过这个差异实际上并不大，根本上讲，只要保证两轮epoch的数据确认状态能够正确传递即可， <a target="_blank" rel="noopener" href="http://loopjump.com/consensus-revised-paper/">这篇文章</a> 做过一些分析。</li>
+<li>差异二：Multi-Paxos里面要求新的proposer使用新的proposal id来明确已有日志确认状态的，Aurora Quorum是先用旧的epoch来完成这步，然后再递增全局epoch（epoch记录在整个Aurora实例的metadata上，等于是维护在中心化的一个节点上）。这里正确性实际上是不明确的，可能Aurora在这里额外做了限制，比如靠外部来保证只允许一个实例做recovery？</li>
+<li>差异三：Multi-Paxos数据提交链路比Aurora Quorum多一跳。这个差异要从几个方面看。本质上讲这个差异并不大，等于是bookkeeping中couting replica的工作从leader上上提到了Aurora计算节点上，这跟共识的数据库背景有关。但是实现效果上可能差异比较大，一是网络多一跳（这个也看各段连接的网络质量），二是leader失效导致的短时间不可用（一般是几秒到几十秒）。</li>
+</ul>
+<p>总结下来，三句话：</p>
+<ul>
+<li>Aurora Quorum通过 ‘引入epoch’ 和 ‘单点record generator’，将简单的quorum system改成了和Multi-Paxos本质相同的共识系统。</li>
+<li>Aurora Quorum的成员变更与Raft协议的joint-consensus思路一致。</li>
+<li>从CAP角度看，Aurora Quorum 和 Spanner Multi-Paxos是强一致的CP系统，Dynamo Quorum是弱一致的AP系统。</li>
+</ul>
+<p>周边的几个问题。</p>
+<h3 id="Aurora-Consensus从存储层剥离？"><a href="#Aurora-Consensus从存储层剥离？" class="headerlink" title="Aurora Consensus从存储层剥离？"></a><strong>Aurora Consensus从存储层剥离？</strong></h3><p>有说法说Aurora Consensus从存储层剥离，这是不严谨的。</p>
+<p>要么系统就设计成弱一致的，让用户业务去承担弱一致的麻烦。如果设计成强一致的，那么应该是无法逃脱FLP定理的魔掌，’引入epoch’这一点就绕不开。再去审视上述观点就可以知道，实际上Aurora Consensus是跨了存储组件和DB组件，存储组件不只是简单地负责存储。</p>
+<h3 id="Aurora与2PC"><a href="#Aurora与2PC" class="headerlink" title="Aurora与2PC"></a><strong>Aurora与2PC</strong></h3><p>有人认为Aurora是个单写系统，本来就不需要2PC实现分布式事务。这个观点有失偏颇，Aurora避开2PC并不是trivial的。即使Aurora只有单点接受客户端写入，单点生成redo log records，但一个事务的多条records的持久化可能是分散在不同存储节点上的，因为一个事务可能涉及多个PG，使用2PC来保证事务的多个操作的原子性也未尝不可。</p>
+<p>相比之下，Socrate（微软SQL Server的存储计算分离版本）是将WAL写到LandingZone，LandingZone是一个可靠的持久化存储组件，在整个架构中，实际上可以视为单一可靠硬盘，这种架构下绕开2PC就是很自然的。</p>
+<h3 id="Aurora-Multi-Master-与-Spanner的分布式事务"><a href="#Aurora-Multi-Master-与-Spanner的分布式事务" class="headerlink" title="Aurora Multi-Master 与 Spanner的分布式事务"></a><strong>Aurora Multi-Master 与 Spanner的分布式事务</strong></h3><p>Aurora的Multi-Master实现目前没有公开，只有AWS re-invent ppt上有少量信息透漏。</p>
+<p>对比两个多写方案，Spanner是先将数据分区，DML操作请求是直接发送到对应的分区，提交时走2PC完成原子提交。冲突的多个写请求实际上是被路由到分区所在leader节点来完成协调的，例如写写冲突用行锁来解决，这几本上完全限定在执行期间的事务并发控制逻辑里面。</p>
+<p>Aurora Multi-Master的方案似乎是多个master各自完成读写，官方PPT里面说没有全局序，所以segment里面应该是有多个redo record日志流，与多个master一一对应，segment的状态机等于基线数据加一组有偏序关系的redo record日志流。各个master生成自己的redo record发送到存储层去触发冲突检测。这个过程有点类似于EPaxos的多点写，两个冲突的redo record写到同一组副本，某些副本会检测到冲突，至少一个写请求会失败或者解决冲突后重试。这种冲突检测方式要比Spanner复杂很多，毕竟Spanner分层非常清晰。另外，Aurora修改数据估计还是read-modify-write的模式，这跟EPaxos的kv盲写还不太一样（EPaxos会在副本本地解决冲突然后建立完序关系再写log，之后再通知到请求端），Aurora Multi-Master似乎不需要像EPaxos一样对read&#x2F;write quorum set做非常大的调整。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/lsmtree-compaction-design-space/">
+        <span class="nav-arrow">← </span>
+        
+          构建分析LSM Compaction Design Space
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/content-aware-lock-scheduling/">
+        
+          Content-Aware Lock Scheduling
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Aurora%E6%9E%B6%E6%9E%84%E8%83%8C%E6%99%AF"><span class="toc-nav-text">Aurora架构背景</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Aurora-Quorum"><span class="toc-nav-text">Aurora Quorum</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Aurora-Consensus%E4%BB%8E%E5%AD%98%E5%82%A8%E5%B1%82%E5%89%A5%E7%A6%BB%EF%BC%9F"><span class="toc-nav-text">Aurora Consensus从存储层剥离？</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Aurora%E4%B8%8E2PC"><span class="toc-nav-text">Aurora与2PC</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Aurora-Multi-Master-%E4%B8%8E-Spanner%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="toc-nav-text">Aurora Multi-Master 与 Spanner的分布式事务</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/aurora-quorum/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

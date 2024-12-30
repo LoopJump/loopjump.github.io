@@ -195,6 +195,83 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/content-aware-lock-scheduling/">Content-Aware Lock Scheduling</a>
+      </h2>
+      <p class="article-date">March 20, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          VLDB 18’  Content-Aware Lock Scheduling for Transactional Database
+相关的证明在 Contention-aware lock scheduling for transactionaldatabases.Technical Re ...
+        
+      </div>
+      <a class="more" href="/content-aware-lock-scheduling/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aurora-quorum/">浅谈Aurora Quorum</a>
+      </h2>
+      <p class="article-date">March 11, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Aurora在SIGMOD18’的论文《Amazon Aurora: On Avoiding Distributed Consensus for I&#x2F;Os, Commits, and Membership Changes》中描述了Aurora关于共识方案的选择和Quorum方案的详 ...
+        
+      </div>
+      <a class="more" href="/aurora-quorum/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/lsmtree-compaction-design-space/">构建分析LSM Compaction Design Space</a>
+      </h2>
+      <p class="article-date">February 19, 2022</p>
+      
+      <div class="article-summary">
+        
+          《Constructing and Analyzing the LSM Compaction Design Space》 VLDB’21
+四个原语Compaction是LSM-Tree引擎中最重要的环节之一，一方面它主导了LSM-Tree的形状进而影响了LSM-Tree的包括性能、空间占用等 ...
+        
+      </div>
+      <a class="more" href="/lsmtree-compaction-design-space/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/remix-efficient-range-query-for-lsm-tree/">REMIX - Efficient Range Query for LSM-trees</a>
+      </h2>
+      <p class="article-date">February 18, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《REMIX: Efficient Range Query for LSM-trees》FAST’20
+LSM-Tree引擎的scan操作是一个引擎固有的短板，其根源在于相比基于B+Tree的引擎如InnoDB的数据全局有序，LSM-Tree的数据有序性差，它由多个sort run组成，因此 ...
+        
+      </div>
+      <a class="more" href="/remix-efficient-range-query-for-lsm-tree/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/rocksdb-evolution/">RocksDB演进</a>
       </h2>
       <p class="article-date">February 12, 2022</p>
@@ -216,6 +293,28 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/rethink-scan-in-mvcc/">Rethink the Scan in MVCC Databases</a>
+      </h2>
+      <p class="article-date">February 12, 2022</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这是SIGMOD’21 上的论文《Rethink the Scan in MVCC Databases》，论文针对像HTAP等场景下可能出现大量versioned data中执行scan慢的问题提出了一种比较有效的方案。
+Scan性能问题首先，论文看到了这种场景下scan慢的一个重要原因：
+ ...
+        
+      </div>
+      <a class="more" href="/rethink-scan-in-mvcc/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/rsm-compartmentalization/">使用Compartmentalization扩展复制状态机</a>
       </h2>
       <p class="article-date">October 20, 2021</p>
@@ -233,6 +332,28 @@
         
       </div>
       <a class="more" href="/rsm-compartmentalization/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/oltp-glass/">OLTP Through the Looking Glass论文阅读</a>
+      </h2>
+      <p class="article-date">August 21, 2021</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这篇文章是08年SIGMOD的文章。
+OLTP系统各组件开销很多OLTP数据库的架构扔延续了70年代面向当时的硬件的设计，但30年来，现代CPU、内存、网络等等已经有了很大的变化。这篇论文分析了一个OLTP数据库的各个组件的开销。
+!http://loopjump.com/wp-conten ...
+        
+      </div>
+      <a class="more" href="/oltp-glass/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -276,138 +397,6 @@ Introductio ...
         
       </div>
       <a class="more" href="/intel-microarch-analysis-method/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
-      </h2>
-      <p class="article-date">May 1, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《LB+Trees: Optimizing Persistent Index Performance on 3DXPoint Memory》（VLDB20’）
-这是个设计非常巧妙的数据结构，这里简单描述下核心内容，读者可以直接读原文，行文非常清晰。
-Abstract3DXPoint的有些硬件 ...
-        
-      </div>
-      <a class="more" href="/lb-tree/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/hekaton-memory-engine/">Hekaton内存引擎</a>
-      </h2>
-      <p class="article-date">April 21, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Hekaton: SQL Server’s Memory-Optimized OLTP Engine（SIGMOD13’）
-Hekaton是SQL Server的一个纯内存数据引擎，用户可以声明一张表存放在Hekaton上，这张表完全支持原SQL Server所有操作，包括T-SQL。同时如 ...
-        
-      </div>
-      <a class="more" href="/hekaton-memory-engine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/xengine/">阿里LSMTree存储引擎X-Engine</a>
-      </h2>
-      <p class="article-date">April 20, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          X-Engine是阿里云研发的LSM-Tree结构的存储引擎，主打低存储成本带来的性价比。
-问题
-the tsunami problem 海啸问题：122倍突发流量
-the flood discharge problem 泄洪问题：将内存数据快速转到持久化存储组件
-the fast-movi ...
-        
-      </div>
-      <a class="more" href="/xengine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/hekaton-high-perf-cc/">Hekaton的高性能并发控制算法</a>
-      </h2>
-      <p class="article-date">April 13, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          High-Performance Concurrency Control Mechanisms for Main-Memory Databases (VLDB12’)
-这篇文章是微软Hekaton上的in-memory storage engine的高性能控制算法。
-MV Storage E ...
-        
-      </div>
-      <a class="more" href="/hekaton-high-perf-cc/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lsmtree-survey/">LSM-Tree综述</a>
-      </h2>
-      <p class="article-date">April 12, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          LSM-based storage techniques: a survey （VLDBJ 2020）
-This paper aims to serve as a guide to the state of the art in LSM-based storage techniques fo ...
-        
-      </div>
-      <a class="more" href="/lsmtree-survey/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lsmtree-adaptive-mem/">LSM Tree 自适应内存管理</a>
-      </h2>
-      <p class="article-date">April 3, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          LSMTree自适应内存管理Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）
-内存管理整体架构比较清晰，如图，无需赘言。
-!http://loopjump.c ...
-        
-      </div>
-      <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
     </article>
   
 

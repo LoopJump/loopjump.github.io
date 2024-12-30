@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      浅析性能优化 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>浅析性能优化</h2>
+  <p class="post-date">2022-06-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>性能分析和优化是一个要求比较全面的工作，通常既要了解所分析的目标系统本身的设计和实现，也要对操作系统等底层基础设施有一定了解，同时需要掌握一些方法论以指导性能分析和优化工作。</p>
+<p>本文尝试根据个人这几年做过的几次数据库性能优化的一点经验做一些总结。如前所说，性能分析和优化覆盖面比较广，这里只能抛砖引玉，欢迎读者批评指正。</p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>性能分析的第一步是做性能测试。</p>
+<p>像MySQL数据库这种适用性较广的系统，性能测试本身就很难做的比较完善，不同场景、不同配置、不同数据规模、不同负载下测试，MySQL的性能瓶颈往往都不相同。所以怎么测，要测哪些场景是需要考虑的一个问题。</p>
+<p>如果你是业务方，那么测试场景就比较简单，可以直接上模拟业务流量。如果你是云数据库厂商，可能就比较麻烦。数据库实例众多而且客户实例也不能随便监测，可能很难分析负载模型。不过数据库发展了几十年，有一些成熟的性能测试工具，例如sysbench和tpc系列benchmark等。sysbench比较简单，很容易上手。tpc测试更规范一些，还有官方审计，例如OB跑过tpcc&#x2F;tpch，ADB等跑过tpc-ds等等。</p>
+<h2 id="性能分析的三个层面"><a href="#性能分析的三个层面" class="headerlink" title="性能分析的三个层面"></a>性能分析的三个层面</h2><p>性能分析有几个层面可以考虑。</p>
+<p><strong>首先，关注架构设计，架构设计决定了系统的性能上限。</strong></p>
+<p>举个例子，单机版本的数据库如MySQL或Oracle，它最多将单机硬件资源榨干。相比而言，如Aurora这种存储计算分离的一写多读的系统，硬件资源就可能多几倍，其中的存储层除了存储功能还有部分计算资源用于apply redo log，甚至部分读写节点的计算任务还可以offload到这里；这相比单机版本的整体性能上限就高数倍，但Aurora的架构还局限在只有一个写节点（新版本支持比较弱的多写能力，我们可以先忽略），其写性能还是会有瓶颈。再相比而言，以Spanner为代表的share nothing水平扩展的数据库，写性能上限会高很多，这也是OceanBase可以打榜TPCC的底层逻辑。实际上，容量和性能上限本身也是架构设计需要重点关注的。</p>
+<p><strong>其次，需要了解待分析系统的系统设计。</strong></p>
+<p>当然架构设计是在系统开发之前的工作，我们往往是拿到一个已有的甚至是演化很久的系统来做性能分析和性能优化。这种情况一般需要在性能分析之前对系统有较为深入的了解，包括系统的主要设计和关键路径的实现。例如需要知道MySQL一条查询从头到尾执行的主要流程，知道每一个阶段可能的耗时在哪里。同时最好也对其他类似系统有了解以做参照。了解的越多，越容易分析和识别性能瓶颈。</p>
+<p>如果你了解的少也不用焦虑，一般数据系统的大致执行流程大同小异，很容易通过论文或者文档学习到。文档里面没有的细节，可以一边分析一边学习。这有时候反而可以让你从系统实现者之外的视角去思考系统该如何设计和实现，可能更容易发现处理请求的不必要的开销。</p>
+<p><strong>第三，从资源利用率的角度分析系统瓶颈。</strong></p>
+<p>也就是很多地方提到的USE方法，Brendan Gregg在其博客上论述比较清楚。简单地说，USE（利用率&#x2F;饱和&#x2F;错误）是看系统压测跑起来后软硬件资源的利用率情况，资源主要包括CPU、内存、IO、网络这几类。</p>
+<p>性能优化的目标就是，在给定资源下尽量让系统把资源完全利用起来，并且资源尽量都用在有效工作上。</p>
+<p>什么是有效工作？比如 select sum(col_2) from t1 这种查询里面，求和的加法就是有效工作，因读数据可能带来的mutex等冲突就不是有效工作。当然，哪些是有效工作哪些是无效工作的分别并不明确，比如查询的优化过程，可以是有效工作，因为不走优化器就不能找到合适的执行计划，但如果有Plan Cache，则每次都做优化又成了无效工作。识别有效工作，减少一次请求的有效工作量（如通过支持Plan Cache减少优化开销）本身就是就是性能优化的一部分。</p>
+<h2 id="性能相关的一些基础知识"><a href="#性能相关的一些基础知识" class="headerlink" title="性能相关的一些基础知识"></a>性能相关的一些基础知识</h2><h3 id="CPU亲和性"><a href="#CPU亲和性" class="headerlink" title="CPU亲和性"></a>CPU亲和性</h3><p>CPU亲和性是指Linux内核在调度线程时，同一个线程尽量调度到同一个核的策略。</p>
+<p>设置亲和性主要有两类原因：一是有利于减少因为线程调度带来的cache失效，二是可以实现进程隔离。</p>
+<p>详细请参考taskset命令和sched_setaffinity接口。</p>
+<h3 id="NUMA"><a href="#NUMA" class="headerlink" title="NUMA"></a>NUMA</h3><p>NUMA是指non-uniform memory access，非一致内存访问。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-1024x473.png">http://loopjump.com/wp-content/uploads/2022/06/1-1024x473.png</a></p>
+<p>维基百科上这张图比较清晰。图中CPU有两个socket，4个node，每个node包含8个core。Node概念上包含一组core和一块内存，Node之间有QPI（quick path interface）连接，Node中的core访问自身的内存比较快，访问其他node的内存就要走QPI，会比较慢。</p>
+<p>numactl命令可以查看numa的情况。</p>
+<p>例如，另外一台机器（与上图不同）上CPU有两个node，node distance描述了访问延迟的相对大小。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-300x252.png">http://loopjump.com/wp-content/uploads/2022/06/2-300x252.png</a></p>
+<p>像数据库之类的应用，需要注意 swap insanity 的问题（开启NUMA后本node内存不足时触发swap而不是从其他node分配），不过高版本内核应该已经解决了。</p>
+<h3 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h3><p>Cache是介于CPU与内存之间的存储层次，用于提高读写数据性能。如前图所示，Cache分为L1&#x2F;L2&#x2F;L3三级，容量和延迟逐级增大，同时L1的cache还会分为数据cache和指令cache以避免互相污染。</p>
+<p>常见的一个Cache相关的问题是伪共享 false sharing：Cache是按Cache Line（一般64字节）来加载或淘汰的，如果两个core读写同一个64字节内的不同地址a和b（例如排在一块的两个全局计数器变量），比如其中一个core修改了a，则会失效a和b所在的64字节缓存内容，并通过cache一致性协议MESI通过QPI将该失效信息同步到其他core，那么另一个core读取b就需要从内存读取。解决方法也比较简单，如果两个变量经常被并发访问，就不要放一块，或者中间加padding撑开。</p>
+<h3 id="TLB"><a href="#TLB" class="headerlink" title="TLB"></a>TLB</h3><p>页表是用于将虚拟地址转为物理地址的映射表，页表存放于内存中。TLB是页表的硬件缓存。TLB也分为dTLB和iTLB。</p>
+<p>如果发现TLB的命中率比较低，可以试下huge page。很久以前我之前遇到过一个场景，内存中存放了大量的数组数据以供查询，启用huge page可以显著提升性能。</p>
+<p>另外，如果发现iTLB命中率比较低，可以考虑PGO等优化来改善二进制文件的代码排布，见 <a target="_blank" rel="noopener" href="http://loopjump.com/pr-ispike-bolt/">BOLT</a>。</p>
+<h3 id="指令流水线"><a href="#指令流水线" class="headerlink" title="指令流水线"></a>指令流水线</h3><p>现代CPU都支持指令流水线，教科书上一般分为取址、译码、执行、访存、写回。实际CPU的流水线有几十级。流水线执行的越流畅，平均每个时钟周期能执行的指令数越多，也就是IPC（instruction per cycle）越高。反之，如果出现两条指令抢占同一个部件（structure hazard）、当前指令执行依赖上一条指令结果（data hazard）或 遇到分支预测失败（control hazard）流水线就可能停顿。编译器编译阶段和CPU运行时会通过重排或乱序的方式减缓hazard，但写码实现上也要注意。比如虚函数调用是间接调用，要先根据对象找到虚表里面记录的函数地址再调用。这对指令流水线不利，所以不要滥用虚函数，尤其是访存可能是瓶颈的情况下。</p>
+<h3 id="Lock-Free编程"><a href="#Lock-Free编程" class="headerlink" title="Lock Free编程"></a>Lock Free编程</h3><p>Lock Free编程指的是并发编程时不使用同步锁，一个线程暂停（例如调度离开CPU）时，不阻塞其他线程progress。</p>
+<p>在遇到并发锁冲突的时候，可以考虑看看是不是可以用Lock Free的方式优化。</p>
+<p>不过Lock Free还有一个附加问题 - 内存回收，常用的机制如Hazard Pointer, EBR等，比较麻烦但其原理和实现跟具体无锁的数据结构无关，比较通用。</p>
+<h3 id="IO-Stack"><a href="#IO-Stack" class="headerlink" title="IO Stack"></a>IO Stack</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-722x1024.png">http://loopjump.com/wp-content/uploads/2022/06/3-722x1024.png</a></p>
+<h2 id="性能分析工具"><a href="#性能分析工具" class="headerlink" title="性能分析工具"></a>性能分析工具</h2><p>Linux下有丰富的监控工具，可以满足各种维度的查询，以CPU利用率为例，可以查询到整台机器的CPU利用率、进程的CPU利用率、每个核的利用率、每个核sys&#x2F;usr&#x2F;irq&#x2F;soft等、进程内的每个线程的CPU利用率等等。</p>
+<h3 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h3><p><strong>top</strong></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-300x74.png">http://loopjump.com/wp-content/uploads/2022/06/4-300x74.png</a></p>
+<p>其中CPU列表示进程的CPU利用率，图中1299%表示mysqld进程占用了约13个核。</p>
+<p><strong>htop</strong></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-300x295.png">http://loopjump.com/wp-content/uploads/2022/06/5-300x295.png</a></p>
+<p>htop可以看到每一个核的利用率，这有助于排查一些做了绑核操作相关的问题，例如绑核后工作线程的负载不均匀等等。其中红色表示sys，指CPU花在内核上（例如内核spinlock冲突 或 网络栈 之类的），绿色表示usr，指CPU花在用户态。如果sys比较多，可能需要排查下具体花在内核什么地方了，例如并发写文件（写不同位置）可能导致inode上的锁冲突，这样就需要对应优化应用代码。如果没有明显的应用层瓶颈，可能需要考虑kernel-bypass的一些技术，例如SPDK&#x2F;DPDK。</p>
+<p>关于亲和性的一个直观例子（进程的6个线程分别跑在1-6号核上）：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-300x76.png">http://loopjump.com/wp-content/uploads/2022/06/6-300x76.png</a></p>
+<p><strong>vmstat</strong></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-300x54.png">http://loopjump.com/wp-content/uploads/2022/06/7-300x54.png</a></p>
+<p>vmstat也有CPU相关的信息，其中 id表示idle，wa表示花在等待IO的时间，st表示stolen（跟虚拟机有关）。</p>
+<p><strong>mpstat</strong></p>
+<p>mpstat也能查看CPU各个核利用率（类似于htop），并且可以看到中断占用CPU的情况。</p>
+<p>%irq和%soft分别是处理硬中断&#x2F;软中断的CPU开销，这里可以用于排查中断落在同一个核的瓶颈等问题。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-257x300.png">http://loopjump.com/wp-content/uploads/2022/06/8-257x300.png</a></p>
+<p><strong>pidstat -u</strong></p>
+<p>pidstat可以指定进程号。-u 表示显示CPU利用率，-t 表示显示进程内的各个线程。</p>
+<p>如图可以看到mysqld进程中只有8个工作线程在忙。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-244x300.png">http://loopjump.com/wp-content/uploads/2022/06/9-244x300.png</a></p>
+<p><strong>Intel VTune</strong></p>
+<p>Intel VTune是面向intel CPU的一款分析工具。分析方法见 Intel Top-Down Microarchitecture Analysis Method。</p>
+<h3 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h3><p><strong>free</strong> 可以看到内存概况，buff&#x2F;cache是指例如page cache等内存占用。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/10-300x38.png">http://loopjump.com/wp-content/uploads/2022/06/10-300x38.png</a></p>
+<p>Linux下内存需要关注下swap，如果有发生swap，可能是出现内存不足了需要倒腾内存空间出来。</p>
+<p><strong>vmstat -a</strong> 可以看到内存swap情况。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/11-300x58.png">http://loopjump.com/wp-content/uploads/2022/06/11-300x58.png</a></p>
+<h3 id="IO"><a href="#IO" class="headerlink" title="IO"></a>IO</h3><p><strong>iostat</strong> 用于显示io的各种信息。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/12-300x106.png">http://loopjump.com/wp-content/uploads/2022/06/12-300x106.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/13-300x61.png">http://loopjump.com/wp-content/uploads/2022/06/13-300x61.png</a></p>
+<ul>
+<li>tps: 每秒向设备发送的请求数目</li>
+<li>kB_read&#x2F;s：每秒从设备读取的字节数目</li>
+<li>kB_wrtn&#x2F;s：每秒写入设备的字节数目</li>
+<li>rrqm&#x2F;s, wrqm&#x2F;s：每秒merge的读&#x2F;写请求数目</li>
+<li>r&#x2F;s,w&#x2F;s：每秒完成的（merge后的）读&#x2F;写请求</li>
+<li>rkB&#x2F;s, wkB&#x2F;s：每秒读&#x2F;写多少kB</li>
+<li>avgrq-sz：请求队列的平均长度（长度以扇区数目计数）</li>
+<li>avgqu-sz：请求队列的平均长度（长度以请求数目基数）</li>
+<li>await：IO请求处理的平均耗时（以毫秒计），包括在队列等待时间和实际设备服务时间</li>
+<li>r_await：读请求处理的平均耗时（以毫秒计），包括在队列等待时间和实际设备服务时间</li>
+<li>w_await：写请求处理的平均耗时（以毫秒计），包括在队列等待时间和实际设备服务时间</li>
+<li>%util：设备带宽利用率，如果接近100%表示设备可能达到IO上限了。</li>
+</ul>
+<p><strong>blktrace</strong></p>
+<p>blktrace是分析块设备IO性能的利器，它可以追踪各个关键阶段的耗时。</p>
+<p>blktrace有一组命令，blktrace用于追踪，blkparse用于解读blktrace的结果，btt用于汇总分析。</p>
+<p>blktrace 执行起来之后，Ctrl-C终止执行，默认在当前目录下生成一组sda.blktrace.{CPU}的文件。</p>
+<p>然后执行blkparse -i 解析这些文件。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/15-281x300.png">http://loopjump.com/wp-content/uploads/2022/06/15-281x300.png</a></p>
+<p>其中，第一列是设备（用主设备号和次设备号标识），第二列时发生在哪个CPU，第三列是sequence number，第四列是时间戳（启动时为0），第五列是进城号，第六列是Action，第七列是RWBS，第八列是进程名。</p>
+<p>Action各字母含义：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/16-300x266.png">http://loopjump.com/wp-content/uploads/2022/06/16-300x266.png</a></p>
+<p>RWBS的含义：R - read, W - write, D - block discard, B &#x3D; barrier, S - synchronous</p>
+<p><strong>btt</strong>工具可以汇总分析，blkparse的输出数据，不过要先把按CPU分开存放的数据合并起来 blkparse -i sda -d sda.blktrace.data，然后再执行 btt -i sda.blktrace.data 。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/17-190x300.png">http://loopjump.com/wp-content/uploads/2022/06/17-190x300.png</a></p>
+<p>各阶段描述可参考[4]</p>
+<ul>
+<li>Q2Q — time between requests sent to the block layer</li>
+<li>Q2G — time from a block I&#x2F;O is queued to the time it gets a request allocated for it</li>
+<li>G2I — time from a request is allocated to the time it is Inserted into the device’s queue</li>
+<li>Q2M — time from a block I&#x2F;O is queued to the time it gets merged with an existing request</li>
+<li>I2D — time from a request is inserted into the device’s queue to the time it is actually issued to the device</li>
+<li>M2D — time from a block I&#x2F;O is merged with an exiting request until the request is issued to the device</li>
+<li>D2C — service time of the request by the device</li>
+<li>Q2C — total time spent in the block layer for a request</li>
+</ul>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p><strong>lsof</strong> lsof用于显示所有打开的文件（就是拿到fd的这种），因为linux下有“一切皆文件”的抽象，所以这里面还包括网络连接、管道等等。从截图还可以看到有些已经被deleted的文件实际上还在占用空间，但如果去它所在目录看却看不到。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/18-300x225.png">http://loopjump.com/wp-content/uploads/2022/06/18-300x225.png</a></p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p><strong>ip addr</strong> 查看本机的网络接口</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/19-300x189.png">http://loopjump.com/wp-content/uploads/2022/06/19-300x189.png</a></p>
+<p><strong>ethtool</strong> 查看网卡配置</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/20-300x273.png">http://loopjump.com/wp-content/uploads/2022/06/20-300x273.png</a></p>
+<p>从Speed可以看到是百兆网卡。</p>
+<p><strong>iperf3</strong>可以用来实测机器之间的网络带宽，在两台机器上分别以server和client启动iperf3，就可以测起来了。</p>
+<p><strong>iftop</strong> 用于查看实时流量</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/21-300x169.png">http://loopjump.com/wp-content/uploads/2022/06/21-300x169.png</a></p>
+<p><strong>nload</strong> 用于查看实时负载，如下图，incoming流量为44.20 Mbps。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/22-300x146.png">http://loopjump.com/wp-content/uploads/2022/06/22-300x146.png</a></p>
+<p><strong>nethogs</strong> 可以用来查看每个进程的流量情况。</p>
+<p><strong>netstat</strong></p>
+<p>netstat可以从网络连接&#x2F;socket的情况进行分析。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/23-300x298.png">http://loopjump.com/wp-content/uploads/2022/06/23-300x298.png</a></p>
+<h3 id="pstack"><a href="#pstack" class="headerlink" title="pstack"></a>pstack</h3><p>pstack工具可以回答 “<em>进程现在在干什么?</em> ”。pstack可以获得进程的各线程的快照，从中可以看到各个线程在执行什么操作。pstack实际上就是个shell脚本，调用gdb attach上去执行 thread apply all bt命令打印各线程的调用栈。</p>
+<p>执行结果（部分截图）如：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/24-231x300.png">http://loopjump.com/wp-content/uploads/2022/06/24-231x300.png</a></p>
+<p>pstack输出比较多，有些线程的栈都是相同的，因此pt-pmp（percona的工具套件之一）可以用于聚合其输出结果，聚合后的结果如下（部分截图）：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/25-300x115.png">http://loopjump.com/wp-content/uploads/2022/06/25-300x115.png</a></p>
+<p>这说明进程中当时有17个线程在将结果通过网络发送回去，有10个线程在等待，等等。</p>
+<p>pstack除了用于性能分析之外，在分析死锁等问题时也是最好用的工具之一。但如前所说，pstack会hang住进程几秒到几十秒，使用的时候要注意影响。</p>
+<h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><p>perf是linux下最常用的性能分析工具之一，它可以读取CPU内置的PMU数据，提供非常详实的性能信息。</p>
+<p>perf top可以回答 “<em>CPU在执行什么？</em>”。</p>
+<p>除了top，还可以 perf record -g -p 1234 sleep 5，表示抓取5秒内进程号1234的栈信息，该命令结束后在当前目录生成一个perf.data文件，用 perf report打开该文件，可以看到和perf top相似的输出：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/26-261x300.png">http://loopjump.com/wp-content/uploads/2022/06/26-261x300.png</a></p>
+<p>其中的+&#x2F;-可以展开&#x2F;折叠。</p>
+<p>实际上perf可以捕获多种event，执行perf list命令可以查看，在我的机器上输出有几百个event可以trace，包括cache、流水线、访存、虚拟内存、分支预测、TLB等方面，还包括库代码的event（USDT，user-level static probe，比如sdt_libpthread:cond_wait等）。</p>
+<p>我们举个USDT的例子：pthread.so里面有个probe名为mutex_entry，我们分析关于它的调用情况。</p>
+<p>首先 perf probe -x注入，然后perf record监测，最后perf report显示结果。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/27-300x72.png">http://loopjump.com/wp-content/uploads/2022/06/27-300x72.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/28-300x194.png">http://loopjump.com/wp-content/uploads/2022/06/28-300x194.png</a></p>
+<p>从这里可以看到进程调用pthread_cond_wait频率最大（71.35%）的是事务提交流程change_stage函数中对pthread_cond_wait的调用。</p>
+<h3 id="火焰图"><a href="#火焰图" class="headerlink" title="火焰图"></a>火焰图</h3><p>火焰图是非常直观的数据展示方式，常用于展示各性能数据（如调用栈）对某个指标的贡献程度。</p>
+<p>以分析CPU热点为例（svg格式，可以鼠标交互）：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/29-300x29.png">http://loopjump.com/wp-content/uploads/2022/06/29-300x29.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/30-300x213.png">http://loopjump.com/wp-content/uploads/2022/06/30-300x213.png</a></p>
+<p>除了分析CPU消耗，其他多种数据都可以用这种直观方式展现，因为火焰图只是counter+frequency的展示方式。</p>
+<p>这里本文提供同一个场景测试的两个性能数据，一个是perf结果，一个是pstack结果，从中看到不同维度的信息。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/31-300x117.png">http://loopjump.com/wp-content/uploads/2022/06/31-300x117.png</a></p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/32-300x151.png">http://loopjump.com/wp-content/uploads/2022/06/32-300x151.png</a></p>
+<p>上面两个图的对比可能还不能明显显示perf和pstack火焰图的差异。读者可以考虑如下的demo程序：进程有100个线程，其中1号线程执行一个耗时的计算如计算圆周率pi，2号线程执行计算自然对数底e，有49个线程等待pi的计算结果，49个线程等待e的计算结果。</p>
+<h3 id="Linux计时"><a href="#Linux计时" class="headerlink" title="Linux计时"></a>Linux计时</h3><p>计时可能时最朴素的性能分析方法了，堪比print之于debug。Linux下有多种方式来计时。</p>
+<p><strong>RDTSC</strong></p>
+<p>RDTSC是Intel的一个指令，读取CPU内部的time stamp counter。这种获取时间戳的成本非常低，非常适合计时来比较耗时大小。但是这里需要注意多核CPU中，RDTSC可能会不准确的问题，有些CPU支持了Invariant TSC，这种情况可以用来准确计时。可以通过查看CPUID.80000007H:EDX[8]位的值来判断是否支持Invariant TSC，这里有个工具[2]可以对CPUID值做全面的解释（部分截图）：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/33-300x206.png">http://loopjump.com/wp-content/uploads/2022/06/33-300x206.png</a></p>
+<p><strong>clock_gettime</strong></p>
+<p>clock_gettime获取纳秒精度的时间戳，具体可参考手册 man clock_gettime。</p>
+<h3 id="eBPF"><a href="#eBPF" class="headerlink" title="eBPF"></a>eBPF</h3><p>eBPF是一种强大的内核追踪技术，现在还在快速发展中，未来可期，值得关注。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/34-300x110.png">http://loopjump.com/wp-content/uploads/2022/06/34-300x110.png</a></p>
+<p>eBPF类似于linux的module，也是用户写的代码运行在内核态，但采用了沙盒和代码验证，因此更安全，也更方便。eBPF可以追踪内核函数，也能追踪应用进程的函数。一般要求linux内核版本比较高，最好到5.0以上。另外，通过eBPF对内核状态进行监控以支持性能分析需要对内核有比较多的了解，了解越多，eBPF用的越顺手。</p>
+<p>bcc是常用的eBPF开发套件，用户可以自己开发性能分析工具，实际上bcc也自带了一组性能分析工具，如下图（来自Brendan Gregg）。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/35-300x180.png">http://loopjump.com/wp-content/uploads/2022/06/35-300x180.png</a></p>
+<p>我们这里挑几个工具简单介绍下。</p>
+<p>比如funccout用来追踪指定函数调用了多少次。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/36-300x181.png">http://loopjump.com/wp-content/uploads/2022/06/36-300x181.png</a></p>
+<p>除了vfs_write这种内核函数，用户态的函数也可以追踪。读者可参考bcc的手册。</p>
+<p>再比如，offcputime用于追踪线程offcpu的情况，其原理是trace内核进程调度模块的finish_task_switch内核函数，记录切换的前后进程和发生的时间戳进行分析。该工具可以回答 “<em>线程为什么放弃了CPU，放弃了多久才重新调度回来</em>”。</p>
+<p>bcc套件还是挺好用的，我自己也写过简单的工具用于分析系统。</p>
+<h2 id="性能分析实战例子"><a href="#性能分析实战例子" class="headerlink" title="性能分析实战例子"></a>性能分析实战例子</h2><p>以MySQL单机性能分析为例，架构方面资源就只有本机资源，MySQL跑起来的主要流程假设读者也都知道，接下来就是一边测试一边分析资源USE，然后调整参数或优化代码测试验证。</p>
+<p>这里举几个简单的实战例子。</p>
+<p>我们用sysbench压测本机的mysql服务器，测试oltp_insert 128并发场景，QPS约5000。</p>
+<p>观测发现CPU很闲，大概只有9%的利用率，但是IO很忙，%util接近满。注意，监控命令的前几秒输出不准确，读者自行忽略。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/37-300x155.png">http://loopjump.com/wp-content/uploads/2022/06/37-300x155.png</a></p>
+<p>MySQL写盘主要是binlog文件，innodb redo文件，innodb page文件。</p>
+<p>写日志文件一般都支持配置是否实时sync。针对前两者，尝试修改参数 sync_binlog&#x3D;0, innodb_flush_log_at_trx_commit&#x3D;2 （注意：这两个参数影响事务持久性，这里简单地假设用户可以接受新的参数值），QPS从5000升到50000。</p>
+<p>测试跑了一会，发现磁盘满了，更新了测试目录重测。新盘性能好一点，QPS跑到了9万左右。监控数据如下。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/38-300x168.png">http://loopjump.com/wp-content/uploads/2022/06/38-300x168.png</a></p>
+<p>现在看起来IO还没有打满，但是CPU利用率也只有约55%左右。</p>
+<p>CPU跑不满的可能的原因有：进程里面worker线程数目本身就不多；线程数目多但很多线程都不占用CPU（例如在等待IO或网络，或者等待其他业务逻辑）。总之就是没有足够多的线程处在RUNNING状态。</p>
+<p>我们的这个测试环境下，客户端并发度128不算低，网络也没问题（测试客户端和myqsld在同一台机器），在观测前我们可以排除这两个因素。接下来我们看线程放弃CPU在干什么。</p>
+<p>这里可以使用bcc的offcputime工具来分析，但我本机跑这个命令有点问题，跑不起来，可能是OS内核版本不行，我们改用pstack跑，我们可以抓10次pstack数据，合并后用火焰图分析看看。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/39-300x141.png">http://loopjump.com/wp-content/uploads/2022/06/39-300x141.png</a></p>
+<p>从中可以看到，比较集中的是两块：有很多线程在插入新数据的时候log_free_check_wait，另有很多线程在ordered_commit流程的enroll_for中等待。</p>
+<p>前者是指redo log在循环复用的时候需要确保旧的日志不再使用，这部分旧日志对应的事务已经checkpoint刷盘（可能是log file size太小或者checkpoint跟不上）。后者是事务group commit后提交时被group的线程等待代为提交。</p>
+<p>排查了下log file size参数，发现默认值比较小，改大后重测，仍然是同样的问题，所以怀疑可能时checkpoint跟不上。checkpoint跟不上可能时刷脏页跟不上，我们调大刷脏页线程数目，重测后的pstack火焰图如下：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/40-300x161.png">http://loopjump.com/wp-content/uploads/2022/06/40-300x161.png</a></p>
+<p>如图可以看到log_free_check_wait已经看不到了。</p>
+<p>MYSQL_BIN_LOG::change_stage的等待，是group commit带来的，修改binlog_order_commits&#x3D;OFF能够减缓该问题，原因是允许并发在innodb层提交，THD阻塞时间减少。但这个问题仍然存在。</p>
+<p>再看一个例子。我们测试只读，因为buffer pool足够大，所以可以看到CPU已经完全跑满了。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/41-300x96.png">http://loopjump.com/wp-content/uploads/2022/06/41-300x96.png</a></p>
+<p>perf看到的结果如下，optimize开销比较大，因为MySQL现在还没有Plan Cache功能。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/image-241x300.png">http://loopjump.com/wp-content/uploads/2022/06/image-241x300.png</a></p>
+<p>这个在现阶段可能就没有明显的瓶颈，优化空间比较小。</p>
+<p><strong>扩展谈一谈MySQL数据库的性能</strong>。</p>
+<p>第一个点是binlog。Binlog从性质上说是MySQL Server层的WAL，但InnoDB也有自己的redo log。一个数据库有两套日志，这实际上是不常见的。Binlog带来的好处是比较容易在一个实例内支撑多个存储引擎，坏处是两套日志显然会拖慢性能。</p>
+<p>第二个点是MySQL被Oracle收购后，代码进行了大量的重构，比如innodb的log sys和lock sys、server字典、DDL等，这些重构解除一些瓶颈，但仍然还有，因此性能还没有大幅的提升。看官方重构的节奏，应该还会继续。但也不排除有些功能可能不会出现在开源分支，而是只在付费企业版本里面有。</p>
+<p>第三个点是SQL层性能问题，包括Plan Cache等功能在其他数据库里面算是标配了，但MySQL一直也没有，主要原因就是SQL层代码模块化不好，改造难度非常大，考虑到国内很多分支还要follow官方的变动，这个事情目前来看只能依靠Oracle官方来搞了。</p>
+<h2 id="高性能系统实现案例"><a href="#高性能系统实现案例" class="headerlink" title="高性能系统实现案例"></a>高性能系统实现案例</h2><h3 id="ScyllaDB-Seastar"><a href="#ScyllaDB-Seastar" class="headerlink" title="ScyllaDB &amp; Seastar"></a>ScyllaDB &amp; Seastar</h3><p>ScyllaDB是一个高性能NoSQL数据库，底层使用了Seastar高性能框架。Seastar的核心想法是data shard per core，并且完全异步化，shard之间使用message passing而不是共享数据，因此可以避免数据同步。此外还支持DPDK等网络栈。在Searstar中，请求之间的同步比较少，如果请求需要等待一个条件，则可以先执行其他请求，因此CPU是比较容易充分跑满的。Seastar几乎可以达到线性扩展。</p>
+<h3 id="CoroBase"><a href="#CoroBase" class="headerlink" title="CoroBase"></a>CoroBase</h3><p>内存数据库中，访存可能会成为整个数据库的性能瓶颈。CoroBase的优化思路是借助协程来overlap访存开销。比如当前请求接下来要从内存中读取数据，则为了overlap读内存的延迟（data stall），当前请求先prefetch对应地址，然后使用协程让本线程放弃当前请求的执行，转而执行其他请求，当后面又调度到原请求时，我们期望prefetch也已经完成，因此原请求读取数据就比较快。</p>
+<p>需要注意的是，CoroBase借助了C++20的协程，其调度开销已经接近普通函数的开销，否则用协程掩盖访存data stall会适得其反。</p>
+<h3 id="PolarFS"><a href="#PolarFS" class="headerlink" title="PolarFS"></a>PolarFS</h3><p>PolarFS充分利用了用户态的网络栈和IO栈，比较新的RDMA&#x2F;NVMe&#x2F;SPDK等技术，将一个分布式FS的性能做到了接近本地FS的性能。</p>
+<p>NVMe盘的性能非常好，500K IOPS &amp; 100us latency，3DXPoint的延迟甚至到了10us。RDMA传输4KB数据到同一交换机上的其他节点耗时7us。这些新技术相比传统IO和网络技术提升非常多，如果要做到极致的性能，就需要考虑这类优化改造方向。</p>
+<h3 id="X-Engine"><a href="#X-Engine" class="headerlink" title="X-Engine"></a>X-Engine</h3><p>X-Engine在LSM-Tree上做了很多性能的优化，例如</p>
+<ul>
+<li>Cache是存储系统的标配，但Cache做好也不容易，内存管理&#x2F;数据结构细节&#x2F;cache汰换&#x2F;预热等等问题都需要小心处理。X-Engine有丰富的Cache系统，如Block层面有BlockCache，SST记录层面还有RowCache等等</li>
+<li>事务提交流水线，将事务提交改造为多级流水线，并调节使流水线充分运行。RocksDB后来也支持了简单的流水线。</li>
+<li>FPGA加速compaction，将compaction这一耗费IO和CPU但核心逻辑比较简单的工作offload到FPGA之类的新硬件，扩展系统可用的硬件资源。</li>
+<li>多种优化并发的技术，如lock free skiplist, cow object, thread local object等等。</li>
+</ul>
+<h3 id="Hekaton"><a href="#Hekaton" class="headerlink" title="Hekaton"></a>Hekaton</h3><p>Hekaton是SQL Server的内存事务型引擎，是微软的几位系统研发大佬主导开发的。</p>
+<p>Hekaton的所有关键数据结构，包括内存分配器、hash&#x2F;range索引（BwTree）、trans-map等完全都是lock-free的。关键路径上没有任何spinlock&#x2F;latch。Hekaton的OCC算法也是完全lock-free的。我甚至怀疑几位大佬写码的时候可能脑子里面一直在评估CPI。</p>
+<p>像编译执行这种大杀器自然也必须搞。</p>
+<p>此外，从logging、checkpointing和recovery组件的设计原则（顺序访问IO；主流程尽量减少操作，能移到Recovery阶段的操作都移过去；消除扩展性瓶颈）都能让我们看到极致的性能是怎么做的。</p>
+<p>总之，Hekaton的搞法给的人感觉就是，老司机就是老司机，不服不行。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>性能分析是一项要求比较全面的工作，需要从架构设计到系统实现都有了解，对硬件资源和OS的特性比较熟悉，掌握一些必要的方法轮和分析工具。</p>
+<p>我们大部分时候都是面向一个已有系统做性能分析和优化，这种情况限制比较多，可能这也不能改那也不能改。如果你有机会从头设计开发一个新的系统，则性能是必须考虑的一个方面。有读者可能会说 “过早优化是万恶之源”，但这也只是针对开发编码阶段，架构设计和系统设计阶段必须把性能考虑进去，务必明确在你的设计下性能天花板在哪里。</p>
+<p>掌握一些基本的高性能程序开发技术是作为数据系统开发的必备能力。学习优秀的系统设计和实现也是一种重要的提升方法。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1] Brendan Gregg <a target="_blank" rel="noopener" href="https://www.brendangregg.com/">https://www.brendangregg.com/</a> 著名性能分析大佬，宝藏博客</p>
+<p>[2] 解析CPUID <a target="_blank" rel="noopener" href="https://github.com/tycho/cpuid.git">https://github.com/tycho/cpuid.git</a></p>
+<p>[3] Intel TMAM <a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html">https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html</a></p>
+<p>[4] blktrace工具 <a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/698568">https://developer.aliyun.com/article/698568</a></p>
+<p>[5] Deep in blktrace <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/355548200">https://zhuanlan.zhihu.com/p/355548200</a></p>
+<p>[6] eBPF <a target="_blank" rel="noopener" href="https://cloudnative.to/blog/bpf-intro/">https://cloudnative.to/blog/bpf-intro/</a></p>
+<p>[7] bcc手册<a target="_blank" rel="noopener" href="https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md#4-attach_uprobe%E3%80%82">https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md#4-attach_uprobe。</a></p>
+<p>[8] ScyllaDB &amp; Seastar <a target="_blank" rel="noopener" href="https://www.scylladb.com/,http://seastar.io/">https://www.scylladb.com/,http://seastar.io/</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/databricks-intro/">
+        <span class="nav-arrow">← </span>
+        
+          Databricks Lakehouse
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/arch-query-compiler/">
+        
+          How to Architect a Query Compiler Revisited
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="toc-nav-text">性能测试</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E7%9A%84%E4%B8%89%E4%B8%AA%E5%B1%82%E9%9D%A2"><span class="toc-nav-text">性能分析的三个层面</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-nav-text">性能相关的一些基础知识</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CPU%E4%BA%B2%E5%92%8C%E6%80%A7"><span class="toc-nav-text">CPU亲和性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#NUMA"><span class="toc-nav-text">NUMA</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Cache"><span class="toc-nav-text">Cache</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#TLB"><span class="toc-nav-text">TLB</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-nav-text">指令流水线</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lock-Free%E7%BC%96%E7%A8%8B"><span class="toc-nav-text">Lock Free编程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#IO-Stack"><span class="toc-nav-text">IO Stack</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="toc-nav-text">性能分析工具</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CPU"><span class="toc-nav-text">CPU</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%86%85%E5%AD%98"><span class="toc-nav-text">内存</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#IO"><span class="toc-nav-text">IO</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-nav-text">文件系统</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="toc-nav-text">网络</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#pstack"><span class="toc-nav-text">pstack</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#perf"><span class="toc-nav-text">perf</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%81%AB%E7%84%B0%E5%9B%BE"><span class="toc-nav-text">火焰图</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Linux%E8%AE%A1%E6%97%B6"><span class="toc-nav-text">Linux计时</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#eBPF"><span class="toc-nav-text">eBPF</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98%E4%BE%8B%E5%AD%90"><span class="toc-nav-text">性能分析实战例子</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%E6%A1%88%E4%BE%8B"><span class="toc-nav-text">高性能系统实现案例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ScyllaDB-Seastar"><span class="toc-nav-text">ScyllaDB &amp; Seastar</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CoroBase"><span class="toc-nav-text">CoroBase</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#PolarFS"><span class="toc-nav-text">PolarFS</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#X-Engine"><span class="toc-nav-text">X-Engine</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Hekaton"><span class="toc-nav-text">Hekaton</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%8F%82%E8%80%83"><span class="toc-nav-text">参考</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/brief-to-performance-analysis/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
