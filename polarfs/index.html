@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      PolarFS论文笔记 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>PolarFS论文笔记</h2>
+  <p class="post-date">2020-06-01</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>《PolarFS : An Ultra-low Latency and Failure Resilient Distributed File System for Shared Storage Cloud Database》 VLDB2018</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>存储计算分离：</p>
+<ul>
+<li>存储节点和计算节点可以分别独立灵活配置硬件</li>
+<li>存储池化，降低碎片、利用率不均、空间浪费，存储集群的容量和吞吐透明水平扩展</li>
+<li>计算节点无状态，数据库弹性更好（迁移更容易），可靠性提升</li>
+</ul>
+<p>PolarFS：</p>
+<ul>
+<li>利用RDMA和NVMe SSD新硬件、轻量级的用户态网络和IO栈</li>
+<li>POSIX-like文件系统API，替换原有OS的posix接口</li>
+<li>高效的IO模型：消除锁和上下文切换，减少不必要的内存拷贝</li>
+</ul>
+<p>PolarFS支持PolarDB：</p>
+<ul>
+<li>PolarFS支持sync元数据，允许RO感知元数据变更</li>
+<li>并发的元数据变更串行化</li>
+<li>网络分区时，可以保证只有一个节点可以写共享文件</li>
+</ul>
+<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><ul>
+<li>NVMe SSD（500K IOPS，&lt;100us延迟）、3DXPoint SSD（~10us）等低延迟设备下，内核IO栈已经成为了瓶颈。</li>
+<li>RDMA：同交换机下4KB的包需要7us。PolarFS用混合的Send&#x2F;Recv和Read&#x2F;Write，大量数据用SR，小包用RW，polling CQ以避免上下文切换。</li>
+</ul>
+<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/image-20200611104620885-1024x440.png">http://loopjump.com/wp-content/uploads/2020/06/image-20200611104620885-1024x440.png</a></p>
+<p>整体架构分成两层：</p>
+<ul>
+<li>下层是storage layer：负责管理所有的磁盘资源。</li>
+<li>上层是fs层：负责管理文件系统元数据，提供FS API，解决并发访问的互斥和元数据同步。</li>
+</ul>
+<p>组件：</p>
+<ul>
+<li>libpfs：用户态文件系统库，提供类POSIX接口，链到PolarDB进程里面。</li>
+<li>PolarSwitch：驻留在计算节点，将IO请求重定向到ChunkServer。</li>
+<li>ChunkServer：部署在存储节点上，服务IO请求。</li>
+<li>PolarCtrl：控制面，由多个微服务组成，所有的计算节点和存储节点上都部署agent。</li>
+</ul>
+<h3 id="FS-layer"><a href="#FS-layer" class="headerlink" title="FS layer"></a>FS layer</h3><p>FS层提供的是一个共享的、并行的文件系统，面向多个db实例并发访问。比如一个实例创建了文件，其他实例要能看到。</p>
+<ul>
+<li>pfs_mount：database启动的时候，将该database的volumn通过pfs_mount挂载，并初始化fs状态，读取volumn的元数据、构造内存数据结构（目录树、文件映射表、块映射表）。</li>
+<li>pfs_umount：database实例销毁时，pfs_umount将detach对应的volumn，释放资源。</li>
+<li>pfs_creat&#x2F;read&#x2F;write&#x2F;pread&#x2F;pwrite&#x2F;lseek&#x2F;fstat&#x2F;fallocate&#x2F;truncate&#x2F;mkdir&#x2F;readdir：类似于POSIX的接口</li>
+</ul>
+<h3 id="Storage-Layer"><a href="#Storage-Layer" class="headerlink" title="Storage Layer"></a>Storage Layer</h3><p><strong>Volumn &amp; Chunk &amp; Block</strong></p>
+<p>每个database实例对应一个volumn，每个volumn对应若干chunk。volumn可以通过追加chunk的方式扩展空间。chunk分散存储在一组存储节点上，每个chunk有三个副本以支持高可靠和高可用。</p>
+<p>chunk大小是10G，该大小设置比GFS的64M大很多。</p>
+<ul>
+<li>优势是chunk数量少很多，元数据管理简单，可以完全缓存到PolarSwitch内存中。</li>
+<li>劣势是热点chunk无法进一步打散，不过整个系统层面看，负载还是均衡的。</li>
+</ul>
+<p>Chunk会进一步划分为64K的block，block按需细粒度供应。</p>
+<p>一个10G的chunk包含16384个block，LBA（Logic Block Address，线性地址0~10G）到block的映射表存在ChunkServer本地，映射表大概占640KB，可以完全cache在内存。</p>
+<p><strong>PolarSwitch</strong></p>
+<p>PolarSwitch部署在每一台database server上，一台server上可以有多个database实例。每个database实例的libpfs将IO请求转发给PolarSwitch daemon请求上带有地址信息（volumn id, offset, length），根据这些地址信息可以确定要访问的是哪个chunk。如果一个请求跨多个chunk，则会被拆成多个子读请求。每个请求最后都会被路由到对应chunk的leader replica上执行。路由信息在metadata中保存，本地会有一个cache，与PolarCtrl同步。</p>
+<p><strong>ChunkServer</strong></p>
+<p>ChunkServer部署在存储节点上，一个存储节点可能有多个ChunkServer进程，每个进程负责单独的一块NVMe SSD盘，并且绑定特定CPU，因此不会有ChunkServer之间的资源竞争。</p>
+<p>ChunkServer负责存储chunk，提供随机读写。每个chunk包含一个WAL，WAL写在3DXPoint SSD buffer，不足时先回收，不能回收时WAL写到NVMe SSD。chunk数据本身始终写到NVMe SSD。</p>
+<p>ChunkServer可能会因为瞬时失效或者永久失效暂时无法响应，瞬时失效的ChunkServer可以自己尝试重新加回来，PolarCtrl也会做一些补充策略，识别瞬时还是永久失效。</p>
+<p><strong>PolarCtrl</strong></p>
+<p>控制面，负责节点管理、volumn管理、资源分配、元数据同步和监控等服务，该服务本身也要多机高可用。</p>
+<p>具体职责：</p>
+<ul>
+<li>负责追踪所有ChunkServer的成员组和在线情况，启动迁移任务</li>
+<li>在metadata db中维护所有的volumn和chunk的位置信息</li>
+<li>创建volumn，分配chunk到ChunkServer</li>
+<li>同步metadata到PolarSwitch（push &amp; pull）</li>
+<li>监控每个volumn&#x2F;chunk的延迟和IOPS指标</li>
+<li>周期地触发replica间和replica内的CRC校验</li>
+</ul>
+<h2 id="IO-Execution-Model"><a href="#IO-Execution-Model" class="headerlink" title="IO Execution Model"></a>IO Execution Model</h2><p>数据库场景下，如果pfs_fallocate预先分配好文件块，写请求基本都不需要同步元数据。</p>
+<p>libfs根据索引映射表将文件offset映射为block偏移，并将文件IO请求拆成多个定长块的IO请求，通过shared memory发送给PolarSwitch。</p>
+<p>具体地，shared memory上有多个ring buffer，PolarDB将写请求投入其中一个，并等待请求完成。PolarSwitch针对每个ring buffer有一个线程做polling，发现有新的请求，则将请求从ring buffer拿出来，转发到对应的ChunkServer。</p>
+<p>ChunkServer使用WAL来保证IO请求修改数据的原子性和持久性。Log被复制到其他副本，用的是ParallelRaft协议。多副本持久化之后，该IO请求就被认为提交成功了。</p>
+<p>大致的IO执行流程如图：</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/image-20200615145328158-1024x762.png">http://loopjump.com/wp-content/uploads/2020/06/image-20200615145328158-1024x762.png</a></p>
+<p>ChunkServer内部有一个IoScheduler，负责协调并发的IO请求。</p>
+<p>ChunkServer使用一个polling模型和事件驱动的有穷状态机。IO线程polling RDMA和NVMe队列里面的请求，并在该线程中处理请求。当一个IO请求需要触发其他异步子IO请求时，线程会保存上下文，然后执行下一个polling到的请求。每个IO请求都有一个单独的cpu core和独立的RMDA和NVMe队列。总体上，IO线程不需要有任何共享数据，因此也不会有锁等待的开销。</p>
+<h2 id="Consistency-Model"><a href="#Consistency-Model" class="headerlink" title="Consistency Model"></a>Consistency Model</h2><p>Raft的主要限制是必须顺序确认。在高并发多连接通信的情况下，请求乱序的概率大增，导致后面的请求被迫等待，整个吞吐和长尾延迟变大。</p>
+<p>PolarFS对Raft进行了改进，允许乱序确认，并允许一定程度的乱序apply，协议称为ParallelRaft。</p>
+<p>乱序确认带来的问题是，新选出来的leader的日志里面可能出现空洞，这时候，要先执行一个merge过程，将所有已经确认的log entry补上，然后再真正成为leader，提供读写服务。merge过程补log entry的过程跟basic paxos一致，prepare一个prepare quorum，然后取MaxVote重新投票。</p>
+<p>乱序apply的实现方式实际上跟状态机有关，因为log entry记录的是对data file的block的修改cmd，所以如果两个log entry修改的是不同的block，实际上就可以并发。在日志有洞的情况下，如果每条日志都记录了本条日志以及它前N条日志修改的block id（论文里面叫look behind buffer），实际上就可以做到最大为N的窗口并发。这个思路实际上也是通用的，只要能萃取出本条日志以及前N条日志的冲突关系，就可以做并发apply。</p>
+<h2 id="FS-Layer-Implementation"><a href="#FS-Layer-Implementation" class="headerlink" title="FS Layer Implementation"></a>FS Layer Implementation</h2><p>主要是两块：</p>
+<ul>
+<li>组织元数据，单个database节点上读写文件和目录</li>
+<li>跨database节点的元数据协调和同步</li>
+</ul>
+<h3 id="Metadata-organization"><a href="#Metadata-organization" class="headerlink" title="Metadata organization"></a>Metadata organization</h3><p>fs元数据包含三种：directory entry、inode、block tag。</p>
+<ul>
+<li>directory entry：包含path中的某级名字和指向inode的引用，一组dentry组织成directory tree。</li>
+<li>inode：可以代表一个普通文件或者目录文件。如果是普通文件，inode保存了一组block tag。如果是目录文件，inode保存了指向子目录项的引用。</li>
+<li>block tag：记录了file block到volumn block的映射。</li>
+</ul>
+<p>三类数据类型，抽象为MetaObject。每个database实例对应一个volumn，pfs_mount时就要加载该volumn上的元数据。每个MetaObject用&lt;metaobject_id, metaobject_type&gt;确定，metaobject_id的高位确定所在chunk，metaobject_type确定chunk内的该类型对应的group，metaobject_id的低位用于group内唯一确定该对象。</p>
+<h3 id="Coordination-and-Synchronization"><a href="#Coordination-and-Synchronization" class="headerlink" title="Coordination and Synchronization"></a>Coordination and Synchronization</h3><p>PolarFS要支持并发读写，就要处理：</p>
+<ul>
+<li>元数据更新的原子性</li>
+<li>database实例间元数据同步</li>
+<li>多个节点并发写（网络分区可能存在多个节点都认为自己可以写）</li>
+</ul>
+<p>元数据更新原子性跟普通文件系统一样，依赖journal文件，元数据变更先原子地写入journal文件，然后再更新元数据。</p>
+<p>database实例间元数据同步解决方法是database节点polling这个journal文件。</p>
+<p>多个节点并发写的解决方法是使用disk paxos实现分布式锁，避免多个节点同时更新。一个节点更新时，如果加不上锁，则要等前面已经持锁的节点释放后，本节点重新加载journal文件最新的变更项，刷新本地后重试本节点元数据变更事务。</p>
+<p>在这个场景里，Disk Paxos要达成一致的是 ‘ <em>谁是leader &amp; journal文件写到哪了</em> ‘ 。分布式锁用完要主动释放。</p>
+<h2 id="Design-Choices-And-Lessons"><a href="#Design-Choices-And-Lessons" class="headerlink" title="Design Choices And Lessons"></a>Design Choices And Lessons</h2><h3 id="Centralized-or-Decentralized-There"><a href="#Centralized-or-Decentralized-There" class="headerlink" title="Centralized or Decentralized There"></a>Centralized or Decentralized There</h3><p>集中式系统，如GFS，通常依赖单个master节点来管理元数据，优点是实现简单，缺点是有单点瓶颈。</p>
+<p>分布式系统，如Dynamo，优点是可靠性更高，缺点是实现更复杂。</p>
+<p>PolarFS做了折中，PolarCtrl是集中式的，但ChunkServer之间是分布式的。</p>
+<h3 id="Snapshot-from-Bottom-to-Top"><a href="#Snapshot-from-Bottom-to-Top" class="headerlink" title="Snapshot from Bottom to Top"></a>Snapshot from Bottom to Top</h3><p>PolarFS和PolarDB两层都有自己的事务日志来支持原子性和持久化。PolarFS提供了disk outage consistency 给PolarDB&#x2F;libpfs来支持数据库层面做一致性快照。disk outage consistency是指存在一个较小的时间区间$$[T_0, T_{trigger_snapshot}]$$，区间左侧发生的IO请求的效果均在快照内，区间右侧均不在快照内，区间内不确定。</p>
+<p>实现方式：PolarCtrl发起，通知PolarSwitch，PolarSwitch给请求打标来卡区间，ChunkServer上用copy-on-write方式实现。</p>
+<h3 id="Outside-Service-vs-Inside-Reliability"><a href="#Outside-Service-vs-Inside-Reliability" class="headerlink" title="Outside Service vs Inside Reliability"></a>Outside Service vs Inside Reliability</h3><p>降低恢复时间：将chunk拆成多个小的128KB的piece，复制一个chunk的任务变成了一组复制piece的子任务，整体可以提升恢复时间（也消耗了更多的资源）。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/lb-tree/">
+        <span class="nav-arrow">← </span>
+        
+          LB+Tree：面向3DXPoint优化的B+Tree
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/intel-microarch-analysis-method/">
+        
+          Intel CPU 自上而下的微架构性能分析方法
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Introduction"><span class="toc-nav-text">Introduction</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Background"><span class="toc-nav-text">Background</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Architecture"><span class="toc-nav-text">Architecture</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#FS-layer"><span class="toc-nav-text">FS layer</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Storage-Layer"><span class="toc-nav-text">Storage Layer</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#IO-Execution-Model"><span class="toc-nav-text">IO Execution Model</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Consistency-Model"><span class="toc-nav-text">Consistency Model</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#FS-Layer-Implementation"><span class="toc-nav-text">FS Layer Implementation</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Metadata-organization"><span class="toc-nav-text">Metadata organization</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Coordination-and-Synchronization"><span class="toc-nav-text">Coordination and Synchronization</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Design-Choices-And-Lessons"><span class="toc-nav-text">Design Choices And Lessons</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Centralized-or-Decentralized-There"><span class="toc-nav-text">Centralized or Decentralized There</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Snapshot-from-Bottom-to-Top"><span class="toc-nav-text">Snapshot from Bottom to Top</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Outside-Service-vs-Inside-Reliability"><span class="toc-nav-text">Outside Service vs Inside Reliability</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/polarfs/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

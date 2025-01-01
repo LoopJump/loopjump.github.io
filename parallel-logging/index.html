@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      存储引擎的多日志流 | LoopJump&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>存储引擎的多日志流</h2>
+  <p class="post-date">2024-02-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p>本文介绍两个多日志流相关的论文。</p>
+<p><em>《Taurus: Lightweight Parallel Logging for In-Memory Database Management Systems》VLDB’20</em></p>
+<p>CMU的一篇工作，这篇论文是面向单机存储引擎，假设硬件上有多个硬盘（即IOPS还有利用空间）。出发点是存储引擎使用单日志流虽然简单，但串行写日志可能成为瓶颈，尤其是在In-Memory DB中。</p>
+<p>注，论文做了一些假设（有些假设可以放松，不影响方案）：</p>
+<ul>
+<li>每个事务只在提交时写一次日志（可能包含多行的修改，修改可以是逻辑修改也可以是物理修改，如果只有物理修改，则后文的readLV就不需要了）。</li>
+<li>采用严格的2PL加锁（S2PL）策略，但支持ELR提前解行锁。后面解释了其他CC算法下如何应用Taurus。</li>
+<li>固定个数worker线程，并且每个worker线程固定划分到某个日志流，一个事务由一个worker执行并提交，因此一个事务只归属到一个流。</li>
+</ul>
+<p>解决思路自然是从单日志流改为多日志流。</p>
+<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2024/02/a-300x193.png">http://loopjump.com/wp-content/uploads/2024/02/a-300x193.png</a></p>
+<p>但改为多日志流后，因为ELR，两个有依赖关系的事务（如两个事务先后修改了同一行）可能会并行地写入不同的日志流，那么持久化的先后顺序可能与修改数据顺序不同，因此需要构建事务间依赖关系，事务提交时使用它，且恢复过程也需要这个依赖关系。所以问题的核心是事务依赖关系从单日志流强制下的全序改为偏序后如何捕获这个偏序关系。</p>
+<p>注意到事务的依赖关系根源在于读写记录集合之间有交集。因此，（在S2PL+ELR下）可以在行锁上维护最后一次读写该行的事务信息。具体地，记录的行锁上维护了一个readLV和writeLV(LV: lsn vector)，含义是LV的每个分量表示该流上最后一次读写该记录的事务的LSN。事务自己也有一个LV表示自己可能依赖的各流上的事务对应的LSN最大值，事务执行过程中访问过的所有行的readLV和writeLV会推大事务的LV（按分量推大）。事务在提交时，需要等待各流持久化LSN分别大于LV的对应分量，即本事务所依赖的那些事务已经提交后本事务才能提交。</p>
+<p>logging开销包括四部分：1. LV的维护开销；2. 创建log record开销，copy log record开销；3. 前面1和2导致锁冲突加剧；4.持久化开销。论文提到如果日志流比较多，LV就太大，所以使用了SIMD优化LV的操作。不过相比这个问题，log mgr线程数量应该是个更大的问题，因此并发日志流数量肯定不能太多，或者就是CPU资源比较空闲，后面实验部分用的也是96C大规格机器。</p>
+<p>其他：可以支持scan （scan到的每一行都逐行加行锁），可以支持OCC 和 MV；可以支持逻辑日志。</p>
+<p>这个方案应用到InnoDB的话，最大的问题一是没有维护全局LSN（可能导致很多依赖单日志流的LSN的设计出问题），二是耦合了锁模块（设计开发复杂度比较高）。</p>
+<hr>
+<p><em>《Border-Collie: A Wait-free, Read-optimal Algorithm for Database Logging on Multicore Hardware》SIGMOD’19</em></p>
+<p>这篇论文并没有提出一种新的parallel logging的方案，而是针对logging（包含centralized logging和decentralized logging，即单日志流和多日志流）中的并发过程中如何高效地维护一个boundary。</p>
+<p>需要注意的是，这里的boundary是个抽象的含义，在论文中给的示例中，boundary针对centralized logging和decentralized logging场景，有不同含义：</p>
+<ul>
+<li>centralized logging中是哪些位置的buffer可以执行刷盘</li>
+<li>decentralized logging中是哪些buffer已经刷盘完成</li>
+</ul>
+<p>文章的核心是说明维护boundary的算法是wait-free，read-optimal的。</p>
+<p>为方便理解，先考虑MySQL8.0中的lock free wal，其中有一个link buffer组件用于维护连续已拷贝的位置。对于应用到centralized logging场景，Border-Collie的boundary算法实质上就是一个与link buffer对等功能的算法，其原理如下：</p>
+<ul>
+<li>提交日志的线程维护一个flags，flags包含两个信息，一个是color（BLACK表示正在copy buffer，即图中代码line4，WHITE表示已经完成copy），一个是lsn（论文抽象为逻辑时钟）。</li>
+<li>单独有一个线程（即论文标题中牧羊犬Collie的线程）执行扫描（图中眼睛表示的操作），针对所有已经开始但未结束的线程，记录其开始lsn，对已经结束的线程，以实现取的lsn为其lsn，选择所有线程最小lsn，即为boundary，它表示小于该值的日志都已经连续copy完成。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=ZTkyNWNiMDExYjhhNWZiY2U1ZDcyMmNkZWI5ZWJmYTBfY0FnV2RQNzBtU2tBWTBPVUtMdkdVSmZwd0NNRG51SkJfVG9rZW46RnAzVmJtMTMwb1A2Skt4THdpTWN1eHRYbjZkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA">https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=ZTkyNWNiMDExYjhhNWZiY2U1ZDcyMmNkZWI5ZWJmYTBfY0FnV2RQNzBtU2tBWTBPVUtMdkdVSmZwd0NNRG51SkJfVG9rZW46RnAzVmJtMTMwb1A2Skt4THdpTWN1eHRYbjZkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA</a></p>
+<p>对于decentralized logging，假设有N个worker，每个worker使用一个独立的log，每个log各自有一个flusher。boundary针对的是若干日志流的ts_f，其含义是该log已经连续copy，即可以flush的逻辑时钟（lsn)。boundary的结果RLB是所有log中最小已经flush完成的lsn。</p>
+<p><a target="_blank" rel="noopener" href="https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=NDM5NDA3NmMzZTkzZTE2M2M3ZTM0ZDMyOTRkYThhYzFfbFI2VFlJYlE1UXpkZEdTUWR5Umo0aEZNc3pOaEJDazlfVG9rZW46VmxqeWJxMWpnb2J2b0t4MFk0MGNsaTJrblJkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA">https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=NDM5NDA3NmMzZTkzZTE2M2M3ZTM0ZDMyOTRkYThhYzFfbFI2VFlJYlE1UXpkZEdTUWR5Umo0aEZNc3pOaEJDazlfVG9rZW46VmxqeWJxMWpnb2J2b0t4MFk0MGNsaTJrblJkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA</a></p>
+<p>Boundary算法的wait-freel是显然的，Collie线程完成一次计算boundary的过程中连retry逻辑都没有，不管worker线程怎么样，Collie线程在有限步骤内必然可以结束算法。</p>
+<p>有关read-optimal的论述如下：</p>
+<blockquote>
+<p>we believe it is read-optimal in the sense that the minimum number of reads required for obtaining an RLB is Θ(|W|), assuming that workers never collaborate with each other to facilitate deciding an RLB</p>
+<p>意思是，假设并发worker个数是|W|，我们最多只需要看|W|即可确认boundary，因此认为是read-optimal。该论述也不能说没有道理，尤其是要先保证wait-free的情况下。</p>
+</blockquote>
+<p>跟InnoDB的link buffer算法相比，核心差异是该论文将信息的维护做成分布式的，flags是per-worker的，也正是通过这一点做到了标题所描述的wait-free和read-optimal。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/polardb-scc/">
+        <span class="nav-arrow">← </span>
+        
+          PolarDB-SCC - RO节点强一致性读优化
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/hello-world/">
+        
+          Hello World
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="nav">none</ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/parallel-logging/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

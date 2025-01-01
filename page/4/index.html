@@ -195,6 +195,94 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/oltp-glass/">OLTP Through the Looking Glass论文阅读</a>
+      </h2>
+      <p class="article-date">August 21, 2021</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          这篇文章是08年SIGMOD的文章。
+OLTP系统各组件开销很多OLTP数据库的架构扔延续了70年代面向当时的硬件的设计，但30年来，现代CPU、内存、网络等等已经有了很大的变化。这篇论文分析了一个OLTP数据库的各个组件的开销。
+!http://loopjump.com/wp-conten ...
+        
+      </div>
+      <a class="more" href="/oltp-glass/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/myrocks-in-fb/">MyRocks in Facebook UDB</a>
+      </h2>
+      <p class="article-date">September 29, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          MyRocks Paper《MyRocks: LSM-Tree Database Storage Engine Serving Facebook’s Social Graph》
+这篇文章介绍了Facebook为了解决UDB数据库成本迁移MyRocks的挑战和解决方案。
+Introductio ...
+        
+      </div>
+      <a class="more" href="/myrocks-in-fb/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/intel-microarch-analysis-method/">Intel CPU 自上而下的微架构性能分析方法</a>
+      </h2>
+      <p class="article-date">June 10, 2020</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          原文：https://www.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html
+ ...
+        
+      </div>
+      <a class="more" href="/intel-microarch-analysis-method/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/polarfs/">PolarFS论文笔记</a>
+      </h2>
+      <p class="article-date">June 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《PolarFS : An Ultra-low Latency and Failure Resilient Distributed File System for Shared Storage Cloud Database》 VLDB2018
+Introduction存储计算分离：
+
+存储节 ...
+        
+      </div>
+      <a class="more" href="/polarfs/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/lb-tree/">LB+Tree：面向3DXPoint优化的B+Tree</a>
       </h2>
       <p class="article-date">May 1, 2020</p>
@@ -213,6 +301,27 @@ Abstract3DXPoint的有些硬件 ...
         
       </div>
       <a class="more" href="/lb-tree/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/distributed-trx-fit-tradeoff/">分布式事务性能的FIT取舍</a>
+      </h2>
+      <p class="article-date">May 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《FIT: A Distributed Database Performance Tradeoff》 Bulletin of the IEEE Computer Society Technical Committee on Data Engineering 2015
+这篇文章不长，内容也不多 ...
+        
+      </div>
+      <a class="more" href="/distributed-trx-fit-tradeoff/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -303,110 +412,6 @@ This paper aims to serve as a guide to the state of the art in LSM-based storage
       <a class="more" href="/lsmtree-survey/">Read more</a>
     </article>
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lsmtree-adaptive-mem/">LSM Tree 自适应内存管理</a>
-      </h2>
-      <p class="article-date">April 3, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          LSMTree自适应内存管理Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）
-内存管理整体架构比较清晰，如图，无需赘言。
-!http://loopjump.c ...
-        
-      </div>
-      <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calvin-intro/">Calvin简介</a>
-      </h2>
-      <p class="article-date">April 2, 2020</p>
-      
-      <div class="article-summary">
-        
-          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
-Calvi ...
-        
-      </div>
-      <a class="more" href="/calvin-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/in-memory-database-cc-eval/">In-Memory DB的并发控制算法评估</a>
-      </h2>
-      <p class="article-date">March 29, 2020</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          An Empirical Evaluation of In-Memory Multi-Version Concurrency Control (VLDB17’)
-这篇工作梳理了MVCC的四个要点：
-
-并发控制协议
-多版本存储
-垃圾回收
-索引管理
-
-还介绍了MVCC的多种变体原理，实现了这些变 ...
-        
-      </div>
-      <a class="more" href="/in-memory-database-cc-eval/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/partial-order-example/">偏序/DAG的一个例子</a>
-      </h2>
-      <p class="article-date">March 20, 2020</p>
-      
-      <div class="article-summary">
-        
-          序问题可以说是分布式系统中天字第一号问题，因为它来自分布式系统最基础的那个系统模型假设 - 异步网络，而且影响了分布式系统算法设计等等很多方面。分布式系统的序问题阐述起来非常庞大，这里只是简单描述下跟偏序&#x2F;DAG的一个例子 - 区块链公链的DAG。
-前面已经写过一点关于偏序的东西， ...
-        
-      </div>
-      <a class="more" href="/partial-order-example/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/calcite-intro/">Calcite简介</a>
-      </h2>
-      <p class="article-date">November 1, 2019</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Calcite是Apache旗下开源的、支持多种数据源、提供查询处理&#x2F;查询优化&#x2F;查询语言的基础软件框架。
-Calcite的三个特点：
-
-标准SQL: 工业级的SQL parser, validator, JDBC Driver
-查询优化器：将查询表达为关系代数，计划生成， ...
-        
-      </div>
-      <a class="more" href="/calcite-intro/">Read more</a>
-    </article>
-  
 
   
     <div class="guide-pager">
@@ -426,7 +431,7 @@ Calcite的三个特点：
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
     <br>
     Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
     

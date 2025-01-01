@@ -195,6 +195,155 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/raft-one-server-reconfiguration/">Raft One-Server成员变更</a>
+      </h2>
+      <p class="article-date">May 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          前面介绍了Paxos成员组变更，现在根据Raft博士论文介绍一下Raft是怎么做成员组变更的。前者更多描述几个核心的思想，而后者更加实用，介绍了实践过程中遇到的一些实际问题。
+Raft博士论文描述了两种变更方案：
+
+One-Server变更：一阶段变更，要求每次成员组从G1变成G2时，G2相 ...
+        
+      </div>
+      <a class="more" href="/raft-one-server-reconfiguration/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
+      </h2>
+      <p class="article-date">April 3, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Reconfiguring a State Machine这篇论文主要讲解成员组reconfigure，即成员变更。发表时间还是2010年，相比Paxos原始论文的发表时间已经过去20年了。本博文先解读这篇论文，Raft做成员变更的方案后面另文阐述。
+Reconfiguration是指在分布 ...
+        
+      </div>
+      <a class="more" href="/reconfig-state-machine/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/epaxos-paper-note/">EPaxos协议解读</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          引言这是2013年SOSP的会议论文，讲述了一个leaderless的一致性协议EPaxos。不得不说的是，这篇论文写的实在是难读，一方面协议确实比Multi Paxos协议复杂很多，另一方面是行文上有些地方不通顺。我看的资料是会议论文和两个版本的EPaxos证明的技术报告。会议论文简洁但是 ...
+        
+      </div>
+      <a class="more" href="/epaxos-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/flp-proof-note/">FLP impossibility证明阅读笔记</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#DistributedSystem" >
+    <span class="tag-code">DistributedSystem</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          分布式系统一致性协议里面有一个FLP impossibility的结论，这个结论是说，在分布式系统中，异步网络（消息延迟可能任意大或丢失，消息可能乱序），只要有一个进程失效（进程死亡或者足够长时间不响应），就不可能设计出一个确定性的一致性协议。
+该结论由Fisher、Lynch、Paters ...
+        
+      </div>
+      <a class="more" href="/flp-proof-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/out-of-order-commit-apply-in-raft/">Raft的乱序commit和乱序apply</a>
+      </h2>
+      <p class="article-date">March 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          不知怎么地，前一阵子知乎上对Raft的乱序的问题的讨论就变多了。我觉得其实这个问题可讨论的东西并不多。
+Raft作者觉得Multi Paxos太复杂，所以搞了一个Raft。Raft加了很多约束，其中可能最重要的一条就是只能顺序commit。
+所以，顺序commit的锅，Raft是得好好背着， ...
+        
+      </div>
+      <a class="more" href="/out-of-order-commit-apply-in-raft/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/dynamo-paper-note/">Dynamo论文阅读笔记</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Dynamo: Amazon’s Highly Available Key-value Store
+Dynamo这篇论文是2007年出来的，以前读研究生的时候读过，前两天看了一篇NoSQL综述提到了这篇论文，今天重读一遍，简单做些笔记，里面有些东西还只是简单看了下不够深入。
+Dynamo系统 ...
+        
+      </div>
+      <a class="more" href="/dynamo-paper-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/flexible-paxos-quorum-revisited/">Flexible Paxos - 重新审视Paxos协议中的Quorum</a>
+      </h2>
+      <p class="article-date">February 10, 2017</p>
+      
+        
+  <a href="/tags#Paxos" >
+    <span class="tag-code">Paxos</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prep ...
+        
+      </div>
+      <a class="more" href="/flexible-paxos-quorum-revisited/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/gdb-tips/">gdb调试技巧</a>
       </h2>
       <p class="article-date">February 10, 2017</p>
@@ -256,156 +405,6 @@ DBMS简史1968年第一个DBMS上线，I ...
       <a class="more" href="/nosql-survey-note/">Read more</a>
     </article>
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/cap-theory/">浅析CAP理论</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          CAP理论是Eric Brewer在2000年前后提出的一个设计上的折中原则，大意是说，一个系统在Consistency、Availability、Partition Tolerance三者之间无法兼顾，必须舍弃一个。
-Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（ ...
-        
-      </div>
-      <a class="more" href="/cap-theory/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/split-order-hash/">Split-Order Hash基本原理</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          之前阅读论文并实现了一个可扩展的哈希表，已经在生产环境使用。这里简单描述一下思路，详细的实现可以参见论文。
-哈希的常规实现方式是开辟一个长度为N的大数组，新插入一个元素时，先根据元素hash值模除N，将元素节点插入这个桶，桶上有元素，一般可以拉链解决冲突。当元素越来越多，每个桶上链表就会比较 ...
-        
-      </div>
-      <a class="more" href="/split-order-hash/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/distributed-consistency-model/">浅析分布式一致性模型</a>
-      </h2>
-      <p class="article-date">November 10, 2016</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一致性术语的理解一致性这个中文术语在计算机的不同领域有不同的含义，对应的英文术语也是不一样的：Consistency, Consensus, Coherence等等。
-就这三个术语而言，其区别可以简单的如下理解：
-
-Coherence这个单词只在Cache Coherence场景下出现过，它 ...
-        
-      </div>
-      <a class="more" href="/distributed-consistency-model/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/raft-paper-note/">Raft论文解读</a>
-      </h2>
-      <p class="article-date">October 23, 2016</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Raft论文解读
-摘要Raft是针对复制日志的一致性协议。效果上，Raft等价于multi-paxos协议；效率上和Paxos一样。但是Raft协议的整体结构与Paxos差别比较大，Raft协议更加容易理解，也更加适合工程实现。Raft为了使协议更加容易理解，将一致性协议拆分为独立的几个要素 ...
-        
-      </div>
-      <a class="more" href="/raft-paper-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/clean-code-note/">代码整洁之道 读书笔记</a>
-      </h2>
-      <p class="article-date">October 11, 2016</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Chapter 1 整洁代码Lebanc’s Law: later equals never.
-Chapter 2 有意义的命名Chapter 3 函数每个函数一个抽象层级
-Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误处理Chap ...
-        
-      </div>
-      <a class="more" href="/clean-code-note/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/basic-paxos-proof/">Basic Paxos证明</a>
-      </h2>
-      <p class="article-date">October 10, 2016</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-        
-      </div>
-      <a class="more" href="/basic-paxos-proof/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/blue-eye-puzzle-from-tao/">蓝眼睛谜题</a>
-      </h2>
-      <p class="article-date">October 10, 2016</p>
-      
-        
-  <a href="/tags#Puzzle" >
-    <span class="tag-code">Puzzle</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          陶哲轩的博客上的一个puzzle。
-地址在这里：https://terrytao.wordpress.com/2008/02/05/the-blue-eyed-islanders-puzzle/ 。你可以直接跳过去读原文。
-这是发生在一个在虚构的岛上的故事，不过因为这里面的逻辑本身就非常微妙 ...
-        
-      </div>
-      <a class="more" href="/blue-eye-puzzle-from-tao/">Read more</a>
-    </article>
-  
 
   
     <div class="guide-pager">
@@ -425,7 +424,7 @@ Chapter 4 注释Chapter 5 格式Chapter 6 对象和数据结构Chapter 7 错误�
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
     <br>
     Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
     

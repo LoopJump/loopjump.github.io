@@ -209,6 +209,70 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/parallel-logging/">存储引擎的多日志流</a>
+      </h2>
+      <p class="article-date">February 4, 2024</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          本文介绍两个多日志流相关的论文。
+《Taurus: Lightweight Parallel Logging for In-Memory Database Management Systems》VLDB’20
+CMU的一篇工作，这篇论文是面向单机存储引擎，假设硬件上有多个硬盘（即IOPS还有 ...
+        
+      </div>
+      <a class="more" href="/parallel-logging/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/polardb-scc/">PolarDB-SCC - RO节点强一致性读优化</a>
+      </h2>
+      <p class="article-date">February 1, 2024</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《PolarDB-SCC: A Cloud-Native Database Ensuring Low Latency for Strongly Consistent Reads》
+很多数据库系统通过类似于binlog复制或者redo复制的方式提供RO节点来提升整个系统的读吞吐，RW节点上产生 ...
+        
+      </div>
+      <a class="more" href="/polardb-scc/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/polardb-serverless/">PolarDB Serverless</a>
+      </h2>
+      <p class="article-date">January 1, 2024</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《PolarDB Serverless： A Cloud Native Database for Disaggregated Data Centers》
+PolarDB架构PolarDB是存储计算分离的架构。底层是定制的PolarFS层，它是一个分布式的、支持一写多读的文件系统层。上层是My ...
+        
+      </div>
+      <a class="more" href="/polardb-serverless/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/memsql-optimizer/">MemSQL优化器</a>
       </h2>
       <p class="article-date">October 29, 2022</p>
@@ -342,71 +406,6 @@ Motivatio ...
       <a class="more" href="/columbia-optimizer/">Read more</a>
     </article>
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/volcano-optimizer/">The Volcano Optimizer Generator</a>
-      </h2>
-      <p class="article-date">June 26, 2022</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《The Volcano Optimizer Generator : Extensibility and Efficient Search》1993
-论文介绍了在EXODUS之后的一个新的优化器生成器Volcano。
-一个好的optimizer generator要满足如下条件：
-
-既能用到 ...
-        
-      </div>
-      <a class="more" href="/volcano-optimizer/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/snowflake-paper/">Snowflake Elastic Data Warehouse</a>
-      </h2>
-      <p class="article-date">June 24, 2022</p>
-      
-      <div class="article-summary">
-        
-          《The Snowflake Elastic Data Warehouse》 SIGMOD 16’
-Snowflake具备如下的特点：
-
-纯粹的SaaS体验：用户将数据放到云上，然后可以通过snowflake对他们的数据进行查询。
-关系型：支持SQL和ACID
-办结构化：内置函数和SQL扩展 ...
-        
-      </div>
-      <a class="more" href="/snowflake-paper/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/arch-query-compiler/">How to Architect a Query Compiler Revisited</a>
-      </h2>
-      <p class="article-date">June 12, 2022</p>
-      
-        
-  <a href="/tags#SQL" >
-    <span class="tag-code">SQL</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《How to Architect a Query Compiler, Revisited》 SIGMOD’16
-数据库执行一个查询的流程包括前端语法解析、优化器以及后端解释执行。语言编译器的流程与之类似，除了最后一步会编译成机器码执行，DBMS一般还是解析执行的。
-在相当长一段时间内，硬盘 ...
-        
-      </div>
-      <a class="more" href="/arch-query-compiler/">Read more</a>
-    </article>
-  
 
   
     <div class="guide-pager">
@@ -426,7 +425,7 @@ Snowflake具备如下的特点：
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
     <br>
     Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
     

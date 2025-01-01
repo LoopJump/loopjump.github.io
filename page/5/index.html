@@ -195,6 +195,155 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/lsmtree-adaptive-mem/">LSM Tree 自适应内存管理</a>
+      </h2>
+      <p class="article-date">April 3, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          LSMTree自适应内存管理Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）
+内存管理整体架构比较清晰，如图，无需赘言。
+!http://loopjump.c ...
+        
+      </div>
+      <a class="more" href="/lsmtree-adaptive-mem/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/calvin-intro/">Calvin简介</a>
+      </h2>
+      <p class="article-date">April 2, 2020</p>
+      
+      <div class="article-summary">
+        
+          前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。
+Calvi ...
+        
+      </div>
+      <a class="more" href="/calvin-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/distributed-concurrency-control-eval/">分布式并发控制算法评估</a>
+      </h2>
+      <p class="article-date">April 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          An Evaluation of Distributed Concurrency Control（VLDB17’）
+这篇工作主要是比较并评估了6种in-memory分布式数据库的并发控制计算法。
+System Overview论文在Deneva系统上做分布式并发控制算法实现和测试。
+Arch ...
+        
+      </div>
+      <a class="more" href="/distributed-concurrency-control-eval/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/in-memory-database-cc-eval/">In-Memory DB的并发控制算法评估</a>
+      </h2>
+      <p class="article-date">March 29, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          An Empirical Evaluation of In-Memory Multi-Version Concurrency Control (VLDB17’)
+这篇工作梳理了MVCC的四个要点：
+
+并发控制协议
+多版本存储
+垃圾回收
+索引管理
+
+还介绍了MVCC的多种变体原理，实现了这些变 ...
+        
+      </div>
+      <a class="more" href="/in-memory-database-cc-eval/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/partial-order-example/">偏序/DAG的一个例子</a>
+      </h2>
+      <p class="article-date">March 20, 2020</p>
+      
+      <div class="article-summary">
+        
+          序问题可以说是分布式系统中天字第一号问题，因为它来自分布式系统最基础的那个系统模型假设 - 异步网络，而且影响了分布式系统算法设计等等很多方面。分布式系统的序问题阐述起来非常庞大，这里只是简单描述下跟偏序&#x2F;DAG的一个例子 - 区块链公链的DAG。
+前面已经写过一点关于偏序的东西， ...
+        
+      </div>
+      <a class="more" href="/partial-order-example/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/concurrency-control-survey/">并发控制算法小结</a>
+      </h2>
+      <p class="article-date">January 1, 2020</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          介绍几篇并发控制的工作（并发控制算法还有很多，这里也只是简单看了几篇）：
+
+《An Empirical Evaluation of In-Memory Multi-Version Concurrency Control》（VLDB 17’）实测了几种In-Memory MVCC机制。参见论文 ...
+        
+      </div>
+      <a class="more" href="/concurrency-control-survey/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/calcite-intro/">Calcite简介</a>
+      </h2>
+      <p class="article-date">November 1, 2019</p>
+      
+        
+  <a href="/tags#SQL" >
+    <span class="tag-code">SQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Calcite是Apache旗下开源的、支持多种数据源、提供查询处理&#x2F;查询优化&#x2F;查询语言的基础软件框架。
+Calcite的三个特点：
+
+标准SQL: 工业级的SQL parser, validator, JDBC Driver
+查询优化器：将查询表达为关系代数，计划生成， ...
+        
+      </div>
+      <a class="more" href="/calcite-intro/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/bitcask-intro/">bitcask简介</a>
       </h2>
       <p class="article-date">October 29, 2019</p>
@@ -255,160 +404,6 @@ P ...
       <a class="more" href="/consensus-revised-paper/">Read more</a>
     </article>
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
-      </h2>
-      <p class="article-date">March 10, 2019</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          《Designing Access Methods: The RUM Conjecture》
-这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
-就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
-        
-      </div>
-      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/debug-linux-kernel/">搭建Linux内核调试环境</a>
-      </h2>
-      <p class="article-date">February 10, 2019</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          这篇文章介绍下在MacOSX如何用gdb + vmware的方式调试Linux内核。
-一：安装Vmware Fusion二：安装gdb注意这里需要安装高版本的gdb，这里安装的是8.2版本
-123456wget http://ftp.gnu.org/gnu/gdb/gdb-8.2.tar.g ...
-        
-      </div>
-      <a class="more" href="/debug-linux-kernel/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/10-patterns-for-controlling-the-cloud-in-aws/">10 Patterns for Controlling the Cloud in AWS</a>
-      </h2>
-      <p class="article-date">January 10, 2019</p>
-      
-        
-  <a href="/tags#Cloud" >
-    <span class="tag-code">Cloud</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          来源：AWS re: invent 2018
-Pattern 1: checksum all of the thingsPattern 2: Cryptgraphic AuthenticationEncrypt and authenticate everything.
-Control Pla ...
-        
-      </div>
-      <a class="more" href="/10-patterns-for-controlling-the-cloud-in-aws/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/lattice-in-anna/">Anna KVS中的Lattice是什么</a>
-      </h2>
-      <p class="article-date">December 9, 2018</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          &#x2F;&#x2F; 一篇闲扯的博文
-Anna KVS官网对Anna的特性总结得非常到位：1. Crazy Fast, 2. Super-Scalable, 3. Flexibly Consistent。
-这里只关注Flexibly Consistent这一项，讲讲Anna是实现灵活的c ...
-        
-      </div>
-      <a class="more" href="/lattice-in-anna/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/quorum-sys-failure-probability/">Quorum System的故障概率和负载</a>
-      </h2>
-      <p class="article-date">November 10, 2018</p>
-      
-        
-  <a href="/tags#DistributedSystem" >
-    <span class="tag-code">DistributedSystem</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          最近读到一个有趣的话题：Quorum System的故障概率和负载。
-首先是一些概念：
-节点集合 (V&#x3D;{v_1, v_2, .., v_n})
-Quorum  (Q\subseteq V)
-Quorum System (\mathcal{S} \subseteq 2^V)，且(Q ...
-        
-      </div>
-      <a class="more" href="/quorum-sys-failure-probability/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/spanner-sql-engine/">Spanner - Becoming a SQL System论文阅读笔记</a>
-      </h2>
-      <p class="article-date">November 10, 2018</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          继2012年在OSDI年发表了Spanner论文《Spanner: Google’s Globally-Distributed Database》之后，Google在SIGMODE’17上发表了第二篇关于Spanner的论文《Spanner: Becoming a SQL System》。从 ...
-        
-      </div>
-      <a class="more" href="/spanner-sql-engine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/sdpaxos-paper/">SDPaxos:在strong leader与leaderless之间折中</a>
-      </h2>
-      <p class="article-date">October 2, 2018</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          &#x2F;&#x2F; 大半夜on-call没事干，写点东西。
-《SDPaxos: Building Efficient Semi-Decentralized Geo-replicated State Machines》(SOCC18’)
-有幸跟作者赵汉宇博士做了一次交流，我也仔细读了一遍 ...
-        
-      </div>
-      <a class="more" href="/sdpaxos-paper/">Read more</a>
-    </article>
-  
 
   
     <div class="guide-pager">
@@ -428,7 +423,7 @@ Quorum System (\mathcal{S} \subseteq 2^V)，且(Q ...
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    &copy; 2024 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
     <br>
     Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
     
