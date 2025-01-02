@@ -231,9 +231,9 @@
 <li>提交日志的线程维护一个flags，flags包含两个信息，一个是color（BLACK表示正在copy buffer，即图中代码line4，WHITE表示已经完成copy），一个是lsn（论文抽象为逻辑时钟）。</li>
 <li>单独有一个线程（即论文标题中牧羊犬Collie的线程）执行扫描（图中眼睛表示的操作），针对所有已经开始但未结束的线程，记录其开始lsn，对已经结束的线程，以实现取的lsn为其lsn，选择所有线程最小lsn，即为boundary，它表示小于该值的日志都已经连续copy完成。</li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=ZTkyNWNiMDExYjhhNWZiY2U1ZDcyMmNkZWI5ZWJmYTBfY0FnV2RQNzBtU2tBWTBPVUtMdkdVSmZwd0NNRG51SkJfVG9rZW46RnAzVmJtMTMwb1A2Skt4THdpTWN1eHRYbjZkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA">https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=ZTkyNWNiMDExYjhhNWZiY2U1ZDcyMmNkZWI5ZWJmYTBfY0FnV2RQNzBtU2tBWTBPVUtMdkdVSmZwd0NNRG51SkJfVG9rZW46RnAzVmJtMTMwb1A2Skt4THdpTWN1eHRYbjZkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA</a></p>
+<p>[IMAGE]</p>
 <p>对于decentralized logging，假设有N个worker，每个worker使用一个独立的log，每个log各自有一个flusher。boundary针对的是若干日志流的ts_f，其含义是该log已经连续copy，即可以flush的逻辑时钟（lsn)。boundary的结果RLB是所有log中最小已经flush完成的lsn。</p>
-<p><a target="_blank" rel="noopener" href="https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=NDM5NDA3NmMzZTkzZTE2M2M3ZTM0ZDMyOTRkYThhYzFfbFI2VFlJYlE1UXpkZEdTUWR5Umo0aEZNc3pOaEJDazlfVG9rZW46VmxqeWJxMWpnb2J2b0t4MFk0MGNsaTJrblJkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA">https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=NDM5NDA3NmMzZTkzZTE2M2M3ZTM0ZDMyOTRkYThhYzFfbFI2VFlJYlE1UXpkZEdTUWR5Umo0aEZNc3pOaEJDazlfVG9rZW46VmxqeWJxMWpnb2J2b0t4MFk0MGNsaTJrblJkXzE3MDc4MDg5NzM6MTcwNzgxMjU3M19WNA</a></p>
+<p>[IMAGE]</p>
 <p>Boundary算法的wait-freel是显然的，Collie线程完成一次计算boundary的过程中连retry逻辑都没有，不管worker线程怎么样，Collie线程在有限步骤内必然可以结束算法。</p>
 <p>有关read-optimal的论述如下：</p>
 <blockquote>
