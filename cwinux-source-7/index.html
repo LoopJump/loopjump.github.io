@@ -246,7 +246,7 @@
 <p>这段代码清晰表明了事件响应过程中是如何通知用户应用程序的。代码很清晰，不再赘述。另外，需要填个坑。在Cwinux简介那篇博文中，最后部分说过：建立Tcp监听时有两种模式可选，对应的响应函数不同（一个由框架接收数据生成消息，另一个只是由框架通知有数据到来）。这里正可从代码看出，两个处理方式的不同。建立Tcp监听时，指定<strong>isRawData</strong>的值，可以决定框架的不同动作：raw情况下，框架只通知有数据到来，getApp()-&gt;onRecvMsg(*this, bSuspend)；not raw情况下，框架接收数据生成消息，通知有消息到来， this-&gt;getApp()-&gt;recvMessage(m_header, this-&gt;m_recvMsgData, *this, bSuspend)。</p>
 <p>至此，我们已经解析了Cwinux实现onXXX这类通知用户应用程序有事件到来的具体过程。</p>
 <p>下面介绍noticeXXX，其实现过程如图示。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/notice.png" alt="notice.png"></p>
+<p><img src="http://blogimage.loopjump.com/2014/notice.png" alt="notice.png"></p>
 <p>CwxAppNoticePipe是一个列表，里面串了CwxAppNotice对象。CwxAppNotice对象用来传递通知命令。AppFramework调用noticeTcpConnect函数，该函数会创建一个Handler4TcpConn对象handle，handle中填充该notice事件的相关参数，并调用m_pReactor串入noticePipe中。AppFramework在启动后进入事件循环run。在hook函数中，AppFramework检查是否有notice事件，如果有，则调用Reactor::noticed处理。</p>
 <p>这里有一点需要注意：由于AppFramework在执行事件循环中会因epoll_wait等待（当前没有网络事件等），当这是我们执行noticeXXX时，需要唤醒AppFramework的事件循环，Cwinux的做法是预先创建一个管道（两个fd：m_pipeReader和m_pipeWriter），读取端m_pipeReader加入epoll_wait中监听，写入端m_pipeWriter留着，执行noticeXXX时，向写入端m_pipeWriter写入一个字节，则读取端m_pipeReader发生可读事件，epoll_wait旋即返回，进而有机会执行hook和noticeEvent函数来处理notice事件。</p>
 <p>Referrence:</p>
