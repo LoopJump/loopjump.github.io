@@ -206,13 +206,13 @@
 <p>在Cwinux源码解析（四）（五）中，我们分析了Reactor模式和Cwinux中的具体实现。</p>
 <p>现在先回顾一下。</p>
 <p>如图示：</p>
-<p><img src="http://blogimage.loopjump.com/2014/msg_process.png" alt="msg_process.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/msg_process.png" alt="msg_process.png"></p>
 <p>该图相比源码解析（四）的第一张图增加了异步Task部分。这部分是从文档中读到，未读这部分代码。</p>
 <p>我们再一次重复描述一下消息处理流程：Cwinux通信层从网络连接对应的文件描述符fd上读取到数据，然后框架将数据封装为消息，并通知用户app有消息到达（例如，EchoApp::onRecvMsg函数会被调用）。用户app将该消息投入到初始化时创建的线程池。线程池通过Commander模式运行，不断地从消息队列（隶属于线程的消息队列）中读取消息并处理。</p>
 <p>通信层的Reactor模式代码和线程池中Commander模式代码的关系是：Reactor模式读取网络连接字节流并封装为Cwinux的消息对象，Commander模式处理消息。我一开始读代码时遇到的一个问题就是没理清楚这个两层关系，所以走了些弯路，请读者注意避免。该层次关系如图示：</p>
-<p><img src="http://blogimage.loopjump.com/2014/2layer.png" alt="2layer.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/2layer.png" alt="2layer.png"></p>
 <p>如前所述，通信层发生的事件不只是有数据到来，还可能是网络连接异常等事件。即使是数据到来，不见得就是Cwinux中定义的消息对应的字节流（与建立连接时设置的模式参数有关）。在源码解析（五）中我们解释了CwxAppHandler4Base和CwxAppHandler4Msg两个类。其余的几个类及其关系图如下。</p>
-<p><img src="http://blogimage.loopjump.com/2014/msg_reactor.png" alt="msg_reactor.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/msg_reactor.png" alt="msg_reactor.png"></p>
 <p>从图中可以看出，除了处理消息外，信号，IO其他事件，新连接进入等事件都是在Reactor模式相关代码中处理的。</p>
 </section>
     <!-- Tags START -->

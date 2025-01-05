@@ -250,7 +250,7 @@
 <p>threadMain首先进行必要的TSS设置（TSS指局部于线程的变量 thread specific storage），然后开始实际的工作。threadMain依据构造函数传递的参数不同，有两种工作方式。第一种是执行已指定的某个函数，这种方式比较简单，与未封装的pthread的用法基本一致。第二种是通过Commander这种机制来完成具体的功能。这种方式比较复杂，后面会有详细的介绍。这里先简单介绍一下。每个消息都有自己的类型， 每种类型的消息都有一个预设的操作对象来处理这个消息。Commander可以被视为类型到操作对象的映射关系管理者。当threadMain按第二种方式工作时，线程不断地从消息队列中取出消息，然后交给Commander处理。</p>
 <h3 id="7-CwxThreadPool，CwxThreadPoolEx线程池"><a href="#7-CwxThreadPool，CwxThreadPoolEx线程池" class="headerlink" title="7. CwxThreadPool，CwxThreadPoolEx线程池"></a>7. CwxThreadPool，CwxThreadPoolEx线程池</h3><p>线程池的大致思路是：在服务启动时预先创建一定数目的线程，这些线程循环执行一些具体的工作，这样就避免了在每次处理你不同请求时进行创建线程和销毁线程。</p>
 <p>Cwinux提供了两种线程池CwxThreadPool和CwxThreadPoolEx。回顾CwxThread类的实现，每个线程都能访问到某个消息队列。CwxThreadPool和CwxThreadPoolEx的区别如图示。</p>
-<p><img src="http://blogimage.loopjump.com/2014/threadPool_newsize.png" alt="tp1"></p>
+<p><img src="https://blogimage.loopjump.com/2014/threadPool_newsize.png" alt="tp1"></p>
 <p>CwxThreadPool的所有线程共享一个消息队列。新的消息会追加到该消息队列。CwxThreadPoolEx的每个线程都有自己的消息队列，每个线程都只能从自己的消息队列中取出消息来处理。新的消息追加时需要制定具体追加到哪一个消息队列中。</p>
 <p>线程池在创建并启动后，池中的所有线程会并发执行，从消息队列中读取消息，并依据线程的配置执行（参见CwxThread类的两种执行方式）。</p>
 </section>

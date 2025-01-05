@@ -203,7 +203,7 @@
   <article class="post-article">
     <section class="markdown-content"><p>3.2节讲了一个很通用的方法，叫尺取法。</p>
 <p>尺取法通常设定前后两个指针，不断地按照某种策略移动前后指针，考察前后指针所限定的区间。</p>
-<p><img src="http://skyovtl07.hb-bkt.clouddn.com/2014/two_pointer.png" alt="two_pointer.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/two_pointer.png" alt="two_pointer.png"></p>
 <p>例如例题3.2.1：给定长度为n的整数序列，求出总和不小于S的连续子序列的长度的最小值。按照尺取法，设定前后指针s&#x3D;0,t&#x3D;0,然后将s向前移动，判断t~s之间的区间是否满足要求，如果小于S，s继续移动，直到和大于等于S为止。此时将t向前移动。反复进行该过程，期间记录长度，并更新长度的最小值。复杂度为O(N)。</p>
 <p>事实上，前后指针，或者叫双指针的方法适用于更广的问题。这里列举几个例子。</p>
 <p><strong>Case 1</strong>：判断数组a[0…n-1]中是否存在两个数其和为S。</p>

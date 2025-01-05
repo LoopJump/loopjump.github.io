@@ -239,8 +239,7 @@
 
 <p>简单解释一下这个定义式：*是类型；Node可以理解成针对树的关键字，它表达一个节点；listof是用Cons将若干子树串成list。</p>
 <p>所以，形如图中的树</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2ee06186-36f1-4226-ab1d-b455a4764f1b/tree.png" alt="tree.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/08/tree.png">http://loopjump.com/wp-content/uploads/2014/08/tree.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2014/tree.png" alt="tree.png"></p>
 <p>可以表示为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Node 1</span><br><span class="line">    (Cons (Node 2 Nil)</span><br><span class="line">        (Cons (Node 3</span><br><span class="line">            (Cons (Node 4 Nil) Nil))</span><br><span class="line">            Nil))</span><br></pre></td></tr></table></figure>
 
@@ -290,14 +289,12 @@
 <p>定义棋盘局面为position，每个position对应若干可以从当前position到达的新的position。所以，定义moves:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">moves :: position -&gt; listof position</span><br></pre></td></tr></table></figure>
 
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/08/moves.png">http://loopjump.com/wp-content/uploads/2014/08/moves.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/725b6429-6742-458c-9ac6-1bde36b7de90/moves.png" alt="moves.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/moves.png" alt="moves.png"></p>
 <p>基于此，我们能够构造一个 gametree:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reptree f a = Node a (map (reptree f) (f a))</span><br><span class="line">gametree p = reptree moves p</span><br></pre></td></tr></table></figure>
 
 <p>多解释几句，reptree是构造树的递归结构，其中a为树根，f为从根能够通过f计算，能够达到的子树根。所以gametree p &#x3D; reptree moves p。gametree产生的结果如图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d293a883-3d14-4631-9b6f-d51abd54a4de/gametree.png" alt="gametree.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/08/gametree.png">http://loopjump.com/wp-content/uploads/2014/08/gametree.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2014/gametree.png" alt="gametree.png"></p>
 <p>alpha-beta启发算法会向前多看几步，看看情况是有利还是不利。为此，我们需要给每一个position一个静态的对应的粗略估值，这个值反应position当前对哪一个玩家有利。举个例子，人机对战时（alpha-beta作为电脑一方），如果对电脑玩家有利，就记为1，如果对对手有利，就记为-1。</p>
 <p>所以我们需要一个static函数：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static :: position -&gt; number</span><br></pre></td></tr></table></figure>
@@ -312,8 +309,7 @@
 <p>当然还要加上空树的情况：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">maximize (Node n Nil) = n</span><br><span class="line">minimize (Node n Nil) = n</span><br></pre></td></tr></table></figure>
 
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2014/08/prune_new_2.png">http://loopjump.com/wp-content/uploads/2014/08/prune_new_2.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/1ce195f4-18a8-4d35-a754-da1f8f2dfbe2/prune_new_2.png" alt="prune_new_2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/prune_new_2.png" alt="prune_new_2.png"></p>
 <p>正如图中所表示的这样。因为电脑对手会在第二层中选择了最有利于它自己的策略，所以电脑算法计算最顶层的max的时候，依赖于第二层的min（对手的选择结果）。</p>
 <p>现在我们可以尝试写出一个position对应的真值了：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evaluate = maximize.maptree static.gametree</span><br></pre></td></tr></table></figure>
