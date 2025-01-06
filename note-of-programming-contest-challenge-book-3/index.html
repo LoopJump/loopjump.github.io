@@ -209,7 +209,7 @@
 <p>Floy-Warshall算法的思路很有意思。</p>
 <p>定义 <strong>dij(k)</strong> 为从i到j的，中间只经过{1,2…k}中的顶点的最短路径。</p>
 <p>则：</p>
-<p><img src="https://blogimage.loopjump.com/floyd1.png" alt="floyd1.png"></p>
+<p><img src="https://blogimage.loopjump.com/2014/floyd1.png" alt="floyd1.png"></p>
 <p>根据这个公式，可以写出非常简单的代码：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D = W</span><br><span class="line">for k = 1 to n</span><br><span class="line">    for i = 1 to n</span><br><span class="line">        for j = 1 to n</span><br><span class="line">            D[i][j] = min( D[i][j], D[i][k]+D[k][j] )</span><br></pre></td></tr></table></figure>
 

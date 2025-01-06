@@ -204,8 +204,7 @@
     <section class="markdown-content"><p>本文是Bigtable论文的阅读笔记，比较简略。</p>
 <h2 id="1-基本概念介绍"><a href="#1-基本概念介绍" class="headerlink" title="1 基本概念介绍"></a><strong>1 基本概念介绍</strong></h2><p>Bigtable本质上是GFS之上对GFS文件数据的一层索引。</p>
 <h3 id="1-1-Bigtable的数据模型"><a href="#1-1-Bigtable的数据模型" class="headerlink" title="1.1 Bigtable的数据模型"></a><strong>1.1 Bigtable的数据模型</strong></h3><p>一个稀疏的分布式的持久化的多维度的排序的map。所谓map，就是key-value对。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/09/bigtable-map.png">http://loopjump.com/wp-content/uploads/2015/09/bigtable-map.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bc254e78-1129-405b-a397-a41a1ff8b883/bigtable-map.png" alt="bigtable-map.png"></p>
+<p><img src="https://blogimage.loopjump.com/2015/bigtable-map.png" alt="bigtable-map.png"></p>
 <p>如图示，bigtable的数据模型是：</p>
 <p><em><strong>(row:string, column:string, time:int64)* &#x3D;&gt; *value:string</strong></em></p>
 <p>即，行+列+时间戳作为key来索引value。</p>
@@ -240,8 +239,7 @@
 <p>Master server一启动就做这些事。当然，考虑到不能启动多个master server实例。Master启动时要先抢锁（chubby实现的分布式锁）。</p>
 <p>Tablet集合的改变：创建、删除、合并、分裂。前三个都是master负责发起的。分裂是由tablet server发起的。因此分裂成功之后要告知master。</p>
 <h3 id="2-3-Tablet-serving"><a href="#2-3-Tablet-serving" class="headerlink" title="2.3 Tablet serving"></a><strong>2.3 Tablet serving</strong></h3><p>下面说下tablet上的读写操作实现。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2015/09/tablet_serving.png">http://loopjump.com/wp-content/uploads/2015/09/tablet_serving.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/082d124d-daae-4f94-9e3f-a0cec3c65526/tablet_serving.png" alt="tablet_serving.png"></p>
+<p><img src="https://blogimage.loopjump.com/2015/tablet_serving.png" alt="tablet_serving.png"></p>
 <p>执行读写涉及到memtable，tablet log，sstable。</p>
 <p>当新写一个key-value时，会先追加到tablet log（WAL，write ahead log）。Tablet log是类似于数据库redo log一样的日志文件。tablet log写成功了，本次写操作就已经被持久化了。此时插入memtable中。Memtable是一个排序的key-value序列（levelDB中实现为跳表skip list）。此时写操作成功。由于tablet log是追加写，因此写性能很高。</p>
 <p>读操作比较复杂。如图示，读操作实际上看到的是memtable和若干SSTable。读操作需要从这些数据中读取想要的那条（考虑到新旧数据，要先读memtable，然后读最新的sstablet，以此类推）。读操作涉及到Cache，ScanCache是缓存KeyValue对，BlockCache缓存SSTable的block，是不同层次的缓存。</p>
