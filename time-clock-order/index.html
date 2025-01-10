@@ -202,8 +202,7 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><h2 id="Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System"><a href="#Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System" class="headerlink" title="Time, Clocks, and the Ordering of Events in a Distributed System"></a>Time, Clocks, and the Ordering of Events in a Distributed System</h2><p>这篇论文Lamport发表于1978年，讨论的是分布式系统下的时钟和事件序问题。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6b91ae01-6164-4001-86ee-f3342a0bc324/time_run_diff.jpg" alt="time_run_diff.jpg"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/time_run_diff.jpg">http://loopjump.com/wp-content/uploads/2016/09/time_run_diff.jpg</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/time_run_diff.jpg" alt="time_run_diff.jpg"></p>
 <p>图片来自《星际穿越》（计算机分布式系统环境与爱因斯坦相对论时空观具有本质相似性）</p>
 <h3 id="分布式系统的概念"><a href="#分布式系统的概念" class="headerlink" title="分布式系统的概念"></a>分布式系统的概念</h3><p>分布式系统由不同的进程组成，不同进程可以经由消息通信。本文说的分布式系统是个广义的概念：一个互联的计算机网络是一个分布式系统；单台机器的CPU、IO部件、内存等也可被视为组成了一个分布式系统。事实上，如果相比组件内事件发生间隔而言，组件间的消息通信延迟不能忽略的话 ，这个系统就可以被视为分布式系统。</p>
 <h3 id="偏序关系"><a href="#偏序关系" class="headerlink" title="偏序关系"></a>偏序关系</h3><p>在分布式系统中，一个进程process内的多个事件，自然地具备事件的先后顺序，或者说一个process本身就是一个有先验顺序的全序的事件集合 a set of events with a priori total ordering。除了process内在的顺序，消息的发送和接收事件也是有因果序的。基于这两点，我们定义happen-before关系，写作(\to)。</p>
@@ -214,8 +213,7 @@
 <p>如果 (a \nrightarrow b \land b \nrightarrow a)，那么，称(a)(b)是并发的。</p>
 <p>根据定义，可以知道happen-before关系(\to)是一个系统所有事件集合之上的反自反偏序关系。</p>
 <p>时空图space-time diagram可以直观地描述这个定义。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/278e161a-4868-4ed6-83b8-7eed2b9690ef/space_time_diagram_1.png" alt="space_time_diagram_1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_1.png">http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/space_time_diagram_1.jpg" alt="space_time_diagram_1.jpg"></p>
 <p>在图中，(a \to b)意味着从(a)可以沿着线到(b)，例如(p_1 \to r_4)。</p>
 <p>这个定义的另外一种理解：(a \to b)意味着从(a)和(b)有因果序。例如(p_3)和(q_3)是并发的，意味着我们并不能推断两者的时序。</p>
 <h3 id="逻辑时钟Logical-Clocks"><a href="#逻辑时钟Logical-Clocks" class="headerlink" title="逻辑时钟Logical Clocks"></a>逻辑时钟Logical Clocks</h3><p>概念上，时钟即给事件分配序号的方式。</p>
@@ -230,11 +228,9 @@
 <p><strong>IR1</strong>: (P_i)的两个连续事件之间要递增该process的(C_i)</p>
 <p><strong>IR2</strong>: (a)是(P_i)发送消息事件，那么消息(m)中携带一个时间戳(T_m&#x3D;C_i\langle a \rangle)。(P_j)接收到该消息之后，将自己的逻辑时钟(C_j)推进到大于(T_m)的时刻。</p>
 <p>我们在时空图上加上tick line虚线，就得到了下面的图。加虚线方式就按C1、C2来。同一process内连续的两个事件必须有一条虚线，消息传递的波浪线也需要交错一条虚线。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0eba201a-4dc9-4d4f-865e-bf6113cd3e4f/space_time_diagram_2.png" alt="space_time_diagram_2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_2.png">http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_2.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/space_time_diagram_2.jpg" alt="space_time_diagram_2.jpg"></p>
 <p>tick line实际上就是时空笛卡尔坐标系的时间轴，整理一下上图，即得下图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e70c8fc1-419d-46b6-88a6-3f968d668ad8/space_time_diagram_3.png" alt="space_time_diagram_3.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_3.png">http://loopjump.com/wp-content/uploads/2016/09/space_time_diagram_3.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/space_time_diagram_3.jpg" alt="space_time_diagram_3.jpg"></p>
 <p>当然，也可以据此扩展画出3D时空图，tick line就变成tick surface了。</p>
 <h3 id="Ordering-the-Events-Totally"><a href="#Ordering-the-Events-Totally" class="headerlink" title="Ordering the Events Totally"></a>Ordering the Events Totally</h3><p>我们将偏序关系扩展成一个全序关系。</p>
 <p>我们构造一个关系(\Rightarrow)：</p>

@@ -211,16 +211,14 @@
 
 <p>如果外部一致性保证不了，那么并发的另一个客户端读x和y时，可能看到y生效但是x没有生效。</p>
 <h2 id="2-实现"><a href="#2-实现" class="headerlink" title="2 实现"></a><strong>2 实现</strong></h2><h3 id="Spanner的部署方式"><a href="#Spanner的部署方式" class="headerlink" title="Spanner的部署方式"></a><strong>Spanner的部署方式</strong></h3><p>Spanner的部署方式，或者说server组织方式如下图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9b8b286a-3d24-4f7c-a26a-8a1cd9c92252/spanner_deplpoy.png" alt="spanner_deplpoy.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/spanner_deplpoy.png">http://loopjump.com/wp-content/uploads/2016/09/spanner_deplpoy.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/spanner_deplpoy.png" alt="spanner_deplpoy.png"></p>
 <p>一个zone可以理解为一个数据中心，或者直接理解为机房。Zone内部有若干spanserver。Zonemaster负责将数据分配到spanserver，location proxy用于支持客户端查询数据分配情况。一个Spanner包含多个zone、一个universemaster、一个placement driver，总称universe。Universemaster是一个控制台服务器，用于监控和debug。Placement driver用于universe级别的跨zone数据迁移。因为Spanner本身已经是全球规模的部署，每个Spanner已经包含了数量巨大的spanserver，所以基本上也不需要几个universe。从这个部署方式看，Google的存储系统仍然沿用了Master-Slave的大模式，当然，此处master负载并不重。</p>
 <p><strong>Spanserver软件栈</strong></p>
 <p>Spanserver软件栈如图。它描述了从日志持久化到2PC的lock管理部件，内容涉及还比较多。</p>
 <p>Tablet的概念与Bigtable差不多，但是key同时绑定一个时间戳，这个时间戳就是MVCC的版本号。Tablet的数据都在B-tree-like的文件 + write ahead log中间，存放于Colossus。Colossus是GFS II代，针对小文件做了优化。</p>
 <p>Spanserver的每个tablet上运行一个Paxos状态机。状态机的元数据和Paxos日志都存到tablet中。当前实现下，一次写操作要写盘两次：一次是tablet的write ahead log，一次是Paxos log。论文说写两次，而且Paxos日志写到tablet中，这个还不太清楚是如何做的。Paxos日志要同步到其他副本上，而tablet本身的数据或者日志都是server local的，这个需要做区分。按照replicated state machine这个概念，持久化的数据只要一份就好。状态通过日志做变更或者重启恢复。我们这里也不纠缠这个问题，论文说这个设计是非预期的，正在改为只写一次。</p>
 <p>另外，Basic Paxos的性能因为2阶段的RPC导致性能问题，因此，实用的Paxos实现，如Multi Paxos或者Raft，其性能都依赖有一个相对稳定的leader replica。这一点并不难做到，毕竟除了宕机等事件，通常并不需要主动切换leader。这里我们假定相对稳定的leader replica已经做到了。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/spanserver_software_stack.png">http://loopjump.com/wp-content/uploads/2016/09/spanserver_software_stack.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b07ae88f-4ebf-4846-8812-fdab8c1da624/spanserver_software_stack.png" alt="spanserver_software_stack.png"></p>
+<p><img src="https://blogimage.loopjump.com/2016/spanserver_software_stack.png" alt="spanserver_software_stack.png"></p>
 <p>Leader replica在replica之上，维护了lock table。这个lock是指数据库行锁，lock table主要管理2PC阶段的锁。</p>
 <p>说到2PC，这里简单描述一下。2PC的目的是为了支持分布式事务的原子提交，避免只提交事务的一部分。协议本身理解起来非常简单，在若干参与者者中，选择一个作为协调者（理论上可以选择一个跟本事务无关的参与者），所有参与者先执行prepare，prepare成功的参与者就确保可以提交或者回滚，但暂时既不提交也不回滚，协调者收集所有的参与者的prepare结果，如果都成功，就通知所有的参与者提交，否则就通知所有参与者回滚。协议本身很简单，但是具体实现还有不少坑。</p>
 <p>Leader上为了支持2PC事务，引入一个transaction manager。按照两阶段和主备，一个事务的副本在事务层的角色分为participant leader、participant slave、coordinator leader、coordinator slave。单tablet上（本质上说，同一个Paxos）上的事务都可以从两阶段优化成一个阶段，因为单个tablet持久化是原子地成功或者失败的，不需要引入2PC来协调事务提交的原子性。</p>
@@ -234,14 +232,12 @@
 <p>前面提到的directory的粒度问题，引入了另一个使用上的模式或者叫范式。每个数据库，都需要应用将各个表设计成层级（hierarchy）的样子。各张表的数据是交错（interleave）和级联的（cascade）。这个举个例子就很清楚了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE Users &#123;</span><br><span class="line">    uid INT64 NOT NULL, email STRING</span><br><span class="line">&#125; PRIMARY KEY (uid), DIRECTORY;</span><br><span class="line">CREATE TABLE Albums &#123;</span><br><span class="line">    uid INT64 NOT NULL, aid INT64 NOT NULL,</span><br><span class="line">    name STRING</span><br><span class="line">&#125; PRIMARY KEY (uid, aid), INTERLEAVE IN PARENT Users ON DELETE CASCADE;</span><br></pre></td></tr></table></figure>
 
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/interleave.png">http://loopjump.com/wp-content/uploads/2016/09/interleave.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0feb6290-1068-459f-8842-e36796b813ee/interleave.png" alt="interleave.png"></p>
+<p><img src="https://blogimage.loopjump.com/2016/interleave.png" alt="interleave.png"></p>
 <p>这个例子是说，创建两张表，一张是user表，一张是albums表，一个用户有多个相册。那么，就需要将这两张表设计成层级的。即user表是父表，albums表是子表。Key-value数据存放时，子表的数据交错放入父表对应的user_id之后。每个user_id对应的一key-value就是一个directory。</p>
 <p>这种数据模型对于应用感知locality很有必要。</p>
 <h2 id="3-True-Time"><a href="#3-True-Time" class="headerlink" title="3 True Time"></a><strong>3 True Time</strong></h2><p>True Time是Spanner最亮眼的地方。</p>
 <p>先看看True Time提供了哪些功能&#x2F;API：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/09/true_time.png">http://loopjump.com/wp-content/uploads/2016/09/true_time.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/8f5ddb88-022e-4138-9514-4f787175df19/true_time.png" alt="true_time.png"></p>
+<p><img src="https://blogimage.loopjump.com/2016/true_time.png" alt="true_time.png"></p>
 <p>接口语义很清晰。TT.now()返回的是一个时间戳区间，TrueTime保证调用now函数时，绝对时间一定在这个时间戳区间内。TT.after和TT.before都是对TT.now的封装。</p>
 <p>我认为，本质上，TrueTime是个全序时钟，只不过这个时钟不是全局时间点而是全局时间段，这一点也是Spanner实现外部一致性的根本支持。</p>
 <p>实现：实现细节论文也没有太多详述，只是描述了大致的原理。每个数据中心都有一个timer master，用以校正全局时钟。每台机器都有一个timeslave daemon来找master poll时间。Master之间为了降低硬件失效，都配了两套时钟硬件：GPS和原子钟。两套硬件失效的因素不同，因此同时失效的概率会比较小。Slave会poll问时间，然后有一套算法来交叉验证。</p>

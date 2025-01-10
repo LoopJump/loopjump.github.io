@@ -203,8 +203,7 @@
   <article class="post-article">
     <section class="markdown-content"><p>读过Paxos等论文的读者，应该对复制状态机（Replicated State Machine）的概念并不陌生。复制状态机在分布式系统中是一个很简单却很强大的模型，也是一种很有价值的思想。</p>
 <p>模型一句话描述就是：多个节点上，从相同的初始状态开始，执行相同的一串命令，产生相同的最终状态。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/958ed6c5-c87d-4ff5-a0f6-8c61328ecdbc/state_machine.png" alt="state_machine.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/10/state_machine.png">http://loopjump.com/wp-content/uploads/2016/10/state_machine.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/state_machine.png" alt="state_machine.png"></p>
 <p>这里有几个有趣的问题。</p>
 <h3 id="复制状态机保持一致是什么意思？"><a href="#复制状态机保持一致是什么意思？" class="headerlink" title="复制状态机保持一致是什么意思？"></a><strong>复制状态机保持一致是什么意思？</strong></h3><p>实际上，与其说是一致，其实可以泛化为分布式的两个节点状态存在某种约束。</p>
 <p>以数据库redo日志作为command为例（后文描述中不区分二者），这里构造几个例子。两个节点经历同样序列的redo日志之后：</p>
