@@ -250,29 +250,29 @@
 <p>那么，Paxos write用的时间戳是如何指定的呢？这个时间戳就是由leader replica简单地按照递增的顺序指定的。当然，这之外还需要一个约束：在切换leader replica时，仍然保证跨主备切换下的时间戳也是递增的。这个约束论文称之为单调不变性monotonicity invariant。</p>
 <p>这个约束如何实现？首先，Spanner的paxos leader lease已经保证leader的lease没有交集，在此条件下，在发生主备切切换时，主想卸任要先等一下。思路很简单，详细的分析在附录A上有，不再赘述。</p>
 <p>Spanner还保证了外部一致性约束（external consistency invariant）：如果T2开始前T1已经提交，则T1的提交时间戳早于T2的提交时间戳，即</p>
-<p>(t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start}) \Rightarrow s_1 &lt; s_2)</p>
-<p>其中，(t_{abs}(e))指事件e的绝对时间戳，(e_1^{commit})是(T_1)的提交事件，(e_2^{start})是(T_2)的开始事件，(s_1)和(s_2)分别是Spanner给(T_1)、(T_2)指定的提交时间戳。</p>
-<p>那么，这个约束又是如何保证的呢？只要保证两条规则：Start规则和Commit Wait规则即可。这里定义(e_i^{server})为事务(T_i)的coordinator leader收到提交请求的事件。</p>
-<p><strong>Start规则</strong>：coordinator leader给事务(T_i)指定的时间戳(s_i)满足 (s_i \geq TT.now().latest)  条件，其中TT.now在(e_i^{server})之后调用。</p>
-<p><strong>Commit Wait规则</strong>：(s_i \leq t_{abs}(e_i^{commit}))   ****** 这个规则是说，提交时间戳要确保比提交事件的绝对时间小，也即TT.after((s_i))为真。</p>
+<p>$t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start}) \Rightarrow s_1 &lt; s_2$</p>
+<p>其中，$t_{abs}(e)$指事件e的绝对时间戳，$e_1^{commit}$是$T_1$的提交事件，$e_2^{start}$是$T_2$的开始事件，$s_1$和$s_2$分别是Spanner给$T_1$、$T_2$指定的提交时间戳。</p>
+<p>那么，这个约束又是如何保证的呢？只要保证两条规则：Start规则和Commit Wait规则即可。这里定义$e_i^{server}$为事务$T_i$的coordinator leader收到提交请求的事件。</p>
+<p><strong>Start规则</strong>：coordinator leader给事务$T_i$指定的时间戳$s_i$满足 $s_i \geq TT.now().latest$  条件，其中TT.now在$e_i^{server}$之后调用。</p>
+<p><strong>Commit Wait规则</strong>：$s_i \leq t_{abs}(e_i^{commit})$   ****** 这个规则是说，提交时间戳要确保比提交事件的绝对时间小，也即TT.after($s_i$)为真。</p>
 <p>这两个规则就保证了外部一致性：</p>
-<p>(s_1 &lt; t_{abs}(e_1^{commit}))            (commit wait)</p>
-<p>(t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start}))        (assumption)</p>
-<p>(t_{abs}(e_2^{start}) \leq t_{abs}(e_2^{server}))       (causality)</p>
-<p>(t_{abs}(e_2^{server}) \leq s_2)              (start)</p>
-<p>(s_1 &lt; s_2)         (transitivity)</p>
+<p>$s_1 &lt; t_{abs}(e_1^{commit})$            (commit wait)</p>
+<p>$t_{abs}(e_1^{commit}) &lt; t_{abs}(e_2^{start})$        (assumption)</p>
+<p>$t_{abs}(e_2^{start}) \leq t_{abs}(e_2^{server})$       (causality)</p>
+<p>$t_{abs}(e_2^{server}) \leq s_2$              (start)</p>
+<p>$s_1 &lt; s_2$         (transitivity)</p>
 <h3 id="Spanner是如何做事务的？"><a href="#Spanner是如何做事务的？" class="headerlink" title="Spanner是如何做事务的？"></a><strong>Spanner是如何做事务的？</strong></h3><p>为了搞明白这个并发控制和外部一致性，以及后面读请求的安全快照点，需要先大致了解下Spanner是如何做事务的。</p>
 <p>client读请求直接发到对应的replica上，写的数据buffer到client自己这里，等执行结束，要提交时，将buffer的这些数据推到对应的参与者，然后选一个参与者作为协调者执行2PC，各个参与者先申请写锁，然后分配一个prepare的时间戳，然后写日志，所有参与者回应协调者，协调者选择一个时间戳s作为提交时间戳，写commit日志（协调者不写prepare日志），然后按照commit wait规则等待TT.now(s)条件满足后，将commit应用到Paxos状态机，然后通知其他参与者进入2PC Commit阶段，其他参与者明白事务确定要提交，因此写outcome日志，这个日志包含了时间戳s的值，同步该日志成功后，应用到状态机，释放锁。</p>
 <p>协调者选时间戳s要满足如下条件：1) s大于等于所有其他参与者的prepare时间戳；2)大于协调者收到client commit请求时TT.now().latest；3) 大于已经分配的时间戳。</p>
-<h3 id="安全读取时间戳-t-safe"><a href="#安全读取时间戳-t-safe" class="headerlink" title="安全读取时间戳 (t_{safe})"></a><strong>安全读取时间戳 (t_{safe})</strong></h3><p>我们来看下之前说的读请求在一个副本上可以读到多新的数据？每个副本无论主备，都维护一个(t_{safe})的时间戳，读请求可以读到这个时间戳时间的数据。(t_{safe})计算方式为：</p>
-<p>(t_{safe}&#x3D;min(t_{safe}^{Paxos}, t_{safe}^{TM}))</p>
-<p>(t_{safe}^{Paxos})指已经应用到Paxos状态机的Paxos write的时间戳的安全时间戳，因为Paxos write应用到状态机是顺序应用的，因此只要维护最后一次应用的Paxos write的时间戳就可以了。</p>
-<p>(t_{safe}^{TM})是指所有没有提交的事务的提交时间戳下界。那么，没提交的事务的提交时间戳下界怎么找呢？</p>
-<p>如果当前活跃的事务都是还未进入2PC的事务，那么，(t_{safe}^{TM})就是 (\infty)，对(t_{safe}^{TM})没有影响。这是因为读写事务的写数据会先Buffer到client，不到提交时候，不会被其他事务读到。</p>
-<p>如果某个事务已经进入2PC的prepare阶段，该参与者上事务最后是不是提交现在还确定不了，那么就需要确保(t_{safe}^{TM})不能超过这个事务将来的提交时间戳。如何保证这一点？TM先给事务的prepare事件指定一个时间戳，并且要求将来提交的时间戳比prepare的时间戳更大，那么prepare事件的时间戳肯定就是这个事务提交事件的时间戳下界。也就是论文中说的，(t_{safe}^{TM}&#x3D;min(s_{i,g}^{prepare})-1)，其中(s_{i,g}^{prepare})是组g内所有的participant leader上已prepare未commit的事务(T_i)的prepare事件的时间戳。</p>
-<p>(t_{safe}^{TM})主备上在具体实现上略有不同，备上没有TM，其信息通过Paxos同步携带，原理一致。</p>
-<p>这里需要解释的地方：为什么要取(t_{safe}^{Paxos}), (t_{safe}^{TM})二者的最小值？</p>
-<p>因为2PC协议本身的局限，参与者prepare结束后，需要死等协调者的commit or abort结论，这个阶段理论上是可以足够长时间的。这段时间内该参与者replica 上可能一直有无关的事务（修改的是该tablet上的其他row key）执行并提交，足够多的Paxos write已经被应用了，(t_{safe}^{Paxos})可能已经足够大。所以要取二者的最小值。从这个结论也能看出，如果有一个事务卡在2PC过程中，迟迟未决，那么读请求总也读不到比较新的快照点。那么，这里有一个refinement：为了避免一个卡顿的事务影响了该tablet上所有的读请求，即将(t_{safe}^{TM})从tablet粒度细化到row key range粒度，而lock table正适合做这个refinement。</p>
+<h3 id="安全读取时间戳-t-safe"><a href="#安全读取时间戳-t-safe" class="headerlink" title="安全读取时间戳 $t_{safe}$"></a><strong>安全读取时间戳 $t_{safe}$</strong></h3><p>我们来看下之前说的读请求在一个副本上可以读到多新的数据？每个副本无论主备，都维护一个$t_{safe}$的时间戳，读请求可以读到这个时间戳时间的数据。$t_{safe}$计算方式为：</p>
+<p>$t_{safe}&#x3D;min(t_{safe}^{Paxos}, t_{safe}^{TM})$</p>
+<p>$t_{safe}^{Paxos}$指已经应用到Paxos状态机的Paxos write的时间戳的安全时间戳，因为Paxos write应用到状态机是顺序应用的，因此只要维护最后一次应用的Paxos write的时间戳就可以了。</p>
+<p>$t_{safe}^{TM}$是指所有没有提交的事务的提交时间戳下界。那么，没提交的事务的提交时间戳下界怎么找呢？</p>
+<p>如果当前活跃的事务都是还未进入2PC的事务，那么，$t_{safe}^{TM}$就是 $\infty$，对$t_{safe}^{TM}$没有影响。这是因为读写事务的写数据会先Buffer到client，不到提交时候，不会被其他事务读到。</p>
+<p>如果某个事务已经进入2PC的prepare阶段，该参与者上事务最后是不是提交现在还确定不了，那么就需要确保$t_{safe}^{TM}$不能超过这个事务将来的提交时间戳。如何保证这一点？TM先给事务的prepare事件指定一个时间戳，并且要求将来提交的时间戳比prepare的时间戳更大，那么prepare事件的时间戳肯定就是这个事务提交事件的时间戳下界。也就是论文中说的，$t_{safe}^{TM}&#x3D;min(s_{i,g}^{prepare})-1$，其中$s_{i,g}^{prepare}$是组g内所有的participant leader上已prepare未commit的事务$T_i$的prepare事件的时间戳。</p>
+<p>$t_{safe}^{TM}$主备上在具体实现上略有不同，备上没有TM，其信息通过Paxos同步携带，原理一致。</p>
+<p>这里需要解释的地方：为什么要取$t_{safe}^{Paxos}$, $t_{safe}^{TM}$二者的最小值？</p>
+<p>因为2PC协议本身的局限，参与者prepare结束后，需要死等协调者的commit or abort结论，这个阶段理论上是可以足够长时间的。这段时间内该参与者replica 上可能一直有无关的事务（修改的是该tablet上的其他row key）执行并提交，足够多的Paxos write已经被应用了，$t_{safe}^{Paxos}$可能已经足够大。所以要取二者的最小值。从这个结论也能看出，如果有一个事务卡在2PC过程中，迟迟未决，那么读请求总也读不到比较新的快照点。那么，这里有一个refinement：为了避免一个卡顿的事务影响了该tablet上所有的读请求，即将$t_{safe}^{TM}$从tablet粒度细化到row key range粒度，而lock table正适合做这个refinement。</p>
 </section>
     <!-- Tags START -->
     
@@ -339,7 +339,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-nav-text">1 概述</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%89%B9%E8%89%B2"><span class="toc-nav-text">Spanner的两个特色</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-%E5%AE%9E%E7%8E%B0"><span class="toc-nav-text">2 实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E7%9A%84%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F"><span class="toc-nav-text">Spanner的部署方式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Model"><span class="toc-nav-text">Data Model</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-True-Time"><span class="toc-nav-text">3 True Time</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-Concurrency-Control"><span class="toc-nav-text">4 Concurrency Control</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%A4%96%E9%83%A8%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="toc-nav-text">外部一致性保证</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E6%98%AF%E5%A6%82%E4%BD%95%E5%81%9A%E4%BA%8B%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="toc-nav-text">Spanner是如何做事务的？</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E5%85%A8%E8%AF%BB%E5%8F%96%E6%97%B6%E9%97%B4%E6%88%B3-t-safe"><span class="toc-nav-text">安全读取时间戳 (t_{safe})</span></a></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-nav-text">1 概述</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%89%B9%E8%89%B2"><span class="toc-nav-text">Spanner的两个特色</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-%E5%AE%9E%E7%8E%B0"><span class="toc-nav-text">2 实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E7%9A%84%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F"><span class="toc-nav-text">Spanner的部署方式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Data-Model"><span class="toc-nav-text">Data Model</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-True-Time"><span class="toc-nav-text">3 True Time</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-Concurrency-Control"><span class="toc-nav-text">4 Concurrency Control</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%A4%96%E9%83%A8%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="toc-nav-text">外部一致性保证</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Spanner%E6%98%AF%E5%A6%82%E4%BD%95%E5%81%9A%E4%BA%8B%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="toc-nav-text">Spanner是如何做事务的？</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E5%85%A8%E8%AF%BB%E5%8F%96%E6%97%B6%E9%97%B4%E6%88%B3-t-safe"><span class="toc-nav-text">安全读取时间戳 $t_{safe}$</span></a></li></ol></li></ol>
     
   </div>
 </aside>
