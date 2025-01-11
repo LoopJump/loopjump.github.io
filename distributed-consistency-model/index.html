@@ -219,13 +219,11 @@
 <p><strong>Data-Centric Consistency Models</strong></p>
 <h3 id="1-Strict-Consistency"><a href="#1-Strict-Consistency" class="headerlink" title="1. Strict Consistency"></a>1. Strict Consistency</h3><p>任何读操作都能读取到最新的修改，换句话说，要求任何写操作都立刻同步到其他所有进程。这里强调的是绝对时钟上的立刻同步，而任何信息的同步都需要延迟，因此在分布式系统下无法严格实现。</p>
 <p>不考虑系统的性能，一种可能的替代办法就是：让整个系统只在单个节点的单个线程运行。或者，在系统粒度上，读写操作操作被读写锁保护起来（另一种形式的单点运行）。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6939a315-e216-4504-97c1-7a40a70c4055/strict.png" alt="strict.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/11/strict.png">http://loopjump.com/wp-content/uploads/2016/11/strict.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/strict.png" alt="strict.png"></p>
 <p>可以看到，在时间轴上，一旦有进程写了x，则其他进程立刻就能读到最新的值。</p>
 <h3 id="2-Sequential-Consistency"><a href="#2-Sequential-Consistency" class="headerlink" title="2. Sequential Consistency"></a>2. Sequential Consistency</h3><p>Sequential Consistency摒弃了绝对时钟的要求，而是使用分布式逻辑时钟。Sequential Consistency将所有事件定一个全序，且单个进程内的多个操作满足program order，每个进程看到的都是这个全序。</p>
 <p>Lamport给出了一种实现方式：首先，每个进程内的读写操作按顺序issue；其次，每个进程的每个操作都被全局的一个FIFO队列定序。在这种实现方式下，同一个进程的几个操作在FIFO的顺序一定是program order，不同进程的两个操作顺序是不确定的，可能违背两个操作的绝对时间序。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/69bf37db-bf4a-4402-a531-0d77596eacfd/sequential.png" alt="sequential.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/11/sequential.png">http://loopjump.com/wp-content/uploads/2016/11/sequential.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/sequential.png" alt="sequential.png"></p>
 <p>如图，w1,w2,w3实际发生顺序是1&lt;2&lt;3，但是被定序后，可能是3&lt;2&lt;1。只要每个进程看到的定序结果是一致的，系统就是满足Sequential Consistency的。</p>
 <h3 id="3-Linearizability-atomic-consistency-External-Consistency"><a href="#3-Linearizability-atomic-consistency-External-Consistency" class="headerlink" title="3. Linearizability (atomic consistency) &amp; External Consistency"></a>3. Linearizability (atomic consistency) &amp; External Consistency</h3><p>Linearizability比Sequential Consistency更严格。Linearizability在Sequential Consistency的约束基础上，额外增加了如下的约束：如果操作A开始时间晚于B结束时间，则在Sequential Consistency定序时，要求B在A前。</p>
 <p>直观上，Linearizability要求的是，操作生效时间是在操作发起到操作返回之间的某个时刻。</p>
@@ -241,18 +239,14 @@
 </ul>
 <p>Causal Consistency要求，如果两个事件有因果关系，则要求这两个事件的先后顺序满足因果序，并且所有进程看到的这两个事件的顺序都是满足这个因果序的。</p>
 <p>Causal Consistency相比Sequential Consistency来说，仅要求有因果关系的事件顺序对所有进程看到的一致，没有因果关系的事件顺序对于所有进程可以不一致。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c40897c1-8b29-4a1e-811b-927171aa66ab/casual.png" alt="casual.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/11/casual.png">http://loopjump.com/wp-content/uploads/2016/11/casual.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/casual.png" alt="casual.png"></p>
 <p>如图示，P2把x从1改成2，因此读取操作不允许出现R(x)2,R(x)1的现象。但是图中，y操作没有因果序，所以P3读到R(y)2,R(y)1和P4读到R(y)1,R(y)2的在Causal Consistency是允许的。这一现象，在Sequential Consistency是不允许的。不严格地说，Causal Consistency弱于Sequential Consistency。</p>
 <h3 id="5-FIFO-Consistency-also-known-as-PRAM-consistency"><a href="#5-FIFO-Consistency-also-known-as-PRAM-consistency" class="headerlink" title="5. FIFO Consistency (also known as PRAM consistency)"></a>5. FIFO Consistency (also known as PRAM consistency)</h3><p>FIFO Consistency要求同一个进程的program order下的几个操作被其他所有进程看到的顺序是相同的。但是不同进程的几个操作被其他所有进程看到的顺序可能是不同的（即使有因果关系）。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9597e9a2-e66e-4ca7-b765-2a6756aea88c/fifo.png" alt="fifo.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/12/fifo.png">http://loopjump.com/wp-content/uploads/2016/12/fifo.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/fifo.png" alt="fifo.png"></p>
 <h3 id="6-Cache-Consistency"><a href="#6-Cache-Consistency" class="headerlink" title="6. Cache Consistency"></a>6. Cache Consistency</h3><p>FIFO Consistency要求同一个进程几个操作被其他进程看到一致的顺序。类似地， Cache Consistency要求所进程涉及到的同一个地址的几个操作，要被所有进程看到一致的顺序。FIFO Consistency和Cache Consistency相比，是两个维度的约束，这两个一致性是incomparable的。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0d6a5c75-3455-40ad-94c9-f2180eb3e7d4/cache.png" alt="cache.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/11/cache.png">http://loopjump.com/wp-content/uploads/2016/11/cache.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/cache.png" alt="cache.png"></p>
 <p>如图，P3,P4看到的x,y分别是一致的。但是x,y并不是一致的。</p>
-<h3 id="7-Processor-Consistency"><a href="#7-Processor-Consistency" class="headerlink" title="7. Processor Consistency"></a>7. Processor Consistency</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/11/processor.png">http://loopjump.com/wp-content/uploads/2016/11/processor.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6679f31b-4d80-42a5-ad85-a78f6e6b7683/processor.png" alt="processor.png"></p>
+<h3 id="7-Processor-Consistency"><a href="#7-Processor-Consistency" class="headerlink" title="7. Processor Consistency"></a>7. Processor Consistency</h3><p><img src="https://blogimage.loopjump.com/2016/processor.png" alt="processor.png"></p>
 <p>Processor Consistency是Cache Consistency + FIFO Consistency的结合，约束更多，因此这个一致性比另外两个都更强。</p>
 <h3 id="8-Eventual-Consistency"><a href="#8-Eventual-Consistency" class="headerlink" title="8. Eventual Consistency"></a>8. Eventual Consistency</h3><p>最终一致性：存储系统保证如果没有新的写操作，那么最终，所有的读操作都能读到一致的数据，这里强调对一个数据项的修改最终会收敛。</p>
 <p>这个一致性的概念也不是特别清晰，从1975年开始，不同时间段有不同研究者在定义使用，而且近几年一直有人研究，感兴趣的读者可以参考<a target="_blank" rel="noopener" href="http://www.bailis.org/%E8%BF%99%E4%B8%AA%E6%95%99%E6%8E%88%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%BA%E6%96%87%E3%80%82">http://www.bailis.org/这个教授的一些论文。</a></p>

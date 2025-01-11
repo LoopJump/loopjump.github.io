@@ -207,8 +207,7 @@
 <p>先假设我们已经有了一个抽象数据类型ResizableArray，另外算法不关心内存回收。</p>
 <p>假设一开始size&#x3D;4，如左侧图示。hash值为0,4,8,12的key都会落在bucket 0上。如果要把size扩展到8，那么，其中4和12要转移到bucket 4上。如果bucket 0上的元素就是按照前一部分属于bucket 0，后一部分属于bucket 4，那么扩展就容易的多，可以直接把bucket 4指向分界点即可，如红色所示。那么，如何在扩展前就将数据按照适合分裂的顺序排好（注意，将来可能还要扩展到16,32…，因该顺序要支持递归分裂）？我们发现，bucket 0和bucket 4的元素有着天然的区分，如果哈希值是x..x000就会落在bucket 0，如果最低位是x..x100就会落在bucekt 4（其中x为0或1的任意值）。</p>
 <p>注意到这个现象之后，我们将哈希值位翻转，即可保证想要的顺序，即000x..x &lt; 001x..x。该顺序也满足递归分裂的要求。位翻转后的顺序即定义为split-order。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/39a38971-2031-498d-9cd2-02c10d83e21d/pic.png" alt="pic.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/12/pic.png">http://loopjump.com/wp-content/uploads/2016/12/pic.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/split_order_hash.png" alt="split_order_hash.png"></p>
 <p>一些经验教训：</p>
 <ol>
 <li>实际实现时，也可以考虑用分位点的思路来写代码，道理是一样的。</li>
