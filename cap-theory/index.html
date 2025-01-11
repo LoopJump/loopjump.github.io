@@ -231,8 +231,7 @@
 <p>从编程角度，分区并不是一个全局共识，有些节点认为发生了分区，有些节点可能认为没有。节点在检测到分区之后，进入分区模式，此时在CA之间做选择。具体系统实现时，可以通过超时时间阈值检测分区。</p>
 <p>CAP理论的指导意义在于，设计者要在分区发生时，显式处理分区，降低分区对CA的影响。当节点检测到分区时，进入分区模式，限制某些操作，在通信恢复后，开始进行分区恢复。如下图。</p>
 <p>如果不发生分区，则状态S是可以被保持一致性的，同时可用性可以保证。当检测到分区，系统进入分区模式，此时就要做决定，允许某些可能导致一致性问题的操作继续执行。系统可能产生了不一致的状态S1、S2。在发现网络通信恢复之后，在退出分区模式之前，要将系统状态重新恢复为一致的状态。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/8c8a4b92-c4bd-4498-a007-7fa129a7de74/partition_mode.png" alt="partition_mode.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2016/12/partition_mode.png">http://loopjump.com/wp-content/uploads/2016/12/partition_mode.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2016/partition_mode.png" alt="partition_mode.png"></p>
 <p>从这个图我们可以看到，问题的困难在于，设计者要思考每一个不变量的维护情况，并有针对性地在Partition recovery过程中将该不变量恢复到一致状态。恢复过程需要对分区模式下做的修改进行追踪，通过版本向量是一个很好的方法，版本向量可以反映操作时间的因果依赖。有研究表明，当我们选择了可用性优先，通常最多只能将一致性恢复到这样的程度。分区恢复时，要做两件事情：两侧的状态最终必须保持一致，必须补偿分区期间产生的错误。而后者往往会影响系统上层业务。</p>
 </section>
     <!-- Tags START -->
