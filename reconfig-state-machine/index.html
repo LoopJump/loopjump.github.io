@@ -215,9 +215,7 @@
 <p>当然，这里只是描述了成员组变更的方法，具体应用时，还要考虑新加节点要先追日志之类的问题，这类问题在Raft论文里面描述更加详细。</p>
 <h2 id="Reconfiguration-Made-Harder"><a href="#Reconfiguration-Made-Harder" class="headerlink" title="Reconfiguration Made Harder"></a>Reconfiguration Made Harder</h2><p>在Ra方案中，引入了a这么个窗口大小，如果a设置比较大就会引入过多的noop，如果太小就会限制并发。这里还有一种更彻底的方法，在成员变更过程中允许任意程度的并发，即思路二。</p>
 <p>我们要构造一个支持reconfigurable的状态机，可以通过组合一系列non-reconfigurable的状态机来接力的方式实现：状态机v先停止工作，然后状态机v+1使用新的成员组，v+1的初始状态为v的最终的状态。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/1d83450f-8439-4db8-b77a-ac6178e6b8a1/relay.png" alt="relay.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/04/relay.png">http://loopjump.com/wp-content/uploads/2017/04/relay.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/04/relay.png">http://loopjump.com/wp-content/uploads/2017/04/relay.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/relay.png" alt="relay.png"></p>
 <p>这个思路下要解决三个正交的问题：停止当前的状态机；选择下一个状态机的成员组；组合一系列状态机。下面分别描述三个问题。</p>
 <h3 id="停止状态机"><a href="#停止状态机" class="headerlink" title="停止状态机"></a>停止状态机</h3><p>停止状态机有如下几种方案：The Stop Sign；Padding；The Brick Wall。</p>
 <h3 id="方案1-The-Stop-Sign"><a href="#方案1-The-Stop-Sign" class="headerlink" title="方案1 The Stop Sign"></a><strong>方案1 The Stop Sign</strong></h3><p>Stop Sign方法是定义一个特殊的stop command，表示其后的instance都不对状态机有影响。在这种方式下，某个instance要执行，需要等前面所有的instance已经确认。</p>

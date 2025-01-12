@@ -205,7 +205,7 @@
 <p>《SDPaxos: Building Efficient Semi-Decentralized Geo-replicated State Machines》(SOCC18’)</p>
 <p>有幸跟作者赵汉宇博士做了一次交流，我也仔细读了一遍论文原文，读完最大的感受是，SDPaxos在Strong Leader和Leaderless中间做了一个优雅的折中，使得协议远比<a target="_blank" rel="noopener" href="http://loopjump.com/epaxos_paper_note/">EPaxos</a>清晰，但又支持了损失很小的多点并发复制。</p>
 <h3 id="SDPaxos-in-design-spectrum"><a href="#SDPaxos-in-design-spectrum" class="headerlink" title="SDPaxos in design spectrum"></a>SDPaxos in design spectrum</h3><p>这里仅描述下SDPaxos的设计选择。协议的细节和大量的分析，有感兴趣的同学，可以直接看原始论文，论文写得很清晰（真是比EPaxos写得清晰太多了），读完应当很有收获。</p>
-<p><img src="https://blogimage.loopjump.com/2018/paxos-leader-spectrum.png.png" alt="paxos-leader-spectrum.png"></p>
+<p><img src="https://blogimage.loopjump.com/2018/paxos-leader-spectrum.png" alt="paxos-leader-spectrum.png"></p>
 <p>从对Leader的依赖这个角度看，SDPaxos在Design Space&#x2F;Spectrum中选择了中间的一个折中位置。</p>
 <p>在图中：</p>
 <p>左一Raft协议强依赖leader，例如在选举时必须选择在某个多数派中拥有最新日志的节点。</p>

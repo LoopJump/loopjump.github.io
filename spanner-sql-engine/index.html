@@ -243,8 +243,7 @@
 <p>不过考虑到避免一个查询引起过高的负载，实践中也会限制并行度。</p>
 <h3 id="Distributed-Joins"><a href="#Distributed-Joins" class="headerlink" title="Distributed Joins"></a>Distributed Joins</h3><p>这一小节只讲了一种Join的优化，叫Batched Apply Join。</p>
 <p>通常的ApplyJoin，比如CrossApply，是左边表达式结果的每一行都要在右边表达式计算一次。这种row-at-a-time的方式（volcano模型就是这种方式）即使在单机就有可能比较低效，考虑到分布式执行的时候，左边每一行都要发到其他节点进行apply，这种低效就不可接受，因此将这种row-at-a-time优化为batch-at-a-time,转换方式如图。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/batch_join.png">http://loopjump.com/wp-content/uploads/2018/11/batch_join.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/batch_join.png">http://loopjump.com/wp-content/uploads/2018/11/batch_join.png</a></p>
+<p>![batch_join.png](<a target="_blank" rel="noopener" href="https://bloginage.loopjump.com/2018/batch_join.png">https://bloginage.loopjump.com/2018/batch_join.png</a></p>
 <p>这个过程中可以按如下步骤做shard pruning：</p>
 <ul>
 <li>Step1: 对batch的每一行，用sharding key filter expression计算，得到这一行涉及到的sharding key range。</li>

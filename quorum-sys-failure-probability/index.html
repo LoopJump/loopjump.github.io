@@ -205,14 +205,14 @@
 <p>首先是一些概念：</p>
 <p><strong>节点集合</strong> $V&#x3D;{v_1, v_2, .., v_n}$</p>
 <p><strong>Quorum</strong>  $Q\subseteq V$</p>
-<p><strong>Quorum System</strong> $\mathcal{S} \subseteq 2^V$，且$Q_1 \cap Q2 \neq \emptyset, \forall Q1,Q2 \in\mathcal{S}$</p>
-<p><strong>故障概率Failure Probability:</strong> 假设每个节点故障概率为p，Quorum System  $\mathcal{S}$的故障概率记为$F_p( \mathcal{S})$等于每个Quorum都至少有一个节点发生故障的概率。</p>
-<p><strong>渐进故障概率Asymptotic Failure Probability</strong>: $\lim\limits_{n \to \infty} F_p( \mathcal{S})$</p>
-<p><strong>访问策略Access Strategy Z</strong>定义了访问每个Q的概率$P_Z(Q)$, 其中 $\sum_{Q\in\mathcal{S}}P_Z(Q)&#x3D;1$</p>
-<p><strong>Z在节点$v_i$上的负载</strong> $L_Z(v_i)&#x3D;\sum_{Q\in\mathcal{S}, v_i\in Q}P_Z(Q)$</p>
-<p><strong>Z在 $\mathcal{S}$上的负载</strong> $L_Z(\mathcal{S})&#x3D;max_{v_i\in\mathcal{S}}L_Z(v_i)$</p>
-<p><strong>$\mathcal{S}$的负载</strong> $L(\mathcal{S})&#x3D;min_ZL_Z(\mathcal{S})$</p>
-<p>简单地说，负载刻画了 $\mathcal{S}$中压力最大的节点的压力的极小值。</p>
+<p><strong>Quorum System</strong> $\cal{S} \subseteq 2^V$，且$Q_1 \cap Q2 \neq \emptyset, \forall Q1,Q2 \in\cal{S}$</p>
+<p><strong>故障概率Failure Probability:</strong> 假设每个节点故障概率为p，Quorum System  $\cal{S}$的故障概率记为$F_p( \cal{S})$等于每个Quorum都至少有一个节点发生故障的概率。</p>
+<p><strong>渐进故障概率Asymptotic Failure Probability</strong>: $\lim\limits_{n \to \infty} F_p( \cal{S})$</p>
+<p><strong>访问策略Access Strategy Z</strong>定义了访问每个Q的概率$P_Z(Q)$, 其中 $\sum_{Q\in\cal{S}}P_Z(Q)&#x3D;1$</p>
+<p><strong>Z在节点$v_i$上的负载</strong> $L_Z(v_i)&#x3D;\sum_{Q\in\cal{S}, v_i\in Q}P_Z(Q)$</p>
+<p><strong>Z在 $\cal{S}$上的负载</strong> $L_Z(\cal{S})&#x3D;max_{v_i\in\cal{S}}L_Z(v_i)$</p>
+<p><strong>$\cal{S}$的负载</strong> $L(\cal{S})&#x3D;min_ZL_Z(\cal{S})$</p>
+<p>简单地说，负载刻画了 $\cal{S}$中压力最大的节点的压力的极小值。</p>
 <p>关于几种Quorum System可以参见<a target="_blank" rel="noopener" href="http://loopjump.com/flexible-paxos-quorum-revisited/">重新审视Paxos协议的Quorum问题</a>。</p>
 <p>B-Grid Quorum System：</p>
 <p>n&#x3D;hrd，布置成hr行，d列，每组r行组成一个band，同一个band的一列的r个celll称为mini-column。Quorum是每个band的一个mini-column和某个band的每个mini-column的每个元素组成，共d+hr-1个元素。</p>
