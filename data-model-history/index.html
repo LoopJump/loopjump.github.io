@@ -221,10 +221,8 @@
 <h2 id="IMS-Era"><a href="#IMS-Era" class="headerlink" title="IMS Era"></a><strong>IMS Era</strong></h2><p>IMS发布于1968年，使用的是hierarchical数据模型。</p>
 <p>IMS感知record type，一个record type有多个字段名及其字段类型，并且有某个字段集合作为该record type的key。record type被组织成一棵树，每个record都有自己的唯一的parent record type。</p>
 <p>用hierarchical数据模型来描述供货商应用的话，有如下两种方式。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/3c8baf2b-0d80-49a2-9d35-aa67bca1141c/ims_left.png" alt="ims_left.png"></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/15572db4-f3e0-4c79-a5cd-b12333e3391f/ims_right.png" alt="ims_right.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/ims_left-300x102.png">http://loopjump.com/wp-content/uploads/2018/02/ims_left-300x102.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/ims_right-300x101.png">http://loopjump.com/wp-content/uploads/2018/02/ims_right-300x101.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/ims-left.png" alt="ims-left.png"></p>
+<p><img src="https://blogimage.loopjump.com/2018/ims-right.png" alt="ims-right.png"></p>
 <p>可以看到这两种方式都有问题：</p>
 <p>问题1：信息被重复了，重复信息可能导致潜在的不一致性。例如左边的方式下，一个Part可能在多个Supplier下重复。</p>
 <p>问题2：存在性依赖parent。例如，左侧方式下，如果某个Part暂时没有Supplier提供，那么数据模型里面就无法存放这个Part了。</p>
@@ -249,8 +247,7 @@
 <p><strong>Lesson 3</strong>: 树形数据模型下，很难提供一个复杂的结构组织。</p>
 <p><strong>Lesson 4</strong>: IMS是一次一记录(record-at-a-time)的方式，这种方式要求使用者手动做优化，这往往都比较困难。</p>
 <h2 id="CODASYL-Era"><a href="#CODASYL-Era" class="headerlink" title="CODASYL Era"></a><strong>CODASYL Era</strong></h2><p>1969年CODASYL(Committee on Data System Languages)发布了CODASYL系统。CODASYL是采用network data model。每个record可以有多个parent。network data model包含named record type和named arc（CODASYL称之为set）。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/codasyl-300x188.png">http://loopjump.com/wp-content/uploads/2018/02/codasyl-300x188.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/47951ced-1a7e-4401-b289-3309f029148a/codasyl.png" alt="codasyl.png"></p>
+<p><img src="https://blogimage.loopjump.com/2018/codasyl.png" alt="codasyl.png"></p>
 <p>CODASYL有一个限制是，只能有二元关系。如果一个应用需要三元关系，就要拆解成多个二元关系，例如一个婚礼包括新娘新郎神父三个参与者，这个三元关系就得拆解成婚礼-新娘，婚礼-新郎，婚礼-神父三个二元关系。</p>
 <p>CODASYL也是record-at-a-time的数据操作语言。一个查询可以这样写：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Find Supplier(sno=16)</span><br><span class="line">Until no-more &#123;</span><br><span class="line">  Find next Supply record in Supplies</span><br><span class="line">  Find owner Part record in Supplied_by</span><br><span class="line">  Get current record</span><br><span class="line">  Check for red color</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -300,8 +297,7 @@
 <p>后来微机时代来临，VAX小型机市场暴涨，其上安装的是Oracle和INGRES，另一边CODASYL被IBM用汇编重写了一遍之后可移植性太差，最后小型机市场中关系模型与VAX携手共赢了。但在大型机市场，IBM在VM370和VSE上的Sysmte R卖的不好，转而卖IMS，最终关系模型在这里基本消失匿迹。然而在当时，大型机才是数据库市场的主流。</p>
 <p>1984年市场剧变，IBM推出了DB2与IMS并肩推销，最终DB2凭借新技术和易用性赢得了市场。IBM成了市场大佬，同时也给这场论战画了句号：关系模型胜出，SQL语言也成为了事实标准。</p>
 <p>一个必须要提到的事情是当时IBM在IMS之上套一层关系接口是很自然的。这个架构下，新应用使用关系模型，旧的应用还可以使用久的IMS接口，优雅地将用户迁到了新技术上。IBM也尝试在IMS上实现SQL接口，但最终因模型问题失败，IMS复杂的逻辑数据模型使导致困难缠身，最终迫使IBM转向双产品推销策略。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6a2e5634-0568-489b-abf2-a2ebbe9c2da8/ims_arch.png" alt="ims_arch.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/ims_arch-292x300.png">http://loopjump.com/wp-content/uploads/2018/02/ims_arch-292x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/ims-arch.png" alt="ims-arch.png"></p>
 <p>旷日持久的大论战最终结束，总结起来，对结局影响最大的三件事情（市场、工程、技术因素都有）：</p>
 <p>一是 VAX小型机在市场上的胜利，</p>
 <p>二是 CODASYL的移植性问题，</p>
@@ -324,8 +320,7 @@
 <ul>
 <li><strong>generalization</strong>：</li>
 </ul>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/23e31918-f725-4a47-8662-733bf796f395/rpp.png" alt="rpp.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/rpp-300x209.png">http://loopjump.com/wp-content/uploads/2018/02/rpp-300x209.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/rpp.png" alt="rpp.png"></p>
 <h2 id="The-Semantic-Data-Model-Era"><a href="#The-Semantic-Data-Model-Era" class="headerlink" title="The Semantic Data Model Era"></a><strong>The Semantic Data Model Era</strong></h2><p>把现实语义引进来。</p>
 <p>略。</p>
 <h2 id="OO-Era"><a href="#OO-Era" class="headerlink" title="OO Era"></a><strong>OO Era</strong></h2><p>1980年代中期，兴起了一波面向对象数据库（OODB）的热潮，社区指出了关系模型和像C++这种OO编程语言之间的不匹配（数据库有自己的数据类型，应用要在C++和数据库之间来回转换数据）。</p>
@@ -362,7 +357,7 @@
 <h2 id="Full-Circle"><a href="#Full-Circle" class="headerlink" title="Full Circle"></a><strong>Full Circle</strong></h2><p>数据模型发展也是兜兜转转，一直都有讨论争辩。为了避免历史重演，就要站在前人肩膀上思考。</p>
 <p><strong>后20年</strong>提出的这些数据模型，其实大都是更早的一些模型的重复发明，真正新的想法，大约只有这两条：</p>
 <ul>
-<li>**Code in the database(**from the OR Camp)</li>
+<li><strong>Code in the database</strong>(from the OR Camp)</li>
 <li><strong>Schema last</strong>(from the semi-structured data camp)</li>
 </ul>
 </section>
