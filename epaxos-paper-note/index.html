@@ -216,8 +216,7 @@
 <h2 id="EPaxos初步了解"><a href="#EPaxos初步了解" class="headerlink" title="EPaxos初步了解"></a>EPaxos初步了解</h2><p>EPaxos提供了另外一种没有leader的paxos变体（leaderless paxos）。EPaxos允许所有的副本都同时可以作为proposer (command leader)，client可以向任何一个副本提交command。</p>
 <p>熟悉Multi Paxos协议的读者很快就可以意识到，这种设计首先要理清楚的就是状态机和command的对应关系问题，以及command order问题。</p>
 <p>在Multi Paxos中，command id可以是一个连续递增的整数，不管是不是发生切主（例如主宕机后选出新主），command id都可以想办法做到保持连续递增。从概念上说，状态机与连续的一片command是对应的（Raft协议里面说的commit id和apply id）。但是在EPaxos中，并不容易维护一个单调递增的整数作为command id（除非像Mencius一样），所以，EPaxos将command id定义为R.id，两维的变量，其中R是副本唯一id，id是R内连续递增的正整数。于是，EPaxos的完整状态机是包括所有N个副本的instance的。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/m_vs_e.png">http://loopjump.com/wp-content/uploads/2017/03/m_vs_e.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/301a6e0e-82a5-4d87-bb5f-a12e9097f085/m_vs_e.png" alt="m_vs_e.png"></p>
+<p><img src="https://blogimage.loopjump.com/2017/m_vs_e.png" alt="m_vs_e.png"></p>
 <p>对于command order，Multi Paxos是由leader来定序的（这里不考虑并发控制部分引入的序），EPaxos中对于不冲突的命令（例如修改的是不同的对象），其顺序不是预先确定的。</p>
 <p>另外一个需要仔细区别的问题是，Multi Paxos协议下，多条command共享一个proposal id（即Paxos原始论文里面提到的ballot number），而在这一点上，EPaxos的每条command的实例都是独立的，不共享ballot number，每个instance都有自己的ballot number（毕竟是leaderless）。接收这条command的副本L给这条command对应的instance分配一个initial ballot number: epoch.0.L。</p>
 <h3 id="EPaxos的性质"><a href="#EPaxos的性质" class="headerlink" title="EPaxos的性质"></a>EPaxos的性质</h3><p>首先，我们要定义什么是command冲突。</p>
@@ -234,13 +233,11 @@
 </ol>
 <p>虽然一下子罗列了6个性质，但是在实际的分布式系统中，这些性质其实还是比较弱的约束了，看过协议再回头 看，这其中多个性质还是比较容易有直观的理解。其中liveness要求网络相比比较可靠，否则根据FLP，保证safety和liveness的容错一致性协议是不存在的。</p>
 <h3 id="执行过程的直观解释"><a href="#执行过程的直观解释" class="headerlink" title="执行过程的直观解释"></a>执行过程的直观解释</h3><p>在正式介绍协议之前，我们先从直观上简单地了解一下EPaxos的执行过程。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/EPaxos-Demo.png">http://loopjump.com/wp-content/uploads/2017/03/EPaxos-Demo.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bbd37aab-23cf-4426-bbaa-39f57480674e/EPaxos-Demo.png" alt="EPaxos-Demo.png"></p>
+<p><img src="https://blogimage.loopjump.com/2017/EPaxos-Demo.png" alt="EPaxos-Demo.png"></p>
 <p>如图示，如果并发的两个客户端发起不冲突的的命令，则每个命令经过PreAccept之后即可commit。如果命令冲突，则有副本检测到冲突，并给冲突的command定序（发送给其他副本的请求带有额外的属性），之后再commit。</p>
 <p>读者可能发现了，关键仍然是command定序。比较容易想到的定序方式是PreAccept发送给多数派，多数派交集的副本（图中为R3）可以检测到C3实际应该在C4之后，并将该信息反馈给R1，R1再处理这个定序结果。</p>
 <p>那么PreAccept发送给多数派就够quorum了么？并非如此，我们看一个例子。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c98fe3a3-7ed7-4677-b3e7-30b8daa76656/case1-2.png" alt="case1-2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/case1-2.png">http://loopjump.com/wp-content/uploads/2017/03/case1-2.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/case1-2.png" alt="case1-2.png"></p>
 <p>如图示，7个副本，大于等于4即为多数派。假设副本1提出command A，副本2提出B，并且并发发送给3、4、5、6、7五个副本。假设4、5先收到A后收到B，6、7相反。如果3先A后B，那么A就收到1、3、4、5四个副本的相应，A就可以commit并响应客户端了。相反，如果3先B后A，则B就可以commit了。不管3是哪种情况，假设此时集群宕机且1、2、3无法恢复，则剩余多数派4、5、6、7在线但是却无法区分到底是A commit还是B commit了。</p>
 <p>带着这几个性质和如何定序、如何恢复的问题，我们来看协议的描述。EPaxos论文中描述了基本EPaxos和优化EPaxos两个，后者是在前者基础上做了优化，将fast quorum从$2F$降低到了$\mathcal{F} &#x3D; F+\lfloor \frac{F+1}{2}\rfloor$。基本EPaxos只能容忍一个节点失效，所以也无法用到实际，优化EPaxos中，fast path在N&#x3D;3,5时，消息数目是最优的。我们直接看优化EPaxos。</p>
 <h3 id="EPaxos用到的几个概念"><a href="#EPaxos用到的几个概念" class="headerlink" title="EPaxos用到的几个概念"></a>EPaxos用到的几个概念</h3><p>在描述前，先描述几个概念。</p>

@@ -215,8 +215,7 @@
 <p>这种quorum跟Dynamo的NRW方案很像：数据被冗余N份，写操作只写其中的W份，读操作只读取R份，如果W+R&gt;N，则一定能不会漏掉早于读取前完成的写结果。Paxos也是类似，在prepare阶段也一定要获取到可能已经被确认的决议的值。</p>
 <h3 id="第三种-Grid-quorum"><a href="#第三种-Grid-quorum" class="headerlink" title="第三种 Grid quorum"></a><strong>第三种 Grid quorum</strong></h3><p>Grid quorum system：将$N$个节点分为$ N&#x3D;N_1*N_2 $的矩阵。</p>
 <p>Paxos要求任意两个quorum都有交集。因此在grid quorum system里，Paxos可以选择quorum为一行加一列。任意两个quorum都有交集，如左图。这种选择最多允许任意$Min(N_1,N_2)$个节点宕机，即宕机一整行或者一整列就会导致协议走不下去。假设蓝色表示$Q_1$，绿色表示$Q_2$。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/66c14b3a-3915-47d0-938d-55928c8562e2/grid.png" alt="grid.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/01/grid.png">http://loopjump.com/wp-content/uploads/2017/01/grid.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/grid.png" alt="grid.png"></p>
 <p>在Flexible Paxos协议下，根据$Q_1$和$Q_2$交集不空的约束，$Q_1$可以为一行大小$N_1$，$Q_2$可以为一列大小$N_2$。这样，正常运行无宕机时，只需要同步$N_2$个节点即可。</p>
 <p>需要指出的是，与simple quorum system不一样，grid quorum system下，节点本身不再是完全对等的。例如在上图中，4个节点宕机，左图prepare和accept阶段都无法推进，但是右图中，如果4个节点在同一列，则accept阶段可以继续推进，只要不需要进行prepare阶段，系统仍可持续服务。</p>
 </section>

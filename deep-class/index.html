@@ -209,8 +209,7 @@
 <p>John Ousterhout问过Donald Knuth，Knuth给的答案是layers of abstraction。</p>
 <p>John Ousterhout自己觉得是problem decomposition，要注意隔离复杂度。</p>
 <h3 id="关于Deep-Class"><a href="#关于Deep-Class" class="headerlink" title="关于Deep Class"></a>关于Deep Class</h3><p>很直观的表述方式。应该尽量写Deep Class。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e3cdcc16-e007-4456-a236-11b81f3de153/class.png" alt="class.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/class.png">http://loopjump.com/wp-content/uploads/2018/11/class.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/class.png" alt="class.png"></p>
 <p>对比Java的IO接口和Unix IO接口：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fileStream = new FileInputStream(fileName);</span><br><span class="line">BufferedInputStream bufferedStream = new BufferedInputStream(fileStream);</span><br><span class="line">ObjectInputStream objectStream = new ObjectInputStream(bufferedStream);</span><br></pre></td></tr></table></figure>
 

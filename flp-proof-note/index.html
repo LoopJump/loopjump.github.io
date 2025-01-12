@@ -207,8 +207,7 @@
 <h2 id="模型概述"><a href="#模型概述" class="headerlink" title="模型概述"></a>模型概述</h2><h3 id="分布式系统异步网络"><a href="#分布式系统异步网络" class="headerlink" title="分布式系统异步网络"></a><strong>分布式系统异步网络</strong></h3><p>异步网络：消息延迟可能任意大或者丢失，消息可能乱序，无同步时钟可用。</p>
 <p>进程失效：进程死亡或者足够长时间不响应。</p>
 <h3 id="一致性问题简化模型"><a href="#一致性问题简化模型" class="headerlink" title="一致性问题简化模型"></a><strong>一致性问题简化模型</strong></h3><p>每个进程初始时记着一个值0或1，根据特定的一致性协议，接收消息、改动该值、并发送消息，当进程进入decide state时，其值就不再变化。所有nonfaulty的进程都进入decided state时，协议成功结束。这里放宽到有一部分进程进入decided state就算协议成功。</p>
-<h3 id="一致性协议P的模型描述"><a href="#一致性协议P的模型描述" class="headerlink" title="一致性协议P的模型描述"></a><strong>一致性协议P的模型描述</strong></h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/074ab092-518d-4b5c-b255-361deeedcd39/c1.png" alt="c1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/c1.png">http://loopjump.com/wp-content/uploads/2017/03/c1.png</a></p>
+<h3 id="一致性协议P的模型描述"><a href="#一致性协议P的模型描述" class="headerlink" title="一致性协议P的模型描述"></a><strong>一致性协议P的模型描述</strong></h3><p><img src="https://blogimage.loopjump.com/2017/c1.png" alt="c1.png"></p>
 <p><strong>进程状态</strong>：异步分布式系统中N（N&gt;&#x3D;2）个进程，每个进程p有三个状态部件：1bit的输入寄存器xp、1bit输出寄存器yp（取值0&#x2F;1&#x2F;b，初始为b表示未设置过）、足够大的内部存储。进程可以从一个状态转换到另一状态。输出寄存器一旦从b设置成了0或者1就不能再更改。</p>
 <p><strong>消息：</strong>进程之间通过消息通信，消息记作(p,m)，意为发送给进程p的内容为m的消息。系统有一个message buffer，存放了所有已经发送的消息。消息的发送定义为向message buffer中放置一个消息，接收定义为从message buffer取出发送给本进程的任意一个消息（没有消息就返回空标记）。如果某个进程p执行足够多次的接收消息操作，则最终message buffer里面发送给p的所有消息最终会被取出。异步网络下，即使message buffer里面有p的消息，也允许p执行接收消息操作时返回有限次的空标记，协议遇到空标记不做任何处理。</p>
 <p><strong>configuration</strong>：一个configuration包括N个进程的状态，以及message buffer。</p>
@@ -216,8 +215,7 @@
 <p><strong>step</strong>：某个进程做一个基本操作（接收一次消息，并根据协议处理该消息，即改动本进程内部状态，发送消息给其他进程），将系统确定性地从configuration C转换到另一个configuration e(C)。一系列的step称之为一个run。</p>
 <p><strong>event</strong>：e&#x3D;(p,m) 某个进程接收到某个消息并处理。</p>
 <p><strong>schedule</strong>：从C开始的schedule定义为从C开始的一个有限或者无限的事件序σ，如果σ是有限的，定义σ(C)为C应用了这一系列事件的结果，称σ(C)是可以从C可达（reachable from C）。这一个时间序列称之为run。如果一个C是可以从initial configuration可达的，就称C是accessible的。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2df6b0c4-ecd2-4f21-afd1-8b7af793f329/c2.png" alt="c2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/c2.png">http://loopjump.com/wp-content/uploads/2017/03/c2.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/c2.png" alt="c2.png"></p>
 <p>如果configuration C中存在某个进程p处于decision state，且vp&#x3D;v，则称C有decided value v。如果一个一致性协议P满足如下两点，则称之为P是partial correct的：</p>
 <p><strong>条件1</strong>：所有accessible的configuration都有相同的decision value。</p>
 <p><strong>条件2</strong>：对于v∈{0,1}，至少有一些accessible configuration有v的值。</p>
@@ -228,8 +226,7 @@
 <h2 id="证明过程"><a href="#证明过程" class="headerlink" title="证明过程"></a>证明过程</h2><p><strong>Lemma 1</strong>: suppose that from some configuration C, the schedules σ1、σ2 lead to configuration C1, C2, respectively. If the sets of processes taking steps in σ1 and σ2 , respectively, are disjoint, then σ2 can be applied to C1 and σ1 can be applied to C2, and both lead to the same configuration C3.</p>
 <p>引理1：从C开始，分别经过σ1到达C1，经过σ2到达C2。如果σ1和σ2中各自的进程集合没有交集，那么，从C1上应用σ2和从C2上应用σ1会到达相同的configuration。</p>
 <p>这个引理说的是，如果两个操作序列操作的是不同的进程集合，那先执行哪个序列结果都一样。这个是显然的，当然，这里要注意到C经过某个e，结果是确定的。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6fcf250b-1331-462f-b0aa-8a2ee0fa2188/lemma1.png" alt="lemma1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/lemma1.png">http://loopjump.com/wp-content/uploads/2017/03/lemma1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/lemma1.png" alt="lemma1.png"></p>
 <p><strong>univalent&#x2F;bivalent</strong>：从C开始，达到的所有decided configuration的decision value的集合定义为V，如果|V|&#x3D;1，则称C是univalent（未来就确定了），|V|&#x3D;2则称C是bivalent的（未来尚未确定）。也就是说，如果在C这里，往后看，如果将来只可能是0或者1中的一个成为decision value，那么C就是univalent的，否则，将来0和1都可能成为decision value，那么C就是bivalent的。</p>
 <p><strong>Lemma 2</strong>: P has a bivalent initial configuration.</p>
 <p>引理2：P存在一个bivalent的初始configuration。</p>
@@ -237,35 +234,29 @@
 <p>先描述一个记法：任意一个initial configuration的任意进程pi记为（xp&#x3D;vi, yp&#x3D;b, storage&#x3D;∅），因为是initial configuration，所以yp和storage都是初始状态，将C&#x3D;&lt; p1p2..pN&gt;简记为xp1 xp2…xpN。</p>
 <p>定义两个initial configuration C1, C2是adjacent：如果C1和C2只有一个进程的初始状态不同，那么C1,C2是adjacent的。</p>
 <p>容易知道，所有的initial configuration都是直接或者间接adjacent的，形成一个图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/1bf8e436-0bcc-4104-a5d6-9b55917ab8ef/lemma2.png" alt="lemma2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/lemma2.png">http://loopjump.com/wp-content/uploads/2017/03/lemma2.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/lemma2.png" alt="lemma2.png"></p>
 <p>因为协议是非平凡的（条件2），一定存在两个configuration C0 C1，其中C0是0-valent，C1是1-valent的。这里假设C0&#x3D;0000，C1&#x3D;1111，那么在C0到C1的路径上，一定存在两个configuration Ca, Cb，其中Ca是0-valent，Cb是1-valent的，并且Ca和Cb是adjacent的（图中Ca&#x3D;0101，Cb&#x3D;1101），所以Ca和Cb只有一个进程是不同的（这里是p0）。现在假设p0是faulty的，那么Ca和Cb就是完全一样的状态，二者最终协商的decision value必然相等（二者都是univalent的），于是导出矛盾。</p>
 <p><strong>Lemma 3:</strong>  let C be a bivalent configuration of P, and let e&#x3D;(p,m) be an event that is applicable to C. let X be the set of configurations that reachable from C without applying e, and let Y &#x3D; e(X) &#x3D; {e(E) | E∈X and e is applicable to E}. Then, Y contain a bivalent configuration.</p>
 <p><strong>引理3：</strong>设C是一个bivalent的configuration，e&#x3D;(p,m)是可以应用到C的事件。设X是从C可达并且未应用过e的configuration的集合，并构造Y &#x3D; e(X) &#x3D; {e(E) | E∈X and e is applicable to E}。那么，Y一定包含bivalent的configuration。</p>
 <p>证明过程：</p>
 <p>我们用反证法。假设Y中的configuration都是univalent的。</p>
 <p>按照引理3中定义，我们有如下的示意图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/304e3458-7c79-4433-8dc3-38fd04b3f58a/e3.png" alt="e3.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/e3.png">http://loopjump.com/wp-content/uploads/2017/03/e3.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/e3.png" alt="e3.png"></p>
 <p>因为C是bivalent的，所以从C可以到达一个0-valent的decided configuration C0，也可以到达一个1-valent的decided configuration C1。C0和C1是对称的，我们只需要考察C0就行了。</p>
 <p>如果C0∈X，则e(C0)&#x3D;D0，D0是0-valent。</p>
 <p>如果C0∉X，则取从C到C0中，接受e之前的configuration H0，那么，e(H0)&#x3D;D0，D0是0-valent。</p>
 <p>也就是说，Y中必有0-valent的configuration。同理可知，Y中也必有1-valent的configuration。</p>
 <p>因为C属于X，且为bivalent，所以e(C)&#x3D;D0是0-valent或者1-valent，假设是0-valent，那么一定存在一个从C可达的D1(C-&gt;Cs-&gt;Ct-&gt;D1)，D1是1-valent的。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/edf59f03-3b7f-433b-95ec-660bdf0c6ea8/e-1.png" alt="e-1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/e-1.png">http://loopjump.com/wp-content/uploads/2017/03/e-1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/e-1.png" alt="e-1.png"></p>
 <p>取图中虚线括起来的部分。我们得到下图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/001ecc22-bf06-46b5-92dc-d35fa71f6f66/dx.png" alt="dx.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/dx.png">http://loopjump.com/wp-content/uploads/2017/03/dx.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/dx.png" alt="dx.png"></p>
 <p>下面我们从该图推导出矛盾。</p>
 <p>图中有两个消息e和f，他们操作的进程记为pe、pf。分为两种情况，pe&#x3D;pf，pe!&#x3D;pf，推出矛盾。</p>
 <p>如果pe!&#x3D;pf：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e8827303-890d-4ed1-b039-b47f715766ee/case1x.png" alt="case1x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/case1x.png">http://loopjump.com/wp-content/uploads/2017/03/case1x.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/case1x.png" alt="case1x.png"></p>
 <p>那么根据引理1，f(D0)&#x3D;D1。D0是一个0-valent的configuration，而D1是一个1-valent的configuration。导出矛盾。</p>
 <p>如果pe&#x3D;pf（记为p）：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/abbca9ea-fd2d-41fa-975a-5342f0918aeb/case2x.png" alt="case2x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/03/case2x.png">http://loopjump.com/wp-content/uploads/2017/03/case2x.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/case2x.png" alt="case2x.png"></p>
 <p>假设进程p faulty，协议容忍了p的faulty，仍然要保证能够从Cx出发经过某个schedule σ到达一个decided configuration，记为S。如图构造，σ(e(Cs))&#x3D;E0，σ(e(f(Cs)))&#x3D;E1，则按照引理1（σ与e&#x2F;f操作的是不同的进程），e(f(S))&#x3D;E1，e(S)&#x3D;E0，说明S既可以成为0-valent，又可以成为1-valent，这与S是deciding configuration是矛盾的。</p>
 <p>因此，集合Y中没有bivalent的假设是不成立的。</p>
 <h3 id="FLP-Theory"><a href="#FLP-Theory" class="headerlink" title="FLP Theory"></a><strong>FLP Theory</strong></h3><p>根据引理3，我们发现从一个bivalent的configuration，总是能够变成另一个bivalent的configuration，而且这个过程可以无穷无尽下去。而引理2已经证明，initial configuration中bivalent的configuration是存在的。因此，算法总是有可能出现从一个初始的bivalent的configuration开始，从一个bivalent的configuration走到另一个bivalent的configuration（在马上要变成一个univalent的configuration时让某个进程crash），无穷无尽下去，无法停止。所以异步网络下，容忍一个进程faulty的一致性协议也做不到totally correct。（Any deciding run from a bivalent initial configuration goes to a univalent configuration, so there must be some single step that goes from a bivalent to a univalent configuration. Such a step determines the eventual decision value. We now show that it is always possible to run the system in a way that avoids such steps, leading to an admissible nondeciding run）。</p>

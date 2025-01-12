@@ -203,8 +203,7 @@
   <article class="post-article">
     <section class="markdown-content"><p>读了Architecture of a Database System这篇经典论文，挑了些不太熟悉的内容做了笔记。</p>
 <p>论文内容基本上谈不上是在讲架构吧，基本上就是罗列了下有哪些组件，而且内容基本上针对原来传统数据库的。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b575946c-59fc-4ebc-9a0b-77755112cb9c/arch.png" alt="arch.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/arch.png">http://loopjump.com/wp-content/uploads/2018/02/arch.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/arch.png" alt="arch.png"></p>
 <p>主要包括几个组件：</p>
 <p>Client Communication Manager</p>
 <p>Process Manager</p>
@@ -253,8 +252,7 @@
 <p>冗余join消除: 例如 SELECT Emp.name, Emp.salary FROM Emp, Dept WHERE Emp.deptno &#x3D; Dep.dno可以消除Dep表。子查询展开和其他启发式重写:大部分optimizer是针对单个SELECT-FROM-WHERE查询块，因此rewriter有时候需要将嵌套查询转为单个查询块（该过程称为query normalization）。</p>
 </blockquote>
 <h2 id="Query-Optimizer"><a href="#Query-Optimizer" class="headerlink" title="Query Optimizer"></a>Query Optimizer</h2><p>查询优化器负责将查询的内部表示(rewriter的输出结果)转为一个高效的执行计划。查询计划可以被视为一个数据流图，表的数据通过数据流图执行处理。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0c307abc-9214-43b7-95ba-e3856e670897/qplan.png" alt="qplan.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/02/qplan.png">http://loopjump.com/wp-content/uploads/2018/02/qplan.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/qplan.png" alt="qplan.png"></p>
 <p>优化器首先使用一些既有的技术处理SELECT-FROM-WHERE查询块，完成后再增加算子处理GroupBy、OrderBy、Having、Distinct。</p>
 <p>执行计划有多种表示方式。一早的时候，System R是将执行计划直接编译成机器码（后来商用时换成了可解释的形式）。Ingres会生成可解释的查询计划结果。目前商用数据库产品基本都是用某种中间格式表示执行计划，但是具体使用的抽象层次不一样。</p>
 <p>除了Selinger那篇关于优化器的经典论文之外，很多系统进行了多种扩展：</p>

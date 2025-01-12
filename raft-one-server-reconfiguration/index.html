@@ -210,9 +210,8 @@
 <p>从实用角度看，第一种简单，而且经过多轮One-Server变更实际上也能最终完成任意成员组变更。Raft博士论文也主要是描述第一种方案。之前的博文描述了会议论文中的Joint Consensus，这里只描述第一种。</p>
 <p>先明确一个思路，成员变更Safety的要点是不会出现双主，也就是新旧成员组不能各形成一个quorum，各自选出一个leader。</p>
 <p>如果每次变更增加或者删除多个server，直接切换成员组就会出现双主，如图。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/58f12f94-ec15-4c71-a577-566f13daf3b4/disjoint-majorities.png" alt="disjoint-majorities.png"></p>
+<p><img src="https://blogimage.loopjump.com/2017/disjoint-majorities.png" alt="disjoint-majorities.png"></p>
 <p>图中，从Cold&#x3D;{S1,S2,S3}变更为Cnew&#x3D;{S1,S2,S3,S4,S5}，如果直接切换成员组，那么在变更过程中，{S1,S2}形成Cold的多数派，{S3,S4,S5}形成Cnew的多数派，这两个多数派可能分别选出leader并确认client的新command，造成不一致。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/05/disjoint-majorities.png">http://loopjump.com/wp-content/uploads/2017/05/disjoint-majorities.png</a></p>
 <h2 id="One-Server成员变更"><a href="#One-Server成员变更" class="headerlink" title="One-Server成员变更"></a>One-Server成员变更</h2><p>Raft最终采用的是每次变更一个server的变更方案来避免出现上图中的disjoint majorities：当增加（或者减少）一个server的时候，新旧成员组的任意多数派必然有交集。这个结论可以简单地从四种情况穷举证明（从奇&#x2F;偶数个成员组中增&#x2F;删一个成员），比如原来成员组大小是2k，增加一个成员后2k+1，如果新旧成员组形成了disjoint majorities，则(k+1) + (k+1) &#x3D; 2k+2 &gt; 2k+1，即至少2k+2个成员才可能出现disjoint majorities。</p>
 <p>Raft成员变更使用的思路还是由状态机决定成员组的思路，即Paxos成员变更一文中的思路一。成员组变更的确认使用成员变更日志来确认，成员变更日志在确认过程中，允许接收客户端新的command并进行同步，即不停服务。</p>
 <p>具体地，当leader收到成员组变更的命令后，从Cold加或减一个成员生成Cnew，Cnew记录在成员变更日志中，并像其他普通日志一样同步给至少多数派。一个副本在收到Cnew的变更日志，本地持久化了该日志之后，就立刻使用这个新的成员组来工作，而不是等待成员变更日志确认。成员变更日志的确认也使用Cnew来完成。</p>
@@ -236,8 +235,7 @@
 <h2 id="Raft成员变更补丁"><a href="#Raft成员变更补丁" class="headerlink" title="Raft成员变更补丁"></a><strong>Raft成员变更补丁</strong></h2><p>前面描述的Raft One-Server成员变更的方法，社区后来爆出一个bug。Raft作者详细描述了问题以及修复方案。</p>
 <h3 id="bug例子"><a href="#bug例子" class="headerlink" title="bug例子"></a><strong>bug例子</strong></h3><p>Raft中成员变更如果保证是只变一个server这个前提，就不会出现双主问题。如果在同一term下，可以由leader确定这件事，但是如果有两个并发的成员变更，并且同时发生了切主，就有可能保证不了这一前提。</p>
 <p>考虑如下的例子：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/cc032633-26ed-4879-9201-5fca6e5d93f5/case1.png" alt="case1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2017/04/case1.png">http://loopjump.com/wp-content/uploads/2017/04/case1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2017/raft-reconf-case1.png" alt="case1.png"></p>
 <p>问题在于新主接收到客户端下一次成员变更请求的时候，可能集群中还可能有未确认的之前的成员变更日志，这个日志在将来可能会确认。</p>
 <h3 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a><strong>修复方案</strong></h3><p>Raft中，新主上任前要先确认一条NOP日志，然后才开始对外提供服务。</p>
 <p>一旦新主在本term内确认了一条日志，那么说明新主已经确认了最新的成员组，并且集群中不会出现未确认的成员变更日志将来会被确认的情况了，在NOP确认后再开启成员变更就能保证每次只变一个server的前提。</p>
