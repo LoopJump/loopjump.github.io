@@ -219,19 +219,18 @@
 <h3 id="Distributed-Query-Compilation"><a href="#Distributed-Query-Compilation" class="headerlink" title="Distributed Query Compilation"></a>Distributed Query Compilation</h3><p>Spanner的执query解析和执行跟传统单机数据库差不多，首先是解析成语法树，然后使用规则进行等价重写。但Spanner多了分布式的部分，具体地，就是多了一个DistributedUnion operator来显式指明需要分布式执行，这个算子负责将子查询发到各个shard，然后汇聚结果。</p>
 <p>DistributedUnion是整个分布式执行中非常基本的操作。首先，基于DistributedUnion可以实现更复杂的分布式operator，比如分布式join。另外，尤其是考虑到Spanner引擎层的shard可能迁移或分裂，查询引擎并不是静态感知shard的location，而是在执行过程中感知。</p>
 <p>在生成plan的时候，如果出现扫表的操作，就要把扫表改写成扫描各个shard然后汇聚结果。</p>
-<p>(Scan(T) \Rightarrow DistributedUnion<a href="Scan(shard)">shard \subset T</a>)</p>
+<p>$Scan(T) \Rightarrow DistributedUnion<a href="Scan(shard)">shard \subset T</a>$</p>
 <p>如果有可能，针对Scan(T)的operator就尽量下压，但下压的operator要满足partitionability:</p>
-<p>(F(Scan(T)) &#x3D; OrderedUnionAll<a href="F(Scan(shard))">shard \subset T</a>)</p>
+<p>$F(Scan(T)) &#x3D; OrderedUnionAll<a href="F(Scan(shard))">shard \subset T</a>$</p>
 <p>这种下压在传统单机数据库优化的时候也是常见的。另外，跟Spanner的数据模型相关(层级模型)的一点，如果要Join的两张表的连接键如果同时是两张表的分区键，那么Join就可以在每个shard上并行做，然后直接用DistributedUnion汇聚结果。</p>
 <p>另外一种可以下压的情况是多个Shard上的结果再次计算得到最终结果的场景，比如TopK和GroupBy。这种情况Spanner使用两阶段计算的方式，先在Shard上局部计算一次，然后在DistributedUnion的结果后再汇总计算一次。这类操作要满足如下条件：</p>
-<p>(op(DistrbutedUnion<a href="F(Scan(T))">shard \subset T</a>) &#x3D; opFinal(DistributedUnion<a href="opLocal(F(Scan(T)))">shard \subset T</a>))</p>
+<p>$op(DistrbutedUnion<a href="F(Scan(T))">shard \subset T</a>) &#x3D; opFinal(DistributedUnion<a href="opLocal(F(Scan(T)))">shard \subset T</a>)$</p>
 <p>举个例子：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SELECT ANY_VALUE(c.name) name,</span><br><span class="line">       SUM(s.amount) total</span><br><span class="line">FROM Customer c JOIN Sales s ON c.ckey = s.ckey</span><br><span class="line">WHERE s.type = &#x27;global&#x27; AND</span><br><span class="line">      c.ckey in UNNEST(@customer_key_arr)</span><br><span class="line">GROUP BY c.ckey</span><br><span class="line">ORDER BY total DESC</span><br><span class="line">LIMIT 5</span><br></pre></td></tr></table></figure>
 
 <p>其中，在Spanner数据模型下，Customer表和Sales表都是按照ckey进行sharding，并且Sales表交叉到Customer表中（Customer表一行与同ckey的Sales的若干行存放在一起）。</p>
 <p>这个SQL查询customer_key_arr指定的这些customer的类型为global的销售记录的金额总和的top 5。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2a79101d-c1b5-4447-9de4-ab3d2ff1036c/WX20181124-141715.png" alt="WX20181124-141715.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/WX20181124-141715.png">http://loopjump.com/wp-content/uploads/2018/11/WX20181124-141715.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/topk-agg-distributed-plan.png" alt="topk-agg-distributed-plan.png"></p>
 <p>其中，</p>
 <p><code>UNNEST</code> 获取一个 <code>ARRAY</code>，然后返回一个表，<code>ARRAY</code> 中的每个元素均占该表的一行。</p>
 <p><code>CrossApply(input, map)</code>允许你join两个table表达式，针对左表达式的每一行，右表达式都计算一遍，如果右表达式计算结果不空（一行或多行），就产生一行或多行最终结果。</p>
@@ -275,8 +274,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT d.*</span><br><span class="line">FROM Documents d</span><br><span class="line">WHERE d.ProjectId = @param1</span><br><span class="line">AND STARTS_WITH(d.DocumentPath, ’/proposals’)</span><br><span class="line">AND d.Version = @param2</span><br></pre></td></tr></table></figure>
 
 <p>这个filtered scan会改写成如下的计划：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d1557482-e36b-4147-b594-322700ffd3f4/selfjoin.png" alt="selfjoin.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/selfjoin.png">http://loopjump.com/wp-content/uploads/2018/11/selfjoin.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/selfjoin.png" alt="selfjoin.png"></p>
 <p>复杂的查询条件被逐渐拆开到每个scan上。其中，Scan1是包含一个常亮的条件@param1，Scan2和Scan3都是关联的（依赖前面的输出结果）。</p>
 <p>Scan1实际上是直接将结果（就是project_id&#x3D;@param1）吐出来，Scan2依赖Scan1的输出，Scan3依赖Scan1和Scan2的输出。Scan2在执行时，首先seek第一个”&#x2F;proposals&#x2F;*”，比如”&#x2F;proposal&#x2F;doc1”，然后跳过doc1的所有行到doc2。Scan3是最右Scan，因此它会把所有列输出出来。</p>
 <p>跟同事简单讨论了下，优化器会把一个filtered scan改写成self-join，一些可能的原因是Scan2可以选择特定个索引，比如Scan1过滤完，还是有大量的shard或者fragement，第二步有机会做一些pruning。</p>
@@ -288,8 +286,7 @@
 <li>消除包含子查询和复杂的算数函数的条件（消除指的是改成post-filter？）。</li>
 </ul>
 <h3 id="Filter-Tree"><a href="#Filter-Tree" class="headerlink" title="Filter Tree"></a>Filter Tree</h3><p>Filter Tree是运行时的数据结构，既用于通过自底向上的交并区间来抽取range，也用于post-filtering self-join的结果。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/95366f28-8c09-4516-be03-765f99239912/ft.png" alt="ft.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2018/11/ft.png">http://loopjump.com/wp-content/uploads/2018/11/ft.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2018/ft.png" alt="ft.png"></p>
 <h2 id="Query-Restarts"><a href="#Query-Restarts" class="headerlink" title="Query Restarts"></a>Query Restarts</h2><p>Spanner的一个目标就是要解决瞬时故障导致的query失败。</p>
 <h3 id="使用场景和好处"><a href="#使用场景和好处" class="headerlink" title="使用场景和好处"></a>使用场景和好处</h3><ol>
 <li>隐藏瞬时故障：网络断、机器重启、Spanner进程Crash、副本无响应时换其他副本、数据迁移导致的查询失败。</li>
