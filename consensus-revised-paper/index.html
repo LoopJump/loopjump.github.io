@@ -214,7 +214,7 @@
 <p>这篇论文说的就是从上一轮学习过程（或者叫上一轮到下一轮的信息传递过程）中，quorum的约束可以如何放松？</p>
 <p>Classis Paxos算法下的”all quorums will intersect”是能够完成信息传递的充分条件，但不是必要条件，这也是这篇revised文章可以放松的直接原因。</p>
 <p>论文Chapter1,2都是背景知识，Chapter8总结过于笼统，所以主体内容还是Chapter 3~7。这里大致罗列一下内容。</p>
-<p>主旨内容一句话总结：因为要解决上一轮到下一轮的信息传递，所以要求是上一轮的accept phase和下一轮的prepare phase要有交集。这也是为什么$$\mathcal{Q}_{phase}^{epoch}$$有上下标两个维度。4.2节的约束 $$\forall Q \in \mathcal{Q}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in \mathcal{Q}_2^f: Q \cap Q’ \ne \emptyset$$ 说的也还是这句话。根据这一主旨，可以有各种各样的放松方式。</p>
+<p>主旨内容一句话总结：因为要解决上一轮到下一轮的信息传递，所以要求是上一轮的accept phase和下一轮的prepare phase要有交集。这也是为什么$$\cal{Q}_{phase}^{epoch}$$有上下标两个维度。4.2节的约束 $$\forall Q \in \mathcal{Q}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in \mathcal{Q}_2^f: Q \cap Q’ \ne \emptyset$$ 说的也还是这句话。根据这一主旨，可以有各种各样的放松方式。</p>
 <h2 id="Chapter-3-Known-revisions"><a href="#Chapter-3-Known-revisions" class="headerlink" title="Chapter 3 Known revisions"></a>Chapter 3 Known revisions</h2><p>这一节主要是讲的一些小的、比较直观的改进。</p>
 <p><strong>3.1 Negative response</strong>：Basic Paxos中，acceptor只会返回正面的prepare response和accept response，不满足条件的proposer会等超时换epoch重试。这里可以改进成如果acceptor发现条件不满足，可以返回一个negative response，告知proposer。一个proposer如果收到多数派的negative response，那就确定本epoch下，自己以后也不会成功，所以可以立即发起换epoch重试，不用再漫长的等待。</p>
 <p><strong>3.2 Bypassing phase two</strong>：如果proposer在prepare phase收到了多数派的prepare response是相同的，那么accept phase是可以省略的。也就是说，在Basic Paxos算法下，从上帝视角看，在某个时刻，如果存在一个系统快照下，多数派的acceptor的accept proposal相同，该proposal的值就已经被确定是会被chosen的（只是可能还未被任何进程知晓）。</p>
