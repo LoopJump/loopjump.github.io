@@ -214,9 +214,7 @@
 <li>强大的查询处理器，可以处理多种查询语言</li>
 <li>可扩展的适配器架构，可以支持多种异构数据源，甚至可以跨源做计划优化</li>
 </ul>
-<h3 id="Calcite与数据引擎的功能边界划分"><a href="#Calcite与数据引擎的功能边界划分" class="headerlink" title="Calcite与数据引擎的功能边界划分"></a>Calcite与数据引擎的功能边界划分</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029155418474.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029155418474.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029155418474.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029155418474.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c08cfc02-24b3-4c44-991f-9315468b91b6/image-20191029155418474.png" alt="image-20191029155418474.png"></p>
+<h3 id="Calcite与数据引擎的功能边界划分"><a href="#Calcite与数据引擎的功能边界划分" class="headerlink" title="Calcite与数据引擎的功能边界划分"></a>Calcite与数据引擎的功能边界划分</h3><p><img src="https://blogimage.loopjump.com/2019/calcite-on-data-engine.png" alt="calcite-on-data-engine.png"></p>
 <h3 id="Calcite的优势"><a href="#Calcite的优势" class="headerlink" title="Calcite的优势"></a>Calcite的优势</h3><ul>
 <li>开源友好：Apache旗下</li>
 <li>多种数据模型：关系型、半结构化、流式、地理空间</li>
@@ -236,14 +234,10 @@
 <p><strong>FORWARD</strong></p>
 <p>FORWARD支持SQL++，一种SQL的超集。</p>
 <p>SQL++支持半结构化数据模型和关系模型的集成。在这一点上，Calcite是通过在计划生成阶段将半结构化数据表达为关系模型来实现集成的。FORWARD的方法是将多种联合查询拆解成各自的查询计划，然后执行结果在FORWARD引擎中合并。</p>
-<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a7070d1a-3064-403a-97cb-848517acff59/image-20191029173659790.png" alt="image-20191029173659790.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029173659790-1024x871.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029173659790-1024x871.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029173659790-1024x871.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029173659790-1024x871.png</a></p>
+<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p><img src="https://blogimage.loopjump.com/2019/calcite-arch.png" alt="calcite-arch.png"></p>
 <h3 id="Parser-Validator"><a href="#Parser-Validator" class="headerlink" title="Parser &amp; Validator"></a>Parser &amp; Validator</h3><p>Calcite包含一个SQL Parser和Validator，这个模块将SQL解析为a tree of relational operators。因为Calcite不包含存储层，所以解析过程中依赖的schema信息是通过一个adapter层来封装的。</p>
 <h3 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h3><p>Calcite包含的优化器部分，可以支持本就支持SQL的系统，如果系统SQL比较弱，比如Hive，虽然支持SQL，但是Hive的优化器很弱。Hive把SQL解析成语法树之后，Calcite可以反过来再恢复成SQL语句，然后再优化。也就是说，Calcite可以直接嵌在不含优化器的SQL系统里面。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029193634796-1024x650.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029193634796-1024x650.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6f9386c4-bb72-4c00-a29b-f7a30f9ec7ec/image-20191029193634796.png" alt="image-20191029193634796.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191029193634796-1024x650.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191029193634796-1024x650.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2019/calcite-optimizer.png" alt="calcite-optimizer.png"></p>
 <p>Calcite的优化器也可以对接其他系统的parser，Calcite内置了一个relational expressions builder接口。举个例子：</p>
 <p>Apache Pig的某个脚本：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">emp = LOAD &#x27;employee_data&#x27; AS (deptno, sal);</span><br><span class="line">emp_by_dept = GROUP emp BY (deptno);</span><br><span class="line">emp_agg = FOREACH emp_by_dept GENERATE GROUP AS deptno COUNT(emp.sal) AS c, SUM(emp.sal) as S;</span><br><span class="line">dump emp_agg;</span><br></pre></td></tr></table></figure>
@@ -256,17 +250,13 @@
 <h3 id="Traits"><a href="#Traits" class="headerlink" title="Traits"></a>Traits</h3><p>有些设计里，逻辑执行计划和物理执行计划是不同的实体。在Calcite中，二者是统一的实体，只是会在这个实体上增加一个traits来描述物理属性。</p>
 <p>traits能够让优化器评估多个候选的计划。优化过程中，会先给关系表达式指定一些traits，如果需要换另外一种物理实现，可以实现关系表达式的converter接口来指示如何把traits从一个物理实现的值转化为另外一种物理实现的值。</p>
 <p>除了ordering, grouping, partitioning这类的traits之外，Calcite中还有一个特殊的traits叫calling convention，它代表了数据源的操作接口，通过这层抽象来实现跨数据源的优化。如下例中，splunk上的scan是按splunk convention，products的scan是按jdbc-mysql convention。如果用Spark来存放splunk表，那么join就会转化成使用spark convention。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/7f0044d3-2b98-4051-b9bb-8b132cd3cd9a/image-20191030112430474.png" alt="image-20191030112430474.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191030112430474-1024x462.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191030112430474-1024x462.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191030112430474-1024x462.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191030112430474-1024x462.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2019/calcite-trait.png" alt="calcite-trait.png"></p>
 <h2 id="Query-Processing-And-Optimization"><a href="#Query-Processing-And-Optimization" class="headerlink" title="Query Processing And Optimization"></a>Query Processing And Optimization</h2><p>优化器是Calcite的核心部分，优化器在代价模型指导下，不断地应用优化规则，生成更好的执行计划。优化器的各个组件都是可以扩展的，用户可以添加自己的relational operator, rule, cost model, statistic。</p>
 <h3 id="Planner-rules"><a href="#Planner-rules" class="headerlink" title="Planner rules"></a>Planner rules</h3><p>Calcite有几百条优化规则，用户可以在这个基础上添加适用于自己系统的新规则。</p>
 <p>例如如下的查询会使用FilterIntoJoinRule规则优化。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT products.name , COUNT (*)</span><br><span class="line">FROM sales JOIN products USING (productId)</span><br><span class="line">WHERE sales.discount IS NOT NULL</span><br><span class="line">GROUP BY products.name</span><br><span class="line">ORDER BY COUNT (*) DESC;</span><br></pre></td></tr></table></figure>
 
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191031115353130-300x227.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191031115353130-300x227.png</a></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191031115353130-300x227.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191031115353130-300x227.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4e25092a-d7d6-4337-af60-b3d8de2ed701/image-20191031115353130.png" alt="image-20191031115353130.png"></p>
+<p><img src="https://blogimage.loopjump.com/2019/calcite-planner-rules.png" alt="calcite-planner-rules.png"></p>
 <h3 id="Metadata-providers"><a href="#Metadata-providers" class="headerlink" title="Metadata providers"></a>Metadata providers</h3><p>Metatadata给优化器提供信息，例如，Calcite里面默认的metadata provider可以提供诸如子表达式的整体代价、返回的行数和数据量、执行表达式时可能的最大并行度等信息。</p>
 <p>用户可以使用Calcite的相关接口来实现自己的metadata provider，提供更多的元数据信息。用户的metadata provider作为java源代码提供出来，Calcite使用一个轻量级的Java编译器Janino编译并实例化新的metadata provider。实现上，Calcite还会缓存Metadata的查询结果。</p>
 <h3 id="Planner-engine"><a href="#Planner-engine" class="headerlink" title="Planner engine"></a>Planner engine</h3><p>Calcite有两个planner引擎：cost-based planner engine, exhaustive planner。</p>
@@ -282,9 +272,7 @@
 <p><strong>lattices</strong></p>
 <p>前提是数据源已经被组织成Cube。Cube是数据分析（比如BI）里面比较常见的概念，它是数据的一种组织方式，本质上类似于关系代数里面讲的范式。</p>
 <p>在这种前提下，物化视图可以更好地被利用，比如原始表是每日营业额，有个物化视图是月度营业额，那么查询年度营业额就可以用这个物化视图。这里lattice也还是代数系统里面讲的那个偏序关系，比如已经有了一张表&#x2F;视图来表示GroupBy &lt;part, customer&gt;，那么GroupBy part和GroupBy customer都可以使用它。如图（我们只关注图的形状，箭头方向的含义是可以取反定义的）。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2900ad86-9571-41f3-a6cd-a8c59a4af441/image-20191101215202096.png" alt="image-20191101215202096.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191101215202096-300x186.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191101215202096-300x186.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/11/image-20191101215202096-300x186.png">http://loopjump.com/wp-content/uploads/2019/11/image-20191101215202096-300x186.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2019/calcite-mv.png" alt="calcite-mv.png"></p>
 <h2 id="Extending-Calcite"><a href="#Extending-Calcite" class="headerlink" title="Extending Calcite"></a>Extending Calcite</h2><h3 id="Semi-structured-Data"><a href="#Semi-structured-Data" class="headerlink" title="Semi-structured Data"></a>Semi-structured Data</h3><p>Calcite支持多种复杂的列类型，比如ARRAY, MAP, MULTISET。</p>
 <p>以mongodb为例，一个存放了城市邮编信息的文档，可以通过如下方式创建视图来转化为关系表：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT CAST(_MAP[&#x27;city&#x27;] AS varchar(20)) AS city,</span><br><span class="line">       CAST(_MAP[&#x27;loc&#x27;][0] AS float) AS longtitude,</span><br><span class="line">       CAST(_MAP[&#x27;loc&#x27;][1] AS float) AS latitude,</span><br><span class="line">FROM mongo_raw.zips;</span><br></pre></td></tr></table></figure>
@@ -334,10 +322,10 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/bitcask-intro/">
+      <a class="nav-left" href="/ddia-quick-note/">
         <span class="nav-arrow">← </span>
         
-          bitcask简介
+          DDIA Quick Note
         
       </a>
     

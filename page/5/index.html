@@ -356,29 +356,6 @@ Calcite的三个特点：
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/bitcask-intro/">bitcask简介</a>
-      </h2>
-      <p class="article-date">October 29, 2019</p>
-      
-        
-  <a href="/tags#Database" >
-    <span class="tag-code">Database</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Bitcask是由Basho公司搞的一个产品。
-技术设计数据顺序追加到磁盘上的active data file，并在内存中建立hash索引。
-active data file文件长到一定程度就切成old data file，新的数据写入新的active data file。
-old data ...
-        
-      </div>
-      <a class="more" href="/bitcask-intro/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/ddia-quick-note/">DDIA Quick Note</a>
       </h2>
       <p class="article-date">August 10, 2019</p>
@@ -420,6 +397,28 @@ P ...
         
       </div>
       <a class="more" href="/consensus-revised-paper/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/designing-access-methods-the-rum-conjecture/">RUM Conjecture</a>
+      </h2>
+      <p class="article-date">March 10, 2019</p>
+      
+        
+  <a href="/tags#Database" >
+    <span class="tag-code">Database</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          《Designing Access Methods: The RUM Conjecture》
+这篇论文从读、写、存储空间开销角度总结了access method设计，并提出了一个RUM猜想，认为针对其中两个开销优化，则会导致第三个优化困难。
+就RUM猜想本身的可信程度而言，我个人觉得一般，不 ...
+        
+      </div>
+      <a class="more" href="/designing-access-methods-the-rum-conjecture/">Read more</a>
     </article>
   
 

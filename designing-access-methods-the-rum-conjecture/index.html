@@ -210,8 +210,7 @@
 </blockquote>
 <p>就是说，如果你的access method能够确保RUM中的任意两个开销的最坏情况的上限，那么剩下的那个开销的最好的情况就很难优化的很好。</p>
 <p>论文提到，某些access method会将索引压缩存放，那么通过引入computation &#x2F; engineering这种场外信息，RUM猜想的可信程度会有些折扣。不过RUM猜想作为一个对access method的RUM三种开销总结，仍然有些价值。只是我们在遇到新的access method设计问题的时候，不能轻易放弃探索“全面好”的方案，尤其是遇到特定场景下的问题，相反RUM猜想可以视为一个探索的工具。</p>
-<h3 id="RUM-in-Practice"><a href="#RUM-in-Practice" class="headerlink" title="RUM in Practice"></a>RUM in Practice</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b616dbc9-a68d-4dea-b106-ad15364e8673/rum_in_practice.png" alt="rum_in_practice.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2019/03/rum_in_practice.png">http://loopjump.com/wp-content/uploads/2019/03/rum_in_practice.png</a></p>
+<h3 id="RUM-in-Practice"><a href="#RUM-in-Practice" class="headerlink" title="RUM in Practice"></a>RUM in Practice</h3><p><img src="https://blogimage.loopjump.com/2019/rum_in_practice.png" alt="rum_in_practice.png"></p>
 <p>每个access method设计在RUM空间占一个点或者（允许通过调优）占一个区域。</p>
 <ul>
 <li><strong>Read-optimized Access Method</strong>: Hash, B-Tree, Tries, Prefix B-Tree, Skiplist etc</li>
