@@ -204,7 +204,7 @@
     <section class="markdown-content"><p>前面介绍的并发控制算法评估里面，测试也把Cavlin算进来了，这里简单介绍下Calvin。详细的可以参考下原论文 Calvin: Fast Distributed Transactions for Partitioned Database Systems （SIGMOD12’）。</p>
 <p>Calvin面向的场景是确定性事务，不支持交互式事务。这一点需要特别注意。在互联网很多业务里，这点是不适用的。</p>
 <p>Calvin也是一个deterministic的分布式数据库，这里先简单介绍下它的架构。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200409110202898-1024x630.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200409110202898-1024x630.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/calvin-arch.png" alt="calvin-arch.png"></p>
 <p>整体上分成三层：</p>
 <ul>
 <li><strong>Sequencing Layer</strong>：拦截事务，定序。</li>

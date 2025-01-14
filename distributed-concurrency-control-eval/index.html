@@ -205,7 +205,7 @@
 <p>这篇工作主要是比较并评估了6种in-memory分布式数据库的并发控制计算法。</p>
 <h2 id="System-Overview"><a href="#System-Overview" class="headerlink" title="System Overview"></a>System Overview</h2><p>论文在Deneva系统上做分布式并发控制算法实现和测试。</p>
 <h3 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h3><p>Deneva架构：shared-nothing</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200402115956955-1.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200402115956955-1.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/shared-nothing.png" alt="shared-nothing.png"></p>
 <h3 id="Env-Model"><a href="#Env-Model" class="headerlink" title="Env Model"></a>Env Model</h3><p>所有的事务都使用存储过程，有些协议只能执行确定事务（需要提前知道访问哪些行）。</p>
 <p>数据按consistent-hash分布，client上配置location信息。</p>
 <p>存储引擎是个纯内存的hashtable。</p>
@@ -230,17 +230,17 @@
 <h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>实验环境：Amazon EC2(8核32G)，网络 1ms RTT。</p>
 <p>benchmark：YCSB、TPCC、PPS（Product-Parts-Supplier）。</p>
 <p><strong>测试结果（single-partition）</strong></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200402185731499-1024x331.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200402185731499-1024x331.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/single-partition-eval.png" alt="single-partition-eval.png"></p>
 <p>Calvin因为是预先定序的，所以线比较平稳。</p>
 <p><strong>测试结果（multi-partition）</strong></p>
 <p>基本上单partition变多partition时，都会因为网络交互导致骤跌plummet。Calvin因为预先定序无2PC，所以影响小一些。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200403101748492-1024x249.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200403101748492-1024x249.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/multi-partition-eval.png" alt="multi-partition-eval.png"></p>
 <p>RO测试：Calvin是因为scheduler的瓶颈，OCC是因为为了validation阶段准备的复制数据的开销。</p>
 <p>RW测试：除了Calvin，其他变化趋势都差不多。</p>
 <p>论文还对scalability的开销做了breakdown：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200403103225076-1024x282.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200403103225076-1024x282.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/scalability-breakdown.png" alt="scalability-breakdown.png"></p>
 <p>图6b&#x2F;c和图6a相比，MVCC和TIMESTAMP的idle时间变多，原因是需要buffer一些事务以等待order小的事务先提交。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200403104320782.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200403104320782.png</a></p>
+<p><img src="http://blogimage.loopjump.com/2020/occ.png" alt="occ.png"></p>
 <p>OCC：the worker threads spend over 50% of their execution time in the validation phase of OCC</p>
 <p>Other也太多了，不知道延迟花到哪里去了。</p>
 <h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p>解决扩展性瓶颈的方法：</p>

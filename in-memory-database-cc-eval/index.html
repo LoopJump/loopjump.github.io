@@ -218,9 +218,7 @@
 <p>主流的DBMS都实现了MVCC（Oracle 1984, Postgres 1985 MySQL InnoDB 2001)。目前MVCC基本上是DBMS的标配了。</p>
 <p><strong>MVCC基本概念</strong></p>
 <p>行格式</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200331114924638-300x29.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4a5564ab-5603-45ab-9676-13bdd195dfc8/image-20200331114924638.png" alt="image-20200331114924638.png"></p>
+<p><img src="https://blogimage.loopjump.com/2020/row-format.png" alt="row-format.png"></p>
 <ul>
 <li>txn-id：一般同时用作行latch，设定为64比特以支持CAS原子操作</li>
 <li>begin-ts ~ end-ts：行的生存周期，如果被delete，可以设置begin-ts&#x3D;INF</li>
@@ -290,9 +288,7 @@
 <h2 id="Index-Management"><a href="#Index-Management" class="headerlink" title="Index Management"></a>Index Management</h2><p>索引结构里面通常只索引一个版本，然后从这个版本开始访问版本链，进而找到可见的版本。</p>
 <p>数据库索引通常有主键索引和二级索引（这个划分来自存储引擎簇集索引方式）。主键索引总是指向最新的版本，至于写请求是否需要涉及修改索引，具体情况具体分析，N2O这种需要总是更新。主键的更新会被DBMS换成DELETE &amp; INSERT组合。</p>
 <p>二级索引复杂一些，通常有如下两种方式：logical pointer 和 physical pointer。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/ce4ec9f7-5863-4b6d-9f85-2889b9c62bde/image-20200401164921066.png" alt="image-20200401164921066.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png">http://loopjump.com/wp-content/uploads/2020/03/image-20200401164921066.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/index-mgr.png" alt="index-mgr.png"></p>
 <ul>
 <li>Logical Pointer：索引指向的是一个间接的map，这个map是固定区域。</li>
 <li>Physical Pointer：指向版本链表。</li>
