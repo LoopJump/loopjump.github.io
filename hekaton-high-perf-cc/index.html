@@ -217,13 +217,13 @@
 <li>SI：不需要加锁，也不需要validation，总是使用事务开启时的快照。</li>
 </ul>
 <h3 id="Main-Memory-Storage-Engine的原型"><a href="#Main-Memory-Storage-Engine的原型" class="headerlink" title="Main Memory Storage Engine的原型"></a>Main Memory Storage Engine的原型</h3><p>论文实现了一个Main Memory Storage Engine的原型。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200404100533596-300x284.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200404100533596-300x284.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/mmse-arch.png" alt="mmse-arch.png"></p>
 <p>行格式如图示。begin字段可以是时间戳也可以是该活跃事务号，如果是事务号，表示该行可能尚未提交。</p>
 <p>存储和索引：原型用的是hash索引，同一个hash桶上的记录无序。</p>
 <p>读操作核心逻辑：读请求会分配一个时间戳snapshot作为读快照，查找满足begin &lt; snapshot &lt; end的版本读取。</p>
 <p>写操作核心逻辑：创建一个新版本插入hash，beigin字段先用本事务号填充，上一个版本的end上也填充该事务号。</p>
 <p>一个事务的生命周期：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200404101148422-300x71.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200404101148422-300x71.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/mmse-trx.png" alt="mmse-trx.png"></p>
 <ul>
 <li>事务启动：分配begin timestamp，状态设为Active。</li>
 <li>事务执行：执行读写，如前述。</li>
@@ -397,8 +397,7 @@
 <p>高冲突：MV比1V好，读和写被多版本隔离。</p>
 <p><strong>Impact of Long Read Transactions</strong></p>
 <p>测试中，workload有部分长只读事务。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200405121527988.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200405121527988.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200405121538230.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200405121538230.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/hekaton-test-1.png" alt="hekaton-test-1.png"><br><img src="https://blogimage.loopjump.com/2020/hekaton-test-2.png" alt="hekaton-test-2.png"></p>
 <p>测试结果看，有长只读事务就会导致1V骤跌。</p>
 <p>注意到前面同构workload几个测试中，1V往往都比MV表现好。这说明1V的workload适应性不好。</p>
 <h2 id="一点总结"><a href="#一点总结" class="headerlink" title="一点总结"></a>一点总结</h2><p>这篇论文是微软Hekaton系统上的CC算法的介绍，虽然索引结构只是简单的hash表而不是ordered index（BwTree之类），但论文对CC讲的非常到位，如何设计锁，如何做validation，如何避免幻读等等，而且对于操作次序有明确的说明。</p>

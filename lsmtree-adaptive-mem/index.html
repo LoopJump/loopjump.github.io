@@ -203,10 +203,10 @@
   <article class="post-article">
     <section class="markdown-content"><h2 id="LSMTree自适应内存管理"><a href="#LSMTree自适应内存管理" class="headerlink" title="LSMTree自适应内存管理"></a>LSMTree自适应内存管理</h2><p>Breaking Down Memory Walls: Adaptive Memory Managementin LSM-based Storage Systems（VLDB’21）</p>
 <p>内存管理整体架构比较清晰，如图，无需赘言。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220220150302433-300x115.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220220150302433-300x115.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/memory-mgr-arch.png" alt="memory-mgr-arch.png"></p>
 <p><strong>Write Memory内存管理</strong></p>
 <p>Write Memory的管理方式见下图。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220220160620056-300x115.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220220160620056-300x115.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/write-mem-arch.png" alt="write-mem-arch.png"></p>
 <p>像RocksDB的Write Memory就是一整个memtable，论文给出了另外一个思路，即使是write memory也用leveled方式，如图。Memory也分成M0，M1，M2三层，M0满则merge到M1，同理M1 merge到M2，M2会刷盘。这种方式的内存利用率更好，否则考虑一个很大的memtable对象flush之后，内存释放出来，新的memtable在前一段时间内内存利用率都很低。不过这种方式看起来也有点不必要地复杂了。</p>
 <p>L0允许多个layer，一个layer这里叫做一个group，如果新memtable数据flush下来，先去看最老的group能不能直接放进去（并且也要保证其他较新的group没有重叠范围的数据），不行就生成一个新的group。</p>
 <p>Partial Flush &amp; Full Flush：略。</p>
@@ -215,7 +215,7 @@
 <p><strong>Memory Tuner</strong></p>
 <p>论文提出的内存管理框架实际上就两个模块消耗内存，write memory和buffer cache。</p>
 <p>论文给出了一种计算最优分配的方法：</p>
-<p>首先，设write memory内存配额是$$x$$，则以IO代价函数为优化目标 $$cost(x)&#x3D;\omega \cdot write(x)+\gamma \cdot read(x)$$。</p>
+<p>首先，设write memory内存配额是$x$，则以IO代价函数为优化目标 $cost(x)&#x3D;\omega \cdot write(x)+\gamma \cdot read(x)$。</p>
 <p>然后，就是一个简单的数学问题，导数求最小值。</p>
 <p>最后，实现一个反馈机制。</p>
 <p><strong>一点总结</strong></p>

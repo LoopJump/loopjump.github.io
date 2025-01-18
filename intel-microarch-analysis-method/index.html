@@ -205,14 +205,14 @@
 <p>现代CPU一般都采用了流水线、硬件线程、乱序执行、指令级并行等技术来高效利用CPU内的各种资源。但有很多软件和算法在实现上并不能很好地利用好CPU，比如非常常见的链表会带来间接地址访问，影响硬件预取的效果，导致读数据的时候流水线冒泡（停顿）。</p>
 <p>本文描述的自上而下的微架构性能分析方法可以用来识别这类问题。</p>
 <p>现代CPU的流水线实际上相当复杂。简单地说，流水线从概念上分为前端Front-End和后端Back-End。前端负责取指和译码（将指令翻译成微操作uOps），uOps被灌到后端（这个过程被称作allocation）。后端负责监控uOps的数据是否可用，如果可用就在可用的执行单元上执行这个uOps。uOps完成时会把结果写回CPU寄存器或者内存，这个过程被称作retirement。通常大部分指令都会走完整个流水线然后retire掉，但是有些推测执行的uOps在分支预测失败的时候会直接中途cancel。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-1.png">http://loopjump.com/wp-content/uploads/2022/06/4-1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/microarch-cpu.png" alt="microarch-cpu.png"></p>
 <p>较新的Intel微架构流水线前端每个节拍可以allocate 4个uOps，后端可以retire 4个uOps。Pipeline slot代表能够处理一个uOps的硬件资源。Top-Down分析方法假设每个CPU Core在每个节拍都有4个slot可用，Core内有PMU监测slot的使用情况，监测发生在allocation point，即图中星号位置。</p>
 <p>如果一个节拍内slot是空的（发生了stall），则需要判断是前端没供给得上还是后端没来得及消费。如果时前端没给slot供给得上uOps，即是Front-End Bound；如果前端供给没问题，但没法将uOps递交到后端，即是Back-End Bound，这通常是因为后端资源不足导致的；如果前端和后端都有问题，这种情况归结到Back-End Bound，因为前端问题解决了还是会卡到后端。</p>
 <p>如果流水线没有stall，确定瓶颈就需要看uOps是否最终retire了。如果确实reitre了，情况归结为Retiring，否则可能是分支预测失败或者self-modify-code的原因导致流水线被清空(flush)，这种情况归结为Bad Speculation。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-1-300x181.png">http://loopjump.com/wp-content/uploads/2022/06/5-1-300x181.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/microarch-slot.png" alt="microarch-slot.png"></p>
 <p>之所以监控在allocation point (图中星号位置) ，是因为front-end和back-end之间是生产者消费者模型，allocation point是连接二者的地方，容易判断是两侧的哪一侧的问题。</p>
 <p>Intel VTune可以用于分析识别瓶颈类型。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6.png">http://loopjump.com/wp-content/uploads/2020/06/6.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/vtune.png" alt="vtune.png"></p>
 <p>如图可以看到每个函数的瓶颈归类，数越大表示瓶颈越显著，其中红色表示需要关注的点。</p>
 <p><strong>微架构调优方法论</strong></p>
 <ol>

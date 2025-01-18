@@ -218,13 +218,13 @@
 <p>解释执行是RDBMS的标准且通用的做法，解释执行的优点是灵活，缺点是执行慢。一个简单的查询语句，如果是使用解释执行的话，大概要执行10万条量级的指令。</p>
 <p>Hekaton解决方法是，对于T-SQL编写的语句和存储过程，Hekaton会将其编译成高度优化的机器码，编译会花一些时间，但执行期间效率很高。</p>
 <h3 id="No-Partitioning"><a href="#No-Partitioning" class="headerlink" title="No Partitioning"></a>No Partitioning</h3><p>HyPer&#x2F;Dora&#x2F;HStore&#x2F;VoltDB这类内存数据库会将数据partition到per-core。但是Hekaton搞了个partition的prototype探索之后，并没有采用这个设计。原因在于workload本身能够partition的时候，数据分区的设计效果很好，否则请求做分区导致多个执行线程间协调同步会导致性能下降严重（比如按非分区键搜索）。</p>
-<h2 id="High-Level-Architecture"><a href="#High-Level-Architecture" class="headerlink" title="High-Level Architecture"></a>High-Level Architecture</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407111229350-300x247.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407111229350-300x247.png</a></p>
+<h2 id="High-Level-Architecture"><a href="#High-Level-Architecture" class="headerlink" title="High-Level Architecture"></a>High-Level Architecture</h2><p><img src="https://blogimage.loopjump.com/2020/hekaton-me-arch.png" alt="hekaton-me-arch.png"></p>
 <p>大部分都比较容易理解，这里挑几个介绍。</p>
 <p>Hekaton runtime：一个小的模块，与SQL Server的资源结合，作为编译执行时所依赖功能的库。</p>
 <p>Query Interop：解释执行时存储引擎提供的操作接口。</p>
 <h2 id="Storage-and-Indexing"><a href="#Storage-and-Indexing" class="headerlink" title="Storage and Indexing"></a>Storage and Indexing</h2><p>参见之前的文章<a target="_blank" rel="noopener" href="http://loopjump.com/pr-haketon-high-perf-concurrency-control/">《论文阅读 - Haketon的高性能并发控制算法》</a>。</p>
 <p>区别在这里除了hash index还有个btree index。Hekaton用的是一个lockfree的BTree，叫Bw-Tree。</p>
-<h2 id="Programmability-and-Query-Processing"><a href="#Programmability-and-Query-Processing" class="headerlink" title="Programmability and Query Processing"></a>Programmability and Query Processing</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407124146314-654x1024.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407124146314-654x1024.png</a></p>
+<h2 id="Programmability-and-Query-Processing"><a href="#Programmability-and-Query-Processing" class="headerlink" title="Programmability and Query Processing"></a>Programmability and Query Processing</h2><p><img src="https://blogimage.loopjump.com/2020/hekaton-me-pq.png" alt="hekaton-me-pq.png"></p>
 <p>面向compile-once-execute-many-times的workload，编译执行对用户透明。C代码到机器码复用Microsoft的Visual C&#x2F;C++编译器。</p>
 <h3 id="Schema-Compilation"><a href="#Schema-Compilation" class="headerlink" title="Schema Compilation"></a>Schema Compilation</h3><p>Hekaton存储引擎将record内容视为黑盒，并不了解record内部格式。对record的操作编译成机器码之后，需要调用一些回调函数来操作record内容，这些回调函数需要感知record格式，因此涉及schema相关的信息也要编译成机器码。</p>
 <h3 id="Compiled-Storage-Procedures"><a href="#Compiled-Storage-Procedures" class="headerlink" title="Compiled Storage Procedures"></a>Compiled Storage Procedures</h3><p>举例说明将T-SQL转成C语言的一些困难：</p>
@@ -237,7 +237,7 @@
 <p>有些编译执行的方式是， 每个operator通常都有自己的一组接口，每个接口都表现为一个C语言函数，operator间通过接口调用。这种基于函数的方式，会有函数调用和函数传参的开销。</p>
 <p>Hekaton为了提升极致性能，采用的方式并不一样。Hekaton将每一个存储过程直接编译成单独的一个函数，跨operator的调用使用的是label和goto。一个带filter的scan的执行计划，编译完可能就是如图示的样子，空心圈表示一个label，箭头表示goto，filter根据谓词可能有命中&#x2F;未命中两个逻辑。</p>
 <p>注：有些像sort&#x2F;数学函数之类的可以直接使用库函数，没必要编译到一个函数里面。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/04/image-20200407154950504-300x152.png">http://loopjump.com/wp-content/uploads/2020/04/image-20200407154950504-300x152.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/hekaton-me-pq-lib.png" alt="hekaton-me-pq-lib.png"></p>
 <h3 id="Restriction"><a href="#Restriction" class="headerlink" title="Restriction"></a>Restriction</h3><p>为了极限性能，带来的一些限制：</p>
 <ul>
 <li>option功能只支持编译时确定的情况</li>

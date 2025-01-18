@@ -224,7 +224,7 @@
 <li>NVMe SSD（500K IOPS，&lt;100us延迟）、3DXPoint SSD（~10us）等低延迟设备下，内核IO栈已经成为了瓶颈。</li>
 <li>RDMA：同交换机下4KB的包需要7us。PolarFS用混合的Send&#x2F;Recv和Read&#x2F;Write，大量数据用SR，小包用RW，polling CQ以避免上下文切换。</li>
 </ul>
-<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/image-20200611104620885-1024x440.png">http://loopjump.com/wp-content/uploads/2020/06/image-20200611104620885-1024x440.png</a></p>
+<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><p><img src="https://blogimage.loopjump.com/2020/polarfs-arch.png" alt="polarfs-arch.png"></p>
 <p>整体架构分成两层：</p>
 <ul>
 <li>下层是storage layer：负责管理所有的磁盘资源。</li>

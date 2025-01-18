@@ -223,7 +223,7 @@
 <li>Distributed headers：对于multi-256B的节点，传统方式是将header放到整个节点的头部，LB+tree是将header分散到每个256B block上。</li>
 </ol>
 <h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>两种安装3DXPoint的方式</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430151750634-300x151.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430151750634-300x151.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/3dxpoint-install.png" alt="3dxpoint-install.png"></p>
 <p>Memory Mode：将DRAM视为3DXPoint的缓存。好处是应用不需要修改，坏处是DRAM不支持持久化，再就是从3DXPoint load数据慢，</p>
 <p>App-direct Mode：在3DXPoint上安装文件系统，使用PMDK将3DXPoint的文件<em>mmap</em>到进程虚拟地址空间，OS访问3DXPoint要绕过page cache。</p>
 <h3 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h3><p>persist op &#x3D; clwb + sfence</p>
@@ -254,20 +254,14 @@
 <li>避免使用log，用NAW</li>
 </ol>
 <h2 id="LB-Tree设计"><a href="#LB-Tree设计" class="headerlink" title="LB+Tree设计"></a>LB+Tree设计</h2><p>结构：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430162647322-300x116.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430162647322-300x116.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/lbtree-design.png" alt="lbtree-design.png"></p>
 <p>LB+Tree使用了HTM，HTM事务内不能使用clwb之类的指令，因为HTM靠缓存本地CPU修改来实现原子性。LB+Tree用lock比特来解决这个问题。</p>
-<h3 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430163449439-300x212.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430163449439-300x212.png</a></p>
+<h3 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-search.png" alt="lbtree-search.png"></p>
 <h3 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h3><p>不涉及node分裂合并。只改bitmap即可。所以只用一个NAW就能实现。</p>
-<h3 id="降低insert开销"><a href="#降低insert开销" class="headerlink" title="降低insert开销"></a>降低insert开销</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430230141217-300x150.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430230141217-300x150.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0a6440c2-c63e-47a5-a2ce-f0103a2b5286/image-20200430230141217.png" alt="image-20200430230141217.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430230141217-300x150.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430230141217-300x150.png</a></p>
+<h3 id="降低insert开销"><a href="#降低insert开销" class="headerlink" title="降低insert开销"></a>降低insert开销</h3><p><img src="https://blogimage.loopjump.com/2017/lbtree-insert.png" alt="lbtree-insert.png"></p>
 <p>基于 ‘一个cache line里面写一个word还是多个word不影响写性能，但写多个line比写一个line性能差’ 的特性，因为每次插入必须要改header，所以尽量将新key插入line 0。如图5，insert 3的时候，将line 0腾出来。</p>
-<h3 id="logless节点分裂"><a href="#logless节点分裂" class="headerlink" title="logless节点分裂"></a>logless节点分裂</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430235237315-300x206.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430235237315-300x206.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0fbf755d-556e-42c3-8883-62dc460e74c0/image-20200430235237315.png" alt="image-20200430235237315.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200430235237315-300x206.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200430235237315-300x206.png</a></p>
-<h3 id="Multi-256B节点"><a href="#Multi-256B节点" class="headerlink" title="Multi-256B节点"></a>Multi-256B节点</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200501000456920-300x129.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200501000456920-300x129.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/58c7882c-fd41-49b4-9162-be5d3a857c2e/image-20200501000456920.png" alt="image-20200501000456920.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/05/image-20200501000456920-300x129.png">http://loopjump.com/wp-content/uploads/2020/05/image-20200501000456920-300x129.png</a></p>
+<h3 id="logless节点分裂"><a href="#logless节点分裂" class="headerlink" title="logless节点分裂"></a>logless节点分裂</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-logless-split.png" alt="lbtree-logless-split.png"></p>
+<h3 id="Multi-256B节点"><a href="#Multi-256B节点" class="headerlink" title="Multi-256B节点"></a>Multi-256B节点</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-multi256b-node.png" alt="lbtree-multi256b-node.png"></p>
 <p>alt除了指示S0&#x2F;S1，同时还指示了2~m的H0&#x2F;H1，这m-1个H0&#x2F;H1的切换是一体切换的。</p>
 </section>
     <!-- Tags START -->
