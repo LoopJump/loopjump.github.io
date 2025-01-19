@@ -203,7 +203,7 @@
   <article class="post-article">
     <section class="markdown-content"><p>Flexible Paxos: Quorum intersection revisited 这篇论文重新审视了Paxos中关于Quorum的问题。在Basic Paxos中，要求任何quorum都有交集（通常选择多数派作为quorum）。事实上，这个要求可以放宽到Paxos的两个阶段prepare&#x2F;accept阶段的quorum有交集即可。</p>
 <p>我们从Basic Paxos证明过程简单描述为什么放宽后算法依然正确（原论文最后给了一个TLA+的形式化证明）。</p>
-<p>在前文<a target="_blank" rel="noopener" href="http://loopjump.com/basic_paxos_proof/">Basic Paxos证明过程</a>中，我们看到，Theorem 1的证明关键点在于$\exists B\triangle\in (C_{qrm} \cap B_{vot})$。$ B\triangle $的存在，使得如果后续的Ballot C想投票，则在prepare阶段，一定会通过$MaxVote(C_{bal}, C_{qrm}, \mathcal{B}) $问到Ballot B投的dec。</p>
+<p>在前文<a target="_blank" rel="noopener" href="http://loopjump.com/basic_paxos_proof/">Basic Paxos证明过程</a>中，我们看到，Theorem 1的证明关键点在于$\exists B\triangle\in (C_{qrm} \cap B_{vot})$。$ B\triangle $的存在，使得如果后续的Ballot C想投票，则在prepare阶段，一定会通过$MaxVote(C_{bal}, C_{qrm}, \cal{B}) $问到Ballot B投的dec。</p>
 <p>那么，在Basic Paxos协议中，$\exists B\triangle\in (C_{qrm} \cap B_{vot})$条件之所以成立，是因为 $ B_{qrm} \subseteq B_{vot}$ 并且 $ B_{qrm} \cap C_{qrm}\neq \emptyset$。</p>
 <p>由此我们可以知道，Basic Paxos协议要求任何quorum都是有交集是保证Paxos协议正确性的<strong>充分不必要条件</strong>。我们可以把约束放宽到**$ C_{qrm} \cap B_{vot} \neq \emptyset $**即可。</p>
 <p>这个条件表达的意思是，<strong>prepare阶段和accept阶段的quorum交集不空即可</strong>。文中称这种协议为Flexible Paxos。</p>

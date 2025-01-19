@@ -246,8 +246,8 @@
 <p>则memory component的行数为$B\cdot P$，第i层行数$T^{i+1}\cdot B\cdot P$ 。设总共$N$行，则最后一层的数据量为$N\cdot\frac{T}{T+1}$（这个是大致数值，按说要按等比数列推算，这里是依据层间数据比率算的粗略的值）。反过来，N行数据可能要有$L&#x3D;\lceil log_T(\frac N{B\cdot P}\cdot \frac T{T+1})\rceil$ 层。</p>
 <p><strong>write cost (write amplification)</strong></p>
 <p>衡量指标：一个写请求的数据，直到数据最后被merge到最底层时，平均的IO次数。</p>
-<p>leveling merge从memory component merge到最底层过程中，每层需要T-1次（本层满），因为该记录是同page内其他记录等价的，所以平均的IO次数是$$O(T\cdot\frac LB)$$。</p>
-<p>tiering merge中，每层每个page最多只会被merge一次，所以总共T次，page内每个记录平均IO次数是$$O(\frac L B)$$。</p>
+<p>leveling merge从memory component merge到最底层过程中，每层需要T-1次（本层满），因为该记录是同page内其他记录等价的，所以平均的IO次数是$O(T\cdot\frac LB)$。</p>
+<p>tiering merge中，每层每个page最多只会被merge一次，所以总共T次，page内每个记录平均IO次数是$O(\frac L B)$。</p>
 <p><strong>point query cost</strong></p>
 <p>点查询受bloom filter优化点影响很大。</p>
 <p>在没有bloom filter的情况下：对于leveling平均是$O(L)$，对于tiering平均是$O(T\cdot L)$。</p>
@@ -283,7 +283,7 @@
 </ul>
 <p>根据这几个问题和对应的优化，目前学术界大致的工作可以总结如图。</p>
 <p><img src="https://blogimage.loopjump.com/2020/lsmtree-opt-summary.png" alt="lsmtree-opt-summary.png"></p>
-<h3 id="降低写放大"><a href="#降低写放大" class="headerlink" title="降低写放大"></a>降低写放大</h3><h3 id="tiering"><a href="#tiering" class="headerlink" title="tiering"></a>tiering</h3><p>**WriteBuffer Tree(WB-tree)**：一种partitioned tiering with vertical grouping的变体。</p>
+<h3 id="降低写放大"><a href="#降低写放大" class="headerlink" title="降低写放大"></a>降低写放大</h3><h3 id="tiering"><a href="#tiering" class="headerlink" title="tiering"></a>tiering</h3><p>**WriteBuffer Tree(WB-tree) **：一种partitioned tiering with vertical grouping的变体。</p>
 <p><strong>Lightweight Compaction Tree（LWC-tree）</strong>：也是一种partitioned tiering with vertical grouping的变体，并且解决了sstable group之间的workload balance。</p>
 <p><strong>PebbleDB</strong>：还是一种partitioned tiering with vertical grouping的变体，通过某种方式来确定group的key-range。</p>
 <p><strong>dCompaction</strong>：引入一个虚拟sstable和虚拟merge的概念，虚拟merge不真做，这样等查询性能下降超过一定阈值再真触发merge。[ ? ]</p>

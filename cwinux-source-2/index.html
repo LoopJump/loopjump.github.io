@@ -215,7 +215,7 @@
 <p>Cwinux中，CwxCommander符合第一种情形。</p>
 <p>对于第一种情形，例如，在Java GUI编程中，我们可以使用库中自带工具箱中的Menu类来添加一个菜单。该Menu类的开发者并不知道某个Menu的MenuItem对应的动作时什么，但可以指定一个Command类，这个Command类具有一个函数execute。Menu的使用者从Command派生一个子类ConcreteCommand，在ConcreteCommand的execute函数中实现具体的工作。这种例子中，Command模式是面向对象版本的回调函数机制。</p>
 <p>Command的结构：</p>
-<p><img src="https://blogimage.loopjump.com/2014/Commander_pattern.gif" alt="Command_patter"></p>
+<p><img src="https://blogimage.loopjump.com/2014/Commander_pattern.png" alt="Command_patter"></p>
 <p>CwxCommander，CwxCmdOp等类就是Cwinux中Command模式的实现。</p>
 <p>在cmn&#x2F;CwxCommander.h文件中定义了两个类 CwxCmdOp和CwxCommander。</p>
 <p>CwxCmdOp代码如下：</p>

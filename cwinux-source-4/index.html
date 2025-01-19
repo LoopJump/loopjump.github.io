@@ -224,7 +224,7 @@
 </li>
 </ol>
 <p>Reactor模式的框架如图。</p>
-<p><img src="https://blogimage.loopjump.com/2014/reactor_pattern.jpg" alt="reactor_pattern.jpg"></p>
+<p><img src="https://blogimage.loopjump.com/2014/reactor_pattern.png" alt="reactor_pattern.png"></p>
 <p>Handle 指的是文件描述符fd，包括建立监听的fd，网络连接fd等。</p>
 <p>EventDemultiplexer是事件分发器。在Linux下，就是epoll（早期可能是select&#x2F;poll等）。EventDemultiplexer是理解Reactor模式的重点。事实上，了解EventDemultiplexer（epoll）就基本了解Reactor模式的工作过程了。epoll在APUE中有介绍，简单地说，<strong>epoll可以管理若干网络连接的文件描述符fd，当其中的某些fd有事件发生时epoll返回，告诉开发者，开发者处理这些fd上的事件</strong>。关于epoll的详细介绍可以参考APUE和文末链接。</p>
 <p>EventHandler是事件处理程序。例如当我们知道某个网络连接fd上的数据都是预定义的消息，那么可以写一个MyEventHandler，这个EventHandler用来读取数据并打包成一个消息。在面向对象编程中，EventHandler通常是父类或者接口，我们所写的MyEventHandler通常继承自EventHandler，实现具体的功能。</p>
