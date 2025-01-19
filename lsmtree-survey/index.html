@@ -271,7 +271,7 @@
 <li>对于tiering，最底层的T个component都是重复的，所以space amplification大约为$O(T)$。</li>
 </ul>
 <p>上述结果的汇总：</p>
-<p><img src="https://blogimage.loopjump.com/2020/summary.png" alt="summary.png"></p>
+<p><img src="https://blogimage.loopjump.com/2020/cost-analysis-summary.png" alt="cost-analysis-summary.png"></p>
 <h2 id="LSM-tree-improvements"><a href="#LSM-tree-improvements" class="headerlink" title="LSM-tree improvements"></a>LSM-tree improvements</h2><h3 id="LSM-tree优化的分类"><a href="#LSM-tree优化的分类" class="headerlink" title="LSM-tree优化的分类"></a>LSM-tree优化的分类</h3><p>LSMTree的几个问题：</p>
 <ul>
 <li>写放大：尽管事务wal顺序写然后写memtable，避免了B+树这类in-place的修改，但merge操作还是引入了一些写放大。</li>
@@ -282,7 +282,7 @@
 <li>二级索引：如何低代价维护二级索引。</li>
 </ul>
 <p>根据这几个问题和对应的优化，目前学术界大致的工作可以总结如图。</p>
-<p><img src="https://blogimage.loopjump.com/2020/lsmtree-opt-summary.png" alt="lsmtree-opt-summary.png"></p>
+<p><img src="https://blogimage.loopjump.com/2020/lsmtree-improvements-taxonomy.png" alt="lsmtree-improvements-taxonomy.png"></p>
 <h3 id="降低写放大"><a href="#降低写放大" class="headerlink" title="降低写放大"></a>降低写放大</h3><h3 id="tiering"><a href="#tiering" class="headerlink" title="tiering"></a>tiering</h3><p>**WriteBuffer Tree(WB-tree) **：一种partitioned tiering with vertical grouping的变体。</p>
 <p><strong>Lightweight Compaction Tree（LWC-tree）</strong>：也是一种partitioned tiering with vertical grouping的变体，并且解决了sstable group之间的workload balance。</p>
 <p><strong>PebbleDB</strong>：还是一种partitioned tiering with vertical grouping的变体，通过某种方式来确定group的key-range。</p>
@@ -352,7 +352,7 @@
 <li>async-simple：插入和删除都异步（先把更新放到异步队列）</li>
 <li>async-session：在async-simple基础上，提供session一致性（实现方式是在client端维护local cache来保存update）。</li>
 </ul>
-<p>**DELI(Defered lightweight indexing)**：改进了Diff-Index的sync-insert，在merge时，扫描主键component，扫到一个索引列值对应的多个主键列时，把旧的主键拿出来用于删除二级索引。</p>
+<p>**DELI(Defered lightweight indexing) **：改进了Diff-Index的sync-insert，在merge时，扫描主键component，扫到一个索引列值对应的多个主键列时，把旧的主键拿出来用于删除二级索引。</p>
 <p>《Efficient data ingestion and query processing for LSM-based storage systems》（作者的另一个工作） 提出了几种基于LSM的二级索引和过滤器等方案。该工作实验分析了batched lookup、stateful B+tree search cursor 和 blocked bloom filter。其他的一些优化思路是，lasy维护二级索引，通过二级索引拿到pk后也validate一下sk。</p>
 <h3 id="-5"><a href="#-5" class="headerlink" title=""></a></h3><ol start="3">
 <li><strong>统计信息收集</strong></li>
