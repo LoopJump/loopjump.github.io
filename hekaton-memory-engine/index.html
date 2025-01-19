@@ -237,7 +237,6 @@
 <p>有些编译执行的方式是， 每个operator通常都有自己的一组接口，每个接口都表现为一个C语言函数，operator间通过接口调用。这种基于函数的方式，会有函数调用和函数传参的开销。</p>
 <p>Hekaton为了提升极致性能，采用的方式并不一样。Hekaton将每一个存储过程直接编译成单独的一个函数，跨operator的调用使用的是label和goto。一个带filter的scan的执行计划，编译完可能就是如图示的样子，空心圈表示一个label，箭头表示goto，filter根据谓词可能有命中&#x2F;未命中两个逻辑。</p>
 <p>注：有些像sort&#x2F;数学函数之类的可以直接使用库函数，没必要编译到一个函数里面。</p>
-<p><img src="https://blogimage.loopjump.com/2020/hekaton-me-pq-lib.png" alt="hekaton-me-pq-lib.png"></p>
 <h3 id="Restriction"><a href="#Restriction" class="headerlink" title="Restriction"></a>Restriction</h3><p>为了极限性能，带来的一些限制：</p>
 <ul>
 <li>option功能只支持编译时确定的情况</li>

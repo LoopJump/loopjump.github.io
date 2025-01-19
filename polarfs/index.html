@@ -274,7 +274,7 @@
 <p>具体地，shared memory上有多个ring buffer，PolarDB将写请求投入其中一个，并等待请求完成。PolarSwitch针对每个ring buffer有一个线程做polling，发现有新的请求，则将请求从ring buffer拿出来，转发到对应的ChunkServer。</p>
 <p>ChunkServer使用WAL来保证IO请求修改数据的原子性和持久性。Log被复制到其他副本，用的是ParallelRaft协议。多副本持久化之后，该IO请求就被认为提交成功了。</p>
 <p>大致的IO执行流程如图：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/image-20200615145328158-1024x762.png">http://loopjump.com/wp-content/uploads/2020/06/image-20200615145328158-1024x762.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/polarfs-io-exec-flow.png" alt="polarfs-io-exec-flow.png"></p>
 <p>ChunkServer内部有一个IoScheduler，负责协调并发的IO请求。</p>
 <p>ChunkServer使用一个polling模型和事件驱动的有穷状态机。IO线程polling RDMA和NVMe队列里面的请求，并在该线程中处理请求。当一个IO请求需要触发其他异步子IO请求时，线程会保存上下文，然后执行下一个polling到的请求。每个IO请求都有一个单独的cpu core和独立的RMDA和NVMe队列。总体上，IO线程不需要有任何共享数据，因此也不会有锁等待的开销。</p>
 <h2 id="Consistency-Model"><a href="#Consistency-Model" class="headerlink" title="Consistency Model"></a>Consistency Model</h2><p>Raft的主要限制是必须顺序确认。在高并发多连接通信的情况下，请求乱序的概率大增，导致后面的请求被迫等待，整个吞吐和长尾延迟变大。</p>
@@ -306,7 +306,7 @@
 <h2 id="Design-Choices-And-Lessons"><a href="#Design-Choices-And-Lessons" class="headerlink" title="Design Choices And Lessons"></a>Design Choices And Lessons</h2><h3 id="Centralized-or-Decentralized-There"><a href="#Centralized-or-Decentralized-There" class="headerlink" title="Centralized or Decentralized There"></a>Centralized or Decentralized There</h3><p>集中式系统，如GFS，通常依赖单个master节点来管理元数据，优点是实现简单，缺点是有单点瓶颈。</p>
 <p>分布式系统，如Dynamo，优点是可靠性更高，缺点是实现更复杂。</p>
 <p>PolarFS做了折中，PolarCtrl是集中式的，但ChunkServer之间是分布式的。</p>
-<h3 id="Snapshot-from-Bottom-to-Top"><a href="#Snapshot-from-Bottom-to-Top" class="headerlink" title="Snapshot from Bottom to Top"></a>Snapshot from Bottom to Top</h3><p>PolarFS和PolarDB两层都有自己的事务日志来支持原子性和持久化。PolarFS提供了disk outage consistency 给PolarDB&#x2F;libpfs来支持数据库层面做一致性快照。disk outage consistency是指存在一个较小的时间区间$$[T_0, T_{trigger_snapshot}]$$，区间左侧发生的IO请求的效果均在快照内，区间右侧均不在快照内，区间内不确定。</p>
+<h3 id="Snapshot-from-Bottom-to-Top"><a href="#Snapshot-from-Bottom-to-Top" class="headerlink" title="Snapshot from Bottom to Top"></a>Snapshot from Bottom to Top</h3><p>PolarFS和PolarDB两层都有自己的事务日志来支持原子性和持久化。PolarFS提供了disk outage consistency 给PolarDB&#x2F;libpfs来支持数据库层面做一致性快照。disk outage consistency是指存在一个较小的时间区间$[T_0, T_{trigger_snapshot}]$，区间左侧发生的IO请求的效果均在快照内，区间右侧均不在快照内，区间内不确定。</p>
 <p>实现方式：PolarCtrl发起，通知PolarSwitch，PolarSwitch给请求打标来卡区间，ChunkServer上用copy-on-write方式实现。</p>
 <h3 id="Outside-Service-vs-Inside-Reliability"><a href="#Outside-Service-vs-Inside-Reliability" class="headerlink" title="Outside Service vs Inside Reliability"></a>Outside Service vs Inside Reliability</h3><p>降低恢复时间：将chunk拆成多个小的128KB的piece，复制一个chunk的任务变成了一组复制piece的子任务，整体可以提升恢复时间（也消耗了更多的资源）。</p>
 </section>
