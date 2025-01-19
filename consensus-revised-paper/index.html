@@ -214,7 +214,7 @@
 <p>这篇论文说的就是从上一轮学习过程（或者叫上一轮到下一轮的信息传递过程）中，quorum的约束可以如何放松？</p>
 <p>Classis Paxos算法下的”all quorums will intersect”是能够完成信息传递的充分条件，但不是必要条件，这也是这篇revised文章可以放松的直接原因。</p>
 <p>论文Chapter1,2都是背景知识，Chapter8总结过于笼统，所以主体内容还是Chapter 3~7。这里大致罗列一下内容。</p>
-<p>主旨内容一句话总结：因为要解决上一轮到下一轮的信息传递，所以要求是上一轮的accept phase和下一轮的prepare phase要有交集。这也是为什么$\scr{Q}_{phase}^{epoch}$有上下标两个维度。4.2节的约束 $$\forall Q \in \scr{Q}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in \scr{Q}_2^f: Q \cap Q’ \ne \emptyset$$ 说的也还是这句话。根据这一主旨，可以有各种各样的放松方式。</p>
+<p>主旨内容一句话总结：因为要解决上一轮到下一轮的信息传递，所以要求是上一轮的accept phase和下一轮的prepare phase要有交集。这也是为什么${\scr{Q}}_{phase}^{epoch}$有上下标两个维度。4.2节的约束 $$\forall Q \in {\scr{Q}}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in {\scr{Q}}_2^f: Q \cap Q’ \ne \emptyset$$ 说的也还是这句话。根据这一主旨，可以有各种各样的放松方式。</p>
 <h2 id="Chapter-3-Known-revisions"><a href="#Chapter-3-Known-revisions" class="headerlink" title="Chapter 3 Known revisions"></a>Chapter 3 Known revisions</h2><p>这一节主要是讲的一些小的、比较直观的改进。</p>
 <p><strong>3.1 Negative response</strong>：Basic Paxos中，acceptor只会返回正面的prepare response和accept response，不满足条件的proposer会等超时换epoch重试。这里可以改进成如果acceptor发现条件不满足，可以返回一个negative response，告知proposer。一个proposer如果收到多数派的negative response，那就确定本epoch下，自己以后也不会成功，所以可以立即发起换epoch重试，不用再漫长的等待。</p>
 <p><strong>3.2 Bypassing phase two</strong>：如果proposer在prepare phase收到了多数派的prepare response是相同的，那么accept phase是可以省略的。也就是说，在Basic Paxos算法下，从上帝视角看，在某个时刻，如果存在一个系统快照下，多数派的acceptor的accept proposal相同，该proposal的值就已经被确定是会被chosen的（只是可能还未被任何进程知晓）。</p>
@@ -236,8 +236,8 @@
 <p>Fast Paxos：Proposer-&gt;Leader-&gt;Acceptor-&gt;Learner 中省略Leader的网络一跳，但要处理多个Proposer冲突情况，这个还比较复杂，不展开了。</p>
 <h2 id="Chapter-4-Quorum-intersection-revised"><a href="#Chapter-4-Quorum-intersection-revised" class="headerlink" title="Chapter 4 Quorum intersection revised"></a>Chapter 4 Quorum intersection revised</h2><h3 id="4-1-Quorum-intersection-across-phases"><a href="#4-1-Quorum-intersection-across-phases" class="headerlink" title="4.1 Quorum intersection across phases"></a>4.1 Quorum intersection across phases</h3><p>基本的思路是prepare phase的quorum Q1要和accept phase的quorum Q2有交集就行，两个phase的quorum之间可以不相交。</p>
 <p>以前写过一篇关于flexible paxos的<a target="_blank" rel="noopener" href="http://loopjump.com/flexible_paxos_quorum_revisited/">博客</a>，更详细一些，感兴趣的读者可以跳过去看看。</p>
-<h3 id="4-2-Quorum-intersection-across-epochs"><a href="#4-2-Quorum-intersection-across-epochs" class="headerlink" title="4.2 Quorum intersection across epochs"></a>4.2 Quorum intersection across epochs</h3><p>将$$\forall Q\in \scr{Q}_1^e, \forall f \in E, \forall Q’ \in \scr{Q}_2^f: Q\cap Q’ \ne \emptyset$$</p>
-<p>放松成$$\forall Q \in \scr{Q}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in \scr{Q}_2^f: Q \cap Q’ \ne \emptyset$$</p>
+<h3 id="4-2-Quorum-intersection-across-epochs"><a href="#4-2-Quorum-intersection-across-epochs" class="headerlink" title="4.2 Quorum intersection across epochs"></a>4.2 Quorum intersection across epochs</h3><p>将$$\forall Q\in {\scr{Q}}_1^e, \forall f \in E, \forall Q’ \in {\scr{Q}}_2^f: Q\cap Q’ \ne \emptyset$$</p>
+<p>放松成$$\forall Q \in {\scr{Q}}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’\in {\scr{Q}}_2^f: Q \cap Q’ \ne \emptyset$$</p>
 <p>也就是说，之前条件里面quorum是跟epoch无关的，现在关联上之后，条件可以放松：如果有人执行过accept phase，后面其他人可能成功的prepare phase (e &gt; f) 必须获知这一事实，也就是必须要跟前面这个accept phase的acceptor集合有交集。这里正是整篇文章的主旨所在。</p>
 <h3 id="4-3-Implications"><a href="#4-3-Implications" class="headerlink" title="4.3 Implications"></a>4.3 Implications</h3><h3 id="4-3-1-Bypassing-phase-two"><a href="#4-3-1-Bypassing-phase-two" class="headerlink" title="4.3.1 Bypassing phase two"></a>4.3.1 Bypassing phase two</h3><p>同3.2节类似，可以理解为3.2节基础上又增加”quorum引入epoch”。</p>
 <h3 id="4-3-2-Co-location-of-proposers-and-acceptors"><a href="#4-3-2-Co-location-of-proposers-and-acceptors" class="headerlink" title="4.3.2 Co-location of proposers and acceptors"></a>4.3.2 Co-location of proposers and acceptors</h3><p>Co-location of proposers and acceptors是指假设每个进程都既是proposer也是acceptor。在这个场景下，有些quorum变体。</p>
@@ -249,7 +249,7 @@
 <h3 id="4-3-4-Voting-for-epochs"><a href="#4-3-4-Voting-for-epochs" class="headerlink" title="4.3.4 Voting for epochs"></a>4.3.4 Voting for epochs</h3><p>略。3.9节演化过来的。</p>
 <h2 id="Chapter-5-Promises-revised"><a href="#Chapter-5-Promises-revised" class="headerlink" title="Chapter 5 Promises revised"></a>Chapter 5 Promises revised</h2><p>如果在某时刻，某个proposer得知了prepare response(e,f,v)，那么对于该proposer的这一轮e来讲，f之前的所有轮的Q2都已经不重要了，因为这个v已经确认是小于等于f的所有轮中的最新的结果了。</p>
 <p>所以，e轮在prepare phase能获得最新结果的充分条件是：</p>
-<p>$$\forall \in \scr{Q}_1^e, \forall g\in E: f&lt;g&lt;e \Longrightarrow \forall Q’\in \scr{Q}_2^g: Q\cap Q’ \ne \emptyset$$</p>
+<p>$$\forall Q \in {\scr{Q}}_1^e, \forall g\in E: f&lt;g&lt;e \Longrightarrow \forall Q’\in {\scr{Q}}_2^g: Q\cap Q’ \ne \emptyset$$</p>
 <h2 id="Chapter-6-Value-selection-revised"><a href="#Chapter-6-Value-selection-revised" class="headerlink" title="Chapter 6 Value selection revised"></a>Chapter 6 Value selection revised</h2><h3 id="6-1-Epoch-agnostic-algorithm"><a href="#6-1-Epoch-agnostic-algorithm" class="headerlink" title="6.1 Epoch agnostic algorithm"></a>6.1 Epoch agnostic algorithm</h3><p>这个变体方案是修改了value selection的方法，在Classic Paxos中，value selection就是原始论文里面提到的MaxVote：即收到的prepare response集合中epoch最大的那个proposal的值，这个计算过程也很简单，就是遍历这个prepare response集合。</p>
 <p>Epoch agnostic algorithm的修改是什么呢？它不再是像MaxVote一样按proposer粒度计算，而是按照Q2集合中元素Q的粒度计算。本质上是尝试逐个否定Q2的每个元素Q的方式，来排除一些val候选值。这个方法正确性的直觉是：真正被chosen的val是不会被否定掉的。</p>
 <p>举个例子：5个acceptor，简单多数派的quorum system，如果某时刻系统状态为：**a1{p1v1}, a2{p2v2}, a3{p3v3}, a4{nil}, a5{nil}**。如果按照Classic Paxos的MaxVote，则一定得到v1&#x2F;v2&#x2F;v3中的某个值，但我们实际上可以确定v1&#x2F;v2&#x2F;v3都没有被chosen，按照epoch agnostic algorithm的Value selection算法，得到的就是nil。</p>
@@ -261,7 +261,7 @@
 <p>不过还有问题：相同epoch不同value，可能导致value被覆盖写。这个问题可以通过限制accept，如果本地accept过epoch下的value，只有epoch和value都相同才accept，否则拒绝。</p>
 <p>不过这又带来一个问题，在value selection时，proposer收到一个epoch下的两个不同值，它要选哪个来提议呢？因为其中一个可能已经chosen，所以自己根据本地信息来决策选一个是不靠谱的。</p>
 <p>这个问题通过再加强quorum交集来解决：</p>
-<p>$$\forall Q \in \scr{Q}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’, Q’’\in \scr{Q}_2^f: Q \cap Q’ \cap Q’’ \ne \emptyset$$</p>
+<p>$$\forall Q \in {\scr{Q}}_1^e, \forall f \in E: f &lt; e \Longrightarrow \forall Q’, Q’’\in {\scr{Q}}_2^f: Q \cap Q’ \cap Q’’ \ne \emptyset$$</p>
 <p>事实上这个相交要求已经太强了(如果是简单多数派的话，Q+Q-N+Q&gt;N，可知Q&gt;2N&#x2F;3)。</p>
 <h3 id="7-4-Hybrid-epoch-allocation"><a href="#7-4-Hybrid-epoch-allocation" class="headerlink" title="7.4 Hybrid epoch allocation"></a>7.4 Hybrid epoch allocation</h3><p><img src="https://blogimage.loopjump.com/2019/hybrid-epoch-allac.png" alt="hybrid-epoch-allac.png.png"></p>
 <p>这节介绍混合的方案，略。</p>
