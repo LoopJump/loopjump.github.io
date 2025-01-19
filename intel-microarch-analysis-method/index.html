@@ -225,19 +225,19 @@
 <p><strong>Back-End瓶颈优化</strong></p>
 <p>Back-End瓶颈属于比较常见的一类，可以继续细分为memory bound和core bound，细分依据是执行单元的利用率。详细的指标可以参考 <a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/cpu-metrics-reference.html">https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/cpu-metrics-reference.html</a></p>
 <p>Memory bound的情况有比如cache miss、memory access。core bound的情况有比如除法指令要占用多个节拍，如果有多个除法指令就会争夺同一个除法部件。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7.png">http://loopjump.com/wp-content/uploads/2020/06/7.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/backend-bound.png" alt="backend-bound.png"></p>
 <p>针对memory bound的情况，Intel VTune工具可以进一步显示是哪个层次的存储瓶颈，包括从L1 cache到内存设备的各层。针对core bound的情况，Intel VTune可以显示Divider和Port Utilization两列情况，其中Divider指除法部件利用率，Port Utilization可以进一步展开看到各个port的利用率。</p>
 <p><strong>Front-End瓶颈优化</strong></p>
 <p>Front-End瓶颈可能来自 JIT代码和解释性代码，这类代码需要临时动态生成；带有分支跳转的代码和指令数比较多的代码也可能引起这类瓶颈。这类瓶颈一般可以通过优化代码段大小，编译器PGO等来优化。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/8.png">http://loopjump.com/wp-content/uploads/2020/06/8.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/frontend-bound.png" alt="frontend-bound.png"></p>
 <p>Intel VTune里面展示了Front-End Bound的两个方面：Front-End Latency和Front-End Bandwidth，前者反应多少节拍内没有uOps供应，后者反应有多少节拍内uOps没灌满4个。</p>
 <p><strong>Bad Speculation类型优化</strong></p>
 <p>这类问题指流水线干了一些没有用的活，这些指令最终都不能retire因而导致流水线白跑了，另外就是需要重新加载有用的指令也要耗时。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/9.png">http://loopjump.com/wp-content/uploads/2020/06/9.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/bad-speculation-bound.png" alt="bad-speculation-bound.png"></p>
 <p>这类问题主要就是分支预测失败导致。一般可以通过PGO来提高分支预测成功率，减少间接跳转分支等。</p>
 <p><strong>Retiring类型优化</strong></p>
 <p>一般retire高表示有用的指令都在提交，这是个好事。但是这不代表没有优化空间了。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/10-300x106.png">http://loopjump.com/wp-content/uploads/2020/06/10-300x106.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2020/retire-bound.png" alt="retire-bound.png"></p>
 <p>举个例子，CPU在执行一些很小的浮点数计算的时候，不能直接用浮点部件计算，需要执行一段特殊的uOps代码，这个过程称为FP Assists。FP Assist会显得前端供应很充足，但对于计算来讲效率其实比较低，属于是“低价走量”的情况。这种可以通过编译时制定DAZ&#x2F;FTZ来优化。</p>
 </section>
     <!-- Tags START -->

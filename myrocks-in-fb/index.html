@@ -230,7 +230,7 @@
 <li>性能与InnoDB持平</li>
 <li>机器数目减半</li>
 </ul>
-<h2 id="Background-And-Motivation"><a href="#Background-And-Motivation" class="headerlink" title="Background And Motivation"></a>Background And Motivation</h2><h3 id="UDB架构"><a href="#UDB架构" class="headerlink" title="UDB架构"></a>UDB架构</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/09/image-20200916211824537.png">http://loopjump.com/wp-content/uploads/2020/09/image-20200916211824537.png</a></p>
+<h2 id="Background-And-Motivation"><a href="#Background-And-Motivation" class="headerlink" title="Background And Motivation"></a>Background And Motivation</h2><h3 id="UDB架构"><a href="#UDB架构" class="headerlink" title="UDB架构"></a>UDB架构</h3><p><img src="https://blogimage.loopjump.com/2020/udb-arch.png" alt="udb-arch.png"></p>
 <p>其中， LBU&#x3D;Log Backup Unit，可以接收并保存最近一段时间的binlog；Wormhole是基于binlog的pub-sub服务，例如通知异地cache系统失效旧数据。</p>
 <p>每个region只有一个全数据副本，其中全副本的Primary-Replica用异步复制。</p>
 <p>每个region内有三个实例（1个Replica + 2个LBU），用Semi-sync复制。</p>
@@ -291,7 +291,7 @@
 <p><strong>Select模式</strong>：类似于Pair模式，使用MyShadow捕获的查询来验证两个实例。</p>
 <h3 id="修复不兼容的Query"><a href="#修复不兼容的Query" class="headerlink" title="修复不兼容的Query"></a>修复不兼容的Query</h3><p>InnoDB和MyRocks的隔离级别实现有差异。InnoDB默认用的是Repeatable Read，换成MyRocks之后，业务产生了更多的错误。最后是通过和业务开发沟通，让业务改用Read Committed。</p>
 <h3 id="真正迁移"><a href="#真正迁移" class="headerlink" title="真正迁移"></a>真正迁移</h3><p>切成master还比较难，需要一些信念 It required a leap of faith that。</p>
-<h2 id="迁移效果-1"><a href="#迁移效果-1" class="headerlink" title="迁移效果"></a>迁移效果</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/09/image-20200918094611693.png">http://loopjump.com/wp-content/uploads/2020/09/image-20200918094611693.png</a></p>
+<h2 id="迁移效果-1"><a href="#迁移效果-1" class="headerlink" title="迁移效果"></a>迁移效果</h2><p><img src="https://blogimage.loopjump.com/2020/compare-innodb-myrocks.png" alt="compare-innodb-myrocks.png"></p>
 <p>MyRocks空间占用是InnoDB空间占用的37.7%（2187.4 vs 824.4），其中InnoDB使用了压缩格式。最初压缩率大概是50%，后来将压缩算法从Zlib改成Zstandard并且加了PeriodicCompaction，进一步降低了空间占用。</p>
 <p>如果不提供读服务，仅作为备库接收复制输入，MyRocks的CPU效率比InnoDB高40%（0.89 vs 0.55）。</p>
 <p>有读流量时，MyRocks花费的CPU略低于InnoDB（1.83 vs 1.65，1.65指用了1.65个CPU）。</p>
