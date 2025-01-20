@@ -258,7 +258,7 @@
 <p>LB+Tree使用了HTM，HTM事务内不能使用clwb之类的指令，因为HTM靠缓存本地CPU修改来实现原子性。LB+Tree用lock比特来解决这个问题。</p>
 <h3 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-search.png" alt="lbtree-search.png"></p>
 <h3 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h3><p>不涉及node分裂合并。只改bitmap即可。所以只用一个NAW就能实现。</p>
-<h3 id="降低insert开销"><a href="#降低insert开销" class="headerlink" title="降低insert开销"></a>降低insert开销</h3><p><img src="https://blogimage.loopjump.com/2017/lbtree-insert.png" alt="lbtree-insert.png"></p>
+<h3 id="降低insert开销"><a href="#降低insert开销" class="headerlink" title="降低insert开销"></a>降低insert开销</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-insert.png" alt="lbtree-insert.png"></p>
 <p>基于 ‘一个cache line里面写一个word还是多个word不影响写性能，但写多个line比写一个line性能差’ 的特性，因为每次插入必须要改header，所以尽量将新key插入line 0。如图5，insert 3的时候，将line 0腾出来。</p>
 <h3 id="logless节点分裂"><a href="#logless节点分裂" class="headerlink" title="logless节点分裂"></a>logless节点分裂</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-logless-split.png" alt="lbtree-logless-split.png"></p>
 <h3 id="Multi-256B节点"><a href="#Multi-256B节点" class="headerlink" title="Multi-256B节点"></a>Multi-256B节点</h3><p><img src="https://blogimage.loopjump.com/2020/lbtree-multi256b-node.png" alt="lbtree-multi256b-node.png"></p>
