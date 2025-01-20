@@ -216,7 +216,7 @@
 <p><img src="https://blogimage.loopjump.com/2021/compartmentalization-more-replica.png" alt="compartmentalization-more-replica.png"></p>
 <h3 id="Leaderless-Read"><a href="#Leaderless-Read" class="headerlink" title="Leaderless Read"></a>Leaderless Read</h3><p>Multi-Paxos读请求是发送到leader的，实际上读写路径可以剥离开。</p>
 <p>读请求的处理类似于Paxos Quorum Reads方法，client先问read quorum，然后以最大的log index去replica上等该log index被apply然后读取数据。</p>
-<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-leaderless-read..png" alt="compartmentalization-leaderless-read..png"></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-leaderless-read.png" alt="compartmentalization-leaderless-read..png"></p>
 <p>不过论文也没提发生leader change等情况，虽然解决起来应该也不麻烦。</p>
 <h3 id="Batch"><a href="#Batch" class="headerlink" title="Batch"></a>Batch</h3><p>就是常见的batch方法。专门搞了一层batcher来负责batch，减轻proposer负担。</p>
 <p><img src="https://blogimage.loopjump.com/2021/compartmentalization-batch.png" alt="compartmentalization-batcb.png"></p>
