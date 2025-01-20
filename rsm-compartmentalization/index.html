@@ -204,24 +204,24 @@
     <section class="markdown-content"><p>Scaling Replicated State Machines with Compartmentalization，VLDB 21’</p>
 <p>本文是针对Multi-Paxos协议的实现方案瓶颈做的扩展性方案，主要的方法论是<strong>compartmentalization</strong>，这个词本意是分离，在这里作为一种方法论，其含义是将各个功能进行剥离分开，并分别进行扩展。</p>
 <p>Multi-Paxos的多个模块都有一些实现方案上的瓶颈，假设读者已经熟悉Multi-Paxos协议内容，我们根据论文的思路看看各个瓶颈如何通过compartmentalization来扩展。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002170548164-300x160.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002170548164-300x160.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-multi-paxos.png" alt="compartmentalization-multi-paxos.png"></p>
 <h2 id="各个功能的Compartmentalization"><a href="#各个功能的Compartmentalization" class="headerlink" title="各个功能的Compartmentalization"></a>各个功能的Compartmentalization</h2><h3 id="Proxy-Leader"><a href="#Proxy-Leader" class="headerlink" title="Proxy Leader"></a>Proxy Leader</h3><p>Proposer实际上有两块功能，一个是sequence，一个是broadcast。实际上这两个功能是可以拆开的，sequence本质上要求串行，但broadcast是完全可以并发起来的。基于此论文的方案是proposer和acceptor之间引入一层proxy leaders，proposer只负责sequence，一旦若干command确定了顺序，就可以由不同的proxy leader来负责broadcast。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002171303663-300x158.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002171303663-300x158.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-proxy-leader.png" alt="compartmentalization-proxy-leader.png"></p>
 <h3 id="Acceptor-Grid"><a href="#Acceptor-Grid" class="headerlink" title="Acceptor Grid"></a>Acceptor Grid</h3><p>同flexible paxos，如图示。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002171446551-300x140.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002171446551-300x140.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-accept-grid.png" alt="compartmentalization-accept-grid.png"></p>
 <p>需要指出的是，虽然图中一个command被chosen只需要6个acceptor中的2个相比简单多数派的4个少很多，但该grid方式最差情况下只能容忍一个acceptor失效，而简单多数派可以容忍3个。</p>
 <p>具体原理可以参考本站其他文章。</p>
 <h3 id="More-Replica"><a href="#More-Replica" class="headerlink" title="More Replica"></a>More Replica</h3><p>一个已经chosen的command，在replica上执行，完成后回包给client。</p>
 <p>扩展replica数目，可以降低每一个replica回包给client的负载，如图每个replica只需要回1&#x2F;3。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002173720693-300x133.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002173720693-300x133.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-more-replica.png" alt="compartmentalization-more-replica.png"></p>
 <h3 id="Leaderless-Read"><a href="#Leaderless-Read" class="headerlink" title="Leaderless Read"></a>Leaderless Read</h3><p>Multi-Paxos读请求是发送到leader的，实际上读写路径可以剥离开。</p>
 <p>读请求的处理类似于Paxos Quorum Reads方法，client先问read quorum，然后以最大的log index去replica上等该log index被apply然后读取数据。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002175550201-300x167.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002175550201-300x167.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-leaderless-read..png" alt="compartmentalization-leaderless-read..png"></p>
 <p>不过论文也没提发生leader change等情况，虽然解决起来应该也不麻烦。</p>
 <h3 id="Batch"><a href="#Batch" class="headerlink" title="Batch"></a>Batch</h3><p>就是常见的batch方法。专门搞了一层batcher来负责batch，减轻proposer负担。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002180100680-300x144.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002180100680-300x144.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-batch.png" alt="compartmentalization-batcb.png"></p>
 <h3 id="Unbatcher"><a href="#Unbatcher" class="headerlink" title="Unbatcher"></a>Unbatcher</h3><p>Unbatcher是replica回包给client的时候，跟batch对应的一个操作，这个也可以直接scale。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2021/10/image-20211002180444224-300x146.png">http://loopjump.com/wp-content/uploads/2021/10/image-20211002180444224-300x146.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2021/compartmentalization-unbatcher.png" alt="compartmentalization-unbatcher.png"></p>
 <h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这篇论文的主要价值是提出了一个方法Compartmentalization，它的核心含义是分离功能并分别扩展。这是一种方法论思想，这种思想实际上在很多地方已经在用了，例如数据架构等等方面被称为disaggregation的方法也是类似的道理。</p>
 <p>而且，Compartmentalization是基于已有方案做扩展性，思路比较直观，一看就懂，因此实现也比较简单。</p>
 <p>但把Compartmentalization用在Multi-Paxos协议实现上这个想法也有一些需要探讨的地方。</p>
