@@ -221,16 +221,12 @@
 </ul>
 <p>使用这些统计信息，优化器将为每一个boolean factor分配一个selectivity factor（记为F），该值粗略地等于满足该条件的记录比例。</p>
 <p>以下有几个例子（基本上可以用简单的数理统计知识推算）：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649120911007-300x202.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649120911007-300x202.jpg</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c7a7c1f3-0111-4d6a-a055-c4d859333302/1649120911007.jpg" alt="1649120911007.jpg"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1649120911007-300x202.jpg">http://loopjump.com/wp-content/uploads/2022/04/1649120911007-300x202.jpg</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/access-path-selection-cost.png" alt="access-path-selection-cost.png"></p>
 <p>单表查询cost取决于 selectivity factors和统计信息。</p>
 <p>除了cost之外，优化还受interesting order（query block的GROUP BY或者order by子句中用到的顺序）影响。</p>
 <p>将三个因素考虑进来，单表的优化过程就是针对每个access path计算cost，如果这个access path没有interesting order，则还需要加上排序代价，最后找到cost最小的access path。这里排序代价的问题是指：比如用户查询是select * from t1 order by c2，但当前access path是走c3,c1索引扫描，则扫出来的结果还要进行按c2排序，这个sort cost也要算进来；如果当前access path就是按照c2索引扫描，则数据已经是按c2有序，不再需要额外的排序开销。</p>
 <p>代价公式（跟具体存储引擎实现关系很大，这里可以简单看看）</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-091052@2x-300x108.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-091052@2x-300x108.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/adba45d2-7c6a-4d6e-b371-6685122c36cf/WX20220405-0910522x.png" alt="WX20220405-091052@2x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-091052@2x-300x108.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-091052@2x-300x108.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/access-path-selection-cost-formular.png" alt="access-path-selection-cost-formular.png"></p>
 <p>其中，W是Page Fetch和RSI CALL开销的相对权重。</p>
 <h2 id="JOINS"><a href="#JOINS" class="headerlink" title="JOINS"></a>JOINS</h2><p><strong>join基本概念</strong></p>
 <p>outer&#x2F;inner relation, join predicate, join columns</p>
@@ -254,16 +250,10 @@
 <p><strong>图示</strong></p>
 <p>以如下的查询为例</p>
 <p>先针对每一张单表构造如下的图示，以下图第一条线段为例，其含义为EMP表的一个access path为通过index EMP.DNO查询，代价为C(EMP.DNO)，且基数为N1。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-153113@2x-300x271.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-153113@2x-300x271.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/59abe3b6-23f8-4596-965c-045674dac532/WX20220405-1531132x.png" alt="WX20220405-153113@2x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-153113@2x-300x271.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-153113@2x-300x271.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/access-path-selection-WX20220405-153113@2x.png" alt="access-path-selection-WX20220405-153113@2x.png"></p>
 <p>在单表基础上，考虑第二张表的join，再考虑进第三张表，如下两图示。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-152939@2x-1024x619.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-152939@2x-1024x619.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e946969e-acc6-4fed-aed3-89950a01dbe7/WX20220405-1529392x.png" alt="WX20220405-152939@2x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-152939@2x-1024x619.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-152939@2x-1024x619.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-154428@2x-1024x737.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-154428@2x-1024x737.png</a></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220405-154428@2x-1024x737.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220405-154428@2x-1024x737.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d6fce2f6-dca0-4a06-9dbf-b063f18bb634/WX20220405-1544282x.png" alt="WX20220405-154428@2x.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/access-path-selection-WX20220405-152939@2x.png" alt="access-path-selection-WX20220405-152939@2x.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/access-path-selection-WX20220405-154428@2x.png" alt="access-path-selection-WX20220405-154428@2x.png"></p>
 <h2 id="嵌套查询-Nested-Queries"><a href="#嵌套查询-Nested-Queries" class="headerlink" title="嵌套查询 Nested Queries"></a>嵌套查询 Nested Queries</h2><p>例子：</p>
 <p>查询1：<code>SELECT NAME FROM EMPLOYEE WHERE SALARY = (SELECT AVG(SALARY) FROM EMPLOYEE);</code></p>
 <p>查询2：<code>SELECT NAME FROM EMPLOYEE WHERE DEPARTMENT_NUMBER IN (SELECT DEPARTMENT_NUMBER FROM DEPARTMENT WHERE LOCATION = &#39;DENVER&#39;);</code></p>

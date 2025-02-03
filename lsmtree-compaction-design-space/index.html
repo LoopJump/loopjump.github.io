@@ -204,7 +204,7 @@
     <section class="markdown-content"><p>《Constructing and Analyzing the LSM Compaction Design Space》 VLDB’21</p>
 <h3 id="四个原语"><a href="#四个原语" class="headerlink" title="四个原语"></a>四个原语</h3><p>Compaction是LSM-Tree引擎中最重要的环节之一，一方面它主导了LSM-Tree的形状进而影响了LSM-Tree的包括性能、空间占用等对外表现，另一方面它本身要消耗相当的计算和IO资源，容易造成抖动等问题。</p>
 <p>但目前业界针对compaction较少有系统的探索，很多系统的compaction策略依赖工程师的个人经验，大量可能的策略未被分析测试。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227110057804.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227110057804.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/lsmtree-compaction-strategy.png" alt="lsmtree-compaction-strategy.png"></p>
 <p>这篇论文旨在构造和分析compaction的design space，力求有一个较为系统的分析。</p>
 <p>论文首先识别出了四个原语（primitive），然后据此构建了design space：</p>
 <ul>
@@ -214,7 +214,7 @@
 <li>Data movement policy：具体移动哪些data block</li>
 </ul>
 <p>四个维度下的各自具体例子：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227110741910.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227110741910.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/lsmtree-compaction-example.png" alt="lsmtree-compaction-example.png"></p>
 <p>详细一点地说，</p>
 <p><strong>Compaction trigger</strong></p>
 <ul>
@@ -251,7 +251,7 @@
 </ul>
 <p>Design Space</p>
 <p>估算下来，space的cardinality有10^4之多。一些典型的例子如图。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220227113828587-1024x1007.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220227113828587-1024x1007.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/lsmtree-compaction-design-space.png" alt="lsmtree-compaction-design-space.png"></p>
 <h3 id="测试和分析"><a href="#测试和分析" class="headerlink" title="测试和分析"></a>测试和分析</h3><p><strong>关注的性能指标</strong></p>
 <ul>
 <li>Compaction latency</li>

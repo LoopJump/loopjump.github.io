@@ -203,7 +203,7 @@
   <article class="post-article">
     <section class="markdown-content"><p>这是SIGMOD’21 上的论文《Rethink the Scan in MVCC Databases》，论文针对像HTAP等场景下可能出现大量versioned data中执行scan慢的问题提出了一种比较有效的方案。</p>
 <h2 id="Scan性能问题"><a href="#Scan性能问题" class="headerlink" title="Scan性能问题"></a>Scan性能问题</h2><p>首先，论文看到了这种场景下scan慢的一个重要原因：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219161029102.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219161029102.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/scan-slow.png" alt="scan-slow.png"></p>
 <p>Scan的时候，每一个key都要分别从自己的多个版本里面做一次线性查找，找到当前读快照可见的版本。</p>
 <p>这个过程中假如有一种ridgy pointer，用于从key A的可见版本数据直接跳转到下一个key的可见版本数据（或者临近版本），则scan操作性能就会大幅提升。</p>
 <p>为此，论文要解决两个问题：</p>
@@ -212,24 +212,24 @@
 <h2 id="两个优化问题"><a href="#两个优化问题" class="headerlink" title="两个优化问题"></a>两个优化问题</h2><h3 id="per-chain内加速搜索"><a href="#per-chain内加速搜索" class="headerlink" title="per-chain内加速搜索"></a><strong>per-chain内加速搜索</strong></h3><p>首先第一个问题本质上是线性有序链表加速查找的过程，论文提出了一种新的跳表 frugal skip list。</p>
 <p>frugal skip list也是一个概率查找数据结构，查找性能与普通skip list一样，都是O(logN)的。但如其名所描述，比普通skip list要节省很多指针空间。</p>
 <p>frugal skip list加速查找示意图如下</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219163415596.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219163415596.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/frugal-skip.png" alt="frugal-skip.png"></p>
 <p>关键还是新增的v_ridgy指针（v指version，per-chain内节点加速）。</p>
 <p>v_ridgy指针插入的流程如下</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219163540596.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219163540596.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/vridgy.png" alt="vridgy.png"></p>
 <p>首先新节点以50%的概率成为一个新的最底层节点，50%的概率成为一个有序链表中其后继节点所在version stack的head。不管是底层还是head，设置其ridgy pointer时，要求都是一样的：新节点N的ridgy pointer指向的节点是N向前（这里向前是指per-chain的old version方向，也就是原始version chain的单链表指针方向）找最近的一个version stack，这个version stack满足stack top的节点的level比N高。</p>
 <p>在这个规则下，ridgy skip list实际上类似于普通skip list的level pointer，注意到version stack达到高度h的概率是1&#x2F;2^h，所以沿着ridgy pointer走实际上达到跳过了指数数量node效果。所以frugal skip list的查找过程也就容易映射到普通skip list了。</p>
 <h3 id="相邻key的per-chain之间建立k-ridgy-pointer"><a href="#相邻key的per-chain之间建立k-ridgy-pointer" class="headerlink" title="相邻key的per-chain之间建立k_ridgy pointer"></a>相邻key的per-chain之间建立k_ridgy pointer</h3><p>第二个问题相邻key的per-chain之间建立k_ridgy pointer。</p>
 <p>这里的核心诉求是保证两个不变式：key-free 和 version-free。</p>
 <p>两个不变式的概念很容易理解，来自最开始的那个洞察。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219193939547.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219193939547.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/invariant.png" alt="invariant.png"></p>
 <p>如图，既然ra80有一个k_ridgy pointer指向 rb82，就要求ra和rb之前不存在其他record，否则scan就会丢数据，这就是key-free。另外一点就是某个读快照如果可以看到ra80，则上述k_ridgy pointer必须保证该快照可以看到的rb版本不会比rb82新，也就是rb82往新的方向没有该快照可见的version，这就是version-free。</p>
 <p>这种k_ridgy pointer的实现实际上也不复杂。如果数据结构本身是lock free的话，可能需要小心，在某些情况下，数据结构新增ridgy pointer应该也有机会做成lock free而不引入lock阻塞。</p>
 <h2 id="应用到实际系统的坑"><a href="#应用到实际系统的坑" class="headerlink" title="应用到实际系统的坑"></a>应用到实际系统的坑</h2><p>这个思路应用到具体实际系统中，还有一些坑需要趟平。</p>
 <p>论文给出了几个坑，并给出的解决方案。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219195636323.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219195636323.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/apply-kridgy-pointer.png" alt="apply-kridgy-pointer.png"></p>
 <h3 id="adjacency-rule"><a href="#adjacency-rule" class="headerlink" title="adjacency rule"></a><strong>adjacency rule</strong></h3><p>也就是说有些数据结构不容易确定相邻key，比如in-memory hash结构。像MySQL InnoDB属于磁盘B+Tree，是可以很简单确定next record的。</p>
-<p>ERMIA就有这个坑。ERMIA主体结构是一个masstree，但叶子上记录的不是raw record address，在叶子和raw record之间多一层indirecton arrary。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/02/image-20220219200647920.png">http://loopjump.com/wp-content/uploads/2022/02/image-20220219200647920.png</a></p>
+<p>ERMIA就有这个坑。ERMIA主体结构是一个masstree，但叶子上记录的不是raw record address，在叶子和raw record之间多一层indirection arrary。</p>
+<p><img src="https://blogimage.loopjump.com/2022/indirection-arrary.png" alt="indirection-arrary.png"></p>
 <p>解决方法是在提交时保留待提交record在之前执行期间搜索的信息，把这个信息带到提交阶段即可。如果没有这个信息，就只能重新搜索了。</p>
 <h3 id="version-ordering"><a href="#version-ordering" class="headerlink" title="version ordering"></a><strong>version ordering</strong></h3><p>version chain的方向是new2old（N2O），还是old2new（O2N）。</p>
 <p>如果是O2N，就比较麻烦，一是要修改old version的ridgy pointer，这可能会引发IO，二是还要额外维护N2O的frugal skip list。</p>

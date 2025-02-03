@@ -213,51 +213,18 @@
 <li>指定规则应用条件比指定规则转换难。</li>
 </ol>
 <h3 id="Plan"><a href="#Plan" class="headerlink" title="Plan"></a>Plan</h3><p>文法的终结符是一些基本操作，文中称为LOLEPOP (LOw-LEvel Plan OPerator)，例如JOIN、UNION、SHIP、ACCESS、SORT等等。一个执行计划 Plan或者叫QEP(query evaluation plan)是LOLEPOP的有向无环图。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4524b748-65cc-4e29-9498-81535e986c24/image-20220426095737882.png" alt="image-20220426095737882.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426095737882-841x1024.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/grammer-plan.png" alt="grammer-plan.png"></p>
 <h3 id="Rules"><a href="#Rules" class="headerlink" title="Rules"></a>Rules</h3><p>规则 STAR (STrategy Alternative Rules) 是一个命名的参数对象，包含一个或多个转换的定义。一个转换的定义包括应用条件，一个计划或者其他STAR。从这里可以看出，STAR实际上就是映射到文法中的非终结符。</p>
 <p>例如，可以定义OrderedStream1和OrderedStream2：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/57915fc5-ce50-4940-b461-a51faae94dbf/image-20220426102330915.png" alt="image-20220426102330915.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102330915-300x92.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/grammer-star.png" alt="grammer-star.png"></p>
 <p>或者定义有两个转换的OrderedStream：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426102346075.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2b0083b0-fff6-41a0-bb0d-3fbb0b144fee/image-20220426102346075.png" alt="image-20220426102346075.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/grammer-orderedstream.png" alt="grammer-orderedstream.png"></p>
 <p>类似于文法的初始状态，这里也有一个root STAR。从root STAR开始，以一种top-down的方式进行，每个推导的fanout一般不多，而且多个推导之间可以并行进行。</p>
 <h3 id="Property"><a href="#Property" class="headerlink" title="Property"></a>Property</h3><p>每张表都有一组属性，分为三类：relational（例如projection&#x2F;join）, physical（例如tuple order）, estimated（基于前两者的代价模型）。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104512607-284x300.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/3ad92185-d848-400d-8589-0d7075704a72/image-20220426104512607.png" alt="image-20220426104512607.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/grammer-property.png" alt="grammer-property.png"></p>
 <h3 id="Glue"><a href="#Glue" class="headerlink" title="Glue"></a>Glue</h3><p>Glue机制是实现某些属性的粘合剂。例如下图中的SHIP（修改site属性，即执行的机器节点）、SORT（修改order属性）等。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png">http://loopjump.com/wp-content/uploads/2022/04/image-20220426104812197-1024x848.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/0e21e71e-7b04-45bf-9dc9-76b6a9dc22e6/image-20220426104812197.png" alt="image-20220426104812197.png"></p>
-<h3 id="JOIN-START的例子"><a href="#JOIN-START的例子" class="headerlink" title="JOIN START的例子"></a>JOIN START的例子</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png">http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png">http://loopjump.com/wp-content/uploads/2022/04/1-300x58.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/6e95af53-bb04-4b8c-be0d-acd69875d6b8/1.png" alt="1.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/2.png">http://loopjump.com/wp-content/uploads/2022/04/2.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/2.png">http://loopjump.com/wp-content/uploads/2022/04/2.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/53984809-5fd1-4560-8076-137c6030c0e5/2.png" alt="2.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/3.png">http://loopjump.com/wp-content/uploads/2022/04/3.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/24a0fd75-07ac-4769-9129-6d6d6875b83d/3.png" alt="3.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/3.png">http://loopjump.com/wp-content/uploads/2022/04/3.png</a></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/4.png">http://loopjump.com/wp-content/uploads/2022/04/4.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/4.png">http://loopjump.com/wp-content/uploads/2022/04/4.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/d6c803e9-069c-4adf-98af-8d39da5bb913/4.png" alt="4.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/6.png">http://loopjump.com/wp-content/uploads/2022/04/6.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/737cd2b1-50f3-4b3d-9491-0e8cd8d74977/6.png" alt="6.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/6.png">http://loopjump.com/wp-content/uploads/2022/04/6.png</a></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/7.png">http://loopjump.com/wp-content/uploads/2022/04/7.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/9ac7c409-3bb4-422e-b39c-3df05cf6e899/7.png" alt="7.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/7.png">http://loopjump.com/wp-content/uploads/2022/04/7.png</a></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/8.png">http://loopjump.com/wp-content/uploads/2022/04/8.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/8.png">http://loopjump.com/wp-content/uploads/2022/04/8.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/5325b598-a77a-45ae-a14d-cab2000582b7/8.png" alt="8.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/9.png">http://loopjump.com/wp-content/uploads/2022/04/9.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/9.png">http://loopjump.com/wp-content/uploads/2022/04/9.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a5f9be43-2e53-4680-a77a-52c67d492a75/9.png" alt="9.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/grammer-glue.png" alt="grammer-glue.png"></p>
+<h3 id="JOIN-START的例子"><a href="#JOIN-START的例子" class="headerlink" title="JOIN START的例子"></a>JOIN START的例子</h3><p><img src="https://blogimage.loopjump.com/2022/grammer-join-example-1.png" alt="grammer-join-example-1.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-2.png" alt="grammer-join-example-2.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-3.png" alt="grammer-join-example-3.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-4.png" alt="grammer-join-example-4.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-6.png" alt="grammer-join-example-6.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-7.png" alt="grammer-join-example-7.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-8.png" alt="grammer-join-example-8.png"><br><img src="https://blogimage.loopjump.com/2022/grammer-join-example-9.png" alt="grammer-join-example-9.png"></p>
 </section>
     <!-- Tags START -->
     
