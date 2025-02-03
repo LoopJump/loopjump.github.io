@@ -231,7 +231,7 @@
 <h3 id="Implementint-a-lakehouse-system"><a href="#Implementint-a-lakehouse-system" class="headerlink" title="Implementint a lakehouse system"></a>Implementint a lakehouse system</h3><p>首先，数据存储在低成本对象存储上，采用标准开放格式（如Apache Parquet）；其上实现一个事务型元数据层，用于定义对象和表的关系。这样可以兼得数据存储的低成本和数据的事务级管理。</p>
 <p>其次，lakehouse不能修改文件格式，但可以在保持数据文件不修改的前提下，实现cache、辅助数据结构如索引统计、数据排布优化等。</p>
 <p>最后，lakehouse既可以加速复杂的AP查询，也可以借助declarative DataFrame API来实现更宽泛的数据管理能力。例如TensorFlow和Spark MLlib可以读取data lake的一些文件格式。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-3-286x300.png">http://loopjump.com/wp-content/uploads/2022/06/2-3-286x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/databrick.png" alt="databrick.png"></p>
 <h3 id="Metadata-Layer"><a href="#Metadata-Layer" class="headerlink" title="Metadata Layer"></a>Metadata Layer</h3><p>元数据层是将S3上的对象存储文件抽象成ACID事务可操作的表对象重要一步。Databricks的Delta Lake、Apache Iceberg、Apache Hudi都是类似功能的组件。</p>
 <p>这类组件在实现事务、零拷贝、time travel等管理功能的同时，达到的性能与直接操作原始Parquet等数据的性能相近甚至超越。</p>
 <p>元数据层很适合做data quanlity enforcement。比如Delta Lake可以对数据上传到表时做schema检查等。</p>

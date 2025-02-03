@@ -233,8 +233,7 @@
 <p>以left outer join (LOJ)为例，LOJ不能自由地交换，但是满足如下的规则：</p>
 <p>JOIN(R, S LOJ T) &#x3D; JOIN(R, S) LOJ T</p>
 <p><strong>Group-By and Join</strong></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e8871761-f204-4198-ac21-f4bc4a3f54b5/image-1.png" alt="image-1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/image-1-300x138.png">http://loopjump.com/wp-content/uploads/2022/06/image-1-300x138.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/rdbms-optimizer.png" alt="rdbms-optimizer.png"></p>
 <p>如图(a)中的G可以下推到左边的R。但JOIN完是否需要再G一次（即(b)和(c)），取决于下推的G结果和右R join情况，如果G结果的每一行最多和右R的一条记录join，则不需要JOIN完再G。</p>
 <h3 id="将多Block查询规约为单Block查询"><a href="#将多Block查询规约为单Block查询" class="headerlink" title="将多Block查询规约为单Block查询"></a>将多Block查询规约为单Block查询</h3><p><strong>Merging Views</strong></p>
 <p>如果查询Q&#x3D;JOIN(R, V)，其中V&#x3D;JOIN(S,T)，则可以将V展开到Q中Q&#x3D;JOIN(R, JOIN(S, T))，这样就可以自由重新考虑join order。</p>

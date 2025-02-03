@@ -217,9 +217,7 @@
 <p>第三，优化器在映射查询到执行计划的过程中所做的选择被表示为代数等价式。有一些系统会用到多种层次的中间表示，例如Grammar-like … 这篇论文提到的方法。但这种方法对于等价和转换的很多问题模糊掉了，例如优化器的输入、计划搜索方法、等价计划选择的次序等等。</p>
 <p>第四，关于规则的解释执行和编译执行。解释执行灵活，编译执行高效。Volcano使用编译执行的方式。为了保持可扩展性，规则本身可以进行参数化。</p>
 <p>第五，search engine基于动态规划。</p>
-<h3 id="Optimizer-Generator-Paradigm"><a href="#Optimizer-Generator-Paradigm" class="headerlink" title="Optimizer Generator Paradigm"></a>Optimizer Generator Paradigm</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/45fe954d-6c23-48d5-bf69-09aa8a8c098c/WX20220430-1931522x.png" alt="WX20220430-193152@2x.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png">http://loopjump.com/wp-content/uploads/2022/04/WX20220430-193152@2x-300x165.png</a></p>
+<h3 id="Optimizer-Generator-Paradigm"><a href="#Optimizer-Generator-Paradigm" class="headerlink" title="Optimizer Generator Paradigm"></a>Optimizer Generator Paradigm</h3><p><img src="https://blogimage.loopjump.com/2022/volcano-optimizer.png" alt="volcano-optimizer.png"></p>
 <p>优化器的输入是Query，表示为logical operator的表达式（树），它来自parser的输出。优化器的输出是Plan，是physical operator表达式。</p>
 <p>优化器的实现者需要提供如下积累信息：</p>
 <p>第一，logical operator和physical operator。优化器就是将一个logical operator表达式映射为一个最优的等价的physical operator表达式，并选择算子具体的实现算法。</p>

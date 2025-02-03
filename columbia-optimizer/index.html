@@ -207,38 +207,27 @@
 <p>第一代可扩展的优化器包括EXODUS、Starburst等，模块化和可扩展比较好，但搜索性能不太好。第二代如Volcano，使用了physical property来引导计划的搜索。第三代如Cascades，使用了面向对象的设计来简化实现。</p>
 <p>这三代优化器可以分为两类，一类是自下而上的动态规划（bottom-up dynamic programming）优化器，如Starburst，另一类是自上而下的分支定界的基于代价的规则驱动（top-down branch and bound rule-driven cost based）优化器，如Cascades。</p>
 <p>Columbia优化器类似Cascades优化器，并在其基础上进行了改进。</p>
-<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><h3 id="Query-Processing大致过程"><a href="#Query-Processing大致过程" class="headerlink" title="Query Processing大致过程"></a>Query Processing大致过程</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4ec66bae-40fb-45aa-8eea-7f270c1761de/image-20220503163535701.png" alt="image-20220503163535701.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220503163535701-300x158.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220503163535701-300x158.png</a></p>
+<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><h3 id="Query-Processing大致过程"><a href="#Query-Processing大致过程" class="headerlink" title="Query Processing大致过程"></a>Query Processing大致过程</h3><p><img src="https://blogimage.loopjump.com/2022/columbia-query-processing.png" alt="columbia-query-processing.png"></p>
 <h3 id="Groups"><a href="#Groups" class="headerlink" title="Groups"></a>Groups</h3><p><strong>Query Tree</strong> ：逻辑执行计划树</p>
 <p><strong>Excution Plan</strong> ：物理执行计划</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/07bf9f93-9a56-4102-8cbc-3eb4adcf825f/image-20220504110903709.png" alt="image-20220504110903709.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504110903709-300x240.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504110903709-300x240.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-plan.png" alt="columbia-plan.png"></p>
 <p><strong>Expression</strong> ：query tree（或者sub tree）和excution plan（或者sub plan），实际上就是逻辑和物理计划的混称，也分别称为logical expression和physical expression。</p>
 <p><strong>Group</strong> ：logical expression的所有等价的expression称为一个Group，自然是包括logical和physical expression。</p>
 <p>例如A⋈B⋈C，也写作 [ABC]的group如下：</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/f3805497-a200-4e5d-85b8-abc60c57626d/image-20220504111726146.png" alt="image-20220504111726146.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504111726146-300x109.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504111726146-300x109.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-group.png" alt="columbia-group.png"></p>
 <p><strong>Multi-expression</strong> ：，简写<strong>mexpr</strong>，这是基于group的一个抽象概念，是指以group为输入的逻辑算子或者物理算子。例如[AB]⋈C就是group [AB]和[C]的EQJOIN表达式。</p>
 <p>例如group [ABC]的所有的multi-expression如下。</p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/39609a59-6d4d-49c5-8fb1-b6de48e774f2/image-20220504112725273.png" alt="image-20220504112725273.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504112725273-300x88.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504112725273-300x88.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-multi-expression.png" alt="columbia-multi-expression.png"></p>
 <p>引入Multi-expression的好处是可以节省大量搜索空间，如上例中，[AB]就作为一个整体。</p>
 <h3 id="Search-Space"><a href="#Search-Space" class="headerlink" title="Search Space"></a>Search Space</h3><p>给定一个查询，其所有等价的logical query tree和physical plan构成一个搜索空间。搜索空间用group来组织以节省空间，每个group以其他group作为输入。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png">http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png">http://loopjump.com/wp-content/uploads/2020/06/Selection_050-300x188.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-group2.png" alt="columbia-group2.png"></p>
 <p>其中final group也叫top group，它对应整个查询的执行结果，相应地，它的EQJOIN也叫top operator。operator映射到search space中的node，从初始的查询可以容易地映射到初始搜索空间（initial search space）。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/df63583d-d5a4-410b-b1a3-4798bf06f820/image-20220504114842230.png" alt="image-20220504114842230.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504114842230-300x143.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-searchspace1.png" alt="columbia-searchspace1.png"></p>
 <p>假如我们需要找到全局最优的physical expression，则需要生成所有的physical expression及其cost，因为一个physical expression是某个logical expression的一种实现方式，因此这意味着需要生成所有的logical expression。当全部的physical expression及其cost都生成之后对应的完全扩展开的search space叫做final search space，也就是锁final search space包含了输入查询的所有等价expression(logical and physical)。</p>
 <p><strong>search space大小</strong>：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504121749153-300x208.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2ea73b3b-c296-4de3-a807-15c8e7dcae2a/image-20220504121749153.png" alt="image-20220504121749153.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-searchspace2.png" alt="columbia-searchspace2.png"></p>
 <h3 id="Rule"><a href="#Rule" class="headerlink" title="Rule"></a>Rule</h3><p>规则包括pattern和substitute。从logical expression到logical expression的规则称为transformation rule，从logical expression到physical expression的规则称为implementation rule。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png">http://loopjump.com/wp-content/uploads/2022/05/image-20220504122349609-300x264.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bbeb15b5-c565-4c36-b664-c602ad49b40a/image-20220504122349609.png" alt="image-20220504122349609.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-rule.png" alt="columbia-rule.png"></p>
 <h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><h3 id="System-R-and-Starburst"><a href="#System-R-and-Starburst" class="headerlink" title="System R and Starburst"></a>System R and Starburst</h3><p>对应的两篇论文《Access Path Selection in a Relational Database Management System》和《Starburst Mid-Flight: As the Dust Clears》。</p>
 <p>Sysmtem R是cost-based优化器，采用了bottom-up动态规划搜索策略。所谓bottom-up是指当优化时先考虑低层次的expression。为了计算一个expression的最优代价，要先计算该expression的所有输入的低层次expression的cost。其计算量是指数的，因此System R也会采用一些启发算法或者搜索时某些情况下只考虑其中一些可能性。</p>
 <p>Starburst包括两个基于规则的子系统，查询重写Query Graph Model (QGM)优化器 和 plan optimizer。</p>
@@ -263,24 +252,13 @@
 <p>优化过程被拆成task，实现上task对应一个对象，包含一个perform函数。Task存放在LIFO Stack中，执行时从栈顶取一个task对象执行，执行过程中可能产生新的task对象压入栈。Cascades优化器从初始query开始，触发优化top group，进而触发逐个更小的sub group的优化，group的优化即找到group中最好的plan。这个过程中除了新的task生成并压入栈之外，新的group和expression也会产生，当top group完成后，优化就结束了。</p>
 <p>和Volcano是一样，Cascades也是top-down搜索策略，也使用动态规划和memorization，一个expression在优化时，先看memorization中之前该expression有没有做过优化。但和Volcano不一样的是，Cascades是按需对group进行探索，Volcano是先穷尽所有的logical expression然后再开始physical expression，Cascades并不将这两步拆开。Cascades用户接口比Volcano也更友好。</p>
 <p>Cascades也存在一些问题，如optimizer framework和DBI的specification割裂、虚函数太多、对象分配释放太频繁，这些都会带来性能问题。另外有些剪枝技术可以应用到top-down优化器上。这也是Columbia优化器的优化目标。</p>
-<h2 id="Structure-of-the-Columbia-Optimizer"><a href="#Structure-of-the-Columbia-Optimizer" class="headerlink" title="Structure of the Columbia Optimizer"></a>Structure of the Columbia Optimizer</h2><h3 id="Overview-of-Columbia-Optimizer"><a href="#Overview-of-Columbia-Optimizer" class="headerlink" title="Overview of Columbia Optimizer"></a>Overview of Columbia Optimizer</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/403c53e4-ce4e-420d-ba83-8098b18a40f6/image-20220506203611054.png" alt="image-20220506203611054.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203611054-1024x380.png</a></p>
+<h2 id="Structure-of-the-Columbia-Optimizer"><a href="#Structure-of-the-Columbia-Optimizer" class="headerlink" title="Structure of the Columbia Optimizer"></a>Structure of the Columbia Optimizer</h2><h3 id="Overview-of-Columbia-Optimizer"><a href="#Overview-of-Columbia-Optimizer" class="headerlink" title="Overview of Columbia Optimizer"></a>Overview of Columbia Optimizer</h3><p><img src="https://blogimage.loopjump.com/2022/columbia-overview.png" alt="columbia-overview.png"></p>
 <p>输入是以文本的形式表达的expression，类似于LISP风格，其目的是解耦parser和optimizer，提高可扩展性。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203636736-1024x820.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/2ab3c514-b9a3-4875-9c79-00acab5273ab/image-20220506203636736.png" alt="image-20220506203636736.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/42f2eee3-b92d-4a05-8c8d-54204bfa5860/image-20220506203653097.png" alt="image-20220506203653097.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203653097-1024x673.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-overview2.png" alt="columbia-overview2.png"><br><img src="https://blogimage.loopjump.com/2022/columbia-overview3.png" alt="columbia-overview3.png"></p>
 <p>输出是以缩进的physical expression的tree形式表达。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/b0ad00e6-4297-41ed-bc06-cf32548f5a8d/image-20220506203711182.png" alt="image-20220506203711182.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203711182-1024x783.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-expr-tree.png" alt="columbia-expr-tree.png"></p>
 <p>另外两个外部依赖是Catalog和Cost Model，它们也都是以文本形式存放的，优化器读入文本，并将内容分别存入全局对象<strong>Cat</strong>和<strong>Cm</strong>（<strong>CAT</strong>类型和<strong>CM</strong>类型的对象实例）。</p>
-<h3 id="Search-Space-1"><a href="#Search-Space-1" class="headerlink" title="Search Space"></a>Search Space</h3><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/aa8fd0b6-f9e3-4940-9728-bd1fd9b693ff/image-20220506203724907.png" alt="image-20220506203724907.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203724907-1024x584.png</a></p>
+<h3 id="Search-Space-1"><a href="#Search-Space-1" class="headerlink" title="Search Space"></a>Search Space</h3><p><img src="https://blogimage.loopjump.com/2022/columbia-searchspace3.png" alt="columbia-searchspace3.png"></p>
 <p><strong>Search Space Structure - SSP</strong></p>
 <p>Columbia使用<strong>SSP</strong>类来表示search space，<strong>SSP</strong>类似于Cascades的<strong>MEMO</strong>。<strong>SSP</strong>包含一组Group，每个group包含一组逻辑上等价的multi-expression。</p>
 <p>初始的时候，只有initial group，优化过程会增加新的group和multi-expression逐渐扩展search space，所以其除initial group外其他group都是另外某个group的input group。</p>
@@ -307,9 +285,7 @@
 <li>**cucard()**函数：设表A是Group G涉及到的表，A.X是涉及到的列，则cucard(A.X)表示A.X列上unique cardinality，cucard(A)表示所有涉及到的列的cucard最大值。</li>
 </ul>
 <p>计算lower bound的公式：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/c7688f95-c4f1-461d-a2fd-1b1577376ea2/image-20220506203751081.png" alt="image-20220506203751081.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png">http://loopjump.com/wp-content/uploads/2022/03/image-20220506203751081-1024x400.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-lowerbound.png" alt="columbia-lowerbound.png"></p>
 <p>其中，”from other non-top joins” 的部分可以简单理解为{Ai}按升序排列，左深树join方式的最低代价值。对此项和fetch项，论文也给出了较为完善的证明过程，读者可以自行阅读。</p>
 <p><strong>区分logical和physical multi-expression</strong></p>
 <p>Cascades是将二者保存在同一个list，Columbia是分开在两个list中。</p>
@@ -366,8 +342,7 @@
 <li><strong>APPLY_RULE</strong> ：rule application to a mexpr</li>
 </ul>
 <p>其关系如图，其中A-&gt;B箭头表示A调用B</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png">http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png">http://loopjump.com/wp-content/uploads/2022/03/Selection_045-300x183.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/columbia-task.png" alt="columbia-task.png"></p>
 <p><strong>O_GROUP</strong></p>
 <p>该类型的task是在给定context下，找到group内的最优计划，并将结果存入group的winner成员中。该任务会生成该group的所有的logical expression和physical expression，计算所有physical expression的代价。O_GROUP task会创建O_EXPR和O_INPUT。</p>
 <p>O_GROUP的主要逻辑：</p>

@@ -343,7 +343,10 @@ UT_MUTEX_TYPE(TTASFutexMutex, GenericPolicy, FutexMutex); 这个宏定义展开�
       <div class="article-summary">
         
           InnoDB的存储层次总的数据粒度：Row - Page - Extent - Segment - Tablespace。
-!http://loopjump.com/wp-content/uploads/2020/06/image-20200623151536735-1024x756.png ...
+
+数据格式Row行内容主要就是各列的值，外加一些flag信息。
+
+PagePage(页面)是固定大小的物理存储块。Page有多种用途，既可以存放一组行记录，也可以存放存 ...
         
       </div>
       <a class="more" href="/innodb-storage-hierarchy/">Read more</a>

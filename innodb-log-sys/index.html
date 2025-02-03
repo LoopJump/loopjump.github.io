@@ -206,7 +206,7 @@
 <h3 id="mtr"><a href="#mtr" class="headerlink" title="mtr"></a>mtr</h3><p>mtr 表示 mini-transaction，表示操作的一个最小原子单元，比数据库事务概念要更小。比如一个事务可能插入两行数据，但每插入一行都可能触发B-Tree的叶子分裂，页面的分裂操作涉及多个页面，这些页面的修改必须保持原子（不能发生分裂的第一个页面生效但第二个页面没生效的情况）。这种原子性就是靠mtr来实现的。</p>
 <p>mtr做一次修改，通常涉及两个主要的步骤，即对修改页面加锁，产生修改变更数据。mtr在提交的时候，需要相应地进行两个操作，一个是将页面挂在flush list上，一个是将变更写入redo log中。刷脏逻辑会从flush list上按从老到新进行刷脏，已经刷脏完成的页面对应的redo就可以不需要了（日志内容可以回收或者循环覆盖使用，重启不需要回放这部分内容）。</p>
 <h3 id="MySQL-5-7-Log-Sys并发冲突"><a href="#MySQL-5-7-Log-Sys并发冲突" class="headerlink" title="MySQL 5.7 Log Sys并发冲突"></a>MySQL 5.7 Log Sys并发冲突</h3><p>基于此，5.7中保证了flush list在前的页面对应的变更修改在redo log中也在前面。具体保证方式是，采用两把锁“接力”，log_sys_t::mutex和log_sys_t::flush_order_mutex，线程首先拿到log_sys_t::mutex，，然后挂flush list，之后拿到log_sys_t::flush_order_mutex后释放log_sys_t::mutex，然后将变更写入redo log buffer。如参考链接中的图示。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-1-300x201.png">http://loopjump.com/wp-content/uploads/2022/06/1-1-300x201.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/innodb-logsys-relay-mutex.png" alt="innodb-logsys-relay-mutex.png"></p>
 <p>显然，这会带来严重的并发冲突，因此8.0重构了这一块内容。</p>
 <h3 id="MySQL-8-0-Scalable-Log-Sys-介绍"><a href="#MySQL-8-0-Scalable-Log-Sys-介绍" class="headerlink" title="MySQL 8.0 Scalable Log Sys 介绍"></a>MySQL 8.0 Scalable Log Sys 介绍</h3><p>首先看下8.0中做到了什么效果呢？</p>
 <ul>
@@ -216,8 +216,7 @@
 </ul>
 <p>第一条其实有篇类似的论文可以参考<em>Aether: A Scalable Approach to Logging</em>。</p>
 <p>不同线程在将线程本地事务的修改数据写到全局的redo log buffer的时候，将自己的数据字节数目原子地加到当前redo log的offset（offset为原子变量），这样相当于每个线程先抢占了redo log buffer中自己的数据对应的一段，然后这些线程就可以并发地向各自的buffer段进行copy。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-1.png">http://loopjump.com/wp-content/uploads/2022/06/2-1.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-1.png">http://loopjump.com/wp-content/uploads/2022/06/3-1.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/innodb-logsys-parallel-copy.png" alt="innodb-logsys-parallel-copy.png"><br><img src="https://blogimage.loopjump.com/2022/innodb-logsys-parallel-copy-linkbuf.png" alt="innodb-logsys-parallel-copy-linkbuf.png"></p>
 <p>但真正将redo log buffer写入文件的时候，只能写到连续已copy的位置，不能包含空洞。所以每个线程在copy完之后，要向一个全局数据结构Finished Writes通知自己的这段已经完成。独立的log writer线程负责检查连续已完成copy的位置，将这部分连续的buffer写入文件。另外一个独立线程log flusher执行真正的flush操作（fsync）。</p>
 <p>另外一块是 flush_list 的问题。</p>
 <p>redo log buffer并发copy，对应的flush list的顺序怎么保证呢？不太准确地说，答案是不保证。</p>

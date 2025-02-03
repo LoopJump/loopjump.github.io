@@ -220,11 +220,11 @@
 <p>设置亲和性主要有两类原因：一是有利于减少因为线程调度带来的cache失效，二是可以实现进程隔离。</p>
 <p>详细请参考taskset命令和sched_setaffinity接口。</p>
 <h3 id="NUMA"><a href="#NUMA" class="headerlink" title="NUMA"></a>NUMA</h3><p>NUMA是指non-uniform memory access，非一致内存访问。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-1024x473.png">http://loopjump.com/wp-content/uploads/2022/06/1-1024x473.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-numa.png" alt="perf-numa.png"></p>
 <p>维基百科上这张图比较清晰。图中CPU有两个socket，4个node，每个node包含8个core。Node概念上包含一组core和一块内存，Node之间有QPI（quick path interface）连接，Node中的core访问自身的内存比较快，访问其他node的内存就要走QPI，会比较慢。</p>
 <p>numactl命令可以查看numa的情况。</p>
 <p>例如，另外一台机器（与上图不同）上CPU有两个node，node distance描述了访问延迟的相对大小。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/2-300x252.png">http://loopjump.com/wp-content/uploads/2022/06/2-300x252.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-numa-node.png" alt="perf-numa-node.png"></p>
 <p>像数据库之类的应用，需要注意 swap insanity 的问题（开启NUMA后本node内存不足时触发swap而不是从其他node分配），不过高版本内核应该已经解决了。</p>
 <h3 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h3><p>Cache是介于CPU与内存之间的存储层次，用于提高读写数据性能。如前图所示，Cache分为L1&#x2F;L2&#x2F;L3三级，容量和延迟逐级增大，同时L1的cache还会分为数据cache和指令cache以避免互相污染。</p>
 <p>常见的一个Cache相关的问题是伪共享 false sharing：Cache是按Cache Line（一般64字节）来加载或淘汰的，如果两个core读写同一个64字节内的不同地址a和b（例如排在一块的两个全局计数器变量），比如其中一个core修改了a，则会失效a和b所在的64字节缓存内容，并通过cache一致性协议MESI通过QPI将该失效信息同步到其他core，那么另一个core读取b就需要从内存读取。解决方法也比较简单，如果两个变量经常被并发访问，就不要放一块，或者中间加padding撑开。</p>
@@ -235,37 +235,36 @@
 <h3 id="Lock-Free编程"><a href="#Lock-Free编程" class="headerlink" title="Lock Free编程"></a>Lock Free编程</h3><p>Lock Free编程指的是并发编程时不使用同步锁，一个线程暂停（例如调度离开CPU）时，不阻塞其他线程progress。</p>
 <p>在遇到并发锁冲突的时候，可以考虑看看是不是可以用Lock Free的方式优化。</p>
 <p>不过Lock Free还有一个附加问题 - 内存回收，常用的机制如Hazard Pointer, EBR等，比较麻烦但其原理和实现跟具体无锁的数据结构无关，比较通用。</p>
-<h3 id="IO-Stack"><a href="#IO-Stack" class="headerlink" title="IO Stack"></a>IO Stack</h3><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-722x1024.png">http://loopjump.com/wp-content/uploads/2022/06/3-722x1024.png</a></p>
+<h3 id="IO-Stack"><a href="#IO-Stack" class="headerlink" title="IO Stack"></a>IO Stack</h3><p><img src="https://blogimage.loopjump.com/2022/perf-iostack.png" alt="perf-iostack.png"></p>
 <h2 id="性能分析工具"><a href="#性能分析工具" class="headerlink" title="性能分析工具"></a>性能分析工具</h2><p>Linux下有丰富的监控工具，可以满足各种维度的查询，以CPU利用率为例，可以查询到整台机器的CPU利用率、进程的CPU利用率、每个核的利用率、每个核sys&#x2F;usr&#x2F;irq&#x2F;soft等、进程内的每个线程的CPU利用率等等。</p>
 <h3 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h3><p><strong>top</strong></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-300x74.png">http://loopjump.com/wp-content/uploads/2022/06/4-300x74.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-top.png" alt="perf-top.png"></p>
 <p>其中CPU列表示进程的CPU利用率，图中1299%表示mysqld进程占用了约13个核。</p>
 <p><strong>htop</strong></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-300x295.png">http://loopjump.com/wp-content/uploads/2022/06/5-300x295.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-htop.png" alt="perf-htop.png"></p>
 <p>htop可以看到每一个核的利用率，这有助于排查一些做了绑核操作相关的问题，例如绑核后工作线程的负载不均匀等等。其中红色表示sys，指CPU花在内核上（例如内核spinlock冲突 或 网络栈 之类的），绿色表示usr，指CPU花在用户态。如果sys比较多，可能需要排查下具体花在内核什么地方了，例如并发写文件（写不同位置）可能导致inode上的锁冲突，这样就需要对应优化应用代码。如果没有明显的应用层瓶颈，可能需要考虑kernel-bypass的一些技术，例如SPDK&#x2F;DPDK。</p>
 <p>关于亲和性的一个直观例子（进程的6个线程分别跑在1-6号核上）：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-300x76.png">http://loopjump.com/wp-content/uploads/2022/06/6-300x76.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-affinity.png" alt="perf-affinity.png"></p>
 <p><strong>vmstat</strong></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-300x54.png">http://loopjump.com/wp-content/uploads/2022/06/7-300x54.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-vmstat.png" alt="perf-vmstat.png"></p>
 <p>vmstat也有CPU相关的信息，其中 id表示idle，wa表示花在等待IO的时间，st表示stolen（跟虚拟机有关）。</p>
 <p><strong>mpstat</strong></p>
 <p>mpstat也能查看CPU各个核利用率（类似于htop），并且可以看到中断占用CPU的情况。</p>
 <p>%irq和%soft分别是处理硬中断&#x2F;软中断的CPU开销，这里可以用于排查中断落在同一个核的瓶颈等问题。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-257x300.png">http://loopjump.com/wp-content/uploads/2022/06/8-257x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-mpstat.png" alt="perf-mpstat.png"></p>
 <p><strong>pidstat -u</strong></p>
 <p>pidstat可以指定进程号。-u 表示显示CPU利用率，-t 表示显示进程内的各个线程。</p>
 <p>如图可以看到mysqld进程中只有8个工作线程在忙。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-244x300.png">http://loopjump.com/wp-content/uploads/2022/06/9-244x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-pidstat.png" alt="perf-pidstat.png"></p>
 <p><strong>Intel VTune</strong></p>
 <p>Intel VTune是面向intel CPU的一款分析工具。分析方法见 Intel Top-Down Microarchitecture Analysis Method。</p>
 <h3 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h3><p><strong>free</strong> 可以看到内存概况，buff&#x2F;cache是指例如page cache等内存占用。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/10-300x38.png">http://loopjump.com/wp-content/uploads/2022/06/10-300x38.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-free.png" alt="perf-free.png"></p>
 <p>Linux下内存需要关注下swap，如果有发生swap，可能是出现内存不足了需要倒腾内存空间出来。</p>
 <p><strong>vmstat -a</strong> 可以看到内存swap情况。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/11-300x58.png">http://loopjump.com/wp-content/uploads/2022/06/11-300x58.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-vmstat-a.png" alt="perf-vmstat-a.png"></p>
 <h3 id="IO"><a href="#IO" class="headerlink" title="IO"></a>IO</h3><p><strong>iostat</strong> 用于显示io的各种信息。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/12-300x106.png">http://loopjump.com/wp-content/uploads/2022/06/12-300x106.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/13-300x61.png">http://loopjump.com/wp-content/uploads/2022/06/13-300x61.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-iostat.png" alt="perf-iostat.png"><br><img src="https://blogimage.loopjump.com/2022/perf-iostat2.png" alt="perf-iostat2.png"></p>
 <ul>
 <li>tps: 每秒向设备发送的请求数目</li>
 <li>kB_read&#x2F;s：每秒从设备读取的字节数目</li>
@@ -285,13 +284,13 @@
 <p>blktrace有一组命令，blktrace用于追踪，blkparse用于解读blktrace的结果，btt用于汇总分析。</p>
 <p>blktrace 执行起来之后，Ctrl-C终止执行，默认在当前目录下生成一组sda.blktrace.{CPU}的文件。</p>
 <p>然后执行blkparse -i 解析这些文件。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/15-281x300.png">http://loopjump.com/wp-content/uploads/2022/06/15-281x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-blkparse.png" alt="perf-blkparse.png"></p>
 <p>其中，第一列是设备（用主设备号和次设备号标识），第二列时发生在哪个CPU，第三列是sequence number，第四列是时间戳（启动时为0），第五列是进城号，第六列是Action，第七列是RWBS，第八列是进程名。</p>
 <p>Action各字母含义：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/16-300x266.png">http://loopjump.com/wp-content/uploads/2022/06/16-300x266.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-blkparse-action.png" alt="perf-blkparse-action.png"></p>
 <p>RWBS的含义：R - read, W - write, D - block discard, B &#x3D; barrier, S - synchronous</p>
 <p><strong>btt</strong>工具可以汇总分析，blkparse的输出数据，不过要先把按CPU分开存放的数据合并起来 blkparse -i sda -d sda.blktrace.data，然后再执行 btt -i sda.blktrace.data 。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/17-190x300.png">http://loopjump.com/wp-content/uploads/2022/06/17-190x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-btt.png" alt="perf-btt.png"></p>
 <p>各阶段描述可参考[4]</p>
 <ul>
 <li>Q2Q — time between requests sent to the block layer</li>
@@ -304,62 +303,59 @@
 <li>Q2C — total time spent in the block layer for a request</li>
 </ul>
 <h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p><strong>lsof</strong> lsof用于显示所有打开的文件（就是拿到fd的这种），因为linux下有“一切皆文件”的抽象，所以这里面还包括网络连接、管道等等。从截图还可以看到有些已经被deleted的文件实际上还在占用空间，但如果去它所在目录看却看不到。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/18-300x225.png">http://loopjump.com/wp-content/uploads/2022/06/18-300x225.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-lsof.png" alt="perf-lsof.png"></p>
 <h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p><strong>ip addr</strong> 查看本机的网络接口</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/19-300x189.png">http://loopjump.com/wp-content/uploads/2022/06/19-300x189.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-ipaddr.png" alt="perf-ipaddr.png"></p>
 <p><strong>ethtool</strong> 查看网卡配置</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/20-300x273.png">http://loopjump.com/wp-content/uploads/2022/06/20-300x273.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-ethtool.png" alt="perf-ethtool.png"></p>
 <p>从Speed可以看到是百兆网卡。</p>
 <p><strong>iperf3</strong>可以用来实测机器之间的网络带宽，在两台机器上分别以server和client启动iperf3，就可以测起来了。</p>
 <p><strong>iftop</strong> 用于查看实时流量</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/21-300x169.png">http://loopjump.com/wp-content/uploads/2022/06/21-300x169.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-iftop.png" alt="perf-iftop.png"></p>
 <p><strong>nload</strong> 用于查看实时负载，如下图，incoming流量为44.20 Mbps。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/22-300x146.png">http://loopjump.com/wp-content/uploads/2022/06/22-300x146.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-nload.png" alt="perf-nload.png"></p>
 <p><strong>nethogs</strong> 可以用来查看每个进程的流量情况。</p>
 <p><strong>netstat</strong></p>
 <p>netstat可以从网络连接&#x2F;socket的情况进行分析。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/23-300x298.png">http://loopjump.com/wp-content/uploads/2022/06/23-300x298.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-netstat.png" alt="perf-netstat.png"></p>
 <h3 id="pstack"><a href="#pstack" class="headerlink" title="pstack"></a>pstack</h3><p>pstack工具可以回答 “<em>进程现在在干什么?</em> ”。pstack可以获得进程的各线程的快照，从中可以看到各个线程在执行什么操作。pstack实际上就是个shell脚本，调用gdb attach上去执行 thread apply all bt命令打印各线程的调用栈。</p>
 <p>执行结果（部分截图）如：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/24-231x300.png">http://loopjump.com/wp-content/uploads/2022/06/24-231x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-pstack.png" alt="perf-pstack.png"></p>
 <p>pstack输出比较多，有些线程的栈都是相同的，因此pt-pmp（percona的工具套件之一）可以用于聚合其输出结果，聚合后的结果如下（部分截图）：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/25-300x115.png">http://loopjump.com/wp-content/uploads/2022/06/25-300x115.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-ptpmp.png" alt="perf-ptpmp.png"></p>
 <p>这说明进程中当时有17个线程在将结果通过网络发送回去，有10个线程在等待，等等。</p>
 <p>pstack除了用于性能分析之外，在分析死锁等问题时也是最好用的工具之一。但如前所说，pstack会hang住进程几秒到几十秒，使用的时候要注意影响。</p>
 <h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><p>perf是linux下最常用的性能分析工具之一，它可以读取CPU内置的PMU数据，提供非常详实的性能信息。</p>
 <p>perf top可以回答 “<em>CPU在执行什么？</em>”。</p>
 <p>除了top，还可以 perf record -g -p 1234 sleep 5，表示抓取5秒内进程号1234的栈信息，该命令结束后在当前目录生成一个perf.data文件，用 perf report打开该文件，可以看到和perf top相似的输出：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/26-261x300.png">http://loopjump.com/wp-content/uploads/2022/06/26-261x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-perf-record.png" alt="perf-perf-record.png"></p>
 <p>其中的+&#x2F;-可以展开&#x2F;折叠。</p>
 <p>实际上perf可以捕获多种event，执行perf list命令可以查看，在我的机器上输出有几百个event可以trace，包括cache、流水线、访存、虚拟内存、分支预测、TLB等方面，还包括库代码的event（USDT，user-level static probe，比如sdt_libpthread:cond_wait等）。</p>
 <p>我们举个USDT的例子：pthread.so里面有个probe名为mutex_entry，我们分析关于它的调用情况。</p>
 <p>首先 perf probe -x注入，然后perf record监测，最后perf report显示结果。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/27-300x72.png">http://loopjump.com/wp-content/uploads/2022/06/27-300x72.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/28-300x194.png">http://loopjump.com/wp-content/uploads/2022/06/28-300x194.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-perf-probe.png" alt="perf-perf-probe.png"><br><img src="https://blogimage.loopjump.com/2023/perf-perf-probe2.png" alt="perf-perf-probe2.png"></p>
 <p>从这里可以看到进程调用pthread_cond_wait频率最大（71.35%）的是事务提交流程change_stage函数中对pthread_cond_wait的调用。</p>
 <h3 id="火焰图"><a href="#火焰图" class="headerlink" title="火焰图"></a>火焰图</h3><p>火焰图是非常直观的数据展示方式，常用于展示各性能数据（如调用栈）对某个指标的贡献程度。</p>
 <p>以分析CPU热点为例（svg格式，可以鼠标交互）：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/29-300x29.png">http://loopjump.com/wp-content/uploads/2022/06/29-300x29.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/30-300x213.png">http://loopjump.com/wp-content/uploads/2022/06/30-300x213.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-flame.png" alt="perf-flame.png"><br><img src="https://blogimage.loopjump.com/2023/perf-flame2.png" alt="perf-flame2.png"></p>
 <p>除了分析CPU消耗，其他多种数据都可以用这种直观方式展现，因为火焰图只是counter+frequency的展示方式。</p>
 <p>这里本文提供同一个场景测试的两个性能数据，一个是perf结果，一个是pstack结果，从中看到不同维度的信息。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/31-300x117.png">http://loopjump.com/wp-content/uploads/2022/06/31-300x117.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/32-300x151.png">http://loopjump.com/wp-content/uploads/2022/06/32-300x151.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-perfresult.png" alt="perf-perfresult.png"><br><img src="https://blogimage.loopjump.com/2023/perf-pstackresult.png" alt="perf-pstackresult.png"></p>
 <p>上面两个图的对比可能还不能明显显示perf和pstack火焰图的差异。读者可以考虑如下的demo程序：进程有100个线程，其中1号线程执行一个耗时的计算如计算圆周率pi，2号线程执行计算自然对数底e，有49个线程等待pi的计算结果，49个线程等待e的计算结果。</p>
 <h3 id="Linux计时"><a href="#Linux计时" class="headerlink" title="Linux计时"></a>Linux计时</h3><p>计时可能时最朴素的性能分析方法了，堪比print之于debug。Linux下有多种方式来计时。</p>
 <p><strong>RDTSC</strong></p>
 <p>RDTSC是Intel的一个指令，读取CPU内部的time stamp counter。这种获取时间戳的成本非常低，非常适合计时来比较耗时大小。但是这里需要注意多核CPU中，RDTSC可能会不准确的问题，有些CPU支持了Invariant TSC，这种情况可以用来准确计时。可以通过查看CPUID.80000007H:EDX[8]位的值来判断是否支持Invariant TSC，这里有个工具[2]可以对CPUID值做全面的解释（部分截图）：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/33-300x206.png">http://loopjump.com/wp-content/uploads/2022/06/33-300x206.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-rdtsc.png" alt="perf-rdtsc.png"></p>
 <p><strong>clock_gettime</strong></p>
 <p>clock_gettime获取纳秒精度的时间戳，具体可参考手册 man clock_gettime。</p>
 <h3 id="eBPF"><a href="#eBPF" class="headerlink" title="eBPF"></a>eBPF</h3><p>eBPF是一种强大的内核追踪技术，现在还在快速发展中，未来可期，值得关注。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/34-300x110.png">http://loopjump.com/wp-content/uploads/2022/06/34-300x110.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-ebpf.png" alt="perf-ebpf.png"></p>
 <p>eBPF类似于linux的module，也是用户写的代码运行在内核态，但采用了沙盒和代码验证，因此更安全，也更方便。eBPF可以追踪内核函数，也能追踪应用进程的函数。一般要求linux内核版本比较高，最好到5.0以上。另外，通过eBPF对内核状态进行监控以支持性能分析需要对内核有比较多的了解，了解越多，eBPF用的越顺手。</p>
 <p>bcc是常用的eBPF开发套件，用户可以自己开发性能分析工具，实际上bcc也自带了一组性能分析工具，如下图（来自Brendan Gregg）。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/35-300x180.png">http://loopjump.com/wp-content/uploads/2022/06/35-300x180.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-bcc.png" alt="perf-bcc.png"></p>
 <p>我们这里挑几个工具简单介绍下。</p>
-<p>比如funccout用来追踪指定函数调用了多少次。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/36-300x181.png">http://loopjump.com/wp-content/uploads/2022/06/36-300x181.png</a></p>
+<p>比如funccount用来追踪指定函数调用了多少次。</p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-funccount.png" alt="perf-funccount.png"></p>
 <p>除了vfs_write这种内核函数，用户态的函数也可以追踪。读者可参考bcc的手册。</p>
 <p>再比如，offcputime用于追踪线程offcpu的情况，其原理是trace内核进程调度模块的finish_task_switch内核函数，记录切换的前后进程和发生的时间戳进行分析。该工具可以回答 “<em>线程为什么放弃了CPU，放弃了多久才重新调度回来</em>”。</p>
 <p>bcc套件还是挺好用的，我自己也写过简单的工具用于分析系统。</p>
@@ -367,26 +363,26 @@
 <p>这里举几个简单的实战例子。</p>
 <p>我们用sysbench压测本机的mysql服务器，测试oltp_insert 128并发场景，QPS约5000。</p>
 <p>观测发现CPU很闲，大概只有9%的利用率，但是IO很忙，%util接近满。注意，监控命令的前几秒输出不准确，读者自行忽略。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/37-300x155.png">http://loopjump.com/wp-content/uploads/2022/06/37-300x155.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-iostat-monitor.png" alt="perf-iostat-monitor.png"></p>
 <p>MySQL写盘主要是binlog文件，innodb redo文件，innodb page文件。</p>
 <p>写日志文件一般都支持配置是否实时sync。针对前两者，尝试修改参数 sync_binlog&#x3D;0, innodb_flush_log_at_trx_commit&#x3D;2 （注意：这两个参数影响事务持久性，这里简单地假设用户可以接受新的参数值），QPS从5000升到50000。</p>
 <p>测试跑了一会，发现磁盘满了，更新了测试目录重测。新盘性能好一点，QPS跑到了9万左右。监控数据如下。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/38-300x168.png">http://loopjump.com/wp-content/uploads/2022/06/38-300x168.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-iostat-monitor2.png" alt="perf-iostat-monitor2.png"></p>
 <p>现在看起来IO还没有打满，但是CPU利用率也只有约55%左右。</p>
 <p>CPU跑不满的可能的原因有：进程里面worker线程数目本身就不多；线程数目多但很多线程都不占用CPU（例如在等待IO或网络，或者等待其他业务逻辑）。总之就是没有足够多的线程处在RUNNING状态。</p>
 <p>我们的这个测试环境下，客户端并发度128不算低，网络也没问题（测试客户端和myqsld在同一台机器），在观测前我们可以排除这两个因素。接下来我们看线程放弃CPU在干什么。</p>
 <p>这里可以使用bcc的offcputime工具来分析，但我本机跑这个命令有点问题，跑不起来，可能是OS内核版本不行，我们改用pstack跑，我们可以抓10次pstack数据，合并后用火焰图分析看看。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/39-300x141.png">http://loopjump.com/wp-content/uploads/2022/06/39-300x141.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-offcputime.png" alt="perf-offcputime.png"></p>
 <p>从中可以看到，比较集中的是两块：有很多线程在插入新数据的时候log_free_check_wait，另有很多线程在ordered_commit流程的enroll_for中等待。</p>
 <p>前者是指redo log在循环复用的时候需要确保旧的日志不再使用，这部分旧日志对应的事务已经checkpoint刷盘（可能是log file size太小或者checkpoint跟不上）。后者是事务group commit后提交时被group的线程等待代为提交。</p>
 <p>排查了下log file size参数，发现默认值比较小，改大后重测，仍然是同样的问题，所以怀疑可能时checkpoint跟不上。checkpoint跟不上可能时刷脏页跟不上，我们调大刷脏页线程数目，重测后的pstack火焰图如下：</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/40-300x161.png">http://loopjump.com/wp-content/uploads/2022/06/40-300x161.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-pstackresult2.png" alt="perf-pstackresult2.png"></p>
 <p>如图可以看到log_free_check_wait已经看不到了。</p>
 <p>MYSQL_BIN_LOG::change_stage的等待，是group commit带来的，修改binlog_order_commits&#x3D;OFF能够减缓该问题，原因是允许并发在innodb层提交，THD阻塞时间减少。但这个问题仍然存在。</p>
 <p>再看一个例子。我们测试只读，因为buffer pool足够大，所以可以看到CPU已经完全跑满了。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/41-300x96.png">http://loopjump.com/wp-content/uploads/2022/06/41-300x96.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-vmstatresult2.png" alt="perf-vmstatresult2.png"></p>
 <p>perf看到的结果如下，optimize开销比较大，因为MySQL现在还没有Plan Cache功能。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/image-241x300.png">http://loopjump.com/wp-content/uploads/2022/06/image-241x300.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2023/perf-perfresult.png" alt="perf-perfresult.png"></p>
 <p>这个在现阶段可能就没有明显的瓶颈，优化空间比较小。</p>
 <p><strong>扩展谈一谈MySQL数据库的性能</strong>。</p>
 <p>第一个点是binlog。Binlog从性质上说是MySQL Server层的WAL，但InnoDB也有自己的redo log。一个数据库有两套日志，这实际上是不常见的。Binlog带来的好处是比较容易在一个实例内支撑多个存储引擎，坏处是两套日志显然会拖慢性能。</p>

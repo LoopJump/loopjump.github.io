@@ -214,8 +214,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def power(x:Int, n:Int): Int =</span><br><span class="line">    if (n == 0) 1 else x * power(x, n - 1)</span><br><span class="line"></span><br><span class="line">def power4(x:Int): Int = x * x * x * x</span><br></pre></td></tr></table></figure>
 
 <p>Futamura的核心想法时将specialization应用到interpreter。一个Interpreter的输入包含要解释的代码和该代码对应的输入数据。这个思路在数据库方面的表现如图。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png">http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png">http://loopjump.com/wp-content/uploads/2022/06/1-2-300x153.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-futamura.png" alt="query-compiler-futamura.png"></p>
 <p>图(a)中是目前解释执行方式，source是指sql语句，不包含参数，类似于prepare statement，input类似于prepare statement的参数。</p>
 <p>图(b)是以Futamura思路设计的执行模式，此处mix即specialization或partial evaluation（叫mix是历史原因），这样给定input，就可以直接用mix + data方式计算了，这样性能就会高很多，因为抹掉了 interpretive overhead。图(b)表达的含义换句话说，partially evaluating一个查询的解析器，事实上生成了该查询的编译版本，这就是<em>the first Futamura projection</em>。（This key result–partially evaluating an interpreter with respect to a source program produces a compiled version of that programis known as the first Futamura projection）</p>
 <p><strong>Programmatic Specialization</strong></p>
@@ -231,9 +230,7 @@
 <h2 id="Structuring-Query-Evaluators"><a href="#Structuring-Query-Evaluators" class="headerlink" title="Structuring Query Evaluators"></a>Structuring Query Evaluators</h2><p>the first Futamura projection本身只是提供了这样一个洞察，但不涉及代码分析和优化。因此后面的问题就是生成优化过的代码。</p>
 <p>按照前一章节的思想，specializaion生成的代码和对应的interpreter的代码形状上是一样的。也就是说，如果我们在实现interpreter的时候按照某种特定方式来实现，那么compiled code也就是类似的样子。</p>
 <p>接下来论文分析了几种常见的执行模型。</p>
-<h3 id="现有的执行模型"><a href="#现有的执行模型" class="headerlink" title="现有的执行模型"></a>现有的执行模型</h3><p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/12531486-4e92-42b6-9a23-fcae02737d99/2-2.png" alt="2-2.png"></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/18bc5d41-0bb3-49bb-8c69-c5ea9aa3ffc0/3-2.png" alt="3-2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/3-2-300x173.png">http://loopjump.com/wp-content/uploads/2022/06/3-2-300x173.png</a></p>
+<h3 id="现有的执行模型"><a href="#现有的执行模型" class="headerlink" title="现有的执行模型"></a>现有的执行模型</h3><p><img src="https://blogimage.loopjump.com/2022/query-compiler-eval-mode.png" alt="query-compiler-eval-mode.png"></p>
 <p><strong>迭代器模型（Volcano模型）</strong></p>
 <p>每个算子统一有open&#x2F;next&#x2F;close三个接口。执行时从root operator开始调用它的next接口，这会调用后继的operator的next，如此驱动直到底层的操作operator提供一条记录，这条记录返回给调用者，然后operator对这条记录执行自身的code。这种方式称作pull-based。</p>
 <p>迭代器模型优点是符合直觉，可以在operator之间进行pipeline。迭代器的缺点是函数调用开销比较大（虚函数多）。</p>
@@ -243,31 +240,20 @@
 <p>Data-Centric模型中控制流是相反的：数据被push到 operator。push模型对数据和代码的局部性更有利。如图3(e)，operator包含produce和consume两个主要接口，producer负责获取一条记录，consumer负责执行计算tuple上的计算。这套produce&#x2F;consume接口实际上比较反直觉，回后面会具体解释其运行过程。</p>
 <p>为什么Data-Centric模型更适应查询编译？从Futamura projection的视角看，data-centric模型中，operator内部的控制流并不依赖动态数据(dynamic data)，如4(c)，每个operator只消费valid的记录，不必重复null check。</p>
 <h3 id="Data-Centric-Evaluation-with-Callbacks"><a href="#Data-Centric-Evaluation-with-Callbacks" class="headerlink" title="Data-Centric Evaluation with Callbacks"></a>Data-Centric Evaluation with Callbacks</h3><p>Data-Centric模型相比迭代器模型不太直观，因此需要考虑使用另外一套API来达成与Data-Centric相同的编译效果。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png">http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/20a8f205-2e4b-4f20-98b4-515fc476d076/4-2.png" alt="4-2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png">http://loopjump.com/wp-content/uploads/2022/06/4-2-300x209.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-datacentric.png" alt="query-compiler-datacentric.png"></p>
 <p>前面提到produce&#x2F;consume运行比较反直觉，这里解释下。如图5(a) 就是push模型，采用了produce&#x2F;consume的方式。HashJoin包含两个子op，即left和right，HashJoin执行时首先执行HashJoin.produce，这里会先执行left.produce，直到碰到scan或者一个pipeline breaker（需要物化的operator，比如sort或者join），然后此时转而调用其parent的comsume，最后会向上调用到这个HashJoin的consume，这里会将left的所有record都放到hashmap中，完成后，执行流程回到left.produce的结束点，接下来执行HashJoin::produce的下一行代码，即isLeft&#x3D;false; right.produce，然后又执行到scan，再执行回HashJoin::consume，具体执行图中else分支。由此可以看到，produce&#x2F;consume运行过程比较复杂，consume实际上是在produce中触发调用的（碰到breaker等情况）。</p>
 <p>这种情况生成的代码也会跟breaker有关，如图。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png">http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/7f922e10-1170-4011-a1c8-5af659f7a4e3/5-2.png" alt="5-2.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png">http://loopjump.com/wp-content/uploads/2022/06/5-2-300x137.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-breaker.png" alt="query-compiler-breaker.png"></p>
 <p>push模型可以看做DFS访问执行计划树，第一次访问调用produce触发准备数据，第二次回来的时候调用consume触发消费数据。</p>
 <p>论文这里为了解决这个问题，提出了一个新的push模型：data-centric with callback。如图5(b)，exec函数是将produce和consume融合后的函数，其中传入一个回调cb。语义上说，*op.exec(cb)*可以解读为 operator op执行生成结果的逻辑，针对每一行结果，执行cb回调函数。</p>
 <h2 id="Building-Optimized-Query-Compiler"><a href="#Building-Optimized-Query-Compiler" class="headerlink" title="Building Optimized Query Compiler"></a>Building Optimized Query Compiler</h2><p>前面从原理上讲述了生成代码的原理，接下来看如何j具体地生成高效的代码。首先就是要回答 “ 代码生成逻辑应该放置在哪里？ ” 这个问题。</p>
 <p><strong>Pure Template Expansion</strong></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png">http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png">http://loopjump.com/wp-content/uploads/2022/06/6-1-300x75.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/bd4194b6-a325-46be-baae-727ef5427b7d/6-1.png" alt="6-1.png"></p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png">http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png">http://loopjump.com/wp-content/uploads/2022/06/7-1-300x197.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a54e16ad-44b5-4fc3-b1cf-13edb42360fc/7-1.png" alt="7-1.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-agg1.png" alt="query-compiler-agg1.png"><br><img src="https://blogimage.loopjump.com/2022/query-compiler-agg2.png" alt="query-compiler-agg2.png"></p>
 <p>这个方法的思路就是，直接在op.exec函数中填写对应的代码，如图，代码直接作为字符串。</p>
 <p>这方法的缺点：一是代码是自己手写进去的，可能不够优化；二是跨operator的优化做不了；三是把代码以字符串的形式写出来涉及到各种转义等等细节问题。</p>
 <p><strong>Programmatic Specialization</strong></p>
 <p>相比pure template expansion，将代码生成逻辑下沉到operator的内部成员的数据结构上。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png">http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/cf506823-7b97-4ce8-9e8d-1246e663d2f2/8-1.png" alt="8-1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png">http://loopjump.com/wp-content/uploads/2022/06/8-1-300x129.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-record.png" alt="query-compiler-record.png"></p>
 <p>注意到，这里的HashMap还是简单版本的hashmap，我们更想用glibc的成熟的hashmap。</p>
 <p><strong>Optimized Programmatic Specialization</strong></p>
 <p>代码生成逻辑继续下沉到操作原语层次上。</p>
@@ -275,9 +261,7 @@
 <p>论文提出的LB2执行引擎用的是LMS这套框架…… LMS类似于LLVM。</p>
 <p>后面介绍了row&#x2F;column存储布局、数据结构、数据分区和索引等方面的具体怎么优化成单个代码生成，而且是one pass的。这部分内容比较琐碎。</p>
 <p>后面章节给了一张查询编译的演化图：</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png">http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png">http://loopjump.com/wp-content/uploads/2022/06/9-1-300x134.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/4f731561-2cb4-43d0-9f2e-549a585bad7f/9-1.png" alt="9-1.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/query-compiler-evolution.png" alt="query-compiler-evolution.png"></p>
 <p>其他略。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>SIGMOD’16 有篇论文名叫<em>How to Architect a Query Compiler</em>，强调了查询编译的困难，本文名叫<em>How to Architect a Query Compiler, Revisited</em>，靶向明显，针对性很强，用非常妙的洞察降维打击，顺便还怼了一把编译器圈子影响力不给力。</p>
 <p>论文基于the first Futamura projection对数据库查询编译的产生了新的理解和洞察，这个理解和洞察对于编译器圈子的人或许很容易，但是对于数据库圈的人可能就不太容易想到。</p>
