@@ -214,14 +214,14 @@
 <p><strong>第一个优化是时间戳获取优化。</strong></p>
 <p>强一致性读问题的关键是在RO上当前读事务开启时，需要知晓此刻RW节点上最新的提交时间戳（可以偏大，不能偏小）。因此概念上RO上每个读请求都要从RW上fetch一次，但是如图的场景，实际上可以在满足条件的情况下，让一个读请求直接使用另一个读请求fetch的结果。图中r1就可以直接使用r2 fetch的结果。</p>
 <p><strong>第二个优化是避免不必要的等待。</strong></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2024/02/screenshot-20240213-111758-300x162.png">http://loopjump.com/wp-content/uploads/2024/02/screenshot-20240213-111758-300x162.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2024/polarscc-wait.png" alt="polarscc-wait.png"></p>
 <p>如果RO上的一个事务要读取的页面或者表在最近一段时间内未被更新，则显然这个事务并不需要等待所有的redo变更apply到最新。但要得知这个事实就要维护每个页面的最新变更LSN。因为PolarDB自身已经使用了CTS提交序事务系统，因此LSN跟commit-timestamp是等价的。文中使用了称之为modification tracking table(MTT)的数据结构维护了三层timestamp值：</p>
 <ul>
 <li>Global Level: 整个db最新的提交时间戳</li>
 <li>Table Level: 表级别的最新提交时间戳，每个表维护一个</li>
 <li>Page Level: 页面级别的最新提交时间戳，每个页面维护一个</li>
 </ul>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2024/02/screenshot-20240213-111836-300x98.png">http://loopjump.com/wp-content/uploads/2024/02/screenshot-20240213-111836-300x98.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2024/polarscc-leveled-timestamp.png" alt="polarscc-leveled-timestamp.png"></p>
 <p><strong>第三个方法是使用RMDA优化RW到RO的log shipment。</strong></p>
 <p>略。</p>
 </section>

@@ -211,15 +211,11 @@
 <li><strong>Verifiability</strong> 可验证性</li>
 <li><strong>Performance</strong> 高性能</li>
 </ol>
-<h2 id="Orca架构"><a href="#Orca架构" class="headerlink" title="Orca架构"></a>Orca架构</h2><p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/1.png">http://loopjump.com/wp-content/uploads/2020/06/1.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/60fbb038-de8c-4f9e-85f3-9fed0fb258ec/1.png" alt="1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/1.png">http://loopjump.com/wp-content/uploads/2020/06/1.png</a></p>
+<h2 id="Orca架构"><a href="#Orca架构" class="headerlink" title="Orca架构"></a>Orca架构</h2><p><img src="https://blogimage.loopjump.com/2022/orca-arch.png" alt="orca-arch.png"></p>
 <p>上图为Orca的架构，包含DXL，Memo，Search和 Job Scheduler，Transformation，Property Enforcement，Metadata Cache，GPOS。我们分别看一下。</p>
 <p><strong>DXL</strong></p>
 <p>Orca为了做到模块化可移植，解耦了优化器在数据库中上下游接口，采用了新的交互数据语言DXL（Data eXchange Language）。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png">http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png">http://loopjump.com/wp-content/uploads/2020/06/2-300x162.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/7784af3e-9eee-4cd2-9634-a30c45280a09/2.png" alt="2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-dxl.png" alt="orca-dxl.png"></p>
 <p>以查询 *SELECT T1.a FROM T1, T2 WHERE T1.a &#x3D; T2.b ORER BY T1.a;*为例，DXL Query为（Mdid为metadata id）：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF -8&quot;?&gt;</span><br><span class="line">&lt;dxl:DXLMessage xmlns:dxl=&quot;http://greenplum.com/dxl/v1&quot;&gt;</span><br><span class="line">    &lt;dxl:Query&gt;</span><br><span class="line">        &lt;dxl:OutputColumns&gt;</span><br><span class="line">            &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">        &lt;/dxl:OutputColumns&gt;</span><br><span class="line">        &lt;dxl:SortingColumnList&gt;</span><br><span class="line">            &lt;dxl:SortingColumn ColId=&quot;0&quot; OpMdid=&quot;0.97.1.0&quot;&gt;</span><br><span class="line">        &lt;/dxl:SortingColumnList&gt;</span><br><span class="line">        &lt;dxl:Distribution Type=&quot;Singleton&quot; /&gt;</span><br><span class="line">        &lt;dxl:LogicalJoin JoinType=&quot;Inner&quot;&gt;</span><br><span class="line">            &lt;dxl:LogicalGet&gt;</span><br><span class="line">                &lt;dxl:TableDescriptor Mdid=&quot;0.1639448.1.1&quot; Name=&quot;T1&quot;&gt;</span><br><span class="line">                    &lt;dxl:Columns&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;1&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                    &lt;/dxl:Columns&gt;</span><br><span class="line">                &lt;/dxl:TableDescriptor&gt;</span><br><span class="line">            &lt;/dxl:LogicalGet&gt;</span><br><span class="line">            &lt;dxl:LogicalGet&gt;</span><br><span class="line">                &lt;dxl:TableDescriptor Mdid=&quot;0.2868145.1.1&quot; Name=&quot;T2&quot;&gt;</span><br><span class="line">                    &lt;dxl:Columns&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;2&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                        &lt;dxl:Ident ColId=&quot;3&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                    &lt;/dxl:Columns&gt;</span><br><span class="line">                &lt;/dxl:TableDescriptor&gt;</span><br><span class="line">            &lt;/dxl:LogicalGet&gt;</span><br><span class="line">            &lt;dxl:Comparison Operator=&quot;=&quot; Mdid=&quot;0.96.1.0&quot;&gt;</span><br><span class="line">                &lt;dxl:Ident ColId=&quot;0&quot; Name=&quot;a&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">                &lt;dxl:Ident ColId=&quot;3&quot; Name=&quot;b&quot; Mdid=&quot;0.23.1.0&quot; /&gt;</span><br><span class="line">            &lt;/dxl:Comparison&gt;</span><br><span class="line">        &lt;/dxl:LogicalJoin&gt;</span><br><span class="line">    &lt;/dxl:Query&gt;</span><br><span class="line">&lt;/dxl:DXLMessage&gt;</span><br></pre></td></tr></table></figure>
 
@@ -235,30 +231,22 @@
 <p>为了与不同的底层OS交互，Orca对OS也做了抽象层。GPOS包括内存管理、并发控制原语、异常处理、文件IO和同步数据结构。</p>
 <h2 id="查询优化"><a href="#查询优化" class="headerlink" title="查询优化"></a>查询优化</h2><h3 id="查询优化过程"><a href="#查询优化过程" class="headerlink" title="查询优化过程"></a>查询优化过程</h3><p>还是前面这个查询，假设T1表按Hashed(T1.a)分区分布，T2按Hashed(T2.a)分区分布。</p>
 <p>Orca的输入是前述的DXL文件，然后解析成逻辑表达式树，拷贝到Memo中，如下图。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png">http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/69019d47-9527-4abd-9d4f-d1eade4fce09/3.png" alt="3.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png">http://loopjump.com/wp-content/uploads/2020/06/3-300x167.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-memo.png" alt="orca-memo.png"></p>
 <p>然后优化执行如下的一些步骤：</p>
 <p><strong>Exploration</strong></p>
 <p>应用transformation rule来生成等价的逻辑表达式，如JOIN交换律，生成的结果加到已有的group，也可能生成新的group（比如Join结合律[AB][C]&#x3D;[A][BC] 会新生成[BC]）。 Memo支持去重，去重方式是一句表达式拓扑。</p>
 <p><strong>Statistics Derivation</strong></p>
 <p>Exploration完了之火，Memo包含了所有的等价的逻辑表达式。这一步用于生成每个group的结果的统计信息，一般就是一组列的直方图。</p>
 <p>对于一个给定的group，估计其统计信息的时候，优先选择group中简单的表达式，因为越简单对统计信息的估计越准确。因为group以其他group为输入，所以在估计其统计信息的时候会递归先对其input group进行估计，然后在合并估计当前group的统计信息。从对象管理角度，统计信息挂在group上，而且可以增量式更新（比如新增一个列的统计信息）。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png">http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/73259713-7fd3-49d6-adbe-966abb5d5675/4.png" alt="4.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png">http://loopjump.com/wp-content/uploads/2020/06/4-300x273.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-group.png" alt="orca-group.png"></p>
 <p><strong>Implemetation</strong></p>
 <p>到这一步，开始根据implementation rule将逻辑表达式转换成物理表达式，例如 Get2Scan rule可以将逻辑Get转换为物理Scan，InnerJoin转为InnerJoin2HashJoin或者InnerJoin2NLJoin。</p>
 <p><strong>optimization</strong></p>
 <p>这一步开始进行property enforce和代价估计。</p>
 <p>实现上，定义向group发出optimization request，其含义是 在group中生成满足request条件的最小代价的计划。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png">http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/e88e7ddb-d60c-4782-bef8-82dc4dddec68/5.png" alt="5.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png">http://loopjump.com/wp-content/uploads/2020/06/5-300x142.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-group2.png" alt="orca-group2.png"></p>
 <p>初始请求为 <strong>req#1 : {singleton, &lt;T1.a&gt;}</strong> 含义为：查询结果需要汇总到master节点（GPDB里的master节点类似于proxy，计算层前面的一层），且要按T1.a排序。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png">http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/a9ced215-3530-4c92-91eb-4b74769055d1/6-1.png" alt="6-1.png"></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png">http://loopjump.com/wp-content/uploads/2020/06/6-1-300x226.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-opt.png" alt="orca-opt.png"></p>
 <p>上图显示了req #1 的优化过程。对于req#1，其中一个可选的计划是按照join条件进行对齐分布然后做hash join。所以在(a)中向group 1发送了<strong>req#7 : {Hashed(T1.a), Any}</strong> 请求（any表示结果的order可任意），向group 2发送了 **req#10 : {Hashed(T2.B), Any}**。因为T1本来就是按T1.a分区的，所以直接使用Scan，T2需要redistribute。最后在group 1上添加enforcer。最终的计划从root group开始自上而下提取。</p>
 <h3 id="并行查询优化"><a href="#并行查询优化" class="headerlink" title="并行查询优化"></a>并行查询优化</h3><p>这里是指优化过程本身的并行化。</p>
 <p>优化过程拆成多个小的task，主要有如下几类：</p>
@@ -273,9 +261,7 @@
 </ul>
 <p>一个SQL语句的优化过程可能产生数百个task，某些task之间可能会有依赖，不能并行。比如parent task和child tasks之间，但几个child tasks可以并行。</p>
 <h2 id="MetaData-Exchange"><a href="#MetaData-Exchange" class="headerlink" title="MetaData Exchange"></a>MetaData Exchange</h2><p>Orca与MetaData之间的数据交互。</p>
-<p><a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png">http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png</a></p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png">http://loopjump.com/wp-content/uploads/2020/06/7-1-300x300.png</a></p>
-<p><img src="https://prod-files-secure.s3.us-west-2.amazonaws.com/4c61fdf7-a36e-430e-bcfa-8388fe1d6ec9/fedf5171-0f9c-4aeb-91c1-d935018d2bdd/7-1.png" alt="7-1.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/orca-metadata.png" alt="orca-metadata.png"></p>
 <h2 id="Verifiability"><a href="#Verifiability" class="headerlink" title="Verifiability"></a>Verifiability</h2><p>Orca开发时就考虑到了测试问题，尤其是确保不要回退。</p>
 <p>两个工具：AMPERe、TAQO。</p>
 </section>

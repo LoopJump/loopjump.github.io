@@ -211,7 +211,7 @@
 <li>固定个数worker线程，并且每个worker线程固定划分到某个日志流，一个事务由一个worker执行并提交，因此一个事务只归属到一个流。</li>
 </ul>
 <p>解决思路自然是从单日志流改为多日志流。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2024/02/a-300x193.png">http://loopjump.com/wp-content/uploads/2024/02/a-300x193.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2024/parallel-logging.png" alt="parallel-logging.png"></p>
 <p>但改为多日志流后，因为ELR，两个有依赖关系的事务（如两个事务先后修改了同一行）可能会并行地写入不同的日志流，那么持久化的先后顺序可能与修改数据顺序不同，因此需要构建事务间依赖关系，事务提交时使用它，且恢复过程也需要这个依赖关系。所以问题的核心是事务依赖关系从单日志流强制下的全序改为偏序后如何捕获这个偏序关系。</p>
 <p>注意到事务的依赖关系根源在于读写记录集合之间有交集。因此，（在S2PL+ELR下）可以在行锁上维护最后一次读写该行的事务信息。具体地，记录的行锁上维护了一个readLV和writeLV(LV: lsn vector)，含义是LV的每个分量表示该流上最后一次读写该记录的事务的LSN。事务自己也有一个LV表示自己可能依赖的各流上的事务对应的LSN最大值，事务执行过程中访问过的所有行的readLV和writeLV会推大事务的LV（按分量推大）。事务在提交时，需要等待各流持久化LSN分别大于LV的对应分量，即本事务所依赖的那些事务已经提交后本事务才能提交。</p>
 <p>logging开销包括四部分：1. LV的维护开销；2. 创建log record开销，copy log record开销；3. 前面1和2导致锁冲突加剧；4.持久化开销。论文提到如果日志流比较多，LV就太大，所以使用了SIMD优化LV的操作。不过相比这个问题，log mgr线程数量应该是个更大的问题，因此并发日志流数量肯定不能太多，或者就是CPU资源比较空闲，后面实验部分用的也是96C大规格机器。</p>

@@ -249,13 +249,13 @@
 </ul>
 <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>数据量越来越大，几乎每两年翻一倍。云计算提供了一种新的处理数据的选择：无限的池化资源；高可靠&#x2F;可扩展&#x2F;灵活的组件；按用付费的模式。Storage as a Service（StaaS）是其中重要的一环。</p>
 <p>数据存储有多个维度可以考察。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/09/1-300x94.png">http://loopjump.com/wp-content/uploads/2022/09/1-300x94.png</a></p>
-<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/09/2-1024x999.png">http://loopjump.com/wp-content/uploads/2022/09/2-1024x999.png</a></p>
-<h2 id="Data-Model"><a href="#Data-Model" class="headerlink" title="Data Model"></a>Data Model</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/09/3-300x147.png">http://loopjump.com/wp-content/uploads/2022/09/3-300x147.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/dsc-dim.png" alt="dsc-dim.png"></p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><img src="https://blogimage.loopjump.com/2022/dsc-overview.png" alt="dsc-overview.png"></p>
+<h2 id="Data-Model"><a href="#Data-Model" class="headerlink" title="Data Model"></a>Data Model</h2><p><img src="https://blogimage.loopjump.com/2022/dsc-datamodel.png" alt="dsc-datamodel.png"></p>
 <p>Model - SMR与DUR：SMR大家都比较熟悉，DUR的思路是指多副本的数据库实例，每个副本都可以执行事务，但事务结束的时候要做certification，判断事务与本地和其他副本上的其他事务是否有冲突。SMR可以实现linearizability，DUR可以实现serializability。DUR有点像MySQL MGR的方案。</p>
 <p>Placement - Hash：数据按hash值分布到所属节点（比如Dynamo）；Closest：将数据放在对该数据的请求路由次数最多的节点；MultiGet：关联数据放一块；Associated Data Placement：Closest和MultiGet的结合。</p>
 <p>Erasure Code：(k,m)-erasure coding将数据拆为等大的k块，并生成额外的m块校验性质的块，总计n&#x3D;k+m块，任意m块损坏都可以从其他k块回复原始数据。EC的价值在于达到同样的容错能力需要的存储成本更低，比如(3,2)-EC可以容忍2个块失效，整体存储成本与同等可靠性的3副本比只有66%。</p>
-<h2 id="Transaction"><a href="#Transaction" class="headerlink" title="Transaction"></a>Transaction</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/09/5-300x203.png">http://loopjump.com/wp-content/uploads/2022/09/5-300x203.png</a></p>
+<h2 id="Transaction"><a href="#Transaction" class="headerlink" title="Transaction"></a>Transaction</h2><p><img src="https://blogimage.loopjump.com/2022/dsc-trx.png" alt="dsc-trx.png"></p>
 <p>Architecture</p>
 <ul>
 <li>TopDown：如Spanner，replication层在事务层下面；</li>
@@ -264,7 +264,7 @@
 <p>Commitment Protocol：这里有点不清晰的是实际上AB&#x3D;Consensus，所以分类看起来有点乱。不过也可能我没注意到具体的细节差异。</p>
 <p>隔离级别：这里就更乱了，论文还列举了个PSI，看文章的描述，类似于Practical Fast Replication(NSDI19’)中的command order的意思。</p>
 <h2 id="Data-Management-Cost"><a href="#Data-Management-Cost" class="headerlink" title="Data Management Cost"></a>Data Management Cost</h2><p>主要是成本， QoS。</p>
-<h2 id="Future"><a href="#Future" class="headerlink" title="Future"></a>Future</h2><p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/09/6-1022x1024.png">http://loopjump.com/wp-content/uploads/2022/09/6-1022x1024.png</a></p>
+<h2 id="Future"><a href="#Future" class="headerlink" title="Future"></a>Future</h2><p><img src="https://blogimage.loopjump.com/2022/dsc-future.png" alt="dsc-future.png"></p>
 </section>
     <!-- Tags START -->
     

@@ -209,7 +209,7 @@
 <li>统一表存储 Unified Table Storage</li>
 </ol>
 <h2 id="存储计算分离"><a href="#存储计算分离" class="headerlink" title="存储计算分离"></a>存储计算分离</h2><p>S2DB是一个shared-nohting架构的分布式数据库，但同时也可以访问分离的对象存储。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/11-300x149.png">http://loopjump.com/wp-content/uploads/2022/10/11-300x149.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/s2db-arch.png" alt="s2db-arch.png"></p>
 <p>使用对象存储的时候，S2DB的架构跟其他存算分离的系统有一些差异，S2DB并不是把所有数据都存到对象存储系统中，而是会利用好本地存储存放新写入的数据，之后再异步将数据移动到对象存储。这个思路既可以做到冷数据存对象存储，又可以做到事务提交延迟不受对象存储访问延迟拖累。事务的持久化靠多S2DB自身的多副本实现。</p>
 <p>Staging Data From Local To Remote Storage S2DB更好地利用了数据冷热和云存储层次（本地内存-本地磁盘-对象存储）。 像Snowflake、Redshift等似乎都没有利用好这种存储层次，它们可能会把数据直接写到对象存储中。 S2DB在这块的一些设计：</p>
 <ul>
@@ -234,7 +234,7 @@
 <p>主要还是存储空间和成本相比本地存储得到很大解放，整体因独立存储带来了一定程度的弹性。</p>
 <h2 id="统一表存储-Unified-Table-Storage"><a href="#统一表存储-Unified-Table-Storage" class="headerlink" title="统一表存储 Unified Table Storage"></a>统一表存储 Unified Table Storage</h2><p>统一表存储的好处是节省了用户操心表存储方式的问题。</p>
 <p>表存储格式 统一存储格式为：内存行存+硬盘列存。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/13-300x94.png">http://loopjump.com/wp-content/uploads/2022/10/13-300x94.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/s2db-storageformat.png" alt="s2db-storageformat.png"></p>
 <p><strong>内存行存</strong></p>
 <ul>
 <li>数据结构：lock free skiplist；skiplist的node作为一条记录；该记录的多版本挂链存放；行锁放到node中；记录按定长处理，变长的字段用指针指出去。</li>
@@ -255,7 +255,7 @@
 <li>external index structure: 外部整体再配个lsm tree索引，将二级索引列映射到主键索引列，如Spanner。</li>
 </ul>
 <p>S2DB的二层索引结构 S2DB的二级索引不太一样，它采用的是二层结构加LSM Tree存储的方式。</p>
-<p>!<a target="_blank" rel="noopener" href="http://loopjump.com/wp-content/uploads/2022/10/12-300x163.png">http://loopjump.com/wp-content/uploads/2022/10/12-300x163.png</a></p>
+<p><img src="https://blogimage.loopjump.com/2022/s2db-index.png" alt="s2db-index.png"></p>
 <p>首先是segment内部的局部索引，即图中 inverted index。它记录了index column值和该值在segment中的offset list。因为segment是不可变的，所以这个索引只需要生成一次。 然后还有一个全局的索引，它记录的是index column值到各个segment的inverted index的索引。当前S2DB的全局索引仅支持无序的二级索引，也就是hashtable。当新的segment生成的时候，就生成LSM Tree里面的一层，逻辑上就是一层hashtable，层数多了也会触发compaction合并hashtable。论文中声称未来会支持有序索引，感觉这个就比较麻烦了。</p>
 <p>多列二级索引 S2DB会分别单列建索引加多列索引，这样可以兼容index columns subset的过滤，多列索引同时还要支持unique check。S2DB的这块实现看起来也没有什么亮点。</p>
 <p><strong>行锁</strong></p>

@@ -333,29 +333,29 @@
 <p>实际上perf可以捕获多种event，执行perf list命令可以查看，在我的机器上输出有几百个event可以trace，包括cache、流水线、访存、虚拟内存、分支预测、TLB等方面，还包括库代码的event（USDT，user-level static probe，比如sdt_libpthread:cond_wait等）。</p>
 <p>我们举个USDT的例子：pthread.so里面有个probe名为mutex_entry，我们分析关于它的调用情况。</p>
 <p>首先 perf probe -x注入，然后perf record监测，最后perf report显示结果。</p>
-<p><img src="https://blogimage.loopjump.com/2022/perf-perf-probe.png" alt="perf-perf-probe.png"><br><img src="https://blogimage.loopjump.com/2023/perf-perf-probe2.png" alt="perf-perf-probe2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-perf-probe.png" alt="perf-perf-probe.png"><br><img src="https://blogimage.loopjump.com/2022/perf-perf-probe2.png" alt="perf-perf-probe2.png"></p>
 <p>从这里可以看到进程调用pthread_cond_wait频率最大（71.35%）的是事务提交流程change_stage函数中对pthread_cond_wait的调用。</p>
 <h3 id="火焰图"><a href="#火焰图" class="headerlink" title="火焰图"></a>火焰图</h3><p>火焰图是非常直观的数据展示方式，常用于展示各性能数据（如调用栈）对某个指标的贡献程度。</p>
 <p>以分析CPU热点为例（svg格式，可以鼠标交互）：</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-flame.png" alt="perf-flame.png"><br><img src="https://blogimage.loopjump.com/2023/perf-flame2.png" alt="perf-flame2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-flame.png" alt="perf-flame.png"><br><img src="https://blogimage.loopjump.com/2022/perf-flame2.png" alt="perf-flame2.png"></p>
 <p>除了分析CPU消耗，其他多种数据都可以用这种直观方式展现，因为火焰图只是counter+frequency的展示方式。</p>
 <p>这里本文提供同一个场景测试的两个性能数据，一个是perf结果，一个是pstack结果，从中看到不同维度的信息。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-perfresult.png" alt="perf-perfresult.png"><br><img src="https://blogimage.loopjump.com/2023/perf-pstackresult.png" alt="perf-pstackresult.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-perfresult.png" alt="perf-perfresult.png"><br><img src="https://blogimage.loopjump.com/2022/perf-pstackresult.png" alt="perf-pstackresult.png"></p>
 <p>上面两个图的对比可能还不能明显显示perf和pstack火焰图的差异。读者可以考虑如下的demo程序：进程有100个线程，其中1号线程执行一个耗时的计算如计算圆周率pi，2号线程执行计算自然对数底e，有49个线程等待pi的计算结果，49个线程等待e的计算结果。</p>
 <h3 id="Linux计时"><a href="#Linux计时" class="headerlink" title="Linux计时"></a>Linux计时</h3><p>计时可能时最朴素的性能分析方法了，堪比print之于debug。Linux下有多种方式来计时。</p>
 <p><strong>RDTSC</strong></p>
 <p>RDTSC是Intel的一个指令，读取CPU内部的time stamp counter。这种获取时间戳的成本非常低，非常适合计时来比较耗时大小。但是这里需要注意多核CPU中，RDTSC可能会不准确的问题，有些CPU支持了Invariant TSC，这种情况可以用来准确计时。可以通过查看CPUID.80000007H:EDX[8]位的值来判断是否支持Invariant TSC，这里有个工具[2]可以对CPUID值做全面的解释（部分截图）：</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-rdtsc.png" alt="perf-rdtsc.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-rdtsc.png" alt="perf-rdtsc.png"></p>
 <p><strong>clock_gettime</strong></p>
 <p>clock_gettime获取纳秒精度的时间戳，具体可参考手册 man clock_gettime。</p>
 <h3 id="eBPF"><a href="#eBPF" class="headerlink" title="eBPF"></a>eBPF</h3><p>eBPF是一种强大的内核追踪技术，现在还在快速发展中，未来可期，值得关注。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-ebpf.png" alt="perf-ebpf.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-ebpf.png" alt="perf-ebpf.png"></p>
 <p>eBPF类似于linux的module，也是用户写的代码运行在内核态，但采用了沙盒和代码验证，因此更安全，也更方便。eBPF可以追踪内核函数，也能追踪应用进程的函数。一般要求linux内核版本比较高，最好到5.0以上。另外，通过eBPF对内核状态进行监控以支持性能分析需要对内核有比较多的了解，了解越多，eBPF用的越顺手。</p>
 <p>bcc是常用的eBPF开发套件，用户可以自己开发性能分析工具，实际上bcc也自带了一组性能分析工具，如下图（来自Brendan Gregg）。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-bcc.png" alt="perf-bcc.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-bcc.png" alt="perf-bcc.png"></p>
 <p>我们这里挑几个工具简单介绍下。</p>
 <p>比如funccount用来追踪指定函数调用了多少次。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-funccount.png" alt="perf-funccount.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-funccount.png" alt="perf-funccount.png"></p>
 <p>除了vfs_write这种内核函数，用户态的函数也可以追踪。读者可参考bcc的手册。</p>
 <p>再比如，offcputime用于追踪线程offcpu的情况，其原理是trace内核进程调度模块的finish_task_switch内核函数，记录切换的前后进程和发生的时间戳进行分析。该工具可以回答 “<em>线程为什么放弃了CPU，放弃了多久才重新调度回来</em>”。</p>
 <p>bcc套件还是挺好用的，我自己也写过简单的工具用于分析系统。</p>
@@ -363,26 +363,26 @@
 <p>这里举几个简单的实战例子。</p>
 <p>我们用sysbench压测本机的mysql服务器，测试oltp_insert 128并发场景，QPS约5000。</p>
 <p>观测发现CPU很闲，大概只有9%的利用率，但是IO很忙，%util接近满。注意，监控命令的前几秒输出不准确，读者自行忽略。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-iostat-monitor.png" alt="perf-iostat-monitor.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-iostat-monitor.png" alt="perf-iostat-monitor.png"></p>
 <p>MySQL写盘主要是binlog文件，innodb redo文件，innodb page文件。</p>
 <p>写日志文件一般都支持配置是否实时sync。针对前两者，尝试修改参数 sync_binlog&#x3D;0, innodb_flush_log_at_trx_commit&#x3D;2 （注意：这两个参数影响事务持久性，这里简单地假设用户可以接受新的参数值），QPS从5000升到50000。</p>
 <p>测试跑了一会，发现磁盘满了，更新了测试目录重测。新盘性能好一点，QPS跑到了9万左右。监控数据如下。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-iostat-monitor2.png" alt="perf-iostat-monitor2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-iostat-monitor2.png" alt="perf-iostat-monitor2.png"></p>
 <p>现在看起来IO还没有打满，但是CPU利用率也只有约55%左右。</p>
 <p>CPU跑不满的可能的原因有：进程里面worker线程数目本身就不多；线程数目多但很多线程都不占用CPU（例如在等待IO或网络，或者等待其他业务逻辑）。总之就是没有足够多的线程处在RUNNING状态。</p>
 <p>我们的这个测试环境下，客户端并发度128不算低，网络也没问题（测试客户端和myqsld在同一台机器），在观测前我们可以排除这两个因素。接下来我们看线程放弃CPU在干什么。</p>
 <p>这里可以使用bcc的offcputime工具来分析，但我本机跑这个命令有点问题，跑不起来，可能是OS内核版本不行，我们改用pstack跑，我们可以抓10次pstack数据，合并后用火焰图分析看看。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-offcputime.png" alt="perf-offcputime.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-offcputime.png" alt="perf-offcputime.png"></p>
 <p>从中可以看到，比较集中的是两块：有很多线程在插入新数据的时候log_free_check_wait，另有很多线程在ordered_commit流程的enroll_for中等待。</p>
 <p>前者是指redo log在循环复用的时候需要确保旧的日志不再使用，这部分旧日志对应的事务已经checkpoint刷盘（可能是log file size太小或者checkpoint跟不上）。后者是事务group commit后提交时被group的线程等待代为提交。</p>
 <p>排查了下log file size参数，发现默认值比较小，改大后重测，仍然是同样的问题，所以怀疑可能时checkpoint跟不上。checkpoint跟不上可能时刷脏页跟不上，我们调大刷脏页线程数目，重测后的pstack火焰图如下：</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-pstackresult2.png" alt="perf-pstackresult2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-pstackresult2.png" alt="perf-pstackresult2.png"></p>
 <p>如图可以看到log_free_check_wait已经看不到了。</p>
 <p>MYSQL_BIN_LOG::change_stage的等待，是group commit带来的，修改binlog_order_commits&#x3D;OFF能够减缓该问题，原因是允许并发在innodb层提交，THD阻塞时间减少。但这个问题仍然存在。</p>
 <p>再看一个例子。我们测试只读，因为buffer pool足够大，所以可以看到CPU已经完全跑满了。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-vmstatresult2.png" alt="perf-vmstatresult2.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-vmstatresult2.png" alt="perf-vmstatresult2.png"></p>
 <p>perf看到的结果如下，optimize开销比较大，因为MySQL现在还没有Plan Cache功能。</p>
-<p><img src="https://blogimage.loopjump.com/2023/perf-perfresult.png" alt="perf-perfresult.png"></p>
+<p><img src="https://blogimage.loopjump.com/2022/perf-perfresult.png" alt="perf-perfresult.png"></p>
 <p>这个在现阶段可能就没有明显的瓶颈，优化空间比较小。</p>
 <p><strong>扩展谈一谈MySQL数据库的性能</strong>。</p>
 <p>第一个点是binlog。Binlog从性质上说是MySQL Server层的WAL，但InnoDB也有自己的redo log。一个数据库有两套日志，这实际上是不常见的。Binlog带来的好处是比较容易在一个实例内支撑多个存储引擎，坏处是两套日志显然会拖慢性能。</p>
