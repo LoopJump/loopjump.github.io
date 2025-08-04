@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      duckdb_sql | LoopJump&#39;s Blog
+    
+  </title><meta name="robots" content="noindex">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+    
+<script src="/js/qrious.js"></script>
+
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>LoopJump's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/series/" class="item-link">Series</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/series/" class="menu-link">Series</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>duckdb_sql</h2>
+  <p class="post-date">2025-07-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="DuckDB-SQL引擎源码浅析"><a href="#DuckDB-SQL引擎源码浅析" class="headerlink" title="DuckDB SQL引擎源码浅析"></a>DuckDB SQL引擎源码浅析</h1><p>本文介绍DuckDB的SQL引擎，主要包括Parser、Analyzer、Optimizer及Executor。这也是一个经典的SQL Engine所具备的主要部分。</p>
+<p>一个查询的入口函数为 <code>ClientContext::Query(const string &amp;query, bool allow_stream_result)</code>。</p>
+<h2 id="Parser"><a href="#Parser" class="headerlink" title="Parser"></a>Parser</h2><p>DuckDB的解析器是基于PostgreSQL的libpg_query语法解析库进行修改而来的。</p>
+<p>主要修改如下：</p>
+<ol>
+<li>输出改为C++语言</li>
+<li>parser和辅助数据结构用duckdb_libpgquery namespace括起来</li>
+<li>将文件拆到多个小文件，而不是以前单独一个大文件</li>
+<li>做了部分代码去重简化</li>
+</ol>
+<p>DuckDB的parser入口函数为<code>Parser::ParseQuery(const string &amp;query)</code>。</p>
+<p>ParseQuery的主要步骤：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Parser::ParseQuery</span><span class="params">(<span class="type">const</span> string &amp;query)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// 处理unicode空白字符</span></span><br><span class="line">  <span class="built_in">StripUnicodeSpace</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 使用libpg_query库的parse功能</span></span><br><span class="line">  PostgresParser parser;</span><br><span class="line">  parser.<span class="built_in">Parse</span>(query);</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 将libpg_query的输出格式转为duckdb自己的内部数据结构表示的形式，</span></span><br><span class="line">  <span class="comment">// 结果存放到 this-&gt;statements，这里每种Statement的每个语法树节点</span></span><br><span class="line">  <span class="comment">// 都要进行转换，因此Transformer的代码量也非常大，详见src/parser/transform</span></span><br><span class="line">  Transformer transformer;</span><br><span class="line">  transformer.<span class="built_in">TransParseTree</span>(parser.parse_tree, <span class="keyword">this</span>-&gt;statements);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Planner"><a href="#Planner" class="headerlink" title="Planner"></a>Planner</h2><p>根据Statement生成执行计划的逻辑参见<code>ClientContext::CreatePreparedStatementInternal</code>函数，这里会先将Statement转为逻辑执行计划，然后进行优化，最后生成物理执行计划。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ClientContext::<span class="built_in">CreatePreparedStatementInternal</span>(statement)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 生成逻辑执行计划</span></span><br><span class="line">  Planner logical_planner;</span><br><span class="line">  logical_plan = logical_planner.<span class="built_in">CreatePlan</span>(statement);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 执行优化</span></span><br><span class="line">  Optimizer optimizer;</span><br><span class="line">  logical_plan = optimizer.<span class="built_in">Optimize</span>(logical_plan);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 生成物理执行计划</span></span><br><span class="line">  PhysicalPlanGenerator physical_planner;</span><br><span class="line">  physical_plan = physical_planner.<span class="built_in">Plan</span>(logical_plan);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Logical-Planner"><a href="#Logical-Planner" class="headerlink" title="Logical Planner"></a>Logical Planner</h3><p>Logical Planner的核心逻辑是根据Statement生成逻辑执行计划，语义解析也是这个过程中完成的。它的入口函数是<code>Planner::CreatePlan(statement)</code>。</p>
+<p>以<code>SELECT c2, count(c2) FROM t1 WHERE c1 != 1 GROUP BY c2 HAVING c2 != 0 ORDER BY c2 LIMIT 2;</code>为例，该SQL语句生成的Statement对象内容大致如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">SelectStatement</span><br><span class="line">|-- type: SELECT_STATEMENT</span><br><span class="line">|-- <span class="built_in">node</span>(QueryNode):</span><br><span class="line">    |-- type: SELECT_NODE</span><br><span class="line">    |-- <span class="built_in">modifiers</span>(vector&lt;ResultModifier&gt;)</span><br><span class="line">    |   |-- modifiers[<span class="number">0</span>](OrderModifier)</span><br><span class="line">    |   |   |-- type: ORDER_MODIFIER</span><br><span class="line">    |   |   |-- <span class="built_in">orders</span>(vector&lt;OrderByNode&gt;)</span><br><span class="line">    |   |       |-- orders[<span class="number">0</span>](OrderByNode): &#123;ORDER_DEFAULT, COLUMN_REF, [<span class="string">&quot;c2&quot;</span>]&#125;</span><br><span class="line">    |   |-- modifiers[<span class="number">1</span>](LimitModifier)</span><br><span class="line">    |       |-- limit: <span class="number">2</span></span><br><span class="line">    |       |-- offset: <span class="literal">NULL</span></span><br><span class="line">    |-- <span class="built_in">select_list</span>(vector&lt;ParsedExpression&gt;)</span><br><span class="line">    |   |-- select_list[<span class="number">0</span>](ParsedExpression): &#123;COLUMN_REF, [<span class="string">&quot;c2&quot;</span>]&#125;</span><br><span class="line">    |   |-- select_list[<span class="number">1</span>](ParsedExpression)</span><br><span class="line">    |       |-- type: Function</span><br><span class="line">    |       |-- function_name: <span class="string">&quot;count&quot;</span></span><br><span class="line">    |       |-- <span class="built_in">children</span>(vector&lt;ParsedExpression&gt;)</span><br><span class="line">    |           |-- children[<span class="number">0</span>](ParsedExpression): &#123;COLUMN_REF, [<span class="string">&quot;c2&quot;</span>]&#125;</span><br><span class="line">    |       |-- distinct: <span class="literal">false</span></span><br><span class="line">    |       |-- filter: <span class="literal">NULL</span></span><br><span class="line">    |       |-- <span class="built_in">order_bys</span>(vector&lt;OrderModifier&gt;): empty</span><br><span class="line">    |-- <span class="built_in">from_table</span>(TableRef): &#123;TABLE_REF, <span class="string">&quot;t1&quot;</span>&#125;</span><br><span class="line">    |-- <span class="built_in">where_clause</span>(ParsedExpression)</span><br><span class="line">    |   |-- type: COMPARE_NOTEQUAL</span><br><span class="line">    |   |-- left: &#123;COLUMN_REF, [<span class="string">&quot;c1&quot;</span>]&#125;</span><br><span class="line">    |   |-- right: &#123;VALUE_CONSTANT.INTEGER, <span class="number">1</span>&#125;</span><br><span class="line">    |-- <span class="built_in">groups</span>(GroupByNode)</span><br><span class="line">        |-- <span class="built_in">group_expression</span>(vector&lt;ParsedExpression&gt;): [&#123;COLUMN_REF, [<span class="string">&quot;c2&quot;</span>]&#125;]</span><br><span class="line">        |-- grouping_sets</span><br><span class="line">        |-- <span class="built_in">having</span>(ParsedExpression)</span><br><span class="line">            |-- type: COMPARE_NOTEQUAL</span><br><span class="line">            |-- left: &#123;COLUMN_REF, <span class="string">&quot;c2&quot;</span>&#125;</span><br><span class="line">            |-- right: &#123;VALUE_CONSTANT.INTEGER, <span class="number">0</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>Planner::CreatePlan</code>会遍历这棵树，并对其中的node进行处理，生成对应的逻辑操作算子，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Bind</span>(SelectStatement)</span><br><span class="line">|-- <span class="built_in">BindNode</span>(QueryNode)</span><br><span class="line">    |-- <span class="built_in">BindNode</span>(SelectNode)</span><br><span class="line">    |   |-- <span class="built_in">Bind</span>(TableRef)</span><br><span class="line">    |       |-- <span class="built_in">Bind</span>(BaseTableRef)</span><br><span class="line">    |           |-- <span class="keyword">new</span> LogicalGet</span><br><span class="line">    |-- <span class="built_in">CreatePlan</span>(BoundQueryNode)</span><br><span class="line">        |-- <span class="built_in">CreatePlan</span>(BoundSelectNode)</span><br><span class="line">            |-- PlanFilter</span><br><span class="line">                |-- <span class="keyword">new</span> LogicalFilter</span><br><span class="line">            |-- <span class="keyword">new</span> LogicalAggrate</span><br><span class="line">            |-- <span class="keyword">new</span> LogicalFilter</span><br><span class="line">            |-- <span class="keyword">new</span> LogicalProjection</span><br><span class="line">            |-- <span class="built_in">VisitQueryNode</span>(BoundQueryNode)</span><br><span class="line">                |-- <span class="keyword">new</span> LogicalOrder</span><br><span class="line">                |-- <span class="keyword">new</span> LogicalLimit</span><br></pre></td></tr></table></figure>
+
+<p>从源码可以看到：</p>
+<ul>
+<li>遍历Statement树的过程中逐步将语法树node转为逻辑算子，并维护逻辑算子的结构，即逻辑执行计划。</li>
+<li>语义分析和逻辑计划生成式交错进行的，这使得代码变得晦涩了一些。</li>
+</ul>
+<p>最终生成的逻辑执行计划为： </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">LogicalLimit <span class="comment">// limit 2</span></span><br><span class="line">       |</span><br><span class="line">LogicalOrderBy <span class="comment">// order by c2</span></span><br><span class="line">       |</span><br><span class="line">LogicalProjection <span class="comment">// c2, count(c2)</span></span><br><span class="line">       |</span><br><span class="line">LogicalFilter <span class="comment">// having c2 != 0</span></span><br><span class="line">       |</span><br><span class="line">LogicalAggregate <span class="comment">// count(c2)</span></span><br><span class="line">       |</span><br><span class="line">LogicalFilter <span class="comment">// filter c1 != 1</span></span><br><span class="line">  		 |</span><br><span class="line">LogicalGet <span class="comment">// scan table</span></span><br></pre></td></tr></table></figure>
+
+<p>当然这个例子比较简单，没有JOIN之类的多个children的operator，所以这棵树呈现为一个链表形状。 </p>
+<h3 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h3><p>DuckDB的优化器是基于规则的优化器（即RBO），优化器入口函数为 <code>Optimizer::Optimize</code>函数。不同的规则在执行顺序上有依赖，需要小心安排。  </p>
+<p><strong>逻辑计划遍历框架</strong></p>
+<p>首先需要描述下<code>LogicalOperatorVisitor::VisitOperator</code>的逻辑。</p>
+<p>逻辑执行计划的优化，通常需要遍历逻辑执行计划树，然后对树的节点或者结构进行对应的优化，很多优化规则的执行逻辑都是从这个逻辑继承过来的。 这块逻辑也比较清晰，就是从根节点开始进行递归访问，并且每个operator的expression也都处理一遍。 </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">VisitOperator</span>(LogicalOperator &amp;op)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 递归遍历子节点</span></span><br><span class="line">  <span class="built_in">VisitOperatorChildren</span>(op);</span><br><span class="line">  <span class="comment">// 处理op的expression部分</span></span><br><span class="line">  <span class="built_in">VisitOperatorExpression</span>(op);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">VisitOperatorChildren</span>(LogicalOperator &amp;op)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 递归遍历每一个子节点</span></span><br><span class="line">  <span class="keyword">for</span> (child : op.children) &#123;</span><br><span class="line">    <span class="built_in">VisitOperator</span>(child);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 访问该op的expression</span></span><br><span class="line"><span class="built_in">VisitOperatorExpression</span>(LogicalOperator &amp;op)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  EnumerateExpressions根据op的具体类型，取出op的expression部分字段。</span></span><br><span class="line"><span class="comment">  例如：LogicalDistinct算子的distinct_targets、LogicalInsert算子的</span></span><br><span class="line"><span class="comment">  on_conflict_condition、LogicalOrder算子的orders等等。</span></span><br><span class="line"><span class="comment">  </span></span><br><span class="line"><span class="comment">  对表达式部分执行func_on_expr，即执行VisitExpression。不同的优化规则自己override</span></span><br><span class="line"><span class="comment">  VisitExpression的实现，进行特定的优化动作。默认的动作是VisitReplace</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="keyword">auto</span> func_on_expr = [&amp;](Expression *child) &#123; <span class="built_in">VisitExpression</span>(child); &#125;</span><br><span class="line">  <span class="built_in">EnumerateExpressions</span>(op, func);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面挑几个（容易看懂的:)）优化规则描述下其逻辑：</p>
+<p><strong>Expression Rewrite</strong> </p>
+<p>表达式重写规则包括多项优化规则，expression rewrite的执行框架如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ExpressionRewriter::<span class="built_in">ApplyRules</span>(op, expr)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 迭代每一个规则</span></span><br><span class="line">  <span class="keyword">for</span> (rule : rules) &#123;</span><br><span class="line">    <span class="comment">// 如果当前表达式expr匹配该规则，则执行apply rule</span></span><br><span class="line">    <span class="keyword">if</span> (rule.<span class="built_in">Match</span>(expr, &amp;bindings)) &#123;</span><br><span class="line">      res = rule.<span class="built_in">Apply</span>(op, expr, bindings);</span><br><span class="line">      <span class="comment">// 再次执行ApplyRules：因为一个规则应用完，其结果可能满足了另一个规则的优化条件。</span></span><br><span class="line">      ExpressionRewriter::<span class="built_in">ApplyRules</span>(op, expr)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 递归对表达式的children（如between表达式的left、right表达式）进行优化</span></span><br><span class="line">    <span class="keyword">auto</span> func_on_child = [&amp;](Expression &amp;child) &#123; ExpressionRewriter::ApplyRules &#125;</span><br><span class="line">    ExpressionIterator::<span class="built_in">EnumrateChildren</span>(expr, func_on_child);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>代码中目前有19项表达式重写规则，具体介绍如下：</p>
+<ul>
+<li><p>ConstantFoldingRule（常量折叠）：1+1 优化为 2</p>
+</li>
+<li><p>DistributivityRule（分配律）：(X AND B) or (X AND C) OR (X AND D) 优化为 X AND (B OR C OR D)</p>
+</li>
+<li><p>ArithmeticSimplifcationRule（算术化简）：X * 0 优化为 0</p>
+</li>
+<li><p>CaseSimplificationRule：CASE WHEN 1&#x3D;1 THEN x ELSE y END 优化为 x</p>
+</li>
+<li><p>ConjunctionSimplification：X OR FALSE 优化为 X</p>
+</li>
+<li><p>DatePartSimplicationRule：date_part(‘year’, x) 优化为 year(x)</p>
+</li>
+<li><p>ComparisonSimplificationRule：[x &#x3D; NULL] 优化为 NULL</p>
+</li>
+<li><p>InClauseSimplificationRule （ cast(x) in list[a, b, c]场景，减少cast(x) ，不过unittest中的例子似乎没有满足优化条件）</p>
+</li>
+<li><p>EqualOrNullSimplicationRule：a&#x3D;b OR (a IS NULL AND b is NULL) 优化为 a IS NULL DISTINCT FROM b</p>
+</li>
+<li><p>MoveConstantsRule：x + 1 &#x3D; 5000 优化为 x &#x3D; 4999</p>
+</li>
+<li><p>LikeOptimizationRule：regexp_matches(c, ‘^Prefix’) 优化为 LIKE ‘Prefix%’</p>
+</li>
+<li><p>OrderAggregateOptimizer：</p>
+</li>
+<li><p>DistinctAggregateOptimizer：</p>
+</li>
+<li><p>DistinctWindowedOptimizer：</p>
+</li>
+<li><p>RegexOptimizationRule：</p>
+</li>
+<li><p>EmptyNeedleRemovalRule：</p>
+</li>
+<li><p>EnumComparisonRule：</p>
+</li>
+<li><p>JoinDependentFilterRule：</p>
+</li>
+<li><p>TimeStampComparison：</p>
+</li>
+</ul>
+<p><strong>Filter Pullup &amp; Filter Pushdown</strong></p>
+<p><code>FilterPullup::Rewrite</code> 针对不同的operator</p>
+<!-- flag of hidden posts --></section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Utterances START -->
+      <div id="utterances"></div>
+      <script src="https://utteranc.es/client.js"
+        repo=""
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async></script>    
+      <!-- Utterances END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#DuckDB-SQL%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90"><span class="toc-nav-text">DuckDB SQL引擎源码浅析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Parser"><span class="toc-nav-text">Parser</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Planner"><span class="toc-nav-text">Planner</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Logical-Planner"><span class="toc-nav-text">Logical Planner</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Optimizer"><span class="toc-nav-text">Optimizer</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/duckdb-sql/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+  <script>
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+  </script>
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+        <br>
+        
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023016451" target="_blank" rel="noopener nofollow"><img src="/css/images/ga.png" width="18" height="18"> 京公网安备 2023016451号</a>
+        
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

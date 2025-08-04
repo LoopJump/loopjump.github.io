@@ -10,7 +10,7 @@
   
   <title>
     
-      k8s学习笔记 | LoopJump&#39;s Blog
+      optimizer_rbo_rules | LoopJump&#39;s Blog
     
   </title><meta name="robots" content="noindex">
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -192,8 +192,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>k8s学习笔记</h2>
-  <p class="post-date">2025-02-01</p>
+  <h2>optimizer_rbo_rules</h2>
+  <p class="post-date">2025-07-04</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -201,90 +201,8 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>极客时间上的一个很赞的<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100015201">课程</a>。</p>
-<h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><p>PaaS能被接纳的一个主要原因是它提供了“应用托管”能力，PaaS最核心的是一套应用的打包和分发机制，容器技术的兴起就是源于PaaS技术的普及。</p>
-<p>Linux环境下容器技术的本质就是通过约束和修改进程的动态表现而创造一个进程边界：</p>
-<ul>
-<li>通过namespace来修改进程的视图</li>
-<li>通过cgroup来限制进程的资源占用</li>
-<li>通过切换根目录来构建一致的进程运行环境</li>
-</ul>
-<h3 id="k8s架构"><a href="#k8s架构" class="headerlink" title="k8s架构"></a>k8s架构</h3><p>k8s项目的本质，是给用户提供一个具有普遍意义的容器编排工具。这里所谓“编排”，是指用户使用声明式API描述业务和容器间的关系，k8s负责监控和调度容器以达到用户描述的效果。</p>
-<p>k8s技术上大量吸取了Google Borg的经验。关于Borg详见 Malte Schwarzkopf. “Operating system support for warehouse-scale computing”. PhD thesis。</p>
-<p>k8s的主要设计思想是，从宏观角度以统一的方式来定义任务之间的各种关系，并且为将来支持更多种类的关系留有余地。</p>
-<p>k8s架构图</p>
-<p><img src="https://blogimage.loopjump.com/2025/k8s-arch.png" alt="k8s-arch.png"></p>
-<p>k8s有master和node两类节点</p>
-<ul>
-<li>master为控制节点</li>
-<li>node为计算节点</li>
-</ul>
-<p>master有3个组件</p>
-<ul>
-<li>API Server：负责API服务的kube-apiserver</li>
-<li>Kube-scheduler：负责调度的kube-scheduler</li>
-<li>Kube-control-manager：负责容器编排</li>
-</ul>
-<p>node上关键组件是kubelet：</p>
-<ul>
-<li>核心功能是负责与容器运行时（如Docker）打交道</li>
-<li>与Device Plugin插件进行交互</li>
-<li>调用网络插件CNI和存储插件CSI为容器配置网络和存储</li>
-</ul>
-<h3 id="k8s核心设计理念"><a href="#k8s核心设计理念" class="headerlink" title="k8s核心设计理念"></a>k8s核心设计理念</h3><p><img src="https://blogimage.loopjump.com/2025/k8s-pod.png" alt="k8s-pod.png"></p>
-<ul>
-<li><p>容器间需要紧密协作 &#x3D;&gt; 引入Pod对象</p>
-<blockquote>
-<p>Pod是k8s里面的基础对象，Pod里面包含了关系紧密的几个容器，它们通过共享同一个network namespace、同一个数据卷来达到高效交换信息的目的。</p>
-</blockquote>
-</li>
-<li><p>一次启动多个Pod &#x3D;&gt; 引入Deployment对象</p>
-<blockquote>
-<p>Deployment用于多实例管理</p>
-</blockquote>
-</li>
-<li><p>以固定的IP:Port和均衡方式对外提供服务 &#x3D;&gt; 引入Service对象</p>
-<blockquote>
-<p>Service对象用于为Pod做代理，从而代替Pod对外暴露一个固定的网络地址。</p>
-</blockquote>
-</li>
-<li><p>授权验证信息的存放 &#x3D;&gt; 引入Secret对象</p>
-<blockquote>
-<p>Secret对象是本质是保存在etcd中的键值对数据，可以存放比如访问数据库的用户名&#x2F;密码等机密信息</p>
-</blockquote>
-</li>
-<li><p>一次性运行的Pod &#x3D;&gt; 引入Job对象</p>
-</li>
-<li><p>每个宿主机上都要部署一个且只能一个副本 &#x3D;&gt; 引入DaemonSet对象</p>
-</li>
-<li><p>定时任务 &#x3D;&gt; 引入CronJob对象</p>
-</li>
-</ul>
-<p>从这些对象中可以看到，k8s的核心设计理念使用声明式API来描述编排对象和服务对象（都是API Object）：</p>
-<ul>
-<li>编排对象，比如Pod、Job、CronJob，用于描述应用</li>
-<li>服务对象，比如Service、Secret等，用于平台级功能</li>
-</ul>
-<h3 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h3><p>Pod是k8s中的最小编排单位。</p>
-<p>哪些属性属于Pod？调度、网络、存储、安全、Namespace属性</p>
-<p>Projected Volumn是一种特殊的为容器提供预先定义好的数据：</p>
-<ul>
-<li>Secret</li>
-<li>ConfigMap</li>
-<li>Downward api</li>
-<li>ServiceAccountToken</li>
-</ul>
-<!-- flag of hidden posts --></section>
+    <section class="markdown-content"><!-- flag of hidden posts --></section>
     <!-- Tags START -->
-    
-      <div class="tags">
-        <span>Tags:</span>
-        
-  <a href="/tags#cloud" >
-    <span class="tag-code">cloud</span>
-  </a>
-
-      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -320,7 +238,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%B9%E5%99%A8"><span class="toc-nav-text">容器</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#k8s%E6%9E%B6%E6%9E%84"><span class="toc-nav-text">k8s架构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#k8s%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5"><span class="toc-nav-text">k8s核心设计理念</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Pod"><span class="toc-nav-text">Pod</span></a></li></ol>
+      <ol class="nav">none</ol>
     
   </div>
 </aside>
@@ -330,7 +248,7 @@
 
 <script>
   (function () {
-    var url = 'http://example.com/deep-dive-k8s/';
+    var url = 'http://example.com/optimizer-rbo-rules/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({

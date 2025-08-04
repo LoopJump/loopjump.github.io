@@ -195,27 +195,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/split-order-hash/">Split-Order Hash基本原理</a>
-      </h2>
-      <p class="article-date">December 10, 2016</p>
-      
-        
-  <a href="/tags#Programming" >
-    <span class="tag-code">Programming</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          之前阅读论文并实现了一个可扩展的哈希表，已经在生产环境使用。这里简单描述一下思路，详细的实现可以参见论文。
-哈希的常规实现方式是开辟一个长度为N的大数组，新插入一个元素时，先根据元素hash值模除N，将元素节点插入这个桶，桶上有元素，一般可以拉链解决冲突。当元素越来越多，每个桶上链表就会比较 ...
-        
-      </div>
-      <a class="more" href="/split-order-hash/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/distributed-consistency-model/">浅析分布式一致性模型</a>
       </h2>
       <p class="article-date">November 10, 2016</p>
@@ -406,6 +385,28 @@ Chapter 1： 焦油坑职业的乐趣：工作的创造性；产品有价值；�
         
       </div>
       <a class="more" href="/manmonth-note/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/cpp-typename-usage/">C++ typename用法</a>
+      </h2>
+      <p class="article-date">July 10, 2016</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          C++中typename关键字的使用方法
+1.用在模板定义里，标明其后的模板参数是类型参数。例如
+12345678910template&lt;typename T, typename Y&gt;T foo(const T&amp; t, const Y&amp; y) &#123; /*. ...
+        
+      </div>
+      <a class="more" href="/cpp-typename-usage/">Read more</a>
     </article>
   
 

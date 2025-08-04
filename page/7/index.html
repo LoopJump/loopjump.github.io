@@ -195,27 +195,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/reconfig-state-machine/">Reconfiguring a State Machine</a>
-      </h2>
-      <p class="article-date">April 3, 2017</p>
-      
-        
-  <a href="/tags#Paxos" >
-    <span class="tag-code">Paxos</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Reconfiguring a State Machine这篇论文主要讲解成员组reconfigure，即成员变更。发表时间还是2010年，相比Paxos原始论文的发表时间已经过去20年了。本博文先解读这篇论文，Raft做成员变更的方案后面另文阐述。
-Reconfiguration是指在分布 ...
-        
-      </div>
-      <a class="more" href="/reconfig-state-machine/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/flp-proof-note/">FLP impossibility证明阅读笔记</a>
       </h2>
       <p class="article-date">March 10, 2017</p>
@@ -401,6 +380,27 @@ Eric Brewer是加州大学伯克利分校的教授，同时是Inktomi（ ...
         
       </div>
       <a class="more" href="/cap-theory/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/split-order-hash/">Split-Order Hash基本原理</a>
+      </h2>
+      <p class="article-date">December 10, 2016</p>
+      
+        
+  <a href="/tags#Programming" >
+    <span class="tag-code">Programming</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          之前阅读论文并实现了一个可扩展的哈希表，已经在生产环境使用。这里简单描述一下思路，详细的实现可以参见论文。
+哈希的常规实现方式是开辟一个长度为N的大数组，新插入一个元素时，先根据元素hash值模除N，将元素节点插入这个桶，桶上有元素，一般可以拉链解决冲突。当元素越来越多，每个桶上链表就会比较 ...
+        
+      </div>
+      <a class="more" href="/split-order-hash/">Read more</a>
     </article>
   
 
